@@ -1,3 +1,5 @@
+from planner.dbConfig import *
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -9,14 +11,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-user = "root"
-pssw = ""
-dbLocation = f"mysql://{user}:{pssw}@localhost/main"
-
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_DATABASE_URI"] = dbLocation
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql://{DB_USER}:{DB_PSSW}@{DB_ADDRESS}/{DB_NAME}"
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
