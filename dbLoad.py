@@ -1,6 +1,6 @@
 from planner.models import *
 
-tables = [Course, Faculty, Subject]
+tables = [Faculty, Subject, Course]
 
 import csv
 import os
@@ -22,8 +22,12 @@ subDir = sys.argv[1]
 
 files = [f.name for f in os.scandir(os.path.join(backupsDir, subDir)) if f.is_file() and ".csv" in f.name]
 
-for file in files:
-	table = getTable(os.path.splitext(file)[0])
+for table in tables:
+	file = [f for f in files if os.path.splitext(f)[0] == table.__tablename__][0]
+
+	if not file:
+		continue
+
 	path = os.path.join(backupsDir, subDir, file)
 
 	with open(path, "r") as file:
