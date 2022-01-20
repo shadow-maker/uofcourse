@@ -39,6 +39,7 @@ for table in tables:
 				continue
 			id = row["id"]
 			row.pop("id")
+			print(f"CREATING {table.__tablename__} {id}")
 			instance = table(**row)
 			instance.id = id
 			db.session.add(instance)

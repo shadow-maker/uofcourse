@@ -138,7 +138,6 @@ class Course(db.Model):
 		yield "code", self.code
 		yield "name", self.name
 		yield "emoji", self.emoji
-		yield "level", self.level
 		yield "units", self.units
 		yield "desc", self.desc
 		yield "prereqs", self.prereqs
