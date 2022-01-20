@@ -37,6 +37,9 @@ for table in tables:
 			if instance:
 				print(f"{table.__tablename__} {row['id']} ALREADY EXISTS, skipping...")
 				continue
+			id = row["id"]
+			row.pop("id")
 			instance = table(**row)
+			instance.id = id
 			db.session.add(instance)
 			db.session.commit()
