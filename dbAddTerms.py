@@ -3,6 +3,8 @@ from planner.models import Season, Term
 
 import json
 
+termsFile = "backups/terms.json"
+
 seasons = ["Winter", "Spring", "Summer", "Fall"]
 
 for i in range(len(seasons)):
@@ -20,7 +22,7 @@ for i in range(len(seasons)):
 		db.session.add(s)
 		db.session.commit()
 
-with open("terms.json", "r") as file:
+with open(termsFile, "r") as file:
 	terms = json.load(file)
 
 for tId, term in terms.items():
