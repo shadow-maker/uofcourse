@@ -15,6 +15,16 @@ def getTable(tablename):
 			return table
 
 
+def changeValuesToInt(dictionary):
+	for key in dictionary:
+		try:
+			newVal = int(dictionary[key])
+		except:
+			continue
+		dictionary[key] = newVal
+	return dictionary
+
+
 if len(sys.argv) < 2:
 	sys.exit("ERROR: No arguments provided")
 
@@ -33,6 +43,7 @@ for table in tables:
 	with open(path, "r") as file:
 		reader = csv.DictReader(file)
 		for row in reader:
+			row = changeValuesToInt(row)
 			instance = table.query.filter_by(id=row["id"]).first()
 			if instance:
 				print(f"{table.__tablename__} {row['id']} ALREADY EXISTS, skipping...")
