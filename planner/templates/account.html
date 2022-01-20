@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>{{user["name"]}}</h2>
+<h3>UCID <span>{{user["id"]}}</span></h3>
+
+<h4>Email: <span>{{user["email"]}}</span></h4>
+
+
+
+<h4>Faculty: <span>{{user["faculty"]["name"]}}</span></h4>
+
+<form action="POST">
+	<fieldset class="form-group">
+	</fieldset>
+</form>
+
+<h4>Units needed to graduate: <span>{{user["neededUnits"]}}</span></h4>
+
+
+
+{% endblock %}

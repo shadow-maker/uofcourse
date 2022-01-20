@@ -1,0 +1,39 @@
+.mono-font {
+	font-family: "Menlo";
+}
+
+
+.popup {
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.requiered-form-label::after {
+	content: " *";
+	color: red;
+}
+
+.requiered-form-label:hover::after {
+	content: " * Required";
+	color: red;
+}
+
+.sticky-offset {
+	top: 80px;
+}
+
+.form-group .form-label {
+	cursor: pointer;
+}
+
+.disabled {
+	display: none;
+}
+
+.subjItem {
+	cursor: pointer;
+}
+
+.dragging {
+	opacity: 0.5;
+}

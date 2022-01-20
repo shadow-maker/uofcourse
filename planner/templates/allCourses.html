@@ -1,0 +1,192 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<script src="/static/scripts/collapse.js"></script>
+<script src="/static/scripts/coursesPag.js"></script>
+<script src="/static/scripts/remSubj.js"></script>
+
+{% for s in subjects %}
+<script>
+	subjects.push("{{s}}")
+</script>
+{% endfor %}
+
+{% for s in subjSelected %}
+<script>
+	subjSelected.push("{{s}}")
+</script>
+{% endfor %}
+
+<div class="row justify-content-between">
+	<div class="container col-xl-3 col-lg-4 col-sm-5 col-12 p-0 pe-md-3 ps-sm-0 ps-3 pe-3 m-0">
+		<div class="sticky-top sticky-offset">
+			<form id="form" name="form" method="POST">
+				<nav class="card mb-2">
+					<div class="card-body">
+						<h5 class="card-title">Sort results</h5>
+						<fieldset class="form-group">
+							<div class="input-group input-group-sm mb-2">
+								<label class="input-group-text col-5" for="sortBy">Sort by</label>
+								<select id="sortBy" name="sortBy" class="form-select col-7" aria-label="Sort options">
+									<option value="0" {% if sortOpt == 0 %}selected{% endif %}>Course level</option>
+									<option value="1" {% if sortOpt == 1 %}selected{% endif %}>Course name</option>
+								</select>
+							</div>
+							<div class="input-group input-group-sm">
+								<label class="input-group-text col-5" for="orderBy">Order by</label>
+								<select id="orderBy" name="orderBy" class="form-select col-7" aria-label="Sort options">
+									<option value="asc" {% if asc %}selected{% endif %}>Ascending</option>
+									<option value="desc" {% if not asc %}selected{% endif %}>Descending</option>
+								</select>
+							</div>
+						</fieldset>
+					</div>
+				</nav>
+				<nav class="card mb-2">
+					<div class="card-body">
+						<h5 class="card-title">Filter results</h5>
+
+						<fieldset>
+							<input type="hidden" id="page" name="page" value="{{page}}">
+						</fieldset>
+						<fieldset class="form-group">
+							<hr class="my-2">
+							<div data-bs-toggle="collapse" href="#levelSelector" role="button" aria-expanded="false"
+								aria-controls="levelSelector" id="levelLabel" onclick="collapse('levelLabel')">
+								<span class="toggleOff">
+									<i class="bi-chevron-right"></i>
+								</span>
+								<span class="toggleOn disabled">
+									<i class="bi-chevron-down"></i>
+								</span>
+								<label for="levelSelector" class="ms-1 form-label text-uppercase">
+									Course levels
+								</label>
+							</div>
+							<div class="form-group mb-2 collapse" id="levelSelector">
+								{% for l, sel in levels.items() %}
+								<div class="form-check">
+									<input name="level{{l}}" class="form-check-input" type="checkbox" value="{{l}}"
+										id="level{{l}}" {% if sel %}checked{% endif %}>
+									<label class="form-check-label" for="level{{l}}">
+										<small>{{l}}XX</small>
+									</label>
+								</div>
+								{% endfor %}
+							</div>
+						</fieldset>
+
+						<fieldset class="form-group">
+							<hr class="my-2">
+							<div data-bs-toggle="collapse" href="#facSelector" role="button" aria-expanded="false"
+								aria-controls="facSelector" id="facLabel" onclick="collapse('facLabel')">
+								<span class="toggleOff">
+									<i class="bi-chevron-right"></i>
+								</span>
+								<span class="toggleOn disabled">
+									<i class="bi-chevron-down"></i>
+								</span>
+								<label for="facSelector" class="ms-1 form-label text-uppercase">
+									Faculties
+								</label>
+							</div>
+							<div class="form-group mb-2 collapse" id="facSelector">
+								{% for f, name, sel in faculties %}
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" value="{{f}}" id="fac{{f}}"
+										name="fac{{f}}" {% if sel %}checked{% endif %}>
+									<label class="form-check-label" for="fac{{f}}">
+										<small>{{name}}</small>
+									</label>
+								</div>
+								{% endfor %}
+							</div>
+						</fieldset>
+
+						<fieldset class="form-group">
+							<hr class="my-2">
+							<span class="toggleOn">
+								<i class="bi-chevron-down"></i>
+							</span>
+							<label for="subjectSearch" class="ms-1 mb-0 form-label text-uppercase">
+								Subjects
+							</label>
+							<div id="selectedSubjects" class="d-flex flex-wrap ms-1">
+								{% for s in subjSelected %}
+								<span class="bg-secondary px-2 py-1 m-1 rounded mono-font text-light subjItem" id="subj{{s}}" onclick="remSubj('{{s}}')">
+									{{s}}
+								</span>
+								{% endfor %}
+							</div>
+							<input type="hidden" id="selectedSubjectsText" name="selectedSubjectsText"
+								value="{{subjSelectedText}}">
+							<div class="ms-2">
+								<input class="form-control form-control-sm mr-sm-2 mt-2" type="search" placeholder="Search subjects"
+								aria-label="Search subjects" id="subjectSearch" name="subjectSearch">
+							</div>
+						</fieldset>
+						<hr class="my-2">
+						<div class="form-group mt-2">
+							<input class="btn btn-outline-info" id="submitBtn" name="submitBtn" type="submit"
+								value="Apply filters">
+						</div>
+					</div>
+				</nav>
+			</form>
+			<p class="text-center text-secondary">
+				{{total}} results found
+			</p>
+		</div>
+	</div>
+
+	<div class="container col-xl-9 col-lg-8 col-sm-7 col-12 p-0 px-lg-5 px-md-4 px-3 m-0">
+		<div>
+			{% for c in courses %}
+			<div class="card mb-3 bg-light">
+				<div class="card-body row px-4 py-2">
+					<a class="col-10 h5 p-0 m-0 text-black" href="{{url_for('courseView', subjCode=c.subj, courseCode=c.code)}}" style="text-decoration: none;">
+						<span class="p-0 m-0">&#{{c.emoji}};</span>
+						<span class="p-0 m-0 me-md-4 me-2 mono-font card-title">{{c.subj}}-{{c.code}}</span>
+						<span class="p-0 m-0">{{c.name}}</span>
+					</a>
+					<div class="col-2 course-actions">
+						⭐️
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		<nav aria-label="Page navigation example">
+			<ul class="pagination justify-content-center mb-2">
+				<li class="page-item" {% if page > 1 %}onclick="switchPage({{page - 1}})" {% endif %}"
+					style="cursor: pointer;">
+					<a class="page-link" aria-label="Previous">
+						<span aria-hidden="true">&laquo;</span>
+					</a>
+				</li>
+				{% if pages > 15 %}
+				<li class="page-item" style="cursor: pointer;">
+					<a class="page-link">...</a>
+				</li>
+				{% else %}
+				{% for p in range(1, pages + 1) %}
+				<li class="page-item {% if p == page %}active{% endif %}" {% if p != page %}onclick="switchPage({{p}})"
+					{% endif %} style="cursor: pointer;">
+					<a class="page-link">{{p}}</a>
+				</li>
+				{% endfor %}
+				{% endif %}
+				<li class="page-item" {% if page < pages %}onclick="switchPage({{page + 1}})" {% endif %}
+					style="cursor: pointer;">
+					<a class="page-link" aria-label="Next">
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+		<p class="text-center text-secondary mt-0"><small>Page {{page}} / {{pages}}</small></p>
+	</div>
+</div>
+
+{% endblock %}

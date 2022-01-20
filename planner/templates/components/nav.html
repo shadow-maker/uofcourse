@@ -1,0 +1,54 @@
+<div class="container-fluid bg-light sticky-top px-md-5 mb-4 border-bottom border-white border-2">
+	<nav class="navbar navbar-expand-xl navbar-light px-md-5" style="z-index: 10000;">
+
+		<a href="{{url_for('home')}}" class="navbar-brand">UofC Planner</a>
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#toggleMobileMenu"
+			aria-controls="toggleMobileMenu" aria-expanded="false" arial-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse d-md-flex justify-content-between" id="toggleMobileMenu">
+			<ul class="navbar-nav text-center">
+				<li>
+					<a class="nav-link" href="{{url_for('allCoursesView')}}">Course Search</a>
+				</li>
+				<li>
+					<a class="nav-link" href="{{url_for('about')}}">About</a>
+				</li>
+			</ul>
+
+			<ul class="navbar-nav text-center">
+				{% if current_user.is_authenticated %}
+					<li class="m-1">
+						<a class="nav-link" href="{{url_for('myPlanner')}}">
+							My Planner
+						</a>
+					</li>
+					<li class="m-1">
+						<a class="nav-link" href="{{url_for('account')}}">
+							My Account
+						</a>
+					</li>
+					<li class="m-1">
+						<a class="btn btn-outline-primary d-block" href="{{url_for('logout')}}">
+							Log Out
+						</a>
+					</li>
+				{% else %}
+					<li class="m-1">
+						<a class="btn btn-outline-info d-block" href="{{url_for('login')}}">
+							Log In
+						</a>
+					</li>
+					<li class="m-1">
+						<a class="btn btn-outline-primary d-block" href="{{url_for('signup')}}">
+							Sign Up
+						</a>
+					</li>
+				{% endif %}
+			</ul>
+		</div>
+
+	</nav>
+</div>

@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h3>
+	<span class="mono-font border border-2 border-secondary bg-light rounded p-1">{{subject.code}}</span>-<span class="mono-font border border-2 border-secondary bg-light rounded p-1">{{course.code}}</span>
+</h3>
+(#{{course.id}})
+<h2>{{course.name}}</h2>
+
+
+<h5>{{faculty.name}}</h5>
+<h5>{{subject.name}}</h5>
+
+<div class="container">
+	<h3>Description</h3>
+	<p>
+		{{course.desc}}
+	</p>
+</div>
+
+<div class="container">
+	<h3>Prerequisites</h3>
+	<p>
+		{{course.prereqs}}
+	</p>
+</div>
+
+<div class="container">
+	<h3>Antirequisites</h3>
+	<p>
+		{{course.antireqs}}
+	</p>
+</div>
+
+{% endblock %}

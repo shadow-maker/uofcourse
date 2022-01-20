@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!--Courses per term-->
+<div class="container-fluid">
+	<h2 class="mb-3">Courses per term</h2>
+	<div class="row flex-nowrap overflow-scroll">
+		{% for collection in courseCollections %}
+		<div class="col-3 card mx-2 p-0">
+			<div class="card-header text-center">
+				{% if collection.transfer %}
+					<span class="h5">Transfered</span>
+				{% else %}
+					<span class="h5">{{collection.term.season.name}} {{collection.term.year}}</span>
+					<br>
+					<small class="m-0 text-muted"><i>{{collection.term.start}} > {{collection.term.end}}</i></small>
+				{% endif %}
+			</div>
+			<div class="course-container card-body p-1">
+				{% for uCourse in collection.userCourses %}
+				<div class="course-item m-1 btn bg-light card" draggable="true" data-bs-toggle="modal"
+					data-bs-target="#formModal">
+					<div class="row">
+						<span class="col-3">&#{{uCourse.course.getEmoji()}}</span>
+						<span class="col-6 mono-font">{{uCourse.course.subject.code}}-{{uCourse.course.code}}</span>
+						<span class="col-3 mono-font text-start">
+							{% if uCourse.gradeLetter %}
+								{{uCourse.gradeLetter}}
+							{% else %}
+								-
+							{% endif %}
+						</span>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+			<div class="card-footer">
+				<div class="row">
+					<span class="col-9 text-center">Term GPA</span>
+					<span class="col-3 mono-font text-start">{{collection.getGPA()}}</span>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+		<div class="col-2 card mx-2 p-0">
+			<div class="card-body btn btn-light">
+				<div class="h-100 d-flex flex-column align-content-center text-muted">
+					<div class="mt-auto"><i class="bi-plus-lg display-4"></i></div>
+					<div class="h5 mb-auto">Add term</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--Form modal-->
+<form id="form" name="form" action="POST">
+	<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Edit course <span class="ms-2 h6 mono-font border border-1 border-secondary bg-light rounded p-1">CPSC-355</span></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body px-5">
+					<div class="row mb-2">
+						<label for="selectedCourse" class="col-3 col-form-label">Course</label>
+						<div class="col-9">
+							<input type="text" id="selectedCourse" class="form-control" placeholder="CPSC-355" disabled readonly>
+						</div>
+					  </div>
+					<div class="row">
+						<div class="col-3">
+							<label class="col-3 col-form-label">Term</label>
+						</div>
+						<div class="col-9">
+							<div class="input-group">
+								<select class="form-select" aria-label="Select season">
+									{% for season in seasons %}
+									<option value="{{season.id}}">{{season.name}}</option>
+									{% endfor %}
+								</select>
+								<select class="form-select" aria-label="Select year">
+									{% for year in years %}
+									<option value="{{year}}">{{year}}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer d-flex justify-content-around">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+<script src="/static/scripts/plannerDrag.js"></script>
+
+{% endblock %}

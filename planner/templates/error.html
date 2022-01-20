@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container my-5">
+	<div class="display-1 text-center mono-font mb-5">
+		<span class="border border-5 border-danger bg-light rounded p-3 text-danger">
+			{{errorCode}}
+		</span>
+	</div>
+	
+	<h2 class="text-center">
+		{{errorMessage}}
+	</h2>
+</div>
+
+{% endblock %}

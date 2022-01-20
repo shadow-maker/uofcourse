@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{% if title %}
+	<title>UofC Planner - {{title}}</title>
+	{% else %}
+	<title>UofC Planner</title>
+	{% endif %}
+
+	<!--jQuery-->
+	<script src="/static/scripts/jQuery.js"></script>
+
+	<!--Stylesheets-->
+	<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+	<link id="lightTheme" rel="stylesheet" href="/static/styles/light.css">
+	<link id="darkTheme" rel="stylesheet" href="/static/styles/dark.css" disabled>
+	<!--
+	<script>
+		if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+			document.getElementById("darkTheme").disabled = false
+			document.getElementById("lightTheme").disabled = true
+		} else {
+			document.getElementById("lightTheme").disabled = false
+			document.getElementById("darkTheme").disabled = true
+		}
+	</script>
+	-->
+	<link rel="stylesheet" href="/static/styles/main.css">
+
+	<!--Icons-->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+</head>
+
+<body>
+	{% include "components/nav.html" %}
+
+	{% if backlinks %}
+	<nav class="container" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			{% for item in backlinks %}
+			<li class="breadcrumb-item">
+				<a href="{{item[1]}}">{{item[0]}}</a>
+			</li>
+			{% endfor %}
+		</ol>
+	</nav>
+	{% endif %}
+
+	<div class="container mb-4 border-bottom">
+		{% include "components/back.html" %}
+
+		{% if header %}
+		<h1>{{header}}</h1>
+		{% endif %}
+	</div>
+
+	<div class="container">
+		{% block content%}{% endblock %}
+	</div>
+
+	{% include "components/alert.html" %}
+
+	{% include "components/foot.html" %}
+
+	<!--Bootstrap-->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous">
+	</script>
+</body>
+
+</html>
