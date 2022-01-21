@@ -1,6 +1,3 @@
-subjects = []
-subjSelected = []
-
 function updateSubj() {
 	text = ""
 	for (s of subjSelected) {

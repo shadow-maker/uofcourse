@@ -229,9 +229,11 @@ def allCoursesView():
 	return render_template("allCourses.html",
 		title = "Courses",
 		header = f"Courses",
-		levels = levels,
-		faculties = faculties,
-		subjects = [s.code for s in Subject.query.all()],
+		filterData = {
+			"levels": levels,
+			"faculties": faculties,
+			"subjects": [s.code for s in Subject.query.all()]
+		},
 		subjSelected = subjSelected,
 		subjSelectedText = "-".join(subjSelected),
 		courses = courses,
