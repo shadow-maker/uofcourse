@@ -187,37 +187,63 @@ def facultyView(facId):
 
 @app.route("/c", methods=["GET", "POST"])
 def allCoursesView():
-	levels = {l : True for l in COURSE_LEVELS}
-	faculties = [(f[0], f[1], True) for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))]
-	subjSelected = []
 	sortOpt = 0
 	sortBy = SORT_OPTIONS[0]
 	asc = True
 
-	page = 1
-	form = request.form
+	levels = {str(l) : True for l in COURSE_LEVELS}
+	faculties = {
+		str(f[0]) : {"name": f[1], "sel": True}
+	for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))}
+	subjects = {
+		str(s[0]) : {"code": s[1], "sel": False}
+	for s in list(db.session.query(Subject).values(Subject.id, Subject.code))}
 
+	page = 1
+
+	form = request.form
 	if form:
-		levels = {l : bool(form.get(f"level{l}")) for l in COURSE_LEVELS}
-		faculties = [(f[0], f[1], bool(form.get(f"fac{f[0]}"))) for f in faculties]
-		subjSelected = [s for s in form.get("selectedSubjectsText").split("-") if s != ""]
-		subjSearch = form.get("subjectSearch")
-		page = int(form.get("page"))
-		if getSubject(subjSearch):
-			subjSelected.append(subjSearch.upper())
+		# Sort
 		sortOpt = int(form.get("sortBy")) if int(form.get("sortBy")) in range(len(SORT_OPTIONS)) else 0
 		sortBy = SORT_OPTIONS[sortOpt]
+	
 		if form.get("orderBy") != "asc":
 			sortBy = [i.desc() for i in sortBy]
 			asc = False
-	elif "subject" in request.args:
-		subjSelected = [request.args["subject"]]
-	elif "facId" in request.args:
-		faculties = [(f[0], f[1], bool(f[0] == request.args["facId"])) for f in faculties]
+
+		# Filter
+		selectedLevel = form.getlist("selectedLevel")
+		for l in levels:
+			levels[l] = l in selectedLevel
 		
-	subjQuery = [getSubject(s).id for s in subjSelected] if subjSelected else [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
-	facQuery = [f[0] for f in faculties if f[2]]
-	results = filterCourses([l for l, sel in levels.items() if sel], facQuery, subjQuery, page, sortBy, 30)
+		selectedFaculty = form.getlist("selectedFaculty")
+		for f in faculties:
+			faculties[f]["sel"] = f in selectedFaculty
+
+		selectedSubject = form.getlist("selectedSubject")
+		for s in subjects:
+			subjects[s]["sel"] = s in selectedSubject
+
+		subjSearch = getSubjectByCode(form.get("subjectSearch"))
+		if subjSearch:
+			subjects[str(subjSearch.id)]["sel"] = True
+	
+		# Pagination
+		page = int(form.get("page"))
+
+	levelIds = [l for l, sel in levels.items() if sel]
+
+	facIds = [int(f) for f, data in faculties.items() if data["sel"]]
+
+	subjIds = [s for s in subjects if subjects[s]["sel"]]
+	if not subjIds:
+		subjIds = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
+	subjIds = [s for s in subjIds if Subject.query.filter_by(id=s).first().faculty_id in facIds]
+
+	query = Course.query.filter(Course.level.in_(levelIds), Course.subject_id.in_(subjIds)).order_by(*sortBy)
+
+	results = query.paginate(per_page=30, page=page)
+
 	courses = [{
 		"id": course.id,
 		"name": course.name,
@@ -229,19 +255,19 @@ def allCoursesView():
 	return render_template("allCourses.html",
 		title = "Courses",
 		header = f"Courses",
+		sortOpt = sortOpt,
+		asc = asc,
 		filterData = {
 			"levels": levels,
 			"faculties": faculties,
-			"subjects": [s.code for s in Subject.query.all()]
+			"subjects": subjects
 		},
-		subjSelected = subjSelected,
-		subjSelectedText = "-".join(subjSelected),
-		courses = courses,
-		sortOpt = sortOpt,
-		asc = asc,
-		pages = results.pages,
-		page = results.page,
-		total = results.total
+		results = {
+			"courses": courses,
+			"page": page,
+			"pages": results.pages,
+			"total": results.total,
+		}
 	)
 
 #@app.route("/c")
@@ -268,7 +294,7 @@ def courseRandom():
 
 @app.route("/c/<subjCode>")
 def subjectView(subjCode):
-	subject = getSubject(subjCode)
+	subject = getSubjectByCode(subjCode)
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
 		return redirect(url_for("home"))
@@ -290,7 +316,7 @@ def subjectView(subjCode):
 
 @app.route("/c/<subjCode>/<courseCode>")
 def courseView(subjCode, courseCode):
-	subject = getSubject(subjCode)
+	subject = getSubjectByCode(subjCode)
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
 		return redirect(url_for("home"))

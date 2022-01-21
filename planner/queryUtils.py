@@ -32,19 +32,14 @@ def getAllUserIds():
 def userExists(ucid):
 	return ucid in getAllUserIds()
 
-def getSubject(subjCode):
+def getSubjectByCode(subjCode):
 	return Subject.query.filter_by(code=subjCode.upper()).first()
 
 def getCourseById(_subjId, _courseCode):
 	return Course.query.filter_by(subject_id=_subjId, code=_courseCode).first()
 
 def getCourseByCode(subjCode, courseCode):
-	subject = getSubject(subjCode)
+	subject = getSubjectByCode(subjCode)
 	if not subject:
 		return None
 	return getCourseById(subject.id, courseCode)
-
-def filterCourses(levels, faculties, subjects, page=1, sortBy=[Course.code, Course.name], perPage=20):
-	subjects = [s for s in subjects if Subject.query.filter_by(id=s).first().faculty_id in faculties]
-	query = Course.query.filter(Course.level.in_(levels), Course.subject_id.in_(subjects)).order_by(*sortBy)
-	return query.paginate(per_page=perPage, page=page)

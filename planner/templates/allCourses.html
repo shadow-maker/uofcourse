@@ -4,12 +4,11 @@
 
 <script>
 	const subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
-	subjSelected = JSON.parse('{{ subjSelected | tojson | safe }}')
 </script>
 
 <script src="/static/scripts/collapse.js"></script>
 <script src="/static/scripts/coursesPag.js"></script>
-<script src="/static/scripts/remSubj.js"></script>
+<script src="/static/scripts/updateSubj.js"></script>
 
 
 <div class="row justify-content-between">
@@ -20,11 +19,13 @@
 					<div class="card-body">
 						<h5 class="card-title">Sort results</h5>
 						<div class="input-group">
-							<select id="sortBy" name="sortBy" class="form-select form-select-sm" aria-label="Sort options">
+							<select id="sortBy" name="sortBy" class="form-select form-select-sm"
+								aria-label="Sort options">
 								<option value="0" {% if sortOpt == 0 %}selected{% endif %}>Course level</option>
 								<option value="1" {% if sortOpt == 1 %}selected{% endif %}>Course name</option>
 							</select>
-							<select id="orderBy" name="orderBy" class="form-select form-select-sm" aria-label="Sort options">
+							<select id="orderBy" name="orderBy" class="form-select form-select-sm"
+								aria-label="Sort options">
 								<option value="asc" {% if asc %}selected{% endif %}>Ascending</option>
 								<option value="desc" {% if not asc %}selected{% endif %}>Descending</option>
 							</select>
@@ -51,7 +52,7 @@
 							<div class="form-group mb-2 collapse" id="levelSelector">
 								{% for l, sel in filterData["levels"].items() %}
 								<div class="form-check">
-									<input name="level{{l}}" class="form-check-input" type="checkbox" value="{{l}}"
+									<input name="selectedLevel" class="form-check-input" type="checkbox" value="{{l}}"
 										id="level{{l}}" {% if sel %}checked{% endif %}>
 									<label class="form-check-label" for="level{{l}}">
 										<small>{{l}}XX</small>
@@ -76,12 +77,12 @@
 								</label>
 							</div>
 							<div class="form-group mb-2 collapse" id="facSelector">
-								{% for f, name, sel in  filterData["faculties"] %}
+								{% for f, data in filterData["faculties"].items() %}
 								<div class="form-check">
 									<input class="form-check-input" type="checkbox" value="{{f}}" id="fac{{f}}"
-										name="fac{{f}}" {% if sel %}checked{% endif %}>
+										name="selectedFaculty" {% if data["sel"] %}checked{% endif %}>
 									<label class="form-check-label" for="fac{{f}}">
-										<small>{{name}}</small>
+										<small>{{data["name"]}}</small>
 									</label>
 								</div>
 								{% endfor %}
@@ -96,16 +97,21 @@
 							<label for="subjectSearch" class="ms-1 mb-0 form-label text-uppercase">
 								Subjects
 							</label>
-							<div id="selectedSubjects" class="d-flex flex-wrap ms-1">
-								{% for s in subjSelected %}
-								<span class="bg-secondary px-2 py-1 m-1 rounded mono-font text-light subjItem"
-									id="subj{{s}}" onclick="remSubj('{{s}}')">
-									{{s}}
-								</span>
+							<div id="subjectSelectorChecks" class="d-none">
+								{% for s, data in filterData["subjects"].items() %}
+								<input type="checkbox" value="{{s}}" id="subjCheck{{s}}" name="selectedSubject" {% if data["sel"] %}checked{% endif %}>
 								{% endfor %}
 							</div>
-							<input type="hidden" id="selectedSubjectsText" name="selectedSubjectsText"
-								value="{{subjSelectedText}}">
+							<div id="subjectSelector" class="d-flex flex-wrap ms-1">
+								{% for s, data in filterData["subjects"].items() %}
+								{% if data["sel"] %}
+								<span class="bg-secondary px-2 py-1 m-1 rounded mono-font text-light subjItem"
+									id="subj{{s}}" onclick="remSubj('{{s}}')">
+									{{data["code"]}}
+								</span>
+								{% endif %}
+								{% endfor %}
+							</div>
 							<div class="ms-2">
 								<input class="form-control form-control-sm mr-sm-2 mt-2" type="search"
 									placeholder="Search subjects" aria-label="Search subjects" id="subjectSearch"
@@ -124,14 +130,14 @@
 				</fieldset>
 			</form>
 			<p class="text-center text-secondary">
-				{{total}} results found
+				{{results["total"]}} results found
 			</p>
 		</div>
 	</div>
 
 	<div class="container col-xl-9 col-lg-8 col-sm-7 col-12 p-0 px-lg-5 px-md-4 px-3 m-0">
 		<div>
-			{% for c in courses %}
+			{% for c in results["courses"] %}
 			<div class="card mb-3 bg-light">
 				<div class="card-body row px-4 py-2">
 					<a class="col-10 h5 p-0 m-0 text-black"
@@ -150,25 +156,25 @@
 		</div>
 		<nav aria-label="Page navigation example">
 			<ul class="pagination justify-content-center mb-2">
-				<li class="page-item" {% if page > 1 %}onclick="switchPage({{page - 1}})" {% endif %}"
+				<li class="page-item" {% if results["page"] > 1 %}onclick="switchPage({{results["page"] - 1}})" {% endif %}"
 					style="cursor: pointer;">
 					<a class="page-link" aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
 					</a>
 				</li>
-				{% if pages > 15 %}
+				{% if results["pages"] > 15 %}
 				<li class="page-item" style="cursor: pointer;">
 					<a class="page-link">...</a>
 				</li>
 				{% else %}
-				{% for p in range(1, pages + 1) %}
-				<li class="page-item {% if p == page %}active{% endif %}" {% if p != page %}onclick="switchPage({{p}})"
+				{% for p in range(1, results["pages"] + 1) %}
+				<li class="page-item {% if p == page %}active{% endif %}" {% if p != results["page"] %}onclick="switchPage({{p}})"
 					{% endif %} style="cursor: pointer;">
 					<a class="page-link">{{p}}</a>
 				</li>
 				{% endfor %}
 				{% endif %}
-				<li class="page-item" {% if page < pages %}onclick="switchPage({{page + 1}})" {% endif %}
+				<li class="page-item" {% if results["page"] < results["pages"] %}onclick="switchPage({{results["page"] + 1}})" {% endif %}
 					style="cursor: pointer;">
 					<a class="page-link" aria-label="Next">
 						<span aria-hidden="true">&raquo;</span>
@@ -176,7 +182,7 @@
 				</li>
 			</ul>
 		</nav>
-		<p class="text-center text-secondary mt-0"><small>Page {{page}} / {{pages}}</small></p>
+		<p class="text-center text-secondary mt-0"><small>Page {{results["page"]}} / {{results["pages"]}}</small></p>
 	</div>
 </div>
 
