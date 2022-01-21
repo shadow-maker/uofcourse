@@ -25,22 +25,16 @@
 				<nav class="card mb-2">
 					<div class="card-body">
 						<h5 class="card-title">Sort results</h5>
-						<fieldset class="form-group">
-							<div class="input-group input-group-sm mb-2">
-								<label class="input-group-text col-5" for="sortBy">Sort by</label>
-								<select id="sortBy" name="sortBy" class="form-select col-7" aria-label="Sort options">
-									<option value="0" {% if sortOpt == 0 %}selected{% endif %}>Course level</option>
-									<option value="1" {% if sortOpt == 1 %}selected{% endif %}>Course name</option>
-								</select>
-							</div>
-							<div class="input-group input-group-sm">
-								<label class="input-group-text col-5" for="orderBy">Order by</label>
-								<select id="orderBy" name="orderBy" class="form-select col-7" aria-label="Sort options">
-									<option value="asc" {% if asc %}selected{% endif %}>Ascending</option>
-									<option value="desc" {% if not asc %}selected{% endif %}>Descending</option>
-								</select>
-							</div>
-						</fieldset>
+						<div class="input-group">
+							<select id="sortBy" name="sortBy" class="form-select form-select-sm" aria-label="Sort options">
+								<option value="0" {% if sortOpt == 0 %}selected{% endif %}>Course level</option>
+								<option value="1" {% if sortOpt == 1 %}selected{% endif %}>Course name</option>
+							</select>
+							<select id="orderBy" name="orderBy" class="form-select form-select-sm" aria-label="Sort options">
+								<option value="asc" {% if asc %}selected{% endif %}>Ascending</option>
+								<option value="desc" {% if not asc %}selected{% endif %}>Descending</option>
+							</select>
+						</div>
 					</div>
 				</nav>
 				<nav class="card mb-2">
@@ -114,7 +108,8 @@
 							</label>
 							<div id="selectedSubjects" class="d-flex flex-wrap ms-1">
 								{% for s in subjSelected %}
-								<span class="bg-secondary px-2 py-1 m-1 rounded mono-font text-light subjItem" id="subj{{s}}" onclick="remSubj('{{s}}')">
+								<span class="bg-secondary px-2 py-1 m-1 rounded mono-font text-light subjItem"
+									id="subj{{s}}" onclick="remSubj('{{s}}')">
 									{{s}}
 								</span>
 								{% endfor %}
@@ -122,8 +117,9 @@
 							<input type="hidden" id="selectedSubjectsText" name="selectedSubjectsText"
 								value="{{subjSelectedText}}">
 							<div class="ms-2">
-								<input class="form-control form-control-sm mr-sm-2 mt-2" type="search" placeholder="Search subjects"
-								aria-label="Search subjects" id="subjectSearch" name="subjectSearch">
+								<input class="form-control form-control-sm mr-sm-2 mt-2" type="search"
+									placeholder="Search subjects" aria-label="Search subjects" id="subjectSearch"
+									name="subjectSearch">
 							</div>
 						</fieldset>
 						<hr class="my-2">
@@ -145,7 +141,9 @@
 			{% for c in courses %}
 			<div class="card mb-3 bg-light">
 				<div class="card-body row px-4 py-2">
-					<a class="col-10 h5 p-0 m-0 text-black" href="{{url_for('courseView', subjCode=c.subj, courseCode=c.code)}}" style="text-decoration: none;">
+					<a class="col-10 h5 p-0 m-0 text-black"
+						href="{{url_for('courseView', subjCode=c.subj, courseCode=c.code)}}"
+						style="text-decoration: none;">
 						<span class="p-0 m-0">&#{{c.emoji}};</span>
 						<span class="p-0 m-0 me-md-4 me-2 mono-font card-title">{{c.subj}}-{{c.code}}</span>
 						<span class="p-0 m-0">{{c.name}}</span>
