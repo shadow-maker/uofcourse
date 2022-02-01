@@ -252,7 +252,7 @@ def allCoursesView():
 		"emoji": course.getEmoji(128218),
 	} for course in results.items]
 	
-	return render_template("allCourses.html",
+	return render_template("coursesFilter.html",
 		title = "Courses",
 		header = f"Courses",
 		sortOpt = sortOpt,
