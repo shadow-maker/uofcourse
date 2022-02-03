@@ -4,7 +4,7 @@
 {% if messages %}
 <div class="fixed-bottom mb-1">
 	{% for category, message in messages %}
-	<div id="popup{{loop.index}}" onclick="closeAlert('{{loop.index}}')"
+	<div id="popup{{loop.index}}" onclick="$(this).alert('close')"
 		class="popup alert alert-{{category}} fade show mx-2 mx-md-5 mb-2 mb-md-3">
 		<div class="d-flex justify-content-between">
 			<span>{{message}}</span>
