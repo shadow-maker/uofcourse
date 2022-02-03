@@ -1,8 +1,5 @@
 function closeAlert(index){
 	setTimeout(function(){
-		$("#popup" + index).addClass("leave")
-		setTimeout(() => {
-			$("#popup" + index).hide()
-		}, 300)
+		$("#popup" + index).alert("close")
 	}.bind(this), 100)
 }

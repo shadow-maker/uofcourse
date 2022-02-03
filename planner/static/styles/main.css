@@ -5,7 +5,6 @@
 
 .popup {
 	cursor: pointer;
-	transition: 0.2s;
 }
 
 .requiered-form-label::after {
