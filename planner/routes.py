@@ -185,6 +185,86 @@ def facultyView(facId):
 		faculty = faculty
 	)
 
+@app.route("/c/filter", methods=["GET", "POST"])
+def coursesFilter():	
+	sortOpt = 0
+	sortBy = SORT_OPTIONS[sortOpt]
+
+	levels = {str(l) : True for l in COURSE_LEVELS}
+	faculties = {
+		str(f[0]) : {"name": f[1], "sel": True}
+	for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))}
+	subjects = {
+		str(s[0]) : {"code": s[1], "sel": False}
+	for s in list(db.session.query(Subject).values(Subject.id, Subject.code))}
+
+	page = 1
+
+	if request.form:
+		data = request.form
+	elif request.json:
+		data = request.json
+	else:
+		return jsonify({"error": "No data passed through json or form"})
+
+	# Sort
+	if "sortBy" in data:
+		sortOpt = int(data["sortBy"]) if int(data["sortBy"]) in range(len(SORT_OPTIONS)) else 0
+	sortBy = SORT_OPTIONS[sortOpt]
+	
+	if "orderBy" in data and data["orderBy"] != "asc":
+		sortBy = [i.desc() for i in sortBy]
+
+	# Filter
+
+	if "selectedLevel" in data:
+		for l in levels:
+			levels[l] = l in data["selectedLevel"]
+	
+	if "selectedFaculty" in data:
+		for f in faculties:
+			faculties[f]["sel"] = f in data["selectedFaculty"]
+
+	if "selectedSubject" in data:
+		subjects = json.loads(data["selectedSubject"])
+
+	if "subjectSearch" in data:
+		subjSearch = getSubjectByCode(data["subjectSearch"])
+		if subjSearch:
+			subjects[str(subjSearch.id)]["sel"] = True
+	
+	if "page" in data:
+		page = int(data["page"])
+
+	levelIds = [l for l, sel in levels.items() if sel]
+
+	facIds = [int(f) for f, v in faculties.items() if v["sel"]]
+
+	subjIds = [s for s in subjects if subjects[s]["sel"]]
+	if not subjIds:
+		subjIds = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
+	subjIds = [s for s in subjIds if Subject.query.filter_by(id=s).first().faculty_id in facIds]
+
+	query = Course.query.filter(Course.level.in_(levelIds), Course.subject_id.in_(subjIds)).order_by(*sortBy)
+
+	results = query.paginate(per_page=30, page=page)
+
+	courses = [{
+		"id": course.id,
+		"name": course.name,
+		"subj": course.subject.code,
+		"code": course.code,
+		"emoji": course.getEmoji(128218),
+	} for course in results.items]
+
+	return jsonify({
+		"subjects": subjects,
+		"courses": courses,
+		"page": page,
+		"pages": results.pages,
+		"total": results.total
+	})
+
 @app.route("/c", methods=["GET", "POST"])
 def allCoursesView():
 	sortOpt = 0
@@ -201,6 +281,7 @@ def allCoursesView():
 
 	page = 1
 
+	""" Not longer used since form moved to AJAX:
 	form = request.form
 	if form:
 		# Sort
@@ -230,6 +311,7 @@ def allCoursesView():
 	
 		# Pagination
 		page = int(form.get("page"))
+	"""
 
 	levelIds = [l for l, sel in levels.items() if sel]
 
