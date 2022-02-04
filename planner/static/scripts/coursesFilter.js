@@ -16,9 +16,15 @@ $(document).ready(function () {
 		})
 
 		var selectedSubject = []
-		$("input[name='selectedSubject']:checked").each(function () {
-			selectedSubject.push(parseInt($(this).val()))
-		})
+		for (let s in subjects) {
+			if (subjects[s].sel) {
+				selectedSubject.push(parseInt(s))
+			}
+			else if (subjects[s].code.toLowerCase() == $("#subjectSearch").val().toLowerCase()) {
+				subjects[s].sel = true
+				selectedSubject.push(parseInt(s))
+			}
+		}
 
 		$.ajax({
 			data: {
@@ -26,7 +32,7 @@ $(document).ready(function () {
 				orderBy: $("#orderBy").val(),
 				selectedLevel: JSON.stringify(selectedLevel),
 				selectedFaculty: JSON.stringify(selectedFaculty),
-				selectedSubject: JSON.stringify(subjects),
+				selectedSubject: JSON.stringify(selectedSubject),
 				subjectSearch: $("#subjectSearch").val(),
 				page: page
 			},
@@ -37,7 +43,7 @@ $(document).ready(function () {
 				$("#errorPopup").show();
 				$("#errorPopup .message").text(data.error);
 			} else {
-				subjects = data.subjects
+				//subjects = data.subjects
 				page = data.page
 				pages = data.pages
 

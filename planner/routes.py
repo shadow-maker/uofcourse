@@ -190,12 +190,12 @@ def coursesFilter():
 	sortOpt = 0
 	sortBy = SORT_OPTIONS[sortOpt]
 
-	levels = {str(l) : True for l in COURSE_LEVELS}
+	levels = {l : True for l in COURSE_LEVELS}
 	faculties = {
-		str(f[0]) : {"name": f[1], "sel": True}
+		f[0] : {"name": f[1], "sel": True}
 	for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))}
 	subjects = {
-		str(s[0]) : {"code": s[1], "sel": False}
+		s[0] : {"code": s[1], "sel": False}
 	for s in list(db.session.query(Subject).values(Subject.id, Subject.code))}
 
 	page = 1
@@ -219,21 +219,20 @@ def coursesFilter():
 		# Filter
 
 		if "selectedLevel" in data:
+			selected = json.loads(data["selectedLevel"])
 			for l in levels:
-				levels[l] = l in data["selectedLevel"]
+				levels[l] = l in selected
 		
 		if "selectedFaculty" in data:
+			selected = json.loads(data["selectedFaculty"])
 			for f in faculties:
-				faculties[f]["sel"] = f in data["selectedFaculty"]
+				faculties[f]["sel"] = f in selected
 
 		if "selectedSubject" in data:
-			subjects = json.loads(data["selectedSubject"])
+			selected = json.loads(data["selectedSubject"])
+			for s in subjects:
+				subjects[s]["sel"] = s in selected
 
-		if "subjectSearch" in data:
-			subjSearch = getSubjectByCode(data["subjectSearch"])
-			if subjSearch:
-				subjects[str(subjSearch.id)]["sel"] = True
-		
 		if "page" in data:
 			page = int(data["page"])
 
