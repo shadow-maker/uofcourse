@@ -186,7 +186,7 @@ def facultyView(facId):
 	)
 
 @app.route("/c/filter", methods=["GET", "POST"])
-def coursesFilter():	
+def coursesFilter():
 	sortOpt = 0
 	sortBy = SORT_OPTIONS[sortOpt]
 
@@ -200,41 +200,42 @@ def coursesFilter():
 
 	page = 1
 
-	if request.form:
-		data = request.form
-	elif request.json:
-		data = request.json
-	else:
-		return jsonify({"error": "No data passed through json or form"})
+	if request.method == "POST":
+		if request.form:
+			data = request.form
+		elif request.json:
+			data = request.json
+		else:
+			return jsonify({"error": "No data passed through json or form"})
 
-	# Sort
-	if "sortBy" in data:
-		sortOpt = int(data["sortBy"]) if int(data["sortBy"]) in range(len(SORT_OPTIONS)) else 0
-	sortBy = SORT_OPTIONS[sortOpt]
-	
-	if "orderBy" in data and data["orderBy"] != "asc":
-		sortBy = [i.desc() for i in sortBy]
+		# Sort
+		if "sortBy" in data:
+			sortOpt = int(data["sortBy"]) if int(data["sortBy"]) in range(len(SORT_OPTIONS)) else 0
+		sortBy = SORT_OPTIONS[sortOpt]
+		
+		if "orderBy" in data and data["orderBy"] != "asc":
+			sortBy = [i.desc() for i in sortBy]
 
-	# Filter
+		# Filter
 
-	if "selectedLevel" in data:
-		for l in levels:
-			levels[l] = l in data["selectedLevel"]
-	
-	if "selectedFaculty" in data:
-		for f in faculties:
-			faculties[f]["sel"] = f in data["selectedFaculty"]
+		if "selectedLevel" in data:
+			for l in levels:
+				levels[l] = l in data["selectedLevel"]
+		
+		if "selectedFaculty" in data:
+			for f in faculties:
+				faculties[f]["sel"] = f in data["selectedFaculty"]
 
-	if "selectedSubject" in data:
-		subjects = json.loads(data["selectedSubject"])
+		if "selectedSubject" in data:
+			subjects = json.loads(data["selectedSubject"])
 
-	if "subjectSearch" in data:
-		subjSearch = getSubjectByCode(data["subjectSearch"])
-		if subjSearch:
-			subjects[str(subjSearch.id)]["sel"] = True
-	
-	if "page" in data:
-		page = int(data["page"])
+		if "subjectSearch" in data:
+			subjSearch = getSubjectByCode(data["subjectSearch"])
+			if subjSearch:
+				subjects[str(subjSearch.id)]["sel"] = True
+		
+		if "page" in data:
+			page = int(data["page"])
 
 	levelIds = [l for l, sel in levels.items() if sel]
 
