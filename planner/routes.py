@@ -258,7 +258,6 @@ def coursesFilter():
 	} for course in results.items]
 
 	return jsonify({
-		"subjects": subjects,
 		"courses": courses,
 		"page": page,
 		"pages": results.pages,

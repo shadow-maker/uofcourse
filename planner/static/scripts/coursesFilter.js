@@ -43,7 +43,6 @@ $(document).ready(function () {
 				$("#errorPopup").show();
 				$("#errorPopup .message").text(data.error);
 			} else {
-				//subjects = data.subjects
 				page = data.page
 				pages = data.pages
 
