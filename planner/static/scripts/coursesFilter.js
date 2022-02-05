@@ -37,7 +37,7 @@ $(document).ready(function () {
 				page: page
 			},
 			type: "POST",
-			url: "/c/filter",
+			url: "/api/c/filter",
 		}).done(function (data) {
 			if (data.error) {
 				$("#errorPopup").show();

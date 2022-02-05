@@ -12,7 +12,7 @@ SORT_OPTIONS = [
 	[Course.name, Course.code]
 ]
 
-@app.route("/c/filter", methods=["GET", "POST"])
+@app.route("/api/c/filter", methods=["GET", "POST"])
 def coursesFilter():
 	sortOpt = 0
 	sortBy = SORT_OPTIONS[sortOpt]
