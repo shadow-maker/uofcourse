@@ -12,6 +12,16 @@ SORT_OPTIONS = [
 	[Course.name, Course.code]
 ]
 
+def parseData(data): # data is dict or ImmutableMultiDict
+	parsed = {}
+	for key, value in data.items():
+		try:
+			parsed[key] = json.loads(value)
+		except:
+			parsed[key] = value
+	return parsed
+
+
 @app.route("/api/c/filter", methods=["GET", "POST"])
 def coursesFilter():
 	sortOpt = 0
@@ -34,6 +44,10 @@ def coursesFilter():
 			data = request.json
 		else:
 			return jsonify({"error": "No data passed through json or form"})
+		try:
+			data = parseData(data)
+		except:
+			return jsonify({"error": "Data couldn't be parsed, is in incorrect format"})
 
 		# Sort
 		if "sortBy" in data:
@@ -45,20 +59,15 @@ def coursesFilter():
 
 		# Filter
 
-		if "selectedLevel" in data:
-			selected = json.loads(data["selectedLevel"])
-			for l in levels:
-				levels[l] = l in selected
+		levels = {l : l in data["selectedLevel"] for l in levels}
 		
 		if "selectedFaculty" in data:
-			selected = json.loads(data["selectedFaculty"])
 			for f in faculties:
-				faculties[f]["sel"] = f in selected
+				faculties[f]["sel"] = f in data["selectedFaculty"]
 
 		if "selectedSubject" in data:
-			selected = json.loads(data["selectedSubject"])
 			for s in subjects:
-				subjects[s]["sel"] = s in selected
+				subjects[s]["sel"] = s in data["selectedSubject"]
 
 		if "page" in data:
 			page = int(data["page"])
