@@ -33,7 +33,6 @@ $(document).ready(function () {
 				selectedLevel: JSON.stringify(selectedLevel),
 				selectedFaculty: JSON.stringify(selectedFaculty),
 				selectedSubject: JSON.stringify(selectedSubject),
-				subjectSearch: $("#subjectSearch").val(),
 				page: page
 			},
 			type: "POST",
