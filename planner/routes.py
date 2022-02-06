@@ -90,6 +90,9 @@ def signup():
 	if current_user.is_authenticated:
 		flash(f"You are already authenticated!", "success")
 		return redirect(url_for("home"))
+	if not ALLOW_ACCOUNT_CREATION:
+		flash(f"Account creation is currently disabled!", "warning")
+		return redirect(url_for("home"))
 	form = registerForm()
 	if form.validate_on_submit():
 		if userExists(form.ucid.data):
