@@ -35,6 +35,7 @@ def coursesFilter():
 		s[0] : {"code": s[1], "sel": False}
 	for s in list(db.session.query(Subject).values(Subject.id, Subject.code))}
 
+	limit = 30
 	page = 1
 
 	data = request.args.to_dict()
@@ -76,6 +77,11 @@ def coursesFilter():
 			for s in subjects:
 				subjects[s]["sel"] = s in selected
 
+		if "limit" in data:
+			limit = int(data["limit"])
+			if limit > MAX_ITEMS_PER_PAGE:
+				return jsonify({"error": f"limit of items per page cannot be greater that {MAX_ITEMS_PER_PAGE}"})
+
 		if "page" in data:
 			page = int(data["page"])
 
@@ -90,7 +96,7 @@ def coursesFilter():
 
 	query = Course.query.filter(Course.level.in_(levelIds), Course.subject_id.in_(subjIds)).order_by(*sortBy)
 
-	results = query.paginate(per_page=30, page=page)
+	results = query.paginate(per_page=limit, page=page)
 
 	courses = [{
 		"id": course.id,
