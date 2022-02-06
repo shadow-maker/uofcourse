@@ -59,15 +59,25 @@ def coursesFilter():
 
 		# Filter
 
-		levels = {l : l in data["selectedLevel"] for l in levels}
+		if "selectedLevel" in data:
+			levels = {l : l in data["selectedLevel"] for l in levels}
 		
 		if "selectedFaculty" in data:
 			for f in faculties:
 				faculties[f]["sel"] = f in data["selectedFaculty"]
 
 		if "selectedSubject" in data:
+			selected = []
+			for s in data["selectedSubject"]:
+				if type(s) == int:
+					selected.append(s)
+				else:
+					try:
+						selected.append(getSubjectByCode(s).id)
+					except:
+						pass
 			for s in subjects:
-				subjects[s]["sel"] = s in data["selectedSubject"]
+				subjects[s]["sel"] = s in selected
 
 		if "page" in data:
 			page = int(data["page"])
