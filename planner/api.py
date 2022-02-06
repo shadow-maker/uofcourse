@@ -12,89 +12,61 @@ SORT_OPTIONS = [
 	[Course.name, Course.code]
 ]
 
-def parseData(data): # data is dict or ImmutableMultiDict
-	parsed = {}
-	for key, value in data.items():
-		try:
-			parsed[key] = json.loads(value)
-		except:
-			parsed[key] = value
-	return parsed
-
-
 @app.route("/api/c/filter", methods=["GET"])
 def coursesFilter():
-	sortOpt = 0
-	sortBy = SORT_OPTIONS[sortOpt]
+	allLevels = COURSE_LEVELS
+	allFaculties = [f[0] for f in list(db.session.query(Faculty).values(Faculty.id))]
+	allSubjects = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
 
-	levels = {l : True for l in COURSE_LEVELS}
-	faculties = {
-		f[0] : {"name": f[1], "sel": True}
-	for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))}
-	subjects = {
-		s[0] : {"code": s[1], "sel": False}
-	for s in list(db.session.query(Subject).values(Subject.id, Subject.code))}
+	# Get request data
 
-	limit = 30
-	page = 1
-
-	data = request.args.to_dict()
-	if data:
-		try:
-			data = parseData(data)
-		except:
-			return jsonify({"error": "Data couldn't be parsed, is in incorrect format"})
-
-		# Sort
-		if "sort" in data:
-			sortOpt = int(data["sort"])
-			if sortOpt not in range(len(SORT_OPTIONS)):
-				sortOpt = 0
+	try:
+		sortOpt = request.args.get("sort", default=0, type=int)
+		if sortOpt not in range(len(SORT_OPTIONS)):
+			sortOpt = 0
 		sortBy = SORT_OPTIONS[sortOpt]
-		
-		if "order" in data and data["order"] != "asc":
+
+		if request.args.get("order", default="asc", type=str) != "asc":
 			sortBy = [i.desc() for i in sortBy]
 
-		# Filter
-
-		if "levels" in data:
-			levels = {l : l in data["levels"] for l in levels}
+		levels = [l for l in json.loads(request.args.get("levels", default="[]", type=str)) if l in allLevels]
+		if not levels:
+			levels = allLevels
 		
-		if "faculties" in data:
-			for f in faculties:
-				faculties[f]["sel"] = f in data["faculties"]
+		faculties = [f for f in json.loads(request.args.get("faculties", default="[]", type=str)) if f in allFaculties]
+		if not faculties:
+			faculties = allFaculties
 
-		if "subjects" in data:
-			selected = []
-			for s in data["subjects"]:
-				if type(s) == int:
-					selected.append(s)
-				else:
-					try:
-						selected.append(getSubjectByCode(s).id)
-					except:
-						pass
-			for s in subjects:
-				subjects[s]["sel"] = s in selected
+		temp = json.loads(request.args.get("subjects", default="[]", type=str))
+		subjects = []
+		for s in temp:
+			if s in allSubjects:
+				subjects.append(s)
+			else:
+				try:
+					subjects.append(getSubjectByCode(s).id)
+				except:
+					pass
+		if not subjects:
+			subjects = allSubjects
 
-		if "limit" in data:
-			limit = int(data["limit"])
-			if limit > MAX_ITEMS_PER_PAGE:
-				return jsonify({"error": f"limit of items per page cannot be greater that {MAX_ITEMS_PER_PAGE}"})
+		limit = request.args.get("limit", default=30, type=int)
+		if limit > MAX_ITEMS_PER_PAGE:
+			return jsonify({"error": f"limit of items per page cannot be greater than {MAX_ITEMS_PER_PAGE}"})
 
-		if "page" in data:
-			page = int(data["page"])
+		page = request.args.get("page", default=1, type=int)
 
-	levelIds = [l for l, sel in levels.items() if sel]
+	except:
+		return jsonify({"error": "could not parse data, invalid format"})
 
-	facIds = [int(f) for f, v in faculties.items() if v["sel"]]
+	# Query database
 
-	subjIds = [s for s in subjects if subjects[s]["sel"]]
-	if not subjIds:
-		subjIds = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
-	subjIds = [s for s in subjIds if Subject.query.filter_by(id=s).first().faculty_id in facIds]
-
-	query = Course.query.filter(Course.level.in_(levelIds), Course.subject_id.in_(subjIds)).order_by(*sortBy)
+	query = Course.query.filter(
+		Course.level.in_(levels),
+		Course.subject_id.in_(
+			[s for s in subjects if Subject.query.filter_by(id=s).first().faculty_id in faculties]
+		)
+	).order_by(*sortBy)
 
 	results = query.paginate(per_page=limit, page=page)
 
