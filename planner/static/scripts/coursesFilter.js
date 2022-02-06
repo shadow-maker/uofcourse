@@ -86,6 +86,10 @@ $(document).ready(function () {
 						`)
 					}
 				}
+
+				$("#numTotal").text(data.total)
+				$("#numPage").text(data.page)
+				$("#numPages").text(data.pages)
 			}
 		})
 

@@ -82,12 +82,6 @@
 								<label for="facSelector" class="ms-1 form-label text-uppercase">
 									<small>Faculties</small>
 								</label>
-								<span class="text-secondary">
-									<small><small><i>
-												({{ filterData["faculties"].values()|list|selectattr("sel")|list|length }}
-												/ {{filterData["faculties"] | length}})
-											</i></small></small>
-								</span>
 							</div>
 							<div class="form-group mb-2 collapse" id="facSelector">
 								{% for f, data in filterData["faculties"].items() %}
@@ -110,20 +104,6 @@
 							<label for="subjectSearch" class="ms-1 mb-0 form-label text-uppercase">
 								<small>Subjects</small>
 							</label>
-							<span class="text-secondary">
-								<small><small><i>
-											({{ filterData["subjects"].values()|list|selectattr("sel")|list|length }} /
-											{{filterData["subjects"] | length}})
-										</i></small></small>
-							</span>
-							<!--Not longer used since form moved to AJAX:
-							<div id="subjectSelectorChecks" class="d-none">
-								{% for s, data in filterData["subjects"].items() %}
-								<input type="checkbox" value="{{s}}" id="subjCheck{{s}}" name="selectedSubject"
-									{% if data["sel"] %}checked{% endif %}>
-								{% endfor %}
-							</div>
-							-->
 							<div id="subjectSelector" class="d-flex flex-wrap ms-3">
 								{% for s, data in filterData["subjects"].items() %}
 								{% if data["sel"] %}
@@ -140,13 +120,14 @@
 						</fieldset>
 						<hr class="my-2">
 						<div class="form-group mt-3">
-							<input class="btn btn-outline-info btn-block w-100" id="submitBtn" name="submitBtn" type="button" value="Apply filters" onclick="$('form').submit()">
+							<input class="btn btn-outline-info btn-block w-100" id="submitBtn" name="submitBtn"
+								type="button" value="Apply filters" onclick="$('form').submit()">
 						</div>
 					</div>
 				</nav>
 			</form>
 			<p class="text-center text-secondary">
-				<span>{{results["total"]}}</span> results found
+				<span id="numTotal">{{results["total"]}}</span> results found
 			</p>
 		</div>
 	</div>
@@ -189,7 +170,8 @@
 				</li>
 				{% endfor %}
 				{% endif %}
-				<li class="pageEllipsis page-item" style="cursor: pointer;" {% if results["pages"] <= 15 %}style="display: none;"{% endif %}>
+				<li class="pageEllipsis page-item" style="cursor: pointer;"
+					{% if results["pages"] <= 15 %}style="display: none;" {% endif %}>
 					<a class="page-link">...</a>
 				</li>
 				<li class="page-item" onclick="switchPageNext()" style="cursor: pointer;">
@@ -198,7 +180,9 @@
 					</a>
 				</li>
 			</ul>
-			<p class="text-center text-secondary mt-0"><small>Page {{results["page"]}} / {{results["pages"]}}</small>
+			<p class="text-center text-secondary mt-0"><small>
+					Page <span id="numPage">{{results["page"]}}</span> / <span id="numPages">{{results["pages"]}}</span>
+				</small>
 			</p>
 		</nav>
 	</div>
