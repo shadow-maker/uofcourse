@@ -38,12 +38,13 @@ def coursesFilter():
 	page = 1
 
 	data = request.args.to_dict()
-	try:
-		data = parseData(data)
-	except:
-		return jsonify({"error": "Data couldn't be parsed, is in incorrect format"})
 	
 	if data:
+		try:
+			data = parseData(data)
+		except:
+			return jsonify({"error": "Data couldn't be parsed, is in incorrect format"})
+
 		# Sort
 		if "sortBy" in data:
 			sortOpt = int(data["sortBy"]) if int(data["sortBy"]) in range(len(SORT_OPTIONS)) else 0
