@@ -22,7 +22,7 @@ def parseData(data): # data is dict or ImmutableMultiDict
 	return parsed
 
 
-@app.route("/api/c/filter", methods=["GET", "POST"])
+@app.route("/api/c/filter", methods=["GET"])
 def coursesFilter():
 	sortOpt = 0
 	sortBy = SORT_OPTIONS[sortOpt]
@@ -37,18 +37,13 @@ def coursesFilter():
 
 	page = 1
 
-	if request.method == "POST":
-		if request.form:
-			data = request.form
-		elif request.json:
-			data = request.json
-		else:
-			return jsonify({"error": "No data passed through json or form"})
-		try:
-			data = parseData(data)
-		except:
-			return jsonify({"error": "Data couldn't be parsed, is in incorrect format"})
-
+	data = request.args.to_dict()
+	try:
+		data = parseData(data)
+	except:
+		return jsonify({"error": "Data couldn't be parsed, is in incorrect format"})
+	
+	if data:
 		# Sort
 		if "sortBy" in data:
 			sortOpt = int(data["sortBy"]) if int(data["sortBy"]) in range(len(SORT_OPTIONS)) else 0

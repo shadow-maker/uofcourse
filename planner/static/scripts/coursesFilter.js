@@ -35,7 +35,7 @@ $(document).ready(function () {
 				selectedSubject: JSON.stringify(selectedSubject),
 				page: page
 			},
-			type: "POST",
+			type: "GET",
 			url: "/api/c/filter",
 		}).done(function (data) {
 			if (data.error) {
