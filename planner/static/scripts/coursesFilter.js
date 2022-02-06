@@ -28,11 +28,11 @@ $(document).ready(function () {
 
 		$.ajax({
 			data: {
-				sortBy: $("#sortBy").val(),
-				orderBy: $("#orderBy").val(),
-				selectedLevel: JSON.stringify(selectedLevel),
-				selectedFaculty: JSON.stringify(selectedFaculty),
-				selectedSubject: JSON.stringify(selectedSubject),
+				sort: $("#sortBy").val(),
+				order: $("#orderBy").val(),
+				levels: JSON.stringify(selectedLevel),
+				faculties: JSON.stringify(selectedFaculty),
+				subjects: JSON.stringify(selectedSubject),
 				page: page
 			},
 			type: "GET",

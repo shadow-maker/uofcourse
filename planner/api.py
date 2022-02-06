@@ -38,7 +38,6 @@ def coursesFilter():
 	page = 1
 
 	data = request.args.to_dict()
-	
 	if data:
 		try:
 			data = parseData(data)
@@ -46,25 +45,27 @@ def coursesFilter():
 			return jsonify({"error": "Data couldn't be parsed, is in incorrect format"})
 
 		# Sort
-		if "sortBy" in data:
-			sortOpt = int(data["sortBy"]) if int(data["sortBy"]) in range(len(SORT_OPTIONS)) else 0
+		if "sort" in data:
+			sortOpt = int(data["sort"])
+			if sortOpt not in range(len(SORT_OPTIONS)):
+				sortOpt = 0
 		sortBy = SORT_OPTIONS[sortOpt]
 		
-		if "orderBy" in data and data["orderBy"] != "asc":
+		if "order" in data and data["order"] != "asc":
 			sortBy = [i.desc() for i in sortBy]
 
 		# Filter
 
-		if "selectedLevel" in data:
-			levels = {l : l in data["selectedLevel"] for l in levels}
+		if "levels" in data:
+			levels = {l : l in data["levels"] for l in levels}
 		
-		if "selectedFaculty" in data:
+		if "faculties" in data:
 			for f in faculties:
-				faculties[f]["sel"] = f in data["selectedFaculty"]
+				faculties[f]["sel"] = f in data["faculties"]
 
-		if "selectedSubject" in data:
+		if "subjects" in data:
 			selected = []
-			for s in data["selectedSubject"]:
+			for s in data["subjects"]:
 				if type(s) == int:
 					selected.append(s)
 				else:
