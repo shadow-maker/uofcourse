@@ -14,11 +14,6 @@ from datetime import datetime, timedelta
 import random
 import json
 
-SORT_OPTIONS = [
-	[Course.code, Course.name],
-	[Course.name, Course.code]
-]
-
 #
 # Funcs
 #

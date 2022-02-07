@@ -80,8 +80,6 @@ function requestResults(after) {
 
 
 $(document).ready(function () {
-	$("#errorPopup").hide();
-
 	requestResults(function (data) {
 		if (data.error) {
 			$("#errorPopup").show();
