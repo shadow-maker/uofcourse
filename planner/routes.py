@@ -198,6 +198,7 @@ def allCoursesView():
 	subjects = {
 		s[0] : {"id": s[1], "name": s[2], "sel": False}
 	for s in list(db.session.query(Subject).values(Subject.code, Subject.id, Subject.name))}
+	subjects = {k : subjects[k] for k in sorted(subjects)}
 
 	return render_template("coursesFilter.html",
 		title = "Courses",

@@ -1,12 +1,5 @@
 function updateResults(data) {
-	$("#subjectSelector").empty()
-	for (let s in subjects) {
-		if (subjects[s].sel) {
-			$("#subjectSelector").append(`
-				<span class="bg-secondary px-2 py-1 m-1 rounded mono-font text-light subjItem" code="` + s + `">` + s + `</span>
-			`)
-		}
-	}
+	//updateSubjects()
 
 	$("#coursesContainer").empty()
 	for (let course of data.courses) {
@@ -64,10 +57,6 @@ function requestResults(after) {
 		if (subjects[s].sel) {
 			selectedSubject.push(parseInt(subjects[s].id))
 		}
-		else if (s.toUpperCase() == $("#subjectSearch").val().toUpperCase()) {
-			subjects[s].sel = true
-			selectedSubject.push(parseInt(subjects[s].id))
-		}
 	}
 
 	$("#subjectSearch").val("")
@@ -104,13 +93,11 @@ $(document).ready(function () {
 		}
 	})
 
-	//$("#subjectSearch").keyup(function () {
-	//	console.log($("#subjectSearch").val());
-	//})
-
 	$("form").on("submit", function (event) {
 		event.preventDefault()
 		event.stopImmediatePropagation()
+
+		updateSubjects()
 
 		requestResults(function (data) {
 			if (data.error) {
