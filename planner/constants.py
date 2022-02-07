@@ -1,4 +1,8 @@
-COURSE_LEVELS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+ALLOW_ACCOUNT_CREATION = True
+
+MAX_ITEMS_PER_PAGE = 50
+
+COURSE_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 DEFAULT_EMOJI = 128218
 

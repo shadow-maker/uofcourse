@@ -1,0 +1,181 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<script>
+	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
+	var page = 1
+	var pages = 1
+</script>
+
+<script src="/static/scripts/coursesFilter.js"></script>
+<script src="/static/scripts/collapse.js"></script>
+<script src="/static/scripts/coursesPag.js"></script>
+<script src="/static/scripts/subjectSearch.js"></script>
+
+
+<div class="row justify-content-between">
+	<!--LEFT: sort and filter options form-->
+	<div class="container col-xl-3 col-lg-4 col-sm-5 col-12 p-0 pe-md-3 ps-sm-0 ps-3 pe-3 m-0">
+		<div class="sticky-top sticky-offset">
+			<form id="form" name="form" method="POST">
+				<!--Sort-->
+				<nav class="card mb-2">
+					<div class="card-body">
+						<h5 class="card-title">Sort results</h5>
+						<div class="input-group">
+							<select id="sortBy" name="sortBy" class="form-select form-select-sm"
+								aria-label="Sort options">
+								<option value="0" {% if sortOpt == 0 %}selected{% endif %}>Course level</option>
+								<option value="1" {% if sortOpt == 1 %}selected{% endif %}>Course name</option>
+							</select>
+							<select id="orderBy" name="orderBy" class="form-select form-select-sm"
+								aria-label="Sort options">
+								<option value="asc" {% if asc %}selected{% endif %}>Ascending</option>
+								<option value="desc" {% if not asc %}selected{% endif %}>Descending</option>
+							</select>
+						</div>
+					</div>
+				</nav>
+
+				<!--Filter-->
+				<nav class="card mb-2">
+					<div class="card-body">
+						<h5 class="card-title">Filter results</h5>
+						<fieldset class="form-group">
+							<hr class="mt-1 mb-2">
+							<div data-bs-toggle="collapse" href="#levelSelector" role="button" aria-expanded="false"
+								aria-controls="levelSelector" id="levelLabel" onclick="collapse('levelLabel')">
+								<span class="toggleOff">
+									<small><i class="bi-chevron-right"></i></small>
+								</span>
+								<span class="toggleOn disabled">
+									<small><i class="bi-chevron-down"></i></small>
+								</span>
+								<label for="levelSelector" class="ms-1 form-label text-uppercase">
+									<small>Course levels</small>
+								</label>
+							</div>
+							<div class="form-group mb-2 collapse" id="levelSelector">
+								{% for l, sel in filterData["levels"].items() %}
+								<div class="form-check">
+									<input name="selectedLevel" class="form-check-input" type="checkbox" value="{{l}}"
+										id="level{{l}}" {% if sel %}checked{% endif %}>
+									<label class="form-check-label" for="level{{l}}">
+										<small>{{l}}XX</small>
+									</label>
+								</div>
+								{% endfor %}
+							</div>
+						</fieldset>
+
+						<fieldset class="form-group">
+							<hr class="mt-1 mb-2">
+							<div data-bs-toggle="collapse" href="#facSelector" role="button" aria-expanded="false"
+								aria-controls="facSelector" id="facLabel" onclick="collapse('facLabel')">
+								<span class="toggleOff">
+									<small><i class="bi-chevron-right"></i></small>
+								</span>
+								<span class="toggleOn disabled">
+									<small><i class="bi-chevron-down"></i></small>
+								</span>
+								<label for="facSelector" class="ms-1 form-label text-uppercase">
+									<small>Faculties</small>
+								</label>
+							</div>
+							<div class="form-group mb-2 collapse" id="facSelector">
+								{% for f, data in filterData["faculties"].items() %}
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" value="{{f}}" id="fac{{f}}"
+										name="selectedFaculty" {% if data["sel"] %}checked{% endif %}>
+									<label class="form-check-label" for="fac{{f}}">
+										<small>{{data["name"]}}</small>
+									</label>
+								</div>
+								{% endfor %}
+							</div>
+						</fieldset>
+
+						<fieldset class="form-group">
+							<hr class="mt-1 mb-2">
+							<span class="toggleOn">
+								<small><i class="bi-chevron-down"></i></small>
+							</span>
+							<label for="subjectSearch" class="ms-1 mb-0 form-label text-uppercase">
+								<small>Subjects</small>
+							</label>
+							<div id="subjectSelector" class="d-flex flex-wrap ms-3">
+								{% for s, data in filterData["subjects"].items() %}
+								{% if data["sel"] %}
+								<span class="bg-secondary px-2 py-1 m-1 rounded mono-font text-light subjItem"
+									id="subj{{s}}" onclick="remSubj('{{s}}')">{{data["code"]}}</span>
+								{% endif %}
+								{% endfor %}
+							</div>
+							<div class="ms-3 ps-1">
+								<input class="form-control form-control-sm mr-sm-2 mt-2" type="search"
+									placeholder="Search subjects" aria-label="Search subjects" id="subjectSearch"
+									name="subjectSearch">
+							</div>
+						</fieldset>
+						<hr class="my-2">
+						<div class="form-group mt-3">
+							<input class="btn btn-outline-info btn-block w-100" id="submitBtn" name="submitBtn"
+								type="button" value="Apply filters" onclick="$('form').submit()">
+						</div>
+					</div>
+				</nav>
+			</form>
+			<p class="text-center text-secondary">
+				<span id="numTotal">0</span> results found
+			</p>
+		</div>
+	</div>
+
+	<!--RIGHT: Courses list and page navigation-->
+	<div class="container col-xl-9 col-lg-8 col-sm-7 col-12 p-0 px-lg-5 px-md-4 px-3 m-0">
+		<!--Courses list-->
+		<div id="coursesContainer">
+
+		</div>
+
+		<!--Page navigation-->
+		<nav aria-label="Page navigation" id="pageNav">
+			<ul class="pagination justify-content-center mb-2">
+				<li class="page-item" onclick="switchPagePrev()" style="cursor: pointer;">
+					<a class="page-link" aria-label="Previous">
+						<span aria-hidden="true">&laquo;</span>
+					</a>
+				</li>
+
+				<li class="pageEllipsis page-item" style="cursor: pointer;" display: none>
+					<a class="page-link">...</a>
+				</li>
+				<li class="page-item" onclick="switchPageNext()" style="cursor: pointer;">
+					<a class="page-link" aria-label="Next">
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+			</ul>
+			<p class="text-center text-secondary mt-0"><small>
+					Page <span id="numPage">1</span> / <span id="numPages">1</span>
+				</small>
+			</p>
+		</nav>
+	</div>
+</div>
+
+<div class="fixed-bottom mb-1">
+	<div id="errorPopup" onclick="$(this).alert('close')"
+		class="popup alert alert-danger fade show mx-2 mx-md-5 mb-2 mb-md-3">
+		<div class="d-flex justify-content-between">
+			<span>
+				<b>FILTERING ERROR:</b>
+				<span class="message"></span>
+			</span>
+			<span><i class="bi-x-lg"></i></span>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

@@ -1,16 +1,15 @@
-<script src="/static/scripts/closeAlert.js"></script>
-
 {% with messages = get_flashed_messages(with_categories=true) %}
-	{% if messages %}
-		<div class="fixed-bottom mb-1">
-			{% for category, message in messages %}
-				<div id="popup{{loop.index}}" onclick="closeAlert('{{loop.index}}')" class="popup alert alert-{{category}} mx-2 mx-md-5 mb-2 mb-md-3">
-					<div class="d-flex justify-content-between">
-						<span>{{message}}</span>
-						<span><i class="bi-x-lg"></i></span>
-					</div>
-				</div>
-			{% endfor %}
+{% if messages %}
+<div class="fixed-bottom mb-1">
+	{% for category, message in messages %}
+	<div id="popup{{loop.index}}" onclick="$(this).alert('close')"
+		class="popup alert alert-{{category}} fade show mx-2 mx-md-5 mb-2 mb-md-3">
+		<div class="d-flex justify-content-between">
+			<span>{{message}}</span>
+			<span><i class="bi-x-lg"></i></span>
 		</div>
-	{% endif %}
+	</div>
+	{% endfor %}
+</div>
+{% endif %}
 {% endwith %}

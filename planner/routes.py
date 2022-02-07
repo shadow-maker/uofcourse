@@ -1,5 +1,6 @@
 from planner import app, db, loginManager, bcrypt
 from planner.models import Course, User, Faculty, Season
+from planner.api import *
 from planner.forms import loginForm, registerForm
 from planner.queryUtils import *
 from planner.constants import *
@@ -89,6 +90,9 @@ def about():
 def signup():
 	if current_user.is_authenticated:
 		flash(f"You are already authenticated!", "success")
+		return redirect(url_for("home"))
+	if not ALLOW_ACCOUNT_CREATION:
+		flash(f"Account creation is currently disabled!", "warning")
 		return redirect(url_for("home"))
 	form = registerForm()
 	if form.validate_on_submit():
@@ -187,59 +191,24 @@ def facultyView(facId):
 
 @app.route("/c", methods=["GET", "POST"])
 def allCoursesView():
-	levels = {l : True for l in COURSE_LEVELS}
-	faculties = [(f[0], f[1], True) for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))]
-	subjSelected = []
-	sortOpt = 0
-	sortBy = SORT_OPTIONS[0]
-	asc = True
+	levels = {str(l) : True for l in COURSE_LEVELS}
+	faculties = {
+		str(f[0]) : {"name": f[1], "sel": True}
+	for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))}
+	subjects = {
+		s[0] : {"id": s[1], "name": s[2], "sel": False}
+	for s in list(db.session.query(Subject).values(Subject.code, Subject.id, Subject.name))}
 
-	page = 1
-	form = request.form
-
-	if form:
-		levels = {l : bool(form.get(f"level{l}")) for l in COURSE_LEVELS}
-		faculties = [(f[0], f[1], bool(form.get(f"fac{f[0]}"))) for f in faculties]
-		subjSelected = [s for s in form.get("selectedSubjectsText").split("-") if s != ""]
-		subjSearch = form.get("subjectSearch")
-		page = int(form.get("page"))
-		if getSubject(subjSearch):
-			subjSelected.append(subjSearch.upper())
-		sortOpt = int(form.get("sortBy")) if int(form.get("sortBy")) in range(len(SORT_OPTIONS)) else 0
-		sortBy = SORT_OPTIONS[sortOpt]
-		if form.get("orderBy") != "asc":
-			sortBy = [i.desc() for i in sortBy]
-			asc = False
-	elif "subject" in request.args:
-		subjSelected = [request.args["subject"]]
-	elif "facId" in request.args:
-		faculties = [(f[0], f[1], bool(f[0] == request.args["facId"])) for f in faculties]
-		
-	subjQuery = [getSubject(s).id for s in subjSelected] if subjSelected else [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
-	facQuery = [f[0] for f in faculties if f[2]]
-	results = filterCourses([l for l, sel in levels.items() if sel], facQuery, subjQuery, page, sortBy, 30)
-	courses = [{
-		"id": course.id,
-		"name": course.name,
-		"subj": course.subject.code,
-		"code": course.code,
-		"emoji": course.getEmoji(128218),
-	} for course in results.items]
-	
-	return render_template("allCourses.html",
+	return render_template("coursesFilter.html",
 		title = "Courses",
 		header = f"Courses",
-		levels = levels,
-		faculties = faculties,
-		subjects = [s.code for s in Subject.query.all()],
-		subjSelected = subjSelected,
-		subjSelectedText = "-".join(subjSelected),
-		courses = courses,
-		sortOpt = sortOpt,
-		asc = asc,
-		pages = results.pages,
-		page = results.page,
-		total = results.total
+		sortOpt = 0,
+		asc = True,
+		filterData = {
+			"levels": levels,
+			"faculties": faculties,
+			"subjects": subjects
+		}
 	)
 
 #@app.route("/c")
@@ -266,7 +235,7 @@ def courseRandom():
 
 @app.route("/c/<subjCode>")
 def subjectView(subjCode):
-	subject = getSubject(subjCode)
+	subject = getSubjectByCode(subjCode)
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
 		return redirect(url_for("home"))
@@ -288,7 +257,7 @@ def subjectView(subjCode):
 
 @app.route("/c/<subjCode>/<courseCode>")
 def courseView(subjCode, courseCode):
-	subject = getSubject(subjCode)
+	subject = getSubjectByCode(subjCode)
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
 		return redirect(url_for("home"))
