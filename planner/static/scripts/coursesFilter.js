@@ -91,6 +91,14 @@ $(document).ready(function () {
 		}
 	})
 
+	$("input").change(function () {
+		$("form").submit()
+	})
+
+	$("select").change(function () {
+		$("form").submit()
+	})
+
 	$("form").on("submit", function (event) {
 		event.preventDefault()
 		event.stopImmediatePropagation()

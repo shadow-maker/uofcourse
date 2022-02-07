@@ -113,17 +113,21 @@
 								{% endfor %}
 							</div>
 							<div class="ms-3 ps-1">
-								<input class="form-control form-control-sm mr-sm-2 mt-2" type="search"
+								<input class="form-control form-control-sm mr-sm-2 mt-1" type="search"
 									placeholder="Search subjects" aria-label="Search subjects" id="subjectSearch"
-									name="subjectSearch" data-bs-toggle="dropdown" aria-expanded="false" autocomplete="off">
-								<ul id="subjectSearchSuggestions" class="dropdown-menu" aria-labelledby="subjectSearch"></ul>
+									name="subjectSearch" data-bs-toggle="dropdown" aria-expanded="false"
+									autocomplete="off">
+								<ul id="subjectSearchSuggestions" class="dropdown-menu p-0" aria-labelledby="subjectSearch">
+								</ul>
 							</div>
 						</fieldset>
+						<!--
 						<hr class="my-2">
 						<div class="form-group mt-3">
 							<input class="btn btn-outline-info btn-block w-100" id="submitBtn" name="submitBtn"
 								type="button" value="Apply filters" onclick="$('form').submit()">
 						</div>
+						-->
 					</div>
 				</nav>
 			</form>
@@ -135,10 +139,13 @@
 
 	<!--RIGHT: Courses list and page navigation-->
 	<div class="container col-xl-9 col-lg-8 col-sm-7 col-12 p-0 px-lg-5 px-md-4 px-3 m-0">
-		<!--Courses list-->
-		<div id="coursesContainer">
+		<!--TODO: Loading spinner-->
+		<div>
 
 		</div>
+
+		<!--Courses list-->
+		<div id="coursesContainer"></div>
 
 		<!--Page navigation-->
 		<nav aria-label="Page navigation" id="pageNav">
@@ -148,7 +155,6 @@
 						<span aria-hidden="true">&laquo;</span>
 					</a>
 				</li>
-
 				<li class="pageEllipsis page-item" style="cursor: pointer;" display: none>
 					<a class="page-link">...</a>
 				</li>
