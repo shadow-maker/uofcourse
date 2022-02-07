@@ -3,7 +3,7 @@ function updateResults(data) {
 	for (let s in subjects) {
 		if (subjects[s].sel) {
 			$("#subjectSelector").append(`
-				<span class="bg-secondary px-2 py-1 m-1 rounded mono-font text-light subjItem" id="subj` + s + `" onclick="remSubj('` + s + `')">` + s + `</span>
+				<span class="bg-secondary px-2 py-1 m-1 rounded mono-font text-light subjItem" code="` + s + `">` + s + `</span>
 			`)
 		}
 	}

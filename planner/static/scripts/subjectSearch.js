@@ -1,5 +1,5 @@
-function remSubj(code) {
-	$("#subj" + code).remove()
-	subjects[code].sel = false // FIXME: sel isn't being set to false when removing the last subject
+$(document).on("click", ".subjItem", function () {
+	subjects[this.getAttribute("code")].sel = false
+	this.remove()
 	$("form").submit()
-}
+});
