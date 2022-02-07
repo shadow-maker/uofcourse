@@ -1,5 +1,8 @@
+var prevData = {}
+
 function updateResults(data) {
-	//updateSubjects()
+	$(".loading").hide()
+	$(".loaded").show()
 
 	$("#coursesContainer").empty()
 	for (let course of data.courses) {
@@ -59,17 +62,26 @@ function requestResults(after) {
 		}
 	}
 
-	$("#subjectSearch").val("")
+	var data = {
+		sort: $("#sortBy").val(),
+		order: $("#orderBy").val(),
+		levels: JSON.stringify(selectedLevel),
+		faculties: JSON.stringify(selectedFaculty),
+		subjects: JSON.stringify(selectedSubject),
+		page: page
+	}
+
+	if (JSON.stringify(data) == JSON.stringify(prevData)) {
+		return
+	}
+
+	prevData = data
+
+	$(".loading").show()
+	$(".loaded").hide()
 
 	$.ajax({
-		data: {
-			sort: $("#sortBy").val(),
-			order: $("#orderBy").val(),
-			levels: JSON.stringify(selectedLevel),
-			faculties: JSON.stringify(selectedFaculty),
-			subjects: JSON.stringify(selectedSubject),
-			page: page
-		},
+		data: data,
 		type: "GET",
 		url: "/api/c/filter",
 	}).done(function (data) {
@@ -80,10 +92,9 @@ function requestResults(after) {
 
 
 $(document).ready(function () {
-	$("#errorPopup").hide();
-
 	requestResults(function (data) {
 		if (data.error) {
+			$(".loading").hide()
 			$("#errorPopup").show();
 			$("#errorPopup .message").text(data.error);
 		} else {
@@ -91,6 +102,14 @@ $(document).ready(function () {
 			pages = data.pages
 			updateResults(data)
 		}
+	})
+
+	$("input").not("#subjectSearch").change(function () {
+		$("form").submit()
+	})
+
+	$("select").change(function () {
+		$("form").submit()
 	})
 
 	$("form").on("submit", function (event) {
