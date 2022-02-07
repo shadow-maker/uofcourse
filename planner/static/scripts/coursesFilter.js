@@ -1,5 +1,6 @@
 function updateResults(data) {
-	//updateSubjects()
+	$(".loading").hide();
+	$(".loaded").show();
 
 	$("#coursesContainer").empty()
 	for (let course of data.courses) {
@@ -59,8 +60,6 @@ function requestResults(after) {
 		}
 	}
 
-	$("#subjectSearch").val("")
-
 	$.ajax({
 		data: {
 			sort: $("#sortBy").val(),
@@ -91,7 +90,7 @@ $(document).ready(function () {
 		}
 	})
 
-	$("input").change(function () {
+	$("input").not("#subjectSearch").change(function () {
 		$("form").submit()
 	})
 
@@ -103,6 +102,8 @@ $(document).ready(function () {
 		event.preventDefault()
 		event.stopImmediatePropagation()
 
+		$(".loading").show();
+		$(".loaded").hide();
 		updateSubjects()
 
 		requestResults(function (data) {

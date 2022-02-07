@@ -1,5 +1,7 @@
 function updateSubjects() {
 	var subjSearch = $("#subjectSearch").val().toUpperCase()
+	$("#subjectSearch").val("")
+
 	if (subjSearch in subjects) {
 		subjects[subjSearch].sel = true
 	}
