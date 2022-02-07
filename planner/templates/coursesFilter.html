@@ -10,8 +10,8 @@
 
 <script src="/static/scripts/coursesFilter.js"></script>
 <script src="/static/scripts/collapse.js"></script>
-<script src="/static/scripts/coursesPag.js"></script>
 <script src="/static/scripts/subjectSearch.js"></script>
+<script src="/static/scripts/coursesPag.js"></script>
 
 
 <div class="row justify-content-between">
@@ -115,7 +115,8 @@
 							<div class="ms-3 ps-1">
 								<input class="form-control form-control-sm mr-sm-2 mt-2" type="search"
 									placeholder="Search subjects" aria-label="Search subjects" id="subjectSearch"
-									name="subjectSearch">
+									name="subjectSearch" data-bs-toggle="dropdown" aria-expanded="false" autocomplete="off">
+								<ul id="subjectSearchSuggestions" class="dropdown-menu" aria-labelledby="subjectSearch"></ul>
 							</div>
 						</fieldset>
 						<hr class="my-2">
