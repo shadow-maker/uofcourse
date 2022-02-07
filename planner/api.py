@@ -13,7 +13,7 @@ SORT_OPTIONS = [
 ]
 
 @app.route("/api/c/filter", methods=["GET"])
-def coursesFilter():
+def apiCoursesFilter():
 	allLevels = COURSE_LEVELS
 	allFaculties = [f[0] for f in list(db.session.query(Faculty).values(Faculty.id))]
 	allSubjects = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
