@@ -1,5 +1,6 @@
 from planner import app, db, loginManager, bcrypt
 from planner.models import Course, User, Faculty, Season
+from planner.api import *
 from planner.forms import loginForm, registerForm
 from planner.queryUtils import *
 from planner.constants import *
@@ -190,88 +191,23 @@ def facultyView(facId):
 
 @app.route("/c", methods=["GET", "POST"])
 def allCoursesView():
-	sortOpt = 0
-	sortBy = SORT_OPTIONS[0]
-	asc = True
-
 	levels = {str(l) : True for l in COURSE_LEVELS}
 	faculties = {
 		str(f[0]) : {"name": f[1], "sel": True}
 	for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))}
 	subjects = {
-		str(s[0]) : {"code": s[1], "sel": False}
-	for s in list(db.session.query(Subject).values(Subject.id, Subject.code))}
+		s[0] : {"id": s[1], "name": s[2], "sel": False}
+	for s in list(db.session.query(Subject).values(Subject.code, Subject.id, Subject.name))}
 
-	page = 1
-
-	""" Not longer used since form moved to AJAX:
-	form = request.form
-	if form:
-		# Sort
-		sortOpt = int(form.get("sortBy")) if int(form.get("sortBy")) in range(len(SORT_OPTIONS)) else 0
-		sortBy = SORT_OPTIONS[sortOpt]
-	
-		if form.get("orderBy") != "asc":
-			sortBy = [i.desc() for i in sortBy]
-			asc = False
-
-		# Filter
-		selectedLevel = form.getlist("selectedLevel")
-		for l in levels:
-			levels[l] = l in selectedLevel
-		
-		selectedFaculty = form.getlist("selectedFaculty")
-		for f in faculties:
-			faculties[f]["sel"] = f in selectedFaculty
-
-		selectedSubject = form.getlist("selectedSubject")
-		for s in subjects:
-			subjects[s]["sel"] = s in selectedSubject
-
-		subjSearch = getSubjectByCode(form.get("subjectSearch"))
-		if subjSearch:
-			subjects[str(subjSearch.id)]["sel"] = True
-	
-		# Pagination
-		page = int(form.get("page"))
-	"""
-
-	levelIds = [l for l, sel in levels.items() if sel]
-
-	facIds = [int(f) for f, data in faculties.items() if data["sel"]]
-
-	subjIds = [s for s in subjects if subjects[s]["sel"]]
-	if not subjIds:
-		subjIds = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
-	subjIds = [s for s in subjIds if Subject.query.filter_by(id=s).first().faculty_id in facIds]
-
-	query = Course.query.filter(Course.level.in_(levelIds), Course.subject_id.in_(subjIds)).order_by(*sortBy)
-
-	results = query.paginate(per_page=30, page=page)
-
-	courses = [{
-		"id": course.id,
-		"name": course.name,
-		"subj": course.subject.code,
-		"code": course.code,
-		"emoji": course.getEmoji(128218),
-	} for course in results.items]
-	
 	return render_template("coursesFilter.html",
 		title = "Courses",
 		header = f"Courses",
-		sortOpt = sortOpt,
-		asc = asc,
+		sortOpt = 0,
+		asc = True,
 		filterData = {
 			"levels": levels,
 			"faculties": faculties,
 			"subjects": subjects
-		},
-		results = {
-			"courses": courses,
-			"page": page,
-			"pages": results.pages,
-			"total": results.total,
 		}
 	)
 
