@@ -65,34 +65,41 @@ def apiCourseByCode(subjCode, courseCode):
 	return jsonify(dict(course))
 
 
-@app.route("/api/c/filter", methods=["GET"])
-def apiCoursesFilter(levels=None, faculties=None, subjects=None):
+def apiCoursesFilterHelper(data={}):
 	allLevels = COURSE_LEVELS
 	allFaculties = [f[0] for f in list(db.session.query(Faculty).values(Faculty.id))]
 	allSubjects = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
 
-	# Get request data
+	defaults = {
+		"sort": 0,
+		"order": "asc",
+		"levels": [],
+		"faculties": [],
+		"subjects": [],
+		"limit": 30,
+		"page": 1
+	}
+
+	data = {k : data[k] if k in data and type(data[k]) == type(v) else v for k, v in defaults.items()}
 
 	try:
-		sortOpt = request.args.get("sort", default=0, type=int)
-		if sortOpt not in range(len(SORT_OPTIONS)):
-			sortOpt = 0
-		sortBy = SORT_OPTIONS[sortOpt]
+		if data["sort"] not in range(len(SORT_OPTIONS)):
+			data["sort"] = 0
+		sortBy = SORT_OPTIONS[data["sort"]]
 
-		if request.args.get("order", default="asc", type=str) != "asc":
+		if data["order"] != "asc":
 			sortBy = [i.desc() for i in sortBy]
 
-		levels = [l for l in json.loads(request.args.get("levels", default="[]", type=str)) if l in allLevels]
+		levels = [l for l in data["levels"] if l in allLevels]
 		if not levels:
 			levels = allLevels
 		
-		faculties = [f for f in json.loads(request.args.get("faculties", default="[]", type=str)) if f in allFaculties]
+		faculties = [f for f in data["faculties"] if f in allFaculties]
 		if not faculties:
 			faculties = allFaculties
 
-		temp = json.loads(request.args.get("subjects", default="[]", type=str))
 		subjects = []
-		for s in temp:
+		for s in data["subjects"]:
 			if s in allSubjects:
 				subjects.append(s)
 			else:
@@ -103,14 +110,14 @@ def apiCoursesFilter(levels=None, faculties=None, subjects=None):
 		if not subjects:
 			subjects = allSubjects
 
-		limit = request.args.get("limit", default=30, type=int)
+		limit = data["limit"]
 		if limit > MAX_ITEMS_PER_PAGE:
-			return jsonify({"error": f"limit of items per page cannot be greater than {MAX_ITEMS_PER_PAGE}"})
+			return {"error": f"limit of items per page cannot be greater than {MAX_ITEMS_PER_PAGE}"}
 
-		page = request.args.get("page", default=1, type=int)
+		page = data["page"]
 
 	except:
-		return jsonify({"error": "could not parse data, invalid format"})
+		return {"error": "could not parse data, invalid format"}
 
 	# Query database
 
@@ -123,17 +130,28 @@ def apiCoursesFilter(levels=None, faculties=None, subjects=None):
 
 	results = query.paginate(per_page=limit, page=page)
 
-	courses = [{
-		"id": course.id,
-		"name": course.name,
-		"subj": course.subject.code,
-		"code": course.code,
-		"emoji": course.getEmoji(DEFAULT_EMOJI),
-	} for course in results.items]
-
-	return jsonify({
-		"courses": courses,
+	return {
+		"courses": [{
+			"id": course.id,
+			"name": course.name,
+			"subj": course.subject.code,
+			"code": course.code,
+			"emoji": course.getEmoji(),
+		} for course in results.items],
 		"page": page,
 		"pages": results.pages,
 		"total": results.total
-	})
+	}
+
+
+@app.route("/api/c/filter", methods=["GET"])
+def apiCoursesFilter():
+	return jsonify(apiCoursesFilterHelper({
+		"sort": request.args.get("sort", default=0, type=int),
+		"order": request.args.get("order", default="asc", type=str),
+		"levels": json.loads(request.args.get("levels", default="[]", type=str)),
+		"faculties": json.loads(request.args.get("faculties", default="[]", type=str)),
+		"subjects": json.loads(request.args.get("subjects", default="[]", type=str)),
+		"limit": request.args.get("limit", default=30, type=int),
+		"page": request.args.get("page", default=1, type=int)
+	}))
