@@ -16,24 +16,34 @@ SORT_OPTIONS = [
 # GET
 #
 
+def apiById(table, id):
+	object = getById(table, id)
+	if not object:
+		return jsonify({"error": f"{table.__name__} with id {id} does not exist"}), 404
+	return jsonify(dict(object))
+
+# Term
+
+@app.route("/api/terms", methods=["GET"])
+def apiTerms():
+	return jsonify([dict(term) for term in Term.query.all()])
+
+@app.route("/api/t/id/<id>", methods=["GET"])
+def apiTermById(id):
+	return apiById(Term, id)
+
 # Faculty
 
 @app.route("/api/f/id/<id>", methods=["GET"])
 def apiFacultyById(id):
-	faculty = getById(Faculty, id)
-	if not faculty:
-		return jsonify({"error": f"Faculty with id {id} does not exist"}), 404
-	return jsonify(dict(faculty))
+	return apiById(Faculty, id)
 
 
 # Subject
 
 @app.route("/api/s/id/<id>", methods=["GET"])
 def apiSubjectById(id):
-	subject = getById(Subject, id)
-	if not subject:
-		return jsonify({"error": f"Subject with id {id} does not exist"}), 404
-	return jsonify(dict(subject))
+	return apiById(Subject, id)
 
 
 @app.route("/api/s/code/<code>", methods=["GET"])
@@ -48,10 +58,7 @@ def apiSubjectByCode(code):
 
 @app.route("/api/c/id/<id>", methods=["GET"])
 def apiCourseById(id):
-	course = getById(Course, id)
-	if not course:
-		return jsonify({"error": f"Course with id {id} does not exist"}), 404
-	return jsonify(dict(course))
+	return apiById(Course, id)
 
 
 @app.route("/api/c/code/<subjCode>/<courseCode>", methods=["GET"])

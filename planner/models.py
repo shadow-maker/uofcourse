@@ -39,6 +39,13 @@ class Term(db.Model):
 
 	def __repr__(self):
 		return f"TERM {self.season.name} {self.year} (#{self.id})"
+	
+	def __iter__(self):
+		yield "id", self.id
+		yield "season", self.season.name
+		yield "year", self.year
+		yield "start", self.start
+		yield "end", self.end
 
 #
 # COURSE DB
