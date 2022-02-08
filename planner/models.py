@@ -168,6 +168,7 @@ class Role(db.Model):
 class User(db.Model, UserMixin):
 	__tablename__ = "user"
 	id = db.Column(db.Integer, primary_key=True)
+	ucid = db.Column(db.Integer, unique=True)
 	name = db.Column(db.String(32))
 	email = db.Column(db.String(64), nullable=False)
 	passw = db.Column(db.String(64), nullable=False)
@@ -182,8 +183,9 @@ class User(db.Model, UserMixin):
 
 	courseCollections = db.relationship("CourseCollection", backref="user")
 
-	def __init__(self, id, email, passw, faculty_id):
-		self.id = id
+	def __init__(self, ucid, name, email, passw, faculty_id):
+		self.ucid = ucid
+		self.ucid = name
 		self.email = email
 		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
 		self.faculty_id = faculty_id
