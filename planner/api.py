@@ -1,5 +1,7 @@
+import collections
+from flask_login import login_required, current_user
 from planner import app, db
-from planner.models import Course, Subject, Faculty
+from planner.models import Course, Subject, Faculty, Term, User, CourseCollection
 from planner.queryUtils import *
 from planner.constants import *
 
@@ -22,6 +24,7 @@ def apiById(table, id):
 		return jsonify({"error": f"{table.__name__} with id {id} does not exist"}), 404
 	return jsonify(dict(object))
 
+
 # Term
 
 @app.route("/api/terms", methods=["GET"])
@@ -31,6 +34,7 @@ def apiTerms():
 @app.route("/api/t/id/<id>", methods=["GET"])
 def apiTermById(id):
 	return apiById(Term, id)
+
 
 # Faculty
 
@@ -119,12 +123,12 @@ def apiCoursesFilterHelper(data={}):
 
 		limit = data["limit"]
 		if limit > MAX_ITEMS_PER_PAGE:
-			return {"error": f"limit of items per page cannot be greater than {MAX_ITEMS_PER_PAGE}"}
+			return {"error": f"limit of items per page cannot be greater than {MAX_ITEMS_PER_PAGE}"}, 400
 
 		page = data["page"]
 
 	except:
-		return {"error": "could not parse data, invalid format"}
+		return {"error": "could not parse data, invalid format"}, 400
 
 	# Query database
 
@@ -162,3 +166,54 @@ def apiCoursesFilter():
 		"limit": request.args.get("limit", default=30, type=int),
 		"page": request.args.get("page", default=1, type=int)
 	}))
+
+
+
+#
+# POST
+#
+
+# CourseCollection
+
+@app.route("/api/u/collection/<termId>", methods=["POST"])
+def apiAddCourseCollection(termId):
+	if not current_user.is_authenticated:
+		return jsonify({"error": "User not logged in"}), 401
+
+	if not Term.query.filter_by(term_id=termId).first():
+		return jsonify({"error": f"Term {termId} does not exist"}), 404
+
+	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=termId):
+		return jsonify({"error": f"User (#{current_user.id}) already has a collection for term {termId}"}), 400
+
+	db.session.add(CourseCollection(user_id=current_user.id, term_id=termId))
+	db.session.commit()
+	return jsonify({"success": True})
+
+
+
+#
+# DELETE
+#
+
+# CourseCollection
+
+@app.route("/api/u/collection/<id>", methods=["DELETE"])
+def apiAddCourseCollection(id):
+	if not current_user.is_authenticated:
+		return jsonify({"error": "User not logged in"}), 401
+
+	collection = CourseCollection.query.filter_by(id=id).first()
+
+	if not collection:
+		return jsonify({"error": f"CourseCollection {id} does not exist"}), 404
+
+	if collection.user_id != current_user.id:
+		return jsonify({"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}), 403
+	
+	if collection.userCourses:
+		return jsonify({"error": f"CourseCollection {id} is not empty"}), 400
+
+	db.session.delete(collection)
+	db.session.commit()
+	return jsonify({"success": True})
