@@ -240,7 +240,7 @@ def subjectView(subjCode):
 	#return redirect(url_for("allCoursesView", subject=subject.code))
 	faculty = subject.faculty
 	return render_template("subject.html",
-		title=subjCode,
+		title=subjCode.upper(),
 		header=f"Subject - {subject.name}",
 		subject=subject,
 		faculty=faculty,
@@ -264,7 +264,7 @@ def courseView(subjCode, courseCode):
 		return redirect(url_for("home"))
 	faculty = subject.faculty
 	return render_template("course.html",
-		title=f"{subjCode}-{courseCode}",
+		title=f"{subjCode.upper()}-{courseCode.upper()}",
 		course=course,
 		subject=subject,
 		faculty=faculty,

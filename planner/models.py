@@ -142,6 +142,7 @@ class Course(db.Model):
 		yield "desc", self.desc
 		yield "prereqs", self.prereqs
 		yield "antireqs", self.antireqs
+		yield "notes", self.notes
 	
 #
 # USER DB
