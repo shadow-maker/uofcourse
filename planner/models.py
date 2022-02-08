@@ -185,10 +185,12 @@ class User(db.Model, UserMixin):
 
 	def __init__(self, ucid, name, email, passw, faculty_id):
 		self.ucid = ucid
-		self.ucid = name
+		self.name = name
 		self.email = email
 		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
 		self.faculty_id = faculty_id
+
+		self.courseCollections.append(CourseCollection(self.id))
 
 	def updatePassw(self, passw):
 		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
