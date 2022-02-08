@@ -175,18 +175,27 @@ def apiCoursesFilter():
 
 # CourseCollection
 
-@app.route("/api/u/collection/<termId>", methods=["POST"])
-def apiAddCourseCollection(termId):
+@app.route("/api/u/collection", methods=["POST"])
+def apiAddCourseCollection():
+	data = request.get_json()
+
 	if not current_user.is_authenticated:
 		return jsonify({"error": "User not logged in"}), 401
 
-	if not Term.query.filter_by(term_id=termId).first():
-		return jsonify({"error": f"Term {termId} does not exist"}), 404
+	if data["term"]:
+		term = Term.query.filter_by(term_id=data["term"]).first()
+	elif not (data["season"] and data["year"]):
+		return jsonify({"error": "Term not specified"}), 400
+	else:
+		term = Term.query.filter_by(season=data["season"].lower(), year=data["year"]).first()
 
-	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=termId):
-		return jsonify({"error": f"User (#{current_user.id}) already has a collection for term {termId}"}), 400
+	if not term:
+		return jsonify({"error": f"Term does not exist"}), 404
 
-	db.session.add(CourseCollection(user_id=current_user.id, term_id=termId))
+	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=term.id):
+		return jsonify({"error": f"User (#{current_user.id}) already has a collection for term {term.id}"}), 400
+
+	db.session.add(CourseCollection(current_user.id, term.id))
 	db.session.commit()
 	return jsonify({"success": True})
 
