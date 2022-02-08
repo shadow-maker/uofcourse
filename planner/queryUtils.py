@@ -35,11 +35,8 @@ def userExists(ucid):
 def getSubjectByCode(subjCode):
 	return Subject.query.filter_by(code=subjCode.upper()).first()
 
-def getCourseById(_subjId, _courseCode):
-	return Course.query.filter_by(subject_id=_subjId, code=_courseCode).first()
-
 def getCourseByCode(subjCode, courseCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
 		return None
-	return getCourseById(subject.id, courseCode)
+	return Course.query.filter_by(subject_id=subject.id, code=courseCode).first()

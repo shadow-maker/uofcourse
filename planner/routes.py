@@ -229,6 +229,7 @@ def courseRandom():
 	return redirect(url_for("courseById", courseId=course.id))
 
 
+@app.route("/s/<subjCode>")
 @app.route("/c/<subjCode>")
 def subjectView(subjCode):
 	subject = getSubjectByCode(subjCode)
@@ -257,7 +258,7 @@ def courseView(subjCode, courseCode):
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
 		return redirect(url_for("home"))
-	course = getCourseById(subject.id, courseCode)
+	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
 	if not course:
 		flash(f"Course with code {subjCode}-{courseCode} does not exist!", "danger")
 		return redirect(url_for("home"))

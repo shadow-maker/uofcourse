@@ -12,8 +12,61 @@ SORT_OPTIONS = [
 	[Course.name, Course.code]
 ]
 
+#
+# GET
+#
+
+# Faculty
+
+@app.route("/api/f/id/<id>", methods=["GET"])
+def apiFacultyById(id):
+	faculty = getById(Faculty, id)
+	if not faculty:
+		return jsonify({"error": f"Faculty with id {id} does not exist"}), 404
+	return jsonify(dict(faculty))
+
+
+# Subject
+
+@app.route("/api/s/id/<id>", methods=["GET"])
+def apiSubjectById(id):
+	subject = getById(Subject, id)
+	if not subject:
+		return jsonify({"error": f"Subject with id {id} does not exist"}), 404
+	return jsonify(dict(subject))
+
+
+@app.route("/api/s/code/<code>", methods=["GET"])
+def apiSubjectByCode(code):
+	subject = getSubjectByCode(code)
+	if not subject:
+		return jsonify({"error": f"Subject with code {code} does not exist"}), 404
+	return jsonify(dict(subject))
+
+
+# Course
+
+@app.route("/api/c/id/<id>", methods=["GET"])
+def apiCourseById(id):
+	course = getById(Course, id)
+	if not course:
+		return jsonify({"error": f"Course with id {id} does not exist"}), 404
+	return jsonify(dict(course))
+
+
+@app.route("/api/c/code/<subjCode>/<courseCode>", methods=["GET"])
+def apiCourseByCode(subjCode, courseCode):
+	subject = getSubjectByCode(subjCode)
+	if not subject:
+		return jsonify({"error": f"Subject with code {subjCode} does not exist"}), 404
+	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
+	if not course:
+		return jsonify({"error": f"Course with code {subjCode}-{courseCode} does not exist"}), 404
+	return jsonify(dict(course))
+
+
 @app.route("/api/c/filter", methods=["GET"])
-def apiCoursesFilter():
+def apiCoursesFilter(levels=None, faculties=None, subjects=None):
 	allLevels = COURSE_LEVELS
 	allFaculties = [f[0] for f in list(db.session.query(Faculty).values(Faculty.id))]
 	allSubjects = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
@@ -75,7 +128,7 @@ def apiCoursesFilter():
 		"name": course.name,
 		"subj": course.subject.code,
 		"code": course.code,
-		"emoji": course.getEmoji(128218),
+		"emoji": course.getEmoji(DEFAULT_EMOJI),
 	} for course in results.items]
 
 	return jsonify({

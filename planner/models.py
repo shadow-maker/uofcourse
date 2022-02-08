@@ -96,7 +96,6 @@ class Subject(db.Model):
 		yield "code", self.code
 		yield "name", self.name
 		yield "emoji", self.emoji
-		yield "site", self.site
 
 
 class Course(db.Model):
@@ -138,6 +137,7 @@ class Course(db.Model):
 		yield "id", self.id
 		yield "subject_id", self.subject_id
 		yield "code", self.code
+		yield "level", self.level
 		yield "name", self.name
 		yield "emoji", self.emoji
 		yield "units", self.units
