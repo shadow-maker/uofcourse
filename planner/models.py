@@ -4,11 +4,7 @@ from planner.adminView import admin, adminModelView
 
 from flask import request
 from flask_login import UserMixin
-from datetime import datetime, date, time
-
-import requests
-import json
-import httpx
+from datetime import datetime, date
 
 #
 # TERMS DB
