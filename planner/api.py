@@ -199,7 +199,7 @@ def apiAddCourseCollection(termId):
 # CourseCollection
 
 @app.route("/api/u/collection/<id>", methods=["DELETE"])
-def apiAddCourseCollection(id):
+def apiDelCourseCollection(id):
 	if not current_user.is_authenticated:
 		return jsonify({"error": "User not logged in"}), 401
 
