@@ -110,6 +110,7 @@ class Course(db.Model):
 	desc = db.Column(db.Text)
 	prereqs = db.Column(db.Text)
 	antireqs = db.Column(db.Text)
+	notes = db.Column(db.Text)
 
 	userCourses = db.relationship("UserCourse", backref="course")
 
@@ -118,7 +119,7 @@ class Course(db.Model):
 			return self.emoji
 		return self.subject.getEmoji(default)
 
-	def __init__(self, subject_id, code, name, units, desc, prereqs, antireqs, emoji=None):
+	def __init__(self, subject_id, code, name, units, desc="", prereqs="", antireqs="", notes="", emoji=None):
 		self.subject_id = subject_id
 		self.code = code
 		self.level = code // 100
@@ -127,6 +128,7 @@ class Course(db.Model):
 		self.desc = desc
 		self.prereqs = prereqs
 		self.antireqs = antireqs
+		self.notes = notes
 		if emoji:
 			self.emoji = emoji
 
