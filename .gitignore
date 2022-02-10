@@ -145,4 +145,5 @@ cython_debug/
 .DS_Store
 
 # Other
+migrations/
 backups/

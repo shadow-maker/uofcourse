@@ -4,11 +4,7 @@ from planner.adminView import admin, adminModelView
 
 from flask import request
 from flask_login import UserMixin
-from datetime import datetime, date, time
-
-import requests
-import json
-import httpx
+from datetime import datetime, date
 
 #
 # TERMS DB
@@ -43,6 +39,13 @@ class Term(db.Model):
 
 	def __repr__(self):
 		return f"TERM {self.season.name} {self.year} (#{self.id})"
+	
+	def __iter__(self):
+		yield "id", self.id
+		yield "season", self.season.name
+		yield "year", self.year
+		yield "start", self.start
+		yield "end", self.end
 
 #
 # COURSE DB
@@ -96,7 +99,6 @@ class Subject(db.Model):
 		yield "code", self.code
 		yield "name", self.name
 		yield "emoji", self.emoji
-		yield "site", self.site
 
 
 class Course(db.Model):
@@ -111,6 +113,7 @@ class Course(db.Model):
 	desc = db.Column(db.Text)
 	prereqs = db.Column(db.Text)
 	antireqs = db.Column(db.Text)
+	notes = db.Column(db.Text)
 
 	userCourses = db.relationship("UserCourse", backref="course")
 
@@ -119,7 +122,7 @@ class Course(db.Model):
 			return self.emoji
 		return self.subject.getEmoji(default)
 
-	def __init__(self, subject_id, code, name, units, desc, prereqs, antireqs, emoji=None):
+	def __init__(self, subject_id, code, name, units, desc="", prereqs="", antireqs="", notes="", emoji=None):
 		self.subject_id = subject_id
 		self.code = code
 		self.level = code // 100
@@ -128,6 +131,7 @@ class Course(db.Model):
 		self.desc = desc
 		self.prereqs = prereqs
 		self.antireqs = antireqs
+		self.notes = notes
 		if emoji:
 			self.emoji = emoji
 
@@ -138,12 +142,14 @@ class Course(db.Model):
 		yield "id", self.id
 		yield "subject_id", self.subject_id
 		yield "code", self.code
+		yield "level", self.level
 		yield "name", self.name
 		yield "emoji", self.emoji
 		yield "units", self.units
 		yield "desc", self.desc
 		yield "prereqs", self.prereqs
 		yield "antireqs", self.antireqs
+		yield "notes", self.notes
 	
 #
 # USER DB
@@ -162,6 +168,7 @@ class Role(db.Model):
 class User(db.Model, UserMixin):
 	__tablename__ = "user"
 	id = db.Column(db.Integer, primary_key=True)
+	ucid = db.Column(db.Integer, unique=True)
 	name = db.Column(db.String(32))
 	email = db.Column(db.String(64), nullable=False)
 	passw = db.Column(db.String(64), nullable=False)
@@ -176,11 +183,14 @@ class User(db.Model, UserMixin):
 
 	courseCollections = db.relationship("CourseCollection", backref="user")
 
-	def __init__(self, id, email, passw, faculty_id):
-		self.id = id
+	def __init__(self, ucid, name, email, passw, faculty_id):
+		self.ucid = ucid
+		self.name = name
 		self.email = email
 		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
 		self.faculty_id = faculty_id
+
+		self.courseCollections.append(CourseCollection(self.id))
 
 	def updatePassw(self, passw):
 		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
