@@ -70,6 +70,7 @@ def loadUser(uId):
 @app.route("/home")
 @app.route("/")
 def home():
+	response = apiAddCourseCollection()[0]
 	return render_template("index.html", header="UofC Planner")
 
 
@@ -163,10 +164,25 @@ def myPlanner():
 	return render_template("myPlanner.html",
 		title = "My Plan",
 		header = "My Course Plan",
-		courseCollections = current_user.courseCollections,
+		courseCollections = sorted(current_user.courseCollections, key=lambda c: c.term_id if c.term_id else 0),
 		seasons = Season.query.all(),
 		years = getAllYears(False)
 	)
+
+@app.route("/my/add/collection", methods=["POST"])
+def myPlannerAddCollection():
+	data = request.form.to_dict()
+	if not data:
+		flash(f"ERROR: No form data provided to add CourseCollection", "warning")
+		return redirect(url_for("myPlanner"))
+
+	response = apiAddCourseCollection(data)[0]
+	if "error" in response:
+		flash(f"ERROR: {response['error']}", "warning")
+	else:
+		flash(f"Term added!", "success")
+
+	return redirect(url_for("myPlanner"))
 
 #
 # COURSES

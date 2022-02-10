@@ -1,7 +1,7 @@
 import collections
 from flask_login import login_required, current_user
 from planner import app, db
-from planner.models import Course, Subject, Faculty, Term, User, CourseCollection
+from planner.models import Course, Subject, Faculty, Season, Term, User, CourseCollection
 from planner.queryUtils import *
 from planner.constants import *
 
@@ -22,14 +22,14 @@ def apiById(table, id):
 	object = getById(table, id)
 	if not object:
 		return jsonify({"error": f"{table.__name__} with id {id} does not exist"}), 404
-	return jsonify(dict(object))
+	return dict(object)
 
 
 # Term
 
 @app.route("/api/terms", methods=["GET"])
 def apiTerms():
-	return jsonify([dict(term) for term in Term.query.all()])
+	return [dict(term) for term in Term.query.all()]
 
 @app.route("/api/t/id/<id>", methods=["GET"])
 def apiTermById(id):
@@ -55,7 +55,7 @@ def apiSubjectByCode(code):
 	subject = getSubjectByCode(code)
 	if not subject:
 		return jsonify({"error": f"Subject with code {code} does not exist"}), 404
-	return jsonify(dict(subject))
+	return dict(subject)
 
 
 # Course
@@ -69,11 +69,11 @@ def apiCourseById(id):
 def apiCourseByCode(subjCode, courseCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
-		return jsonify({"error": f"Subject with code {subjCode} does not exist"}), 404
+		return {"error": f"Subject with code {subjCode} does not exist"}, 404
 	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
 	if not course:
-		return jsonify({"error": f"Course with code {subjCode}-{courseCode} does not exist"}), 404
-	return jsonify(dict(course))
+		return {"error": f"Course with code {subjCode}-{courseCode} does not exist"}, 404
+	return dict(course)
 
 
 def apiCoursesFilterHelper(data={}):
@@ -157,7 +157,7 @@ def apiCoursesFilterHelper(data={}):
 
 @app.route("/api/c/filter", methods=["GET"])
 def apiCoursesFilter():
-	return jsonify(apiCoursesFilterHelper({
+	return apiCoursesFilterHelper({
 		"sort": request.args.get("sort", default=0, type=int),
 		"order": request.args.get("order", default="asc", type=str),
 		"levels": json.loads(request.args.get("levels", default="[]", type=str)),
@@ -165,7 +165,7 @@ def apiCoursesFilter():
 		"subjects": json.loads(request.args.get("subjects", default="[]", type=str)),
 		"limit": request.args.get("limit", default=30, type=int),
 		"page": request.args.get("page", default=1, type=int)
-	}))
+	}), 200
 
 
 
@@ -176,28 +176,38 @@ def apiCoursesFilter():
 # CourseCollection
 
 @app.route("/api/u/collection", methods=["POST"])
-def apiAddCourseCollection():
-	data = request.get_json()
-
+def apiAddCourseCollection(data={}):
 	if not current_user.is_authenticated:
-		return jsonify({"error": "User not logged in"}), 401
+		return {"error": "User not logged in"}, 401
 
-	if data["term"]:
+	if not data:
+		data = request.get_json()
+	if not data:
+		data = request.form.to_dict()
+	if not data:
+		return {"error": "no data provided"}, 400
+	
+	if "term" in data:
 		term = Term.query.filter_by(term_id=data["term"]).first()
-	elif not (data["season"] and data["year"]):
-		return jsonify({"error": "Term not specified"}), 400
+	elif not (("season" in data) and ("year" in data)):
+		return {"error": "Term not specified"}, 400
 	else:
-		term = Term.query.filter_by(season=data["season"].lower(), year=data["year"]).first()
+		season = Season.query.filter_by(id=data["season"]).first()
+		if not season:
+			season = Season.query.filter_by(name=data["season"].lower()).first()
+		if not season:
+			return {"error": "Season not found"}, 404
+		term = Term.query.filter_by(season_id=season.id, year=data["year"]).first()
 
 	if not term:
-		return jsonify({"error": f"Term does not exist"}), 404
+		return {"error": f"Term does not exist"}, 404
 
-	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=term.id):
-		return jsonify({"error": f"User (#{current_user.id}) already has a collection for term {term.id}"}), 400
+	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=term.id).first():
+		return {"error": f"User (#{current_user.id}) already has a collection for term {term.id}"}, 400
 
 	db.session.add(CourseCollection(current_user.id, term.id))
 	db.session.commit()
-	return jsonify({"success": True})
+	return {"success": True}, 200
 
 
 
