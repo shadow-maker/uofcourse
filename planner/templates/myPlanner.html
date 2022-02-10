@@ -5,40 +5,52 @@
 <!--Courses per term-->
 <div class="container-fluid">
 	<h2 class="mb-3">Courses per term</h2>
-	<div class="row flex-nowrap overflow-scroll">
+	<div class="row flex-nowrap overflow-scroll pt-3">
 		{% for collection in courseCollections %}
-		<div class="col-3 card mx-2 p-0">
-			<div class="card-header text-center">
-				{% if collection.transfer %}
-				<span class="h5">Transfered</span>
-				{% else %}
-				<span class="h5">{{collection.term.season.name | capitalize}} {{collection.term.year}}</span>
-				<br>
-				<small class="m-0 text-muted"><i>{{collection.term.start}} > {{collection.term.end}}</i></small>
+		<div class="col-3 mx-2 p-0">
+			<div class="card h-100">
+				{% if not (collection.transfer or collection.userCourses) %}
+				<form action="/my/del/collection" method="POST">
+					<input type="hidden" name="id" value="{{collection.id}}">
+					<button
+						class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light border border-secondary">
+						<i class="bi-x-lg text-secondary"></i>
+						<span class="visually-hidden">Remove term</span>
+					</button>
+				</form>
 				{% endif %}
-			</div>
-			<div class="course-container card-body p-1">
-				{% for uCourse in collection.userCourses %}
-				<div class="course-item m-1 btn bg-light card" draggable="true" data-bs-toggle="modal"
-					data-bs-target="#modalEditUserCourse">
-					<div class="row">
-						<span class="col-3">&#{{uCourse.course.getEmoji()}}</span>
-						<span class="col-6 mono-font">{{uCourse.course.subject.code}}-{{uCourse.course.code}}</span>
-						<span class="col-3 mono-font text-start">
-							{% if uCourse.gradeLetter %}
-							{{uCourse.gradeLetter}}
-							{% else %}
-							-
-							{% endif %}
-						</span>
-					</div>
+				<div class="card-header text-center">
+					{% if collection.transfer %}
+					<span class="h5">Transfered</span>
+					{% else %}
+					<span class="h5">{{collection.term.season.name | capitalize}} {{collection.term.year}}</span>
+					<br>
+					<small class="m-0 text-muted"><i>{{collection.term.start}} > {{collection.term.end}}</i></small>
+					{% endif %}
 				</div>
-				{% endfor %}
-			</div>
-			<div class="card-footer">
-				<div class="row">
-					<span class="col-9 text-center">Term GPA</span>
-					<span class="col-3 mono-font text-start">{{collection.getGPA()}}</span>
+				<div class="course-container card-body p-1">
+					{% for uCourse in collection.userCourses %}
+					<div class="course-item m-1 btn bg-light card" draggable="true" data-bs-toggle="modal"
+						data-bs-target="#modalEditUserCourse">
+						<div class="row">
+							<span class="col-3">&#{{uCourse.course.getEmoji()}}</span>
+							<span class="col-6 mono-font">{{uCourse.course.subject.code}}-{{uCourse.course.code}}</span>
+							<span class="col-3 mono-font text-start">
+								{% if uCourse.gradeLetter %}
+								{{uCourse.gradeLetter}}
+								{% else %}
+								-
+								{% endif %}
+							</span>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+				<div class="card-footer">
+					<div class="row">
+						<span class="col-9 text-center">Term GPA</span>
+						<span class="col-3 mono-font text-start">{{collection.getGPA()}}</span>
+					</div>
 				</div>
 			</div>
 		</div>

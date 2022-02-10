@@ -180,11 +180,27 @@ def addCollection():
 	else:
 		response = apiAddCourseCollection(data)[0]
 		if "error" in response:
-			flash(f"ERROR: {response['error']}", "warning")
+			flash(f"ERROR: {response['error']}", "danger")
 		else:
 			flash(f"Term added!", "success")
 
 	return redirect(url_for("viewMyPlanner"))
+
+
+@app.route("/my/del/collection", methods=["DELETE", "POST"])
+def delCollection():
+	data = request.form.to_dict()
+	if not data or "id" not in data:
+		flash(f"ERROR: No form data with CourseCollection id provided to remove CourseCollection", "warning")
+	else:
+		response = apiDelCourseCollection(data)[0]
+		if "error" in response:
+			flash(f"ERROR: {response['error']}", "danger")
+		else:
+			flash(f"Term removed!", "success")
+
+	return redirect(url_for("viewMyPlanner"))
+
 
 #
 # COURSES

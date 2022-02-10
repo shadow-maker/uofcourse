@@ -1,4 +1,5 @@
 import collections
+from email.policy import default
 from flask_login import login_required, current_user
 from planner import app, db
 from planner.models import Course, Subject, Faculty, Season, Term, User, CourseCollection
@@ -217,22 +218,34 @@ def apiAddCourseCollection(data={}):
 
 # CourseCollection
 
+@app.route("/api/u/collection", defaults={"id":None}, methods=["DELETE"])
 @app.route("/api/u/collection/<id>", methods=["DELETE"])
-def apiDelCourseCollection(id):
+def apiDelCourseCollection(data={}, id=None):
 	if not current_user.is_authenticated:
-		return jsonify({"error": "User not logged in"}), 401
+		return {"error": "User not logged in"}, 401
+
+	if not id:
+		if not data:
+			data = request.get_json()
+		if not data:
+			data = request.form.to_dict()
+		if not data:
+			return {"error": "no data provided"}, 400
+		if not "id" in data:
+			return {"error": "no CourseCollection id provided"}, 400
+		id = data["id"]
 
 	collection = CourseCollection.query.filter_by(id=id).first()
 
 	if not collection:
-		return jsonify({"error": f"CourseCollection {id} does not exist"}), 404
+		return {"error": f"CourseCollection does not exist"}, 404
 
 	if collection.user_id != current_user.id:
-		return jsonify({"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}), 403
+		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
 	
 	if collection.userCourses:
-		return jsonify({"error": f"CourseCollection {id} is not empty"}), 400
+		return {"error": f"CourseCollection is not empty"}, 400
 
 	db.session.delete(collection)
 	db.session.commit()
-	return jsonify({"success": True})
+	return {"success": True}, 200
