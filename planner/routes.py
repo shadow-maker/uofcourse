@@ -24,7 +24,7 @@ def redirectLogin():
 
 def redirectNoaccess():
 	flash(f"You do not have permission to access this page!", "warning")
-	return redirect(url_for("home"))
+	return redirect(url_for("viewHome"))
 
 #
 # Error pages
@@ -69,13 +69,13 @@ def loadUser(uId):
 
 @app.route("/home")
 @app.route("/")
-def home():
+def viewHome():
 	response = apiAddCourseCollection()[0]
 	return render_template("index.html", header="UofC Planner")
 
 
 @app.route("/about")
-def about():
+def viewAbout():
 	return render_template("about.html", title="About", header="About UofC Planner")
 
 #
@@ -86,10 +86,12 @@ def about():
 def signup():
 	if current_user.is_authenticated:
 		flash(f"You are already authenticated!", "success")
-		return redirect(url_for("home"))
+		return redirect(url_for("viewHome"))
+
 	if not ALLOW_ACCOUNT_CREATION:
 		flash(f"Account creation is currently disabled!", "warning")
-		return redirect(url_for("home"))
+		return redirect(url_for("viewHome"))
+
 	form = registerForm()
 	if form.validate_on_submit():
 		if userExists(form.ucid.data):
@@ -104,7 +106,8 @@ def signup():
 			db.session.commit()
 			flash(f"Account created!", "success")
 			return redirect(url_for("login"))
-		return redirect(url_for("home"))
+		return redirect(url_for("viewHome"))
+
 	return render_template("signup.html",
 		title="Sign Up",
 		header="Create Account",
@@ -115,7 +118,7 @@ def signup():
 def login():
 	if current_user.is_authenticated:
 		flash(f"You are already authenticated!", "success")
-		return redirect(url_for("home"))
+		return redirect(url_for("viewHome"))
 	form = loginForm()
 	if form.validate_on_submit():
 		if not userExists(form.ucid.data):
@@ -125,7 +128,7 @@ def login():
 			if bcrypt.check_password_hash(user.passw, form.passw.data):
 				login_user(user, remember=form.remember.data)
 				flash(f"Log in successful! (#{user.id})", "success")
-				return redirect(url_for("home"))
+				return redirect(url_for("viewHome"))
 			else:
 				flash(f"Incorrect password!", "danger")
 	return render_template("login.html",
@@ -139,14 +142,14 @@ def logout():
 	if not current_user.is_authenticated:
 		return redirect(url_for("logout"))
 	logout_user()
-	return redirect(url_for("home"))
+	return redirect(url_for("viewHome"))
 
 #
 # ACCOUNT
 #
 
 @app.route("/account")
-def account():
+def viewAccount():
 	if not current_user.is_authenticated:
 		return redirectLogin()
 	
@@ -157,7 +160,7 @@ def account():
 	)
 
 @app.route("/my")
-def myPlanner():
+def viewMyPlanner():
 	if not current_user.is_authenticated:
 		return redirectLogin()
 
@@ -170,38 +173,101 @@ def myPlanner():
 	)
 
 @app.route("/my/add/collection", methods=["POST"])
-def myPlannerAddCollection():
+def addCollection():
 	data = request.form.to_dict()
 	if not data:
 		flash(f"ERROR: No form data provided to add CourseCollection", "warning")
-		return redirect(url_for("myPlanner"))
-
-	response = apiAddCourseCollection(data)[0]
-	if "error" in response:
-		flash(f"ERROR: {response['error']}", "warning")
 	else:
-		flash(f"Term added!", "success")
+		response = apiAddCourseCollection(data)[0]
+		if "error" in response:
+			flash(f"ERROR: {response['error']}", "warning")
+		else:
+			flash(f"Term added!", "success")
 
-	return redirect(url_for("myPlanner"))
+	return redirect(url_for("viewMyPlanner"))
 
 #
 # COURSES
 #
 
 @app.route("/f/<facId>")
-def facultyView(facId):
+def viewFaculty(facId):
 	faculty = getById(Faculty, facId)
 	if not faculty:
 		flash(f"Faculty with id {facId} does not exist!", "danger")
-		return redirect(url_for("home"))
+		return redirect(url_for("viewHome"))
 	return render_template("faculty.html",
 		title = "Faculty",
 		header = "Faculty",
 		faculty = faculty
 	)
 
+
+@app.route("/s/<subjCode>")
+@app.route("/c/<subjCode>")
+def viewSubject(subjCode):
+	subject = getSubjectByCode(subjCode)
+	if not subject:
+		flash(f"Subject with code {subjCode} does not exist!", "danger")
+		return redirect(url_for("viewHome"))
+	#return redirect(url_for("allCoursesView", subject=subject.code))
+	faculty = subject.faculty
+	return render_template("subject.html",
+		title=subjCode.upper(),
+		header=f"Subject - {subject.name}",
+		subject=subject,
+		faculty=faculty,
+		courses=subject.courses,
+		backlinks={
+			faculty.name: url_for("facultyView", facId=faculty.id),
+			subject.code: ""
+		}.items()
+	)
+
+
+@app.route("/c/<subjCode>/<courseCode>")
+def viewCourse(subjCode, courseCode):
+	subject = getSubjectByCode(subjCode)
+	if not subject:
+		flash(f"Subject with code {subjCode} does not exist!", "danger")
+		return redirect(url_for("viewHome"))
+	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
+	if not course:
+		flash(f"Course with code {subjCode}-{courseCode} does not exist!", "danger")
+		return redirect(url_for("viewHome"))
+	faculty = subject.faculty
+	return render_template("course.html",
+		title=f"{subjCode.upper()}-{courseCode.upper()}",
+		course=course,
+		subject=subject,
+		faculty=faculty,
+		backlinks={
+			faculty.name: url_for("facultyView", facId=faculty.id),
+			subject.code: url_for("subjectView", subjCode=subject.code),
+			course.code: ""
+		}.items()
+	)
+
+
+@app.route("/c/id/<courseId>")
+def courseById(courseId):
+	course = getById(Course, courseId)
+	if not course:
+		flash(f"Course with id {courseId} does not exist!", "danger")
+		return redirect(url_for("viewHome"))
+	return redirect(url_for("viewCourse", subjCode=course.subject.code, courseCode=course.code))
+
+
+@app.route("/c/random")
+def courseRandom():
+	course = None
+	while not course:
+		course = Course.query[random.randrange(0, Course.query.count())]
+	return redirect(url_for("courseById", courseId=course.id))
+
+
 @app.route("/c", methods=["GET", "POST"])
-def allCoursesView():
+def viewCourses():
 	levels = {str(l) : True for l in COURSE_LEVELS}
 	faculties = {
 		str(f[0]) : {"name": f[1], "sel": True}
@@ -221,72 +287,4 @@ def allCoursesView():
 			"faculties": faculties,
 			"subjects": subjects
 		}
-	)
-
-#@app.route("/c")
-#def allCoursesViewAlt():
-#	return redirect(url_for("allCoursesView"))
-
-
-@app.route("/c/id/<courseId>")
-def courseById(courseId):
-	course = getById(Course, courseId)
-	if not course:
-		flash(f"Course with id {courseId} does not exist!", "danger")
-		return redirect(url_for("home"))
-	return redirect(url_for("courseView", subjCode=course.subject.code, courseCode=course.code))
-
-
-@app.route("/c/random")
-def courseRandom():
-	course = None
-	while not course:
-		course = Course.query[random.randrange(0, Course.query.count())]
-	return redirect(url_for("courseById", courseId=course.id))
-
-
-@app.route("/s/<subjCode>")
-@app.route("/c/<subjCode>")
-def subjectView(subjCode):
-	subject = getSubjectByCode(subjCode)
-	if not subject:
-		flash(f"Subject with code {subjCode} does not exist!", "danger")
-		return redirect(url_for("home"))
-	print("OK")
-	#return redirect(url_for("allCoursesView", subject=subject.code))
-	faculty = subject.faculty
-	return render_template("subject.html",
-		title=subjCode.upper(),
-		header=f"Subject - {subject.name}",
-		subject=subject,
-		faculty=faculty,
-		courses=subject.courses,
-		backlinks={
-			faculty.name: url_for("facultyView", facId=faculty.id),
-			subject.code: ""
-		}.items()
-	)
-
-
-@app.route("/c/<subjCode>/<courseCode>")
-def courseView(subjCode, courseCode):
-	subject = getSubjectByCode(subjCode)
-	if not subject:
-		flash(f"Subject with code {subjCode} does not exist!", "danger")
-		return redirect(url_for("home"))
-	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
-	if not course:
-		flash(f"Course with code {subjCode}-{courseCode} does not exist!", "danger")
-		return redirect(url_for("home"))
-	faculty = subject.faculty
-	return render_template("course.html",
-		title=f"{subjCode.upper()}-{courseCode.upper()}",
-		course=course,
-		subject=subject,
-		faculty=faculty,
-		backlinks={
-			faculty.name: url_for("facultyView", facId=faculty.id),
-			subject.code: url_for("subjectView", subjCode=subject.code),
-			course.code: ""
-		}.items()
 	)
