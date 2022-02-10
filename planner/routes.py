@@ -235,7 +235,7 @@ def viewSubject(subjCode):
 		faculty=faculty,
 		courses=subject.courses,
 		backlinks={
-			faculty.name: url_for("facultyView", facId=faculty.id),
+			faculty.name: url_for("viewFaculty", facId=faculty.id),
 			subject.code: ""
 		}.items()
 	)
@@ -258,8 +258,8 @@ def viewCourse(subjCode, courseCode):
 		subject=subject,
 		faculty=faculty,
 		backlinks={
-			faculty.name: url_for("facultyView", facId=faculty.id),
-			subject.code: url_for("subjectView", subjCode=subject.code),
+			faculty.name: url_for("viewFaculty", facId=faculty.id),
+			subject.code: url_for("viewSubject", subjCode=subject.code),
 			course.code: ""
 		}.items()
 	)
