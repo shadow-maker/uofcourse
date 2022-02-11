@@ -173,7 +173,7 @@ def viewMyPlanner():
 	)
 
 @app.route("/my/add/collection", methods=["POST"])
-def addCollection():
+def addCourseCollection():
 	def ret(message, category):
 		flash(message, category)
 		return redirect(url_for("viewMyPlanner"))
@@ -210,7 +210,7 @@ def addCollection():
 
 
 @app.route("/my/del/collection", methods=["DELETE", "POST"])
-def delCollection():
+def delCourseCollection():
 	def ret(message, category):
 		flash(message, category)
 		return redirect(url_for("viewMyPlanner"))
