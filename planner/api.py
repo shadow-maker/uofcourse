@@ -22,15 +22,15 @@ SORT_OPTIONS = [
 def apiById(table, id):
 	object = getById(table, id)
 	if not object:
-		return jsonify({"error": f"{table.__name__} with id {id} does not exist"}), 404
-	return dict(object)
+		return {"error": f"{table.__name__} with id {id} does not exist"}, 404
+	return dict(object), 200
 
 
 # Term
 
 @app.route("/api/terms", methods=["GET"])
 def apiTerms():
-	return [dict(term) for term in Term.query.all()]
+	return jsonify([dict(term) for term in Term.query.all()])
 
 @app.route("/api/t/id/<id>", methods=["GET"])
 def apiTermById(id):
@@ -55,8 +55,8 @@ def apiSubjectById(id):
 def apiSubjectByCode(code):
 	subject = getSubjectByCode(code)
 	if not subject:
-		return jsonify({"error": f"Subject with code {code} does not exist"}), 404
-	return dict(subject)
+		return {"error": f"Subject with code {code} does not exist"}, 404
+	return dict(subject), 200
 
 
 # Course
