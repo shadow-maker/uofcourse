@@ -204,7 +204,7 @@ def apiAddCourseCollection(data={}):
 		return {"error": f"Term does not exist"}, 404
 
 	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=term.id).first():
-		return {"error": f"User (#{current_user.id}) already has a collection for term {term.id}"}, 400
+		return {"error": f"User (#{current_user.ucid}) already has a collection for term {term.id}"}, 400
 
 	db.session.add(CourseCollection(current_user.id, term.id))
 	db.session.commit()
