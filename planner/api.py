@@ -2,7 +2,7 @@ import collections
 from email.policy import default
 from flask_login import login_required, current_user
 from planner import app, db
-from planner.models import Course, Subject, Faculty, Season, Term, User, CourseCollection
+from planner.models import *
 from planner.queryUtils import *
 from planner.constants import *
 
@@ -213,6 +213,44 @@ def apiAddCourseCollection(data={}):
 
 
 #
+# PUT
+#
+
+
+@app.route("/api/u/course", methods=["PUT"])
+def apiEditUserCourse():
+	if not current_user.is_authenticated:
+		return {"error": "User not logged in"}, 401
+
+	data = request.form.to_dict()
+	if not data:
+		return {"error": "no data provided"}, 400
+	if not "id" in data:
+		return {"error": "no UserCourse id provided in data"}, 400
+
+	userCourse = UserCourse.query.filter_by(id=data["id"]).first()
+
+	if not userCourse:
+		return {"error": "UserCourse not found"}, 404
+	if not userCourse.ownedBy(current_user.id):
+		return {"error": "User does not have access to this UserCourse"}, 403
+	
+	if "collection_id" in data:
+		courseCollection = CourseCollection.query.filter_by(id=data["collection_id"]).first()
+		if not courseCollection:
+			return {"error": "CourseCollection not found"}, 404
+		if courseCollection.user_id != current_user.id:
+			return {"error": "User does not have access to this CourseCollection"}, 403
+		userCourse.course_collection_id = courseCollection.id
+	
+	# TODO: Add support for editing grade and passed
+	
+	db.session.commit()
+	
+	return {"success": True}, 200
+
+
+#
 # DELETE
 #
 
@@ -241,7 +279,7 @@ def apiDelCourseCollection(data={}, id=None):
 		return {"error": f"CourseCollection does not exist"}, 404
 
 	if collection.user_id != current_user.id:
-		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
+		return {"error": f"User (#{current_user.ucid}) does not have access to this CourseCollection"}, 403
 	
 	if collection.userCourses:
 		return {"error": f"CourseCollection is not empty"}, 400

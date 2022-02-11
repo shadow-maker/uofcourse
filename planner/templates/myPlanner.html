@@ -28,9 +28,9 @@
 					<small class="m-0 text-muted"><i>{{collection.term.start}} > {{collection.term.end}}</i></small>
 					{% endif %}
 				</div>
-				<div class="course-container card-body p-1">
+				<div class="course-container card-body p-1" course-collection="{{collection.id}}">
 					{% for uCourse in collection.userCourses %}
-					<div class="course-item m-1 btn bg-light card" draggable="true" data-bs-toggle="modal"
+					<div class="course-item m-1 btn bg-light card" user-course="{{uCourse.id}}" draggable="true" data-bs-toggle="modal"
 						data-bs-target="#modalEditUserCourse">
 						<div class="row">
 							<span class="col-3">&#{{uCourse.course.getEmoji()}}</span>
@@ -155,5 +155,7 @@
 </form>
 
 <script src="/static/scripts/plannerDrag.js"></script>
+
+{% include "components/error.html" %}
 
 {% endblock %}

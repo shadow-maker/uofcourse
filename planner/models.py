@@ -285,6 +285,9 @@ class UserCourse(db.Model):
 	gradeLetter = db.Column(db.String(2))
 	passed = db.Column(db.Boolean)
 
+	def ownedBy(self, user_id):
+		return self.collection.user_id == user_id
+
 	def getGPV(self, conversion=LETTER_TO_GPA):
 		if not self.gradeLetter:
 			return None
