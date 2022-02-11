@@ -218,15 +218,16 @@ def apiAddCourseCollection(data={}):
 
 
 @app.route("/api/u/course", methods=["PUT"])
-def apiEditUserCourse():
+def apiEditUserCourse(data={}):
 	if not current_user.is_authenticated:
 		return {"error": "User not logged in"}, 401
 
-	data = request.form.to_dict()
 	if not data:
-		return {"error": "no data provided"}, 400
-	if not "id" in data:
-		return {"error": "no UserCourse id provided in data"}, 400
+		data = request.form.to_dict()
+		if not data:
+			return {"error": "no data provided"}, 400
+		if not "id" in data:
+			return {"error": "no UserCourse id provided in data"}, 400
 
 	userCourse = UserCourse.query.filter_by(id=data["id"]).first()
 

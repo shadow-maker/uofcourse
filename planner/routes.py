@@ -243,6 +243,17 @@ def delCourseCollection():
 	return redirect(url_for("viewMyPlanner"))
 
 
+@app.route("/my/edit/course", methods=["PUT", "POST"])
+def editUserCourse():
+	response, _ = apiEditUserCourse(request.form.to_dict())
+
+	if "error" in response:
+		flash(f"ERROR: {response['error']}", "danger")
+
+	return redirect(url_for("viewMyPlanner"))
+
+
+
 #
 # COURSES
 #

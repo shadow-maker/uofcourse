@@ -28,13 +28,13 @@
 					<small class="m-0 text-muted"><i>{{collection.term.start}} > {{collection.term.end}}</i></small>
 					{% endif %}
 				</div>
-				<div class="course-container card-body p-1" course-collection="{{collection.id}}">
+				<div class="course-container card-body p-1" db-id="{{collection.id}}">
 					{% for uCourse in collection.userCourses %}
-					<div class="course-item m-1 btn bg-light card" user-course="{{uCourse.id}}" draggable="true" data-bs-toggle="modal"
-						data-bs-target="#modalEditUserCourse">
+					<div class="course-item m-1 btn bg-light card" db-id="{{uCourse.id}}" draggable="true"
+						data-bs-toggle="modal" data-bs-target="#modalEditUserCourse">
 						<div class="row">
 							<span class="col-3">&#{{uCourse.course.getEmoji()}}</span>
-							<span class="col-6 mono-font">{{uCourse.course.subject.code}}-{{uCourse.course.code}}</span>
+							<span id="code" class="col-6 mono-font">{{uCourse.course.subject.code}}-{{uCourse.course.code}}</span>
 							<span class="col-3 mono-font text-start">
 								{% if uCourse.gradeLetter %}
 								{{uCourse.gradeLetter}}
@@ -67,6 +67,8 @@
 </div>
 
 <!--Form modal-->
+
+<!--Form add CourseCollection-->
 <form id="formAddCollection" name="formAddCollection" action="/my/add/collection" method="POST">
 	<div class="modal fade" id="modalAddCollection" tabindex="-1" aria-labelledby="exampleModalLabel"
 		aria-hidden="true">
@@ -107,22 +109,22 @@
 		</div>
 	</div>
 </form>
-<form id="formEditUserCourse" name="formEditUserCourse" action="POST">
+
+<!--Form edit UserCourse-->
+<form id="formEditUserCourse" name="formEditUserCourse" action="/my/edit/course" method="POST">
 	<div class="modal fade" id="modalEditUserCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Edit course <span
-							class="ms-2 h6 mono-font border border-1 border-secondary bg-light rounded p-1">CPSC-355</span>
-					</h5>
+					<h5 class="modal-title">Edit course</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body px-5">
 					<div class="row mb-2">
 						<label for="selectedCourse" class="col-3 col-form-label">Course</label>
 						<div class="col-9">
-							<input type="text" id="selectedCourse" class="form-control" placeholder="CPSC-355" disabled
-								readonly>
+							<input type="hidden" id="selectedCourse" name="id" value="">
+							<input type="text" id="selectedCoursePlaceholder" class="form-control col-9" value="" disabled readonly>
 						</div>
 					</div>
 					<div class="row">
@@ -130,23 +132,21 @@
 							<label class="col-3 col-form-label">Term</label>
 						</div>
 						<div class="col-9">
-							<div class="input-group">
-								<select class="form-select" aria-label="Select season">
-									{% for season in seasons %}
-									<option value="{{season.id}}">{{season.name | capitalize}}</option>
-									{% endfor %}
-								</select>
-								<select class="form-select" aria-label="Select year">
-									{% for year in years %}
-									<option value="{{year}}">{{year}}</option>
-									{% endfor %}
-								</select>
-							</div>
+							<select class="form-select" aria-label="Select term" name="collection_id" id="selectedCollection">
+								{% for collection in courseCollections %}
+								<option value="{{collection.id}}">
+									{% if collection.transfer %}
+									Transferred
+									{% else %}
+									{{collection.term.season.name | capitalize}} {{collection.term.year}}
+									{% endif %}
+								</option>
+								{% endfor %}
+							</select>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-around">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 					<button type="submit" class="btn btn-primary">Save changes</button>
 				</div>
 			</div>
@@ -154,7 +154,7 @@
 	</div>
 </form>
 
-<script src="/static/scripts/plannerDrag.js"></script>
+<script src="/static/scripts/planner.js"></script>
 
 {% include "components/error.html" %}
 
