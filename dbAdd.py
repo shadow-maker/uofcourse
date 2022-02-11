@@ -25,7 +25,7 @@ for id, name in roles.items():
 
 termsFile = "backups/terms.json"
 
-seasons = ["Winter", "Spring", "Summer", "Fall"]
+seasons = ["winter", "spring", "summer", "fall"]
 
 for i in range(len(seasons)):
 	sId = i + 1
