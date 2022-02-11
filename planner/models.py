@@ -1,6 +1,7 @@
 from planner import db, bcrypt
 from planner.constants import DEFAULT_EMOJI, LETTER_TO_GPA
 from planner.adminView import admin, adminModelView
+from planner.constants import *
 
 from flask import request
 from flask_login import UserMixin
@@ -181,7 +182,8 @@ class User(db.Model, UserMixin):
 	entryYear = db.Column(db.Integer)
 	neededUnits = db.Column(db.Numeric(3, 2))
 
-	courseCollections = db.relationship("CourseCollection", backref="user")
+	collections = db.relationship("CourseCollection", backref="user")
+	tags = db.relationship("UserTag", backref="user")
 
 	def __init__(self, ucid, name, email, passw, faculty_id):
 		self.ucid = ucid
@@ -190,7 +192,8 @@ class User(db.Model, UserMixin):
 		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
 		self.faculty_id = faculty_id
 
-		self.courseCollections.append(CourseCollection(self.id))
+		self.collections.append(CourseCollection(self.id))
+		self.tags.append(UserTag(self.id, "Starred", STARRED_COLOR, STARRED_EMOJI))
 
 	def updatePassw(self, passw):
 		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
@@ -212,6 +215,30 @@ class User(db.Model, UserMixin):
 		yield "faculty", dict(self.faculty)
 		yield "entryYear", self.entryYear
 		yield "neededUnits", self.neededUnits
+
+
+course_tag = db.Table("course_tag",
+	db.Column("user_tag_id", db.Integer, db.ForeignKey("user_tag.id"), nullable=False),
+	db.Column("course_id", db.Integer, db.ForeignKey("course.id"), nullable=False)
+)
+
+
+class UserTag(db.Model):
+	__tablename__ = "user_tag"
+	id = db.Column(db.Integer, primary_key=True)
+	user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+	name = db.Column(db.String(16), nullable=False)
+	color = db.Column(db.Integer, nullable=False)
+	emoji = db.Column(db.Integer)
+	deletable = db.Column(db.Boolean, nullable=False, default=True)
+
+	courses = db.relationship("Course", secondary=course_tag, backref="userTags")
+
+	def __init__(self, user_id, name, color, emoji=None):
+		self.user_id = user_id
+		self.name = name
+		self.color = color
+		self.emoji = emoji
 
 
 class CourseCollection(db.Model):
@@ -263,13 +290,15 @@ class UserCourse(db.Model):
 			return None
 		return conversion[self.gradeLetter]
 
+	def getTags(self):
+		return [tag for tag in self.course.userTags if tag.user_id == self.collection.user_id]
+
 	def __init__(self, course_collection_id, course_id):
 		self.course_collection_id = course_collection_id
-		self.course_id = course_id
 
 	def __repr__(self):
 		return f"USER_COURSE (#{self.id}): CourseCollection {self.course_collection_id} - Course {self.course_id}"
-
+		
 
 db.create_all()
 
