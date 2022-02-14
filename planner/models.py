@@ -1,5 +1,4 @@
 from planner import db, bcrypt
-from planner.constants import DEFAULT_EMOJI, LETTER_TO_GPA
 from planner.adminView import admin, adminModelView
 from planner.constants import *
 
@@ -59,6 +58,8 @@ class Grade(db.Model):
 	gpv = db.Column(db.Numeric(4, 2))
 	passed = db.Column(db.Boolean, nullable=False, default=True)
 	desc = db.Column(db.String(256))
+
+	userCourses = db.relationship("UserCourse", backref="grade")
 
 	def __init__(self, symbol, gpv, desc, passed=True):
 		self.symbol = symbol
@@ -278,13 +279,13 @@ class CourseCollection(db.Model):
 
 	userCourses = db.relationship("UserCourse", backref="collection")
 
-	def getGPA(self, precision=3, conversion=LETTER_TO_GPA):
+	def getGPA(self, precision=3):
 		points = 0
 		accUnits = 0
 		for uCouse in self.userCourses:
 			units = float(uCouse.course.units)
 			accUnits += units
-			gpv = uCouse.getGPV(conversion)
+			gpv = uCouse.grade.gpv
 			if not gpv:
 				return None
 			points += (gpv * units)
@@ -309,17 +310,11 @@ class UserCourse(db.Model):
 	course_collection_id = db.Column(db.Integer, db.ForeignKey("course_collection.id"), nullable=False)
 	course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
 
-	gradePercent = db.Column(db.Numeric(4, 2))
-	gradeLetter = db.Column(db.String(2))
+	grade_id = db.Column(db.Integer, db.ForeignKey("grade.id"))
 	passed = db.Column(db.Boolean)
 
 	def ownedBy(self, user_id):
 		return self.collection.user_id == user_id
-
-	def getGPV(self, conversion=LETTER_TO_GPA):
-		if not self.gradeLetter:
-			return None
-		return conversion[self.gradeLetter]
 
 	def getTags(self):
 		return [tag for tag in self.course.userTags if tag.user_id == self.collection.user_id]
