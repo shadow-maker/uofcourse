@@ -231,6 +231,8 @@ def apiEditUserCourse(data={}):
 
 	userCourse = UserCourse.query.filter_by(id=data["id"]).first()
 
+	print(data)
+
 	if not userCourse:
 		return {"error": "UserCourse not found"}, 404
 	if not userCourse.ownedBy(current_user.id):
@@ -244,7 +246,13 @@ def apiEditUserCourse(data={}):
 			return {"error": "User does not have access to this CourseCollection"}, 403
 		userCourse.course_collection_id = courseCollection.id
 	
-	# TODO: Add support for editing grade and passed
+	# TODO: Add support for editing grade
+
+	if "passed" in data:
+		try:
+			userCourse.passed = json.loads(data["passed"])
+		except:
+			return {"error": "passed must be a boolean"}, 400
 	
 	db.session.commit()
 	

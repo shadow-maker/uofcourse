@@ -1,20 +1,18 @@
 const courseContainers = document.querySelectorAll(".course-container")
 const courseItems = document.querySelectorAll(".course-item")
 
-function requestEditCollection(courseId, collectionId) {
+// AJAX for dragging course items
+
+function requestEditCollection(data) {
 	$.ajax({
-		data: {
-			id: courseId,
-			collection_id: collectionId,
-		},
+		data: data,
 		type: "PUT",
 		url: "/api/u/course",
 	}).done(function (data) {
 		console.log(data);
-		if (data.error) {
-			$("#errorPopup").show();
-			$("#errorPopup .message").text(data.error);
-		}
+		if (data.error)
+			$("#errorPopup").show()
+			$("#errorPopup .message").text(data.error)
 	})
 }
 
@@ -28,9 +26,12 @@ courseItems.forEach(item => {
 
 	item.addEventListener("dragend", () => {
 		item.classList.remove("dragging")
-		if (oldContainer != item.parentElement) {
-			requestEditCollection(item.getAttribute("db-id"), item.parentElement.getAttribute("db-id"))
-		}
+		
+		if (oldContainer != item.parentElement)
+			requestEditCollection({
+				id: item.getAttribute("db-id"),
+				collection_id: item.parentElement.getAttribute("db-id")
+			})
 	})
 })
 
@@ -43,16 +44,31 @@ courseContainers.forEach(container => {
 })
 
 
+// Normal form submission
+
+
 $(document).on("click", ".course-item", function () {
 	if (!this.classList.contains("dragging")) {
 		let form = $("#formEditUserCourse")
 
 		let courseId = this.getAttribute("db-id")
 		let courseCode = this.querySelector("#code").innerText
+		let coursePassed = this.getAttribute("db-passed")
 		let collectionId = this.parentElement.getAttribute("db-id")
 
-		form.find("#selectedCourse").val(courseId)
-		form.find("#selectedCoursePlaceholder").val(courseCode)
-		form.find("#selectedCollection").val(collectionId)
+		form.find("#selectCourse").val(courseId)
+		form.find("#selectCoursePlaceholder").val(courseCode)
+		form.find("#selectCollection").val(collectionId)
+
+		if (coursePassed == "true") {
+			form.find("#selectPassedTrue").prop("checked", true)
+			form.find("#selectPassedFalse").prop("checked", false)
+		} else if (coursePassed == "false") {
+			form.find("#selectPassedTrue").prop("checked", false)
+			form.find("#selectPassedFalse").prop("checked", true)
+		} else {
+			form.find("#selectPassedTrue").prop("checked", false)
+			form.find("#selectPassedFalse").prop("checked", false)
+		}
 	}
 });

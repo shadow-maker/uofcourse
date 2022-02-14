@@ -30,11 +30,12 @@
 				</div>
 				<div class="course-container card-body p-1" db-id="{{collection.id}}">
 					{% for uCourse in collection.userCourses %}
-					<div class="course-item m-1 btn bg-light card" db-id="{{uCourse.id}}" draggable="true"
+					<div class="course-item m-1 btn bg-light card" db-id="{{uCourse.id}}" db-passed="{{uCourse.passed | tojson | safe}}" draggable="true"
 						data-bs-toggle="modal" data-bs-target="#modalEditUserCourse">
 						<div class="row">
 							<span class="col-3">&#{{uCourse.course.getEmoji()}}</span>
-							<span id="code" class="col-6 mono-font">{{uCourse.course.subject.code}}-{{uCourse.course.code}}</span>
+							<span id="code"
+								class="col-6 mono-font">{{uCourse.course.subject.code}}-{{uCourse.course.code}}</span>
 							<span class="col-3 mono-font text-start">
 								{% if uCourse.gradeLetter %}
 								{{uCourse.gradeLetter}}
@@ -121,18 +122,18 @@
 				</div>
 				<div class="modal-body px-5">
 					<div class="row mb-2">
-						<label for="selectedCourse" class="col-3 col-form-label">Course</label>
+						<label for="selectCoursePlaceholder" class="col-3 col-form-label">Course</label>
 						<div class="col-9">
-							<input type="hidden" id="selectedCourse" name="id" value="">
-							<input type="text" id="selectedCoursePlaceholder" class="form-control col-9" value="" disabled readonly>
+							<input type="hidden" id="selectCourse" name="id" value="">
+							<input type="text" id="selectCoursePlaceholder" class="form-control col-9" value=""
+								disabled readonly>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-3">
-							<label class="col-3 col-form-label">Term</label>
-						</div>
+						<label class="col-3 col-form-label" for="selectCollection">Term</label>
 						<div class="col-9">
-							<select class="form-select" aria-label="Select term" name="collection_id" id="selectedCollection">
+							<select class="form-select" aria-label="Select term" name="collection_id"
+								id="selectCollection">
 								{% for collection in courseCollections %}
 								<option value="{{collection.id}}">
 									{% if collection.transfer %}
@@ -143,6 +144,20 @@
 								</option>
 								{% endfor %}
 							</select>
+						</div>
+					</div>
+					<div class="row">
+						<label class="col-3 col-form-label">Passed</label>
+						<div class="col-9 py-2">
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="passed" id="selectPassedTrue" value="true">
+								<label class="form-check-label" for="selectPassedTrue">Yes</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="passed" id="selectPassedFalse"
+									value="false">
+								<label class="form-check-label" for="selectPassedFalse">No</label>
+							</div>
 						</div>
 					</div>
 				</div>
