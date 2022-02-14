@@ -37,8 +37,8 @@
 							<span id="code"
 								class="col-6 mono-font">{{uCourse.course.subject.code}}-{{uCourse.course.code}}</span>
 							<span class="col-3 mono-font text-start">
-								{% if uCourse.gradeLetter %}
-								{{uCourse.gradeLetter}}
+								{% if uCourse.grade %}
+								{{uCourse.grade.symbol}}
 								{% else %}
 								-
 								{% endif %}
