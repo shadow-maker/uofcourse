@@ -289,7 +289,7 @@ class CourseCollection(db.Model):
 			if grade.gpv:
 				units = float(uCouse.course.units)
 				accUnits += units
-				points += (grade.gpv * units)
+				points += float(grade.gpv) * units
 		if accUnits == 0:
 			return None
 		return round(points / accUnits, precision)
