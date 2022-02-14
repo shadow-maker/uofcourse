@@ -30,7 +30,7 @@
 				</div>
 				<div class="course-container card-body p-1" db-id="{{collection.id}}">
 					{% for uCourse in collection.userCourses %}
-					<div class="course-item m-1 btn bg-light card" db-id="{{uCourse.id}}" db-passed="{{uCourse.passed | tojson | safe}}" draggable="true"
+					<div class="course-item m-1 btn bg-light card" db-id="{{uCourse.id}}" db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" draggable="true"
 						data-bs-toggle="modal" data-bs-target="#modalEditUserCourse">
 						<div class="row">
 							<span class="col-3">&#{{uCourse.course.getEmoji()}}</span>
@@ -50,7 +50,13 @@
 				<div class="card-footer">
 					<div class="row">
 						<span class="col-9 text-center">Term GPA</span>
-						<span class="col-3 mono-font text-start">{{collection.getGPA()}}</span>
+						<span class="col-3 mono-font text-start">
+							{% if collection.getGPA() %}
+							{{collection.getGPA()}}
+							{% else %}
+							-
+							{% endif %}
+						</span>
 					</div>
 				</div>
 			</div>
@@ -158,6 +164,20 @@
 									value="false">
 								<label class="form-check-label" for="selectPassedFalse">No</label>
 							</div>
+						</div>
+					</div>
+					<div class="row">
+						<label class="col-3 col-form-label" for="selectGrade">Grade</label>
+						<div class="col-9">
+							<select class="form-select" aria-label="Select grade" name="grade"
+								id="selectGrade">
+								<option value="0">-</option>
+								{% for grade in grades %}
+								<option value="{{grade.id}}">
+									{{grade.symbol}}
+								</option>
+								{% endfor %}
+							</select>
 						</div>
 					</div>
 				</div>

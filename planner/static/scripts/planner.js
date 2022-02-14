@@ -53,12 +53,16 @@ $(document).on("click", ".course-item", function () {
 
 		let courseId = this.getAttribute("db-id")
 		let courseCode = this.querySelector("#code").innerText
+		var courseGrade = this.getAttribute("db-grade")
+		if (courseGrade == "")
+			courseGrade = "0"
 		let coursePassed = this.getAttribute("db-passed")
 		let collectionId = this.parentElement.getAttribute("db-id")
 
 		form.find("#selectCourse").val(courseId)
 		form.find("#selectCoursePlaceholder").val(courseCode)
 		form.find("#selectCollection").val(collectionId)
+		form.find("#selectGrade").val(courseGrade)
 
 		if (coursePassed == "true") {
 			form.find("#selectPassedTrue").prop("checked", true)

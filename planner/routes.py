@@ -163,11 +163,12 @@ def viewAccount():
 def viewMyPlanner():
 	if not current_user.is_authenticated:
 		return redirectLogin()
-
+	
 	return render_template("myPlanner.html",
 		title = "My Plan",
 		header = "My Course Plan",
 		courseCollections = sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0),
+		grades = Grade.query.all(),
 		seasons = Season.query.all(),
 		years = getAllYears(False)
 	)

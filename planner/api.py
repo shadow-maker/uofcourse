@@ -231,8 +231,6 @@ def apiEditUserCourse(data={}):
 
 	userCourse = UserCourse.query.filter_by(id=data["id"]).first()
 
-	print(data)
-
 	if not userCourse:
 		return {"error": "UserCourse not found"}, 404
 	if not userCourse.ownedBy(current_user.id):
@@ -246,7 +244,18 @@ def apiEditUserCourse(data={}):
 			return {"error": "User does not have access to this CourseCollection"}, 403
 		userCourse.course_collection_id = courseCollection.id
 	
-	# TODO: Add support for editing grade
+	if "grade" in data:
+		try:
+			gradeId = json.loads(data["grade"])
+		except:
+			return {"error": "grade must be a float"}, 400
+		if gradeId == 0:
+			gradeId = None
+		else:
+			grade = Grade.query.filter_by(id=gradeId).first()
+			if not grade:
+				return {"error": "Grade not found"}, 404
+		userCourse.grade_id = gradeId
 
 	if "passed" in data:
 		try:
