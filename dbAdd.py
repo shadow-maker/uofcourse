@@ -1,7 +1,10 @@
 from planner import db
-from planner.models import Role, Season, Term
+from planner.models import *
+from bs4 import BeautifulSoup
 
-import json
+import json, requests
+
+# ADD ROLES
 
 roles = {
 	1 : "user",
@@ -23,7 +26,7 @@ for id, name in roles.items():
 		db.session.add(role)
 		db.session.commit()
 
-termsFile = "backups/terms.json"
+# ADD SEASONS
 
 seasons = ["winter", "spring", "summer", "fall"]
 
@@ -42,6 +45,10 @@ for i in range(len(seasons)):
 		db.session.add(s)
 		db.session.commit()
 
+# ADD TERMS
+
+termsFile = "backups/terms.json"
+
 with open(termsFile, "r") as file:
 	terms = json.load(file)
 
@@ -52,7 +59,7 @@ for tId, term in terms.items():
 		print(f"ERROR: term '{term}' is not formatted correctly")
 		continue
 	try:
-		sId = seasons.index(season) + 1
+		sId = seasons.index(season.lower()) + 1
 	except:
 		print(f"ERROR: Season '{season}' not found")
 		continue
@@ -76,4 +83,40 @@ for tId, term in terms.items():
 		print(f"CREATING TERM {tId}")
 		t = Term(id=tId, season_id=sId, year=year)
 		db.session.add(t)
+		db.session.commit()
+
+# ADD GRADES
+
+systemWebsite = "https://www.ucalgary.ca/pubs/calendar/current/f-1-1.html"
+
+r = requests.get(systemWebsite)
+soup = BeautifulSoup(r.text, features="html.parser")
+
+content = soup.find(id="ctl00_ctl00_pageContent")
+table = content.find("tbody")
+rows = table.find_all("tr")[1:]
+
+for i, row in enumerate(rows):
+	try:
+		symbol, gpv, desc = [i.text.strip().split("\n")[0] for i in row.find_all("td")]
+		gpv = float(gpv) if gpv else None
+	except:
+		print(f"ERROR: Could not parse row {i + 1}")
+		pass
+
+	g = Grade.query.filter_by(symbol=symbol).first()
+
+	if g:
+		print(f"GRADE with symbol '{symbol}' ALREADY EXISTS")
+		if g.gpv != gpv:
+			print(f"  - gpv does not match: (db) {g.gpv} != {gpv}, updating...")
+			g.gpv = gpv
+		if g.desc != desc:
+			print(f"  - description does not match: (db) {g.desc} != {desc}, updating...")
+			g.desc = desc
+		db.session.commit()
+	else:
+		print(f"CREATING GRADE with symbol '{symbol}'")
+		g = Grade(symbol, gpv, desc)
+		db.session.add(g)
 		db.session.commit()
