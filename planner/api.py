@@ -37,6 +37,18 @@ def apiTermById(id):
 	return apiById(Term, id)
 
 
+# Grade
+
+@app.route("/api/grades", methods=["GET"])
+def apiGrades():
+	return jsonify([dict(grade) for grade in Grade.query.all()])
+
+
+@app.route("/api/f/id/<id>", methods=["GET"])
+def apiGradeById(id):
+	return apiById(Grade, id)
+
+
 # Faculty
 
 @app.route("/api/f/id/<id>", methods=["GET"])
