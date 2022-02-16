@@ -90,7 +90,7 @@ class Faculty(db.Model):
 	users = db.relationship("User", backref="faculty")
 	subjects = db.relationship("Subject", backref="faculty")
 
-	def getEmoji(self, default=None):
+	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
 			return self.emoji
 		return default
@@ -115,7 +115,7 @@ class Subject(db.Model):
 
 	courses = db.relationship("Course", backref="subject")
 
-	def getEmoji(self, default=None):
+	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
 			return self.emoji
 		return self.faculty.getEmoji(default)
