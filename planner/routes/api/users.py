@@ -20,7 +20,7 @@ user = Blueprint("users", __name__, url_prefix="/users")
 
 # User Course
 
-@user.route("/u/course", methods=["PUT"])
+@user.route("/course", methods=["PUT"])
 def apiEditUserCourse(data={}):
 	if not current_user.is_authenticated:
 		return {"error": "User not logged in"}, 401
@@ -77,8 +77,8 @@ def apiEditUserCourse(data={}):
 
 # CourseCollection
 
-@user.route("/u/collection", defaults={"id":None}, methods=["DELETE"])
-@user.route("/u/collection/<id>", methods=["DELETE"])
+@user.route("/collection", defaults={"id":None}, methods=["DELETE"])
+@user.route("/collection/<id>", methods=["DELETE"])
 def apiDelCourseCollection(data={}, id=None):
 	if not current_user.is_authenticated:
 		return {"error": "User not logged in"}, 401
