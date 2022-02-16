@@ -16,4 +16,4 @@ def getTerms():
 
 @term.route("/<id>", methods=["GET"])
 def getTermById(id):
-	return apiById(Term, id)
+	return getById(Term, id)

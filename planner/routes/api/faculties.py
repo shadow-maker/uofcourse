@@ -1,4 +1,4 @@
-from planner.models import Term
+from planner.models import Faculty
 from planner.routes.api.utils import *
 
 from flask import Blueprint, request
@@ -16,4 +16,4 @@ def getFaculties():
 
 @faculty.route("/<id>", methods=["GET"])
 def getFacultyById(id):
-	return apiById(Faculty, id)
+	return getById(Faculty, id)

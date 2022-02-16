@@ -20,12 +20,12 @@ def getCourses():
 
 @course.route("/<id>", methods=["GET"])
 def getCourseById(id):
-	return apiById(Course, id)
+	return getById(Course, id)
 
 
 @course.route("/code/<subjCode>/<courseCode>", methods=["GET"])
-def apiCourseByCode(subjCode, courseCode):
-	subject = getSubjectByCode(subjCode)
+def getCourseByCode(subjCode, courseCode):
+	subject = utils.getSubjectByCode(subjCode)
 	if not subject:
 		return {"error": f"Subject with code {subjCode} does not exist"}, 404
 	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
@@ -35,7 +35,7 @@ def apiCourseByCode(subjCode, courseCode):
 
 
 @course.route("/filter", methods=["GET"])
-def apiCoursesFilter():
+def getCoursesFilter():
 	allLevels = COURSE_LEVELS
 	allFaculties = [f[0] for f in list(db.session.query(Faculty).values(Faculty.id))]
 	allSubjects = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
@@ -76,7 +76,7 @@ def apiCoursesFilter():
 				subjects.append(s)
 			else:
 				try:
-					subjects.append(getSubjectByCode(s).id)
+					subjects.append(utils.getSubjectByCode(s).id)
 				except:
 					pass
 		if not subjects:

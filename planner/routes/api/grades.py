@@ -16,4 +16,4 @@ def getGrades():
 
 @grade.route("/<id>", methods=["GET"])
 def getGradeById(id):
-	return apiById(Grade, id)
+	return getById(Grade, id)

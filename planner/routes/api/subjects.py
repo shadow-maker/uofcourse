@@ -16,11 +16,11 @@ def getSubjects():
 
 @subject.route("/<id>", methods=["GET"])
 def getSubjectById(id):
-	return apiById(Subject, id)
+	return getById(Subject, id)
 
 @subject.route("/code/<code>", methods=["GET"])
-def getSubjectByCodes(code):
-	subject = getSubjectByCode(code)
+def getSubjectByCode(code):
+	subject = utils.getSubjectByCode(code)
 	if not subject:
 		return {"error": f"Subject with code {code} does not exist"}, 404
 	return dict(subject), 200

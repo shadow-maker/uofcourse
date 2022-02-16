@@ -1,22 +1,17 @@
+from planner import queryUtils as utils
 from planner.constants import *
-from planner.queryUtils import *
-
-from flask import jsonify
+from planner.models import Course
 
 SORT_OPTIONS = [
 	[Course.code, Course.name],
 	[Course.name, Course.code]
 ]
 
-def apiById(table, id):
-	obj = getById(table, id)
+def getById(table, id):
+	obj = utils.getById(table, id)
 	if not obj:
 		return {"error": f"{table.__name__} with id {id} does not exist"}, 404
 	return dict(obj), 200
-
-
-def apiGetAll(table):
-	return jsonify([dict(obj) for obj in table.query.all()]), 200
 
 
 def getAll(table, args):
