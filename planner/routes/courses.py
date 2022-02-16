@@ -1,0 +1,113 @@
+from planner import db
+from planner.models import Faculty, Subject, Course
+from planner.queryUtils import *
+from planner.constants import *
+
+from flask import Blueprint, render_template, flash, redirect
+from flask.helpers import url_for
+
+import random
+
+courses = Blueprint("courses", __name__)
+
+#
+# Routes
+#
+
+@courses.route("/f/<facId>")
+def viewFaculty(facId):
+	faculty = getById(Faculty, facId)
+	if not faculty:
+		flash(f"Faculty with id {facId} does not exist!", "danger")
+		return redirect(url_for("main.viewHome"))
+	return render_template("faculty.html",
+		title = "Faculty",
+		header = "Faculty",
+		faculty = faculty
+	)
+
+
+@courses.route("/s/<subjCode>")
+@courses.route("/c/<subjCode>")
+def viewSubject(subjCode):
+	subject = getSubjectByCode(subjCode)
+	if not subject:
+		flash(f"Subject with code {subjCode} does not exist!", "danger")
+		return redirect(url_for("main.viewHome"))
+	faculty = subject.faculty
+	return render_template("subject.html",
+		title=subjCode.upper(),
+		header=f"Subject - {subject.name}",
+		subject=subject,
+		faculty=faculty,
+		courses=subject.courses,
+		backlinks={
+			faculty.name: url_for("courses.viewFaculty", facId=faculty.id),
+			subject.code: ""
+		}.items()
+	)
+
+
+@courses.route("/c/<subjCode>/<courseCode>")
+def viewCourse(subjCode, courseCode):
+	subject = getSubjectByCode(subjCode)
+	if not subject:
+		flash(f"Subject with code {subjCode} does not exist!", "danger")
+		return redirect(url_for("main.viewHome"))
+	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
+	if not course:
+		flash(f"Course with code {subjCode}-{courseCode} does not exist!", "danger")
+		return redirect(url_for("main.viewHome"))
+	faculty = subject.faculty
+	return render_template("course.html",
+		title=f"{subjCode.upper()}-{courseCode.upper()}",
+		course=course,
+		subject=subject,
+		faculty=faculty,
+		backlinks={
+			faculty.name: url_for("courses.viewFaculty", facId=faculty.id),
+			subject.code: url_for("courses.viewSubject", subjCode=subject.code),
+			course.code: ""
+		}.items()
+	)
+
+
+@courses.route("/c/id/<courseId>")
+def courseById(courseId):
+	course = getById(Course, courseId)
+	if not course:
+		flash(f"Course with id {courseId} does not exist!", "danger")
+		return redirect(url_for("main.viewHome"))
+	return redirect(url_for("courses.viewCourse", subjCode=course.subject.code, courseCode=course.code))
+
+
+@courses.route("/c/random")
+def courseRandom():
+	course = None
+	while not course:
+		course = Course.query[random.randrange(0, Course.query.count())]
+	return redirect(url_for("courses.courseById", courseId=course.id))
+
+
+@courses.route("/c", methods=["GET", "POST"])
+def viewCourses():
+	levels = {str(l) : True for l in COURSE_LEVELS}
+	faculties = {
+		str(f[0]) : {"name": f[1], "sel": True}
+	for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))}
+	subjects = {
+		s[0] : {"id": s[1], "name": s[2], "sel": False}
+	for s in list(db.session.query(Subject).values(Subject.code, Subject.id, Subject.name))}
+	subjects = {k : subjects[k] for k in sorted(subjects)}
+
+	return render_template("coursesFilter.html",
+		title = "Courses",
+		header = f"Courses",
+		sortOpt = 0,
+		asc = True,
+		filterData = {
+			"levels": levels,
+			"faculties": faculties,
+			"subjects": subjects
+		}
+	)

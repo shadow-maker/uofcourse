@@ -4,7 +4,7 @@
 
 <div class="container">
 	{% for c in courses %}
-		<a class="container row bg-light m-2 px-3 py-2 rounded" href="{{url_for('viewCourse', subjCode=subject.code, courseCode=c.code)}}">
+		<a class="container row bg-light m-2 px-3 py-2 rounded" href="{{url_for('courses.viewCourse', subjCode=subject.code, courseCode=c.code)}}">
 			<h5 class="col-1 p-0 m-0 mono-font">{{c.code}}</h5>
 			<h5 class="col-10 p-0 m-0">{{c.name}}</h5>
 		</a>

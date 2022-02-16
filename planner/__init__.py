@@ -27,4 +27,11 @@ loginManager = LoginManager(app)
 from datetime import datetime, timedelta
 utcoffset = timedelta(hours=round(((datetime.now() - datetime.utcnow()).seconds / 3600) - 24))
 
-from planner import routes
+from planner.routes import *
+
+app.register_blueprint(api)
+app.register_blueprint(main)
+app.register_blueprint(auth)
+app.register_blueprint(account)
+app.register_blueprint(courses)
+app.register_blueprint(error)

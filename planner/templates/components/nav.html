@@ -1,7 +1,7 @@
 <div class="container-fluid bg-light sticky-top px-md-5 mb-4 border-bottom border-white border-2">
 	<nav class="navbar navbar-expand-xl navbar-light px-md-5" style="z-index: 10000;">
 
-		<a href="{{url_for('viewHome')}}" class="navbar-brand">UofC Planner</a>
+		<a href="{{url_for('main.viewHome')}}" class="navbar-brand">UofC Planner</a>
 
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#toggleMobileMenu"
 			aria-controls="toggleMobileMenu" aria-expanded="false" arial-label="Toggle navigation">
@@ -11,38 +11,38 @@
 		<div class="collapse navbar-collapse d-md-flex justify-content-between" id="toggleMobileMenu">
 			<ul class="navbar-nav text-center">
 				<li>
-					<a class="nav-link" href="{{url_for('viewCourses')}}">Course Search</a>
+					<a class="nav-link" href="{{url_for('courses.viewCourses')}}">Course Search</a>
 				</li>
 				<li>
-					<a class="nav-link" href="{{url_for('viewAbout')}}">About</a>
+					<a class="nav-link" href="{{url_for('main.viewAbout')}}">About</a>
 				</li>
 			</ul>
 
 			<ul class="navbar-nav text-center">
 				{% if current_user.is_authenticated %}
 					<li class="m-1">
-						<a class="nav-link" href="{{url_for('viewMyPlanner')}}">
+						<a class="nav-link" href="{{url_for('account.viewMyPlanner')}}">
 							My Planner
 						</a>
 					</li>
 					<li class="m-1">
-						<a class="nav-link" href="{{url_for('viewAccount')}}">
+						<a class="nav-link" href="{{url_for('account.viewAccount')}}">
 							My Account
 						</a>
 					</li>
 					<li class="m-1">
-						<a class="btn btn-outline-primary d-block" href="{{url_for('logout')}}">
+						<a class="btn btn-outline-primary d-block" href="{{url_for('auth.logout')}}">
 							Log Out
 						</a>
 					</li>
 				{% else %}
 					<li class="m-1">
-						<a class="btn btn-outline-info d-block" href="{{url_for('login')}}">
+						<a class="btn btn-outline-info d-block" href="{{url_for('auth.login')}}">
 							Log In
 						</a>
 					</li>
 					<li class="m-1">
-						<a class="btn btn-outline-primary d-block" href="{{url_for('signup')}}">
+						<a class="btn btn-outline-primary d-block" href="{{url_for('auth.signup')}}">
 							Sign Up
 						</a>
 					</li>

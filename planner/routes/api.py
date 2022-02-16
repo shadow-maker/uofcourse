@@ -1,10 +1,13 @@
-from flask_login import current_user
+from flask import Blueprint
+api = Blueprint("template", __name__)
+
 from planner import app, db
 from planner.models import *
 from planner.queryUtils import *
 from planner.constants import *
 
 from flask import request, jsonify
+from flask_login import current_user
 
 import json
 
@@ -26,42 +29,42 @@ def apiById(table, id):
 
 # Term
 
-@app.route("/api/terms", methods=["GET"])
+@api.route("/api/terms", methods=["GET"])
 def apiTerms():
 	return jsonify([dict(term) for term in Term.query.all()])
 
-@app.route("/api/t/id/<id>", methods=["GET"])
+@api.route("/api/t/id/<id>", methods=["GET"])
 def apiTermById(id):
 	return apiById(Term, id)
 
 
 # Grade
 
-@app.route("/api/grades", methods=["GET"])
+@api.route("/api/grades", methods=["GET"])
 def apiGrades():
 	return jsonify([dict(grade) for grade in Grade.query.all()])
 
 
-@app.route("/api/f/id/<id>", methods=["GET"])
+@api.route("/api/f/id/<id>", methods=["GET"])
 def apiGradeById(id):
 	return apiById(Grade, id)
 
 
 # Faculty
 
-@app.route("/api/f/id/<id>", methods=["GET"])
+@api.route("/api/f/id/<id>", methods=["GET"])
 def apiFacultyById(id):
 	return apiById(Faculty, id)
 
 
 # Subject
 
-@app.route("/api/s/id/<id>", methods=["GET"])
+@api.route("/api/s/id/<id>", methods=["GET"])
 def apiSubjectById(id):
 	return apiById(Subject, id)
 
 
-@app.route("/api/s/code/<code>", methods=["GET"])
+@api.route("/api/s/code/<code>", methods=["GET"])
 def apiSubjectByCode(code):
 	subject = getSubjectByCode(code)
 	if not subject:
@@ -71,12 +74,12 @@ def apiSubjectByCode(code):
 
 # Course
 
-@app.route("/api/c/id/<id>", methods=["GET"])
+@api.route("/api/c/id/<id>", methods=["GET"])
 def apiCourseById(id):
 	return apiById(Course, id)
 
 
-@app.route("/api/c/code/<subjCode>/<courseCode>", methods=["GET"])
+@api.route("/api/c/code/<subjCode>/<courseCode>", methods=["GET"])
 def apiCourseByCode(subjCode, courseCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
@@ -166,7 +169,7 @@ def apiCoursesFilterHelper(data={}):
 	}
 
 
-@app.route("/api/c/filter", methods=["GET"])
+@api.route("/api/c/filter", methods=["GET"])
 def apiCoursesFilter():
 	return apiCoursesFilterHelper({
 		"sort": request.args.get("sort", default=0, type=int),
@@ -186,7 +189,7 @@ def apiCoursesFilter():
 
 # CourseCollection
 
-@app.route("/api/u/collection", methods=["POST"])
+@api.route("/api/u/collection", methods=["POST"])
 def apiAddCourseCollection(data={}):
 	if not current_user.is_authenticated:
 		return {"error": "User not logged in"}, 401
@@ -227,7 +230,7 @@ def apiAddCourseCollection(data={}):
 #
 
 
-@app.route("/api/u/course", methods=["PUT"])
+@api.route("/api/u/course", methods=["PUT"])
 def apiEditUserCourse(data={}):
 	if not current_user.is_authenticated:
 		return {"error": "User not logged in"}, 401
@@ -284,8 +287,8 @@ def apiEditUserCourse(data={}):
 
 # CourseCollection
 
-@app.route("/api/u/collection", defaults={"id":None}, methods=["DELETE"])
-@app.route("/api/u/collection/<id>", methods=["DELETE"])
+@api.route("/api/u/collection", defaults={"id":None}, methods=["DELETE"])
+@api.route("/api/u/collection/<id>", methods=["DELETE"])
 def apiDelCourseCollection(data={}, id=None):
 	if not current_user.is_authenticated:
 		return {"error": "User not logged in"}, 401
