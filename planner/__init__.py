@@ -1,4 +1,4 @@
-from planner.dbConfig import *
+from planner.config import DatabaseConfig, Config
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -6,17 +6,12 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_migrate import Migrate
 
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql://{DB_USER}:{DB_PSSW}@{DB_ADDRESS}/{DB_NAME}"
-app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
-app.config["SQLALCHEMY_POOL_TIMEOUT"] = 20
+
+dbConfig = DatabaseConfig()
+config = Config(dbConfig)
+app.config.from_object(Config)
+
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
@@ -27,4 +22,10 @@ loginManager = LoginManager(app)
 from datetime import datetime, timedelta
 utcoffset = timedelta(hours=round(((datetime.now() - datetime.utcnow()).seconds / 3600) - 24))
 
-from planner import routes
+from planner.routes.api import api
+from planner.routes.views import view
+from planner.routes.errors import error
+
+app.register_blueprint(api)
+app.register_blueprint(view)
+app.register_blueprint(error)

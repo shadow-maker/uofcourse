@@ -5,7 +5,7 @@ function updateResults(data) {
 	$(".loaded").show()
 
 	$("#coursesContainer").empty()
-	for (let course of data.courses) {
+	for (let course of data.results) {
 		$("#coursesContainer").append(`
 			<div class="course-item card mb-3 bg-light">
 				<div class="card-body row px-4 py-2">
@@ -64,7 +64,7 @@ function requestResults(after) {
 
 	var data = {
 		sort: $("#sortBy").val(),
-		order: $("#orderBy").val(),
+		asc: $("#orderBy").val(),
 		levels: JSON.stringify(selectedLevel),
 		faculties: JSON.stringify(selectedFaculty),
 		subjects: JSON.stringify(selectedSubject),
@@ -83,7 +83,7 @@ function requestResults(after) {
 	$.ajax({
 		data: data,
 		type: "GET",
-		url: "/api/c/filter",
+		url: "/api/courses/filter",
 	}).done(function (data) {
 		after(data)
 	})

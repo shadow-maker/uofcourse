@@ -31,8 +31,8 @@
 							</select>
 							<select id="orderBy" name="orderBy" class="form-select form-select-sm"
 								aria-label="Sort options">
-								<option value="asc" {% if asc %}selected{% endif %}>Ascending</option>
-								<option value="desc" {% if not asc %}selected{% endif %}>Descending</option>
+								<option value="1" {% if asc %}selected{% endif %}>Ascending</option>
+								<option value="0" {% if not asc %}selected{% endif %}>Descending</option>
 							</select>
 						</div>
 					</div>
@@ -172,17 +172,6 @@
 	</div>
 </div>
 
-<div class="fixed-bottom mb-1">
-	<div id="errorPopup" onclick="$(this).alert('close')" style="display: none;"
-		class="popup alert alert-danger fade show mx-2 mx-md-5 mb-2 mb-md-3">
-		<div class="d-flex justify-content-between">
-			<span>
-				<b>FILTERING ERROR:</b>
-				<span class="message"></span>
-			</span>
-			<span><i class="bi-x-lg"></i></span>
-		</div>
-	</div>
-</div>
+{% include "components/error.html" %}
 
 {% endblock %}

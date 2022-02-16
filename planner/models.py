@@ -1,6 +1,6 @@
 from planner import db, bcrypt
-from planner.constants import DEFAULT_EMOJI, LETTER_TO_GPA
 from planner.adminView import admin, adminModelView
+from planner.constants import *
 
 from flask import request
 from flask_login import UserMixin
@@ -18,6 +18,10 @@ class Season(db.Model):
 
 	def __repr__(self):
 		return f"SEASON {self.name} (#{self.id})"
+
+	def __iter__(self):
+		yield "id", self.id
+		yield "name", self.name
 
 class Term(db.Model):
 	__tablename__ = "term"
@@ -48,6 +52,36 @@ class Term(db.Model):
 		yield "end", self.end
 
 #
+# GRADE DB
+#
+
+class Grade(db.Model):
+	__tablename__ = "grade"
+	id = db.Column(db.Integer, primary_key=True)
+	symbol = db.Column(db.String(2), nullable=False)
+	gpv = db.Column(db.Numeric(4, 2))
+	passed = db.Column(db.Boolean, nullable=False, default=True)
+	desc = db.Column(db.String(256))
+
+	userCourses = db.relationship("UserCourse", backref="grade")
+
+	def __init__(self, symbol, gpv, desc, passed=True):
+		self.symbol = symbol
+		self.gpv = gpv
+		self.desc = desc
+		self.passed = passed
+
+	def __repr__(self):
+		return f"GRADE {self.symbol} ({self.gpv}) {'PASSED' if self.passed else 'FAILED'} (#{self.id})"
+
+	def __iter__(self):
+		yield "id", self.id
+		yield "symbol", self.symbol
+		yield "gpv", self.gpv
+		yield "passed", self.passed
+		yield "desc", self.desc
+
+#
 # COURSE DB
 #
 
@@ -60,7 +94,7 @@ class Faculty(db.Model):
 	users = db.relationship("User", backref="faculty")
 	subjects = db.relationship("Subject", backref="faculty")
 
-	def getEmoji(self, default=None):
+	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
 			return self.emoji
 		return default
@@ -85,7 +119,7 @@ class Subject(db.Model):
 
 	courses = db.relationship("Course", backref="subject")
 
-	def getEmoji(self, default=None):
+	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
 			return self.emoji
 		return self.faculty.getEmoji(default)
@@ -181,7 +215,8 @@ class User(db.Model, UserMixin):
 	entryYear = db.Column(db.Integer)
 	neededUnits = db.Column(db.Numeric(3, 2))
 
-	courseCollections = db.relationship("CourseCollection", backref="user")
+	collections = db.relationship("CourseCollection", backref="user")
+	tags = db.relationship("UserTag", backref="user")
 
 	def __init__(self, ucid, name, email, passw, faculty_id):
 		self.ucid = ucid
@@ -190,7 +225,8 @@ class User(db.Model, UserMixin):
 		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
 		self.faculty_id = faculty_id
 
-		self.courseCollections.append(CourseCollection(self.id))
+		self.collections.append(CourseCollection(self.id))
+		self.tags.append(UserTag(self.id, "Starred", STARRED_COLOR, STARRED_EMOJI))
 
 	def updatePassw(self, passw):
 		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
@@ -214,6 +250,30 @@ class User(db.Model, UserMixin):
 		yield "neededUnits", self.neededUnits
 
 
+course_tag = db.Table("course_tag",
+	db.Column("user_tag_id", db.Integer, db.ForeignKey("user_tag.id"), nullable=False),
+	db.Column("course_id", db.Integer, db.ForeignKey("course.id"), nullable=False)
+)
+
+
+class UserTag(db.Model):
+	__tablename__ = "user_tag"
+	id = db.Column(db.Integer, primary_key=True)
+	user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+	name = db.Column(db.String(16), nullable=False)
+	color = db.Column(db.Integer, nullable=False)
+	emoji = db.Column(db.Integer)
+	deletable = db.Column(db.Boolean, nullable=False, default=True)
+
+	courses = db.relationship("Course", secondary=course_tag, backref="userTags")
+
+	def __init__(self, user_id, name, color, emoji=None):
+		self.user_id = user_id
+		self.name = name
+		self.color = color
+		self.emoji = emoji
+
+
 class CourseCollection(db.Model):
 	__tablename__ = "course_collection"
 	id = db.Column(db.Integer, primary_key=True)
@@ -223,16 +283,17 @@ class CourseCollection(db.Model):
 
 	userCourses = db.relationship("UserCourse", backref="collection")
 
-	def getGPA(self, precision=3, conversion=LETTER_TO_GPA):
+	def getGPA(self, precision=3):
 		points = 0
 		accUnits = 0
 		for uCouse in self.userCourses:
-			units = float(uCouse.course.units)
-			accUnits += units
-			gpv = uCouse.getGPV(conversion)
-			if not gpv:
+			grade = uCouse.grade
+			if not grade:
 				return None
-			points += (gpv * units)
+			if grade.gpv:
+				units = float(uCouse.course.units)
+				accUnits += units
+				points += float(grade.gpv) * units
 		if accUnits == 0:
 			return None
 		return round(points / accUnits, precision)
@@ -254,26 +315,26 @@ class UserCourse(db.Model):
 	course_collection_id = db.Column(db.Integer, db.ForeignKey("course_collection.id"), nullable=False)
 	course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
 
-	gradePercent = db.Column(db.Numeric(4, 2))
-	gradeLetter = db.Column(db.String(2))
+	grade_id = db.Column(db.Integer, db.ForeignKey("grade.id"))
 	passed = db.Column(db.Boolean)
 
-	def getGPV(self, conversion=LETTER_TO_GPA):
-		if not self.gradeLetter:
-			return None
-		return conversion[self.gradeLetter]
+	def ownedBy(self, user_id):
+		return self.collection.user_id == user_id
+
+	def getTags(self):
+		return [tag for tag in self.course.userTags if tag.user_id == self.collection.user_id]
 
 	def __init__(self, course_collection_id, course_id):
 		self.course_collection_id = course_collection_id
-		self.course_id = course_id
 
 	def __repr__(self):
 		return f"USER_COURSE (#{self.id}): CourseCollection {self.course_collection_id} - Course {self.course_id}"
-
+		
 
 db.create_all()
 
 admin.add_view(adminModelView(User, db.session))
+admin.add_view(adminModelView(Grade, db.session))
 admin.add_view(adminModelView(Course, db.session))
 admin.add_view(adminModelView(Subject, db.session))
 admin.add_view(adminModelView(Faculty, db.session))
