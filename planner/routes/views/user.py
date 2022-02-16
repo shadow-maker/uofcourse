@@ -109,7 +109,7 @@ def delCourseCollection():
 
 @view.route("/my/edit/course", methods=["PUT", "POST"])
 def editUserCourse():
-	response, _ = apiEditUserCourse(request.form.to_dict())
+	response, _ = putUserCourse(request.form.to_dict())
 
 	if "error" in response:
 		flash(f"ERROR: {response['error']}", "danger")
