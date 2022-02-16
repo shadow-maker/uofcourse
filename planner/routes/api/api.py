@@ -44,7 +44,7 @@ def apiGrades():
 	return jsonify([dict(grade) for grade in Grade.query.all()])
 
 
-@api.route("/f/id/<id>", methods=["GET"])
+@api.route("/g/id/<id>", methods=["GET"])
 def apiGradeById(id):
 	return apiById(Grade, id)
 
