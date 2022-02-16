@@ -1,7 +1,7 @@
 <div class="container-fluid bg-light sticky-top px-md-5 mb-4 border-bottom border-white border-2">
 	<nav class="navbar navbar-expand-xl navbar-light px-md-5" style="z-index: 10000;">
 
-		<a href="{{url_for('view.viewHome')}}" class="navbar-brand">UofC Planner</a>
+		<a href="{{url_for('view.home')}}" class="navbar-brand">UofC Planner</a>
 
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#toggleMobileMenu"
 			aria-controls="toggleMobileMenu" aria-expanded="false" arial-label="Toggle navigation">
@@ -14,19 +14,19 @@
 					<a class="nav-link" href="{{url_for('view.courses')}}">Course Search</a>
 				</li>
 				<li>
-					<a class="nav-link" href="{{url_for('view.viewAbout')}}">About</a>
+					<a class="nav-link" href="{{url_for('view.about')}}">About</a>
 				</li>
 			</ul>
 
 			<ul class="navbar-nav text-center">
 				{% if current_user.is_authenticated %}
 					<li class="m-1">
-						<a class="nav-link" href="{{url_for('view.viewMyPlanner')}}">
+						<a class="nav-link" href="{{url_for('view.planner')}}">
 							My Planner
 						</a>
 					</li>
 					<li class="m-1">
-						<a class="nav-link" href="{{url_for('view.viewAccount')}}">
+						<a class="nav-link" href="{{url_for('view.account')}}">
 							My Account
 						</a>
 					</li>

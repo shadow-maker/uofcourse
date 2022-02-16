@@ -12,7 +12,7 @@ from flask_login import current_user
 
 
 @view.route("/account")
-def viewAccount():
+def account():
 	if not current_user.is_authenticated:
 		return redirectLogin()
 	
@@ -23,7 +23,7 @@ def viewAccount():
 	)
 
 @view.route("/my")
-def viewMyPlanner():
+def planner():
 	if not current_user.is_authenticated:
 		return redirectLogin()
 	
@@ -40,7 +40,7 @@ def viewMyPlanner():
 def addCourseCollection():
 	def ret(message, category):
 		flash(message, category)
-		return redirect(url_for("view.viewMyPlanner"))
+		return redirect(url_for("view.planner"))
 
 	if not current_user.is_authenticated:
 		return ret("ERROR: User not logged in", "danger")
@@ -77,7 +77,7 @@ def addCourseCollection():
 def delCourseCollection():
 	def ret(message, category):
 		flash(message, category)
-		return redirect(url_for("view.viewMyPlanner"))
+		return redirect(url_for("view.planner"))
 
 	if not current_user.is_authenticated:
 		return ret("ERROR: User not logged in", "danger")
@@ -104,7 +104,7 @@ def delCourseCollection():
 
 	flash(f"Term removed!", "success")
 
-	return redirect(url_for("view.viewMyPlanner"))
+	return redirect(url_for("view.planner"))
 
 
 @view.route("/my/edit/course", methods=["PUT", "POST"])
@@ -114,4 +114,4 @@ def editUserCourse():
 	if "error" in response:
 		flash(f"ERROR: {response['error']}", "danger")
 
-	return redirect(url_for("view.viewMyPlanner"))
+	return redirect(url_for("view.planner"))

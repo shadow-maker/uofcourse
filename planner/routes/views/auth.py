@@ -23,11 +23,11 @@ def loadUser(uId):
 def signup():
 	if current_user.is_authenticated:
 		flash(f"You are already authenticated!", "success")
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 
 	if not ALLOW_ACCOUNT_CREATION:
 		flash(f"Account creation is currently disabled!", "warning")
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 
 	form = registerForm()
 	if form.validate_on_submit():
@@ -43,7 +43,7 @@ def signup():
 			db.session.commit()
 			flash(f"Account created!", "success")
 			return redirect(url_for("view.login"))
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 
 	return render_template("signup.html",
 		title="Sign Up",
@@ -55,7 +55,7 @@ def signup():
 def login():
 	if current_user.is_authenticated:
 		flash(f"You are already authenticated!", "success")
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 	form = loginForm()
 	if form.validate_on_submit():
 		if not userExists(form.ucid.data):
@@ -65,7 +65,7 @@ def login():
 			if bcrypt.check_password_hash(user.passw, form.passw.data):
 				login_user(user, remember=form.remember.data)
 				flash(f"Log in successful! (#{user.id})", "success")
-				return redirect(url_for("view.viewHome"))
+				return redirect(url_for("view.home"))
 			else:
 				flash(f"Incorrect password!", "danger")
 	return render_template("login.html",
@@ -79,4 +79,4 @@ def logout():
 	if not current_user.is_authenticated:
 		return redirect(url_for("view.logout"))
 	logout_user()
-	return redirect(url_for("view.viewHome"))
+	return redirect(url_for("view.home"))

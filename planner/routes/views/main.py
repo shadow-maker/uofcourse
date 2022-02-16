@@ -8,10 +8,10 @@ from flask import render_template
 
 @view.route("/home")
 @view.route("/")
-def viewHome():
+def home():
 	return render_template("index.html", header="UofC Planner")
 
 
 @view.route("/about")
-def viewAbout():
+def about():
 	return render_template("about.html", title="About", header="About UofC Planner")
