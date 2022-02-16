@@ -16,7 +16,7 @@ def viewFaculty(facId):
 	faculty = getById(Faculty, facId)
 	if not faculty:
 		flash(f"Faculty with id {facId} does not exist!", "danger")
-		return redirect(url_for("main.viewHome"))
+		return redirect(url_for("view.viewHome"))
 	return render_template("faculty.html",
 		title = "Faculty",
 		header = "Faculty",
@@ -30,7 +30,7 @@ def viewSubject(subjCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
-		return redirect(url_for("main.viewHome"))
+		return redirect(url_for("view.viewHome"))
 	faculty = subject.faculty
 	return render_template("subject.html",
 		title=subjCode.upper(),
@@ -50,11 +50,11 @@ def viewCourse(subjCode, courseCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
-		return redirect(url_for("main.viewHome"))
+		return redirect(url_for("view.viewHome"))
 	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
 	if not course:
 		flash(f"Course with code {subjCode}-{courseCode} does not exist!", "danger")
-		return redirect(url_for("main.viewHome"))
+		return redirect(url_for("view.viewHome"))
 	faculty = subject.faculty
 	return render_template("course.html",
 		title=f"{subjCode.upper()}-{courseCode.upper()}",
@@ -74,7 +74,7 @@ def courseById(courseId):
 	course = getById(Course, courseId)
 	if not course:
 		flash(f"Course with id {courseId} does not exist!", "danger")
-		return redirect(url_for("main.viewHome"))
+		return redirect(url_for("view.viewHome"))
 	return redirect(url_for("view.viewCourse", subjCode=course.subject.code, courseCode=course.code))
 
 
