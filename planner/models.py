@@ -19,6 +19,10 @@ class Season(db.Model):
 	def __repr__(self):
 		return f"SEASON {self.name} (#{self.id})"
 
+	def __iter__(self):
+		yield "id", self.id
+		yield "name", self.name
+
 class Term(db.Model):
 	__tablename__ = "term"
 	id = db.Column(db.Integer, primary_key=True)
