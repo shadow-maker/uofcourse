@@ -1,21 +1,17 @@
-from planner.models import User
 from planner.queryUtils import *
 from planner.constants import *
 
-from flask import Blueprint, render_template
+from planner.routes.views import view
 
-main = Blueprint("main", __name__)
+from flask import render_template
 
-#
-# Routes
-#
 
-@main.route("/home")
-@main.route("/")
+@view.route("/home")
+@view.route("/")
 def viewHome():
 	return render_template("index.html", header="UofC Planner")
 
 
-@main.route("/about")
+@view.route("/about")
 def viewAbout():
 	return render_template("about.html", title="About", header="About UofC Planner")

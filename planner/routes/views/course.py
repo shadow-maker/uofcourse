@@ -3,18 +3,15 @@ from planner.models import Faculty, Subject, Course
 from planner.queryUtils import *
 from planner.constants import *
 
-from flask import Blueprint, render_template, flash, redirect
+from planner.routes.views import view
+
+from flask import render_template, flash, redirect
 from flask.helpers import url_for
 
 import random
 
-courses = Blueprint("courses", __name__)
 
-#
-# Routes
-#
-
-@courses.route("/f/<facId>")
+@view.route("/f/<facId>")
 def viewFaculty(facId):
 	faculty = getById(Faculty, facId)
 	if not faculty:
@@ -27,8 +24,8 @@ def viewFaculty(facId):
 	)
 
 
-@courses.route("/s/<subjCode>")
-@courses.route("/c/<subjCode>")
+@view.route("/s/<subjCode>")
+@view.route("/c/<subjCode>")
 def viewSubject(subjCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
@@ -42,13 +39,13 @@ def viewSubject(subjCode):
 		faculty=faculty,
 		courses=subject.courses,
 		backlinks={
-			faculty.name: url_for("courses.viewFaculty", facId=faculty.id),
+			faculty.name: url_for("view.viewFaculty", facId=faculty.id),
 			subject.code: ""
 		}.items()
 	)
 
 
-@courses.route("/c/<subjCode>/<courseCode>")
+@view.route("/c/<subjCode>/<courseCode>")
 def viewCourse(subjCode, courseCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
@@ -65,31 +62,31 @@ def viewCourse(subjCode, courseCode):
 		subject=subject,
 		faculty=faculty,
 		backlinks={
-			faculty.name: url_for("courses.viewFaculty", facId=faculty.id),
-			subject.code: url_for("courses.viewSubject", subjCode=subject.code),
+			faculty.name: url_for("view.viewFaculty", facId=faculty.id),
+			subject.code: url_for("view.viewSubject", subjCode=subject.code),
 			course.code: ""
 		}.items()
 	)
 
 
-@courses.route("/c/id/<courseId>")
+@view.route("/c/id/<courseId>")
 def courseById(courseId):
 	course = getById(Course, courseId)
 	if not course:
 		flash(f"Course with id {courseId} does not exist!", "danger")
 		return redirect(url_for("main.viewHome"))
-	return redirect(url_for("courses.viewCourse", subjCode=course.subject.code, courseCode=course.code))
+	return redirect(url_for("view.viewCourse", subjCode=course.subject.code, courseCode=course.code))
 
 
-@courses.route("/c/random")
+@view.route("/c/random")
 def courseRandom():
 	course = None
 	while not course:
 		course = Course.query[random.randrange(0, Course.query.count())]
-	return redirect(url_for("courses.courseById", courseId=course.id))
+	return redirect(url_for("view.courseById", courseId=course.id))
 
 
-@courses.route("/c", methods=["GET", "POST"])
+@view.route("/c", methods=["GET", "POST"])
 def viewCourses():
 	levels = {str(l) : True for l in COURSE_LEVELS}
 	faculties = {

@@ -3,14 +3,11 @@ from planner.forms import *
 from planner.queryUtils import *
 from planner.constants import *
 
-from flask import Blueprint, render_template, flash, redirect
+from planner.routes.views import view
+
+from flask import render_template, flash, redirect
 from flask.helpers import url_for
 from flask_login import login_user, logout_user, current_user
-
-
-# Setup
-
-auth = Blueprint("auth", __name__)
 
 
 # Login utils
@@ -22,7 +19,7 @@ def loadUser(uId):
 
 # Routes
 
-@auth.route("/signup", methods=["GET", "POST"])
+@view.route("/signup", methods=["GET", "POST"])
 def signup():
 	if current_user.is_authenticated:
 		flash(f"You are already authenticated!", "success")
@@ -45,7 +42,7 @@ def signup():
 			db.session.add(user)
 			db.session.commit()
 			flash(f"Account created!", "success")
-			return redirect(url_for("auth.login"))
+			return redirect(url_for("view.login"))
 		return redirect(url_for("main.viewHome"))
 
 	return render_template("signup.html",
@@ -54,7 +51,7 @@ def signup():
 		form=form
 	)
 
-@auth.route("/login", methods=["GET", "POST"])
+@view.route("/login", methods=["GET", "POST"])
 def login():
 	if current_user.is_authenticated:
 		flash(f"You are already authenticated!", "success")
@@ -77,9 +74,9 @@ def login():
 		form=form
 	)
 
-@auth.route("/logout")
+@view.route("/logout")
 def logout():
 	if not current_user.is_authenticated:
-		return redirect(url_for("auth.logout"))
+		return redirect(url_for("view.logout"))
 	logout_user()
 	return redirect(url_for("main.viewHome"))

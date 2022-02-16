@@ -2,20 +2,16 @@ from planner import db
 from planner.queryUtils import *
 from planner.constants import *
 
+from planner.routes.views import view
 from planner.routes.utils import *
 from planner.routes.api import *
 
-from flask import Blueprint, render_template, flash, redirect, request
+from flask import render_template, flash, redirect, request
 from flask.helpers import url_for
 from flask_login import current_user
 
-account = Blueprint("account", __name__)
 
-#
-# Routes
-#
-
-@account.route("/account")
+@view.route("/account")
 def viewAccount():
 	if not current_user.is_authenticated:
 		return redirectLogin()
@@ -26,7 +22,7 @@ def viewAccount():
 		user = dict(current_user)
 	)
 
-@account.route("/my")
+@view.route("/my")
 def viewMyPlanner():
 	if not current_user.is_authenticated:
 		return redirectLogin()
@@ -40,11 +36,11 @@ def viewMyPlanner():
 		years = getAllYears(False)
 	)
 
-@account.route("/my/add/collection", methods=["POST"])
+@view.route("/my/add/collection", methods=["POST"])
 def addCourseCollection():
 	def ret(message, category):
 		flash(message, category)
-		return redirect(url_for("account.viewMyPlanner"))
+		return redirect(url_for("view.viewMyPlanner"))
 
 	if not current_user.is_authenticated:
 		return ret("ERROR: User not logged in", "danger")
@@ -77,11 +73,11 @@ def addCourseCollection():
 
 
 
-@account.route("/my/del/collection", methods=["DELETE", "POST"])
+@view.route("/my/del/collection", methods=["DELETE", "POST"])
 def delCourseCollection():
 	def ret(message, category):
 		flash(message, category)
-		return redirect(url_for("account.viewMyPlanner"))
+		return redirect(url_for("view.viewMyPlanner"))
 
 	if not current_user.is_authenticated:
 		return ret("ERROR: User not logged in", "danger")
@@ -108,14 +104,14 @@ def delCourseCollection():
 
 	flash(f"Term removed!", "success")
 
-	return redirect(url_for("account.viewMyPlanner"))
+	return redirect(url_for("view.viewMyPlanner"))
 
 
-@account.route("/my/edit/course", methods=["PUT", "POST"])
+@view.route("/my/edit/course", methods=["PUT", "POST"])
 def editUserCourse():
 	response, _ = apiEditUserCourse(request.form.to_dict())
 
 	if "error" in response:
 		flash(f"ERROR: {response['error']}", "danger")
 
-	return redirect(url_for("account.viewMyPlanner"))
+	return redirect(url_for("view.viewMyPlanner"))
