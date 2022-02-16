@@ -1,8 +1,6 @@
 from planner import utcoffset
 from planner.models import Term, Faculty, Subject, Course, User
 
-from datetime import datetime, date, time, timedelta
-
 def getById(table, id):
 	return table.query.filter_by(id=id).first()
 

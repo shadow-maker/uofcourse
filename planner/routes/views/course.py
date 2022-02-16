@@ -12,7 +12,7 @@ import random
 
 
 @view.route("/f/<facId>")
-def viewFaculty(facId):
+def faculty(facId):
 	faculty = getById(Faculty, facId)
 	if not faculty:
 		flash(f"Faculty with id {facId} does not exist!", "danger")
@@ -26,7 +26,7 @@ def viewFaculty(facId):
 
 @view.route("/s/<subjCode>")
 @view.route("/c/<subjCode>")
-def viewSubject(subjCode):
+def subject(subjCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
@@ -39,14 +39,14 @@ def viewSubject(subjCode):
 		faculty=faculty,
 		courses=subject.courses,
 		backlinks={
-			faculty.name: url_for("view.viewFaculty", facId=faculty.id),
+			faculty.name: url_for("view.faculty", facId=faculty.id),
 			subject.code: ""
 		}.items()
 	)
 
 
 @view.route("/c/<subjCode>/<courseCode>")
-def viewCourse(subjCode, courseCode):
+def course(subjCode, courseCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
@@ -62,8 +62,8 @@ def viewCourse(subjCode, courseCode):
 		subject=subject,
 		faculty=faculty,
 		backlinks={
-			faculty.name: url_for("view.viewFaculty", facId=faculty.id),
-			subject.code: url_for("view.viewSubject", subjCode=subject.code),
+			faculty.name: url_for("view.faculty", facId=faculty.id),
+			subject.code: url_for("view.subject", subjCode=subject.code),
 			course.code: ""
 		}.items()
 	)
@@ -75,7 +75,7 @@ def courseById(courseId):
 	if not course:
 		flash(f"Course with id {courseId} does not exist!", "danger")
 		return redirect(url_for("view.viewHome"))
-	return redirect(url_for("view.viewCourse", subjCode=course.subject.code, courseCode=course.code))
+	return redirect(url_for("view.course", subjCode=course.subject.code, courseCode=course.code))
 
 
 @view.route("/c/random")
@@ -87,7 +87,7 @@ def courseRandom():
 
 
 @view.route("/c", methods=["GET", "POST"])
-def viewCourses():
+def courses():
 	levels = {str(l) : True for l in COURSE_LEVELS}
 	faculties = {
 		str(f[0]) : {"name": f[1], "sel": True}
