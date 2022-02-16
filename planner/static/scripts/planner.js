@@ -7,7 +7,7 @@ function requestEditCollection(data) {
 	$.ajax({
 		data: data,
 		type: "PUT",
-		url: "/api/u/course",
+		url: "/api/users/course",
 	}).done(function (data) {
 		console.log(data);
 		if (data.error)
