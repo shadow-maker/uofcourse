@@ -226,7 +226,11 @@ class User(db.Model, UserMixin):
 		self.faculty_id = faculty_id
 
 		self.collections.append(CourseCollection(self.id))
-		self.tags.append(UserTag(self.id, "Starred", STARRED_COLOR, STARRED_EMOJI))
+
+		starred = UserTag(self.id, "Starred", color=STARRED_COLOR, emoji=STARRED_EMOJI)
+		starred.starred = True
+		starred.deletable = False
+		self.tags.append(starred)
 
 	def updatePassw(self, passw):
 		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
@@ -263,6 +267,7 @@ class UserTag(db.Model):
 	name = db.Column(db.String(16), nullable=False)
 	color = db.Column(db.Integer, nullable=False)
 	emoji = db.Column(db.Integer)
+	starred = db.Column(db.Boolean, nullable=False, default=False)
 	deletable = db.Column(db.Boolean, nullable=False, default=True)
 
 	courses = db.relationship("Course", secondary=course_tag, backref="userTags")
