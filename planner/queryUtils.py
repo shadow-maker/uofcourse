@@ -24,12 +24,6 @@ def getCurrentTerm():
 			return term
 	return None
 
-def getAllUserIds():
-	return [u[0] for u in User.query.with_entities(User.id)]
-
-def userExists(ucid):
-	return ucid in getAllUserIds()
-
 def getSubjectByCode(subjCode):
 	return Subject.query.filter_by(code=subjCode.upper()).first()
 

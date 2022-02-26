@@ -31,12 +31,10 @@ def signup():
 
 	form = registerForm()
 	if form.validate_on_submit():
-		if userExists(form.ucid.data):
+		if User.query.filter_by(ucid=form.ucid.data).first():
 			flash(f"User with UCID {form.ucid.data} already exist. Please sign in.", "danger")
 		else:
-			user = User(form.ucid.data, form.email.data, form.passw.data, form.fac.data)
-			if form.name.data:
-				user.name = form.name.data
+			user = User(form.ucid.data, form.name.data, form.email.data, form.passw.data, form.fac.data)
 			if form.entry.data:
 				user.entryYear = form.entry.data
 			db.session.add(user)
@@ -58,16 +56,16 @@ def login():
 		return redirect(url_for("view.home"))
 	form = loginForm()
 	if form.validate_on_submit():
-		if not userExists(form.ucid.data):
-			flash(f"User with UCID {form.ucid.data} doesn't exist. Please sign up for an account.", "danger")
-		else:
-			user = getById(User, form.ucid.data)
+		user = User.query.filter_by(ucid=form.ucid.data).first()
+		if user:
 			if bcrypt.check_password_hash(user.passw, form.passw.data):
 				login_user(user, remember=form.remember.data)
-				flash(f"Log in successful! (#{user.id})", "success")
+				flash(f"Log in successful! (#{user.ucid})", "success")
 				return redirect(url_for("view.home"))
 			else:
 				flash(f"Incorrect password!", "danger")
+		else:
+			flash(f"User with UCID {form.ucid.data} doesn't exist. Please sign up for an account.", "danger")
 	return render_template("login.html",
 		title="Log In",
 		header="Log In",
