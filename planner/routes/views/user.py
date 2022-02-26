@@ -27,7 +27,7 @@ def planner():
 	if not current_user.is_authenticated:
 		return redirectLogin()
 	
-	return render_template("myPlanner.html",
+	return render_template("planner.html",
 		title = "My Plan",
 		header = "My Course Plan",
 		courseCollections = sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0),
