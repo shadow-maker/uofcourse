@@ -44,7 +44,7 @@ function updateResults(data) {
 
 
 
-function requestResults(after) {
+function requestResults(suc, err) {
 	var selectedLevel = []
 	$("input[name='selectedLevel']:checked").each(function () {
 		selectedLevel.push(parseInt($(this).val()))
@@ -81,44 +81,45 @@ function requestResults(after) {
 	$(".loaded").hide()
 
 	$.ajax({
-		data: data,
-		type: "GET",
 		url: "/api/courses/filter",
-	}).done(function (data) {
-		after(data)
+		method: "GET",
+		data: data,
+		success: (data) => {suc(data)},
+		error: (data) => {err(data)}
 	})
 }
 
 
 
-$(document).ready(function () {
-	requestResults(function (data) {
-		if (data.error) {
-			$(".loading").hide()
-			$("#errorPopup").show();
-			$("#errorPopup .message").text(data.error);
-		} else {
+$(document).ready(() => {
+	requestResults(
+		(data) => {
 			page = data.page
 			pages = data.pages
 			updateResults(data)
+		},
+		(data) => {
+			$(".loading").hide()
+			$("#errorPopup").show();
+			$("#errorPopup .message").text(data.error);
 		}
-	})
+	)
 
-	$("input").not("#subjectSearch").change(function () {
+	$("input").not("#subjectSearch").change(() => {
 		$("form").submit()
 	})
 
-	$("select").change(function () {
+	$("select").change(() => {
 		$("form").submit()
 	})
 
-	$("form").on("submit", function (event) {
+	$("form").on("submit", (event) => {
 		event.preventDefault()
 		event.stopImmediatePropagation()
 
 		updateSubjects()
 
-		requestResults(function (data) {
+		requestResults((data) => {
 			if (data.error) {
 				$("#errorPopup").show();
 				$("#errorPopup .message").text(data.error);
