@@ -331,6 +331,7 @@ class UserCourse(db.Model):
 
 	def __init__(self, course_collection_id, course_id):
 		self.course_collection_id = course_collection_id
+		self.course_id = course_id
 
 	def __repr__(self):
 		return f"USER_COURSE (#{self.id}): CourseCollection {self.course_collection_id} - Course {self.course_id}"
