@@ -17,6 +17,27 @@ import json
 user = Blueprint("users", __name__, url_prefix="/users")
 
 #
+# GET
+#
+
+# CourseCollection
+
+@user.route("/collection/<id>/gpa")
+def getCourseCollectionGpa(id):
+	if not current_user.is_authenticated:
+		return {"error": "User not logged in"}, 401
+
+	collection = CourseCollection.query.filter_by(id=id).first()
+
+	if not collection:
+		return {"error": f"CourseCollection does not exist"}, 404
+
+	if collection.user_id != current_user.id:
+		return {"error": f"User (#{current_user.ucid}) does not have access to this CourseCollection"}, 403
+	
+	return {"gpa": collection.getGPA()}, 200
+
+#
 # POST
 #
 

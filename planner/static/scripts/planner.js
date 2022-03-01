@@ -3,11 +3,38 @@ const courseItems = document.querySelectorAll(".course-item")
 
 // AJAX for dragging course items
 
-function requestEditCollection(data) {
+function updateCollectionGPA(container) {
+	$.ajax({
+		url: "/api/users/collection/" + container.getAttribute("db-id") + "/gpa",
+		method: "GET",
+		success: (response) => {
+			const gpaElem = $(container.parentElement).children(".card-footer").children(".row").children(".collection-gpa")
+
+			if (response.gpa)
+				gpaElem.text(response.gpa)
+			else
+				gpaElem.text("-")
+		},
+		error: (response) => {
+			if (data.responseJSON)
+				$("#errorPopup .message").text(response.responseJSON.error)
+			else
+				$("#errorPopup .message").text(response.statusText + " (" + response.staus + ")")
+			$("#errorPopup").show()
+		}
+	})
+}
+
+function editCollection(data, containers) {
 	$.ajax({
 		url: "/api/users/course",
 		method: "PUT",
 		data: data,
+		success: () => {
+			containers.forEach((container) => {
+				updateCollectionGPA(container)
+			})
+		},
 		error: (response) => {
 			if (data.responseJSON)
 				$("#errorPopup .message").text(response.responseJSON.error)
@@ -45,10 +72,10 @@ courseItems.forEach(item => {
 		item.classList.remove("dragging")
 
 		if (oldContainer != item.parentElement) {
-			requestEditCollection({
+			editCollection({
 				id: item.getAttribute("db-id"),
 				collection_id: item.parentElement.getAttribute("db-id")
-			})
+			}, [oldContainer, item.parentElement])
 		}
 	})
 })
