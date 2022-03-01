@@ -110,7 +110,7 @@
 							<div id="subjectSelector" class="d-flex flex-wrap ms-3">
 								{% for s, data in filterData["subjects"].items() %}
 								{% if data["sel"] %}
-								<span class="bg-secondary px-2 py-1 m-1 rounded mono-font text-light subjItem"
+								<span class="bg-secondary px-2 py-1 m-1 rounded font-monospace text-light subjItem"
 									id="subj{{s}}" onclick="remSubj('{{s}}')">{{data["code"]}}</span>
 								{% endif %}
 								{% endfor %}

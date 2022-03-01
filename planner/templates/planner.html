@@ -57,8 +57,8 @@
 						<div class="row">
 							<span class="col-3">&#{{uCourse.course.getEmoji()}}</span>
 							<span id="code"
-								class="col-6 mono-font">{{uCourse.course.subject.code}}-{{uCourse.course.code}}</span>
-							<span class="col-3 mono-font text-start">
+								class="col-6 font-monospace">{{uCourse.course.subject.code}}-{{uCourse.course.code}}</span>
+							<span class="col-3 font-monospace text-start">
 								{% if uCourse.grade %}
 								{{uCourse.grade.symbol}}
 								{% else %}
@@ -75,7 +75,7 @@
 				<div class="card-footer">
 					<div class="row">
 						<span class="col-9 text-center">Term GPA</span>
-						<span class="col-3 mono-font text-start collection-gpa">
+						<span class="col-3 font-monospace text-start collection-gpa">
 							{% if collection.getGPA() %}
 							{{collection.getGPA()}}
 							{% else %}
@@ -154,9 +154,9 @@
 					<input type="number" name="collection_id" id="selectCollectionId" value="" readonly hidden>
 					<input type="number" name="course_id" id="selectCourseId" value="" readonly hidden>
 					<div class="d-flex flex-row justify-content-center">
-						<input type="text" class="form-control form-control-lg selectCourse mono-font text-end" id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;">
+						<input type="text" class="form-control form-control-lg selectCourse font-monospace text-end" id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;">
 						<span class="h-100 p-2 m-0 h4">–</span>
-						<input type="text" class="form-control form-control-lg selectCourse mono-font text-begin" id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;">
+						<input type="text" class="form-control form-control-lg selectCourse font-monospace text-begin" id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;">
 						<span class="h-100 p-2 m-0 ms-1 h4" id="selectCourseStatus" style="width: 1em;">
 							<span class="error" style="display: none;">
 								<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Course does not exist" title="Course does not exist"></i>

@@ -8,16 +8,16 @@ function updateResults(data) {
 	for (let course of data.results) {
 		$("#coursesContainer").append(`
 			<div class="course-item card mb-3 bg-light">
-				<div class="card-body row px-4 py-2">
-					<a class="col-10 h5 p-0 m-0 text-black" href="/c/` + course.subj + `/` + course.code + `" style="text-decoration: none;">
+				<a class="card-body row px-4 py-2 text-decoration-none" href="/c/` + course.subj + `/` + course.code + `">
+					<div class="col-10 h5 p-0 m-0 text-black" style="text-decoration: none;">
 						<span class="p-0 m-0">&#` + course.emoji + `</span>
-						<span class="p-0 m-0 me-md-4 me-2 mono-font card-title">` + course.subj + `-` + course.code + `</span>
+						<span class="p-0 m-0 me-md-4 me-2 font-monospace card-title">` + course.subj + `-` + course.code + `</span>
 						<span class="p-0 m-0">` + course.name + `</span>
-					</a>
+					</div>
 					<div class="col-2 course-actions">
 						&#11088
 					</div>
-				</div>
+				</a>
 			</div>
 		`)
 	}
