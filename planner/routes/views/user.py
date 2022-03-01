@@ -103,9 +103,7 @@ def delCourseCollection():
 	db.session.delete(collection)
 	db.session.commit()
 
-	flash(f"Term removed!", "success")
-
-	return redirect(url_for("view.planner"))
+	return ret(f"Term removed!", "success")
 
 
 @view.route("/my/add/course", methods=["POST"])
@@ -117,10 +115,20 @@ def addUserCourse():
 
 	return redirect(url_for("view.planner"))
 
-
-@view.route("/my/edit/course", methods=["PUT", "POST"])
-def editUserCourse():
-	response, _ = putUserCourse(request.form.to_dict())
+@view.route("my/course", methods=["POST"])
+def modUserCourse():
+	data = request.form.to_dict()
+	if not data:
+		flash("ERROR: No form data provided to remove UserCourse", "danger")
+		return redirect(url_for("view.planner"))
+	if not "method" in data:
+		flash("ERROR: No method provided", "danger")
+		return redirect(url_for("view.planner"))
+	
+	if data["method"] == "PUT":
+		response, _ = putUserCourse(request.form.to_dict())
+	elif data["method"] == "DELETE":
+		response, _ = delUserCourse(request.form.to_dict())
 
 	if "error" in response:
 		flash(f"ERROR: {response['error']}", "danger")

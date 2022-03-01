@@ -169,3 +169,36 @@ def delCourseCollection(data={}, id=None):
 	db.session.commit()
 
 	return {"success": True}, 200
+
+
+# UserCourse
+
+@user.route("/course", defaults={"id":None}, methods=["DELETE"])
+@user.route("/course/<id>", methods=["DELETE"])
+def delUserCourse(data={}, id=None):
+	if not current_user.is_authenticated:
+		return {"error": "User not logged in"}, 401
+
+	if not id:
+		if not data:
+			data = request.get_json()
+		if not data:
+			data = request.form.to_dict()
+		if not data:
+			return {"error": "no data provided"}, 400
+		if not "id" in data:
+			return {"error": "no UserCourse id provided"}, 400
+		id = data["id"]
+
+	userCourse = UserCourse.query.filter_by(id=id).first()
+
+	if not userCourse:
+		return {"error": f"UserCourse does not exist"}, 404
+
+	if userCourse.collection.user_id != current_user.id:
+		return {"error": f"User (#{current_user.ucid}) does not have access to this CourseCollection"}, 403
+
+	db.session.delete(userCourse)
+	db.session.commit()
+
+	return {"success": True}, 200
