@@ -18,6 +18,21 @@ function requestEditCollection(data) {
 	})
 }
 
+function sortCourses(container) {
+	$(container).children(".course-item").sort(function (a, b) {
+		if ( ($(a).attr("db-code").toLowerCase() > $(b).attr("db-code").toLowerCase()) )
+			return 1
+		else if (($(a).attr("db-code").toLowerCase() == $(b).attr("db-code").toLowerCase()))
+			return 0
+		else
+			return -1
+	}).each(function () {
+		var elem = $(this)
+		elem.remove()
+		$(elem).appendTo(container)
+	})
+}
+
 var oldContainer = null
 
 courseItems.forEach(item => {
@@ -29,11 +44,12 @@ courseItems.forEach(item => {
 	item.addEventListener("dragend", () => {
 		item.classList.remove("dragging")
 
-		if (oldContainer != item.parentElement)
+		if (oldContainer != item.parentElement) {
 			requestEditCollection({
 				id: item.getAttribute("db-id"),
 				collection_id: item.parentElement.getAttribute("db-id")
 			})
+		}
 	})
 })
 
@@ -42,6 +58,7 @@ courseContainers.forEach(container => {
 		e.preventDefault()
 		const item = document.querySelector(".dragging")
 		container.appendChild(item)
+		sortCourses(container)
 	})
 })
 

@@ -50,9 +50,9 @@
 					{% endif %}
 				</div>
 				<div class="course-container card-body p-1" db-id="{{collection.id}}">
-					{% for uCourse in collection.userCourses %}
+					{% for uCourse in collection.userCourses | sort(attribute="course.subject.code") %}
 					<div class="course-item m-1 btn bg-light card" db-id="{{uCourse.id}}"
-						db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" draggable="true"
+						db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{{uCourse.course.subject.code}}-{{uCourse.course.code}}" draggable="true"
 						data-bs-toggle="modal" data-bs-target="#modalEditUserCourse">
 						<div class="row">
 							<span class="col-3">&#{{uCourse.course.getEmoji()}}</span>
