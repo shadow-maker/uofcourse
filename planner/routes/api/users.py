@@ -1,5 +1,7 @@
 # These routes are meant to be used internally by AJAX calls
 
+# TODO: Add try statements to db.session.commit()
+
 from planner import db
 from planner.models import UserCourse, CourseCollection, Grade
 from planner.queryUtils import *
@@ -13,6 +15,43 @@ from flask_login import current_user
 import json
 
 user = Blueprint("users", __name__, url_prefix="/users")
+
+#
+# POST
+#
+
+# User Course
+
+@user.route("/course", methods=["POST"])
+def postUserCourse(data={}):
+	if not current_user.is_authenticated:
+		return {"error": "User not logged in"}, 401
+
+	if not data:
+		data = request.form.to_dict()
+		if not data:
+			return {"error": "no data provided"}, 400
+	if not "collection_id" in data:
+		return {"error": "no CourseCollection id provided in data"}, 400
+	if not "course_id" in data:
+		return {"error": "no Course id provided in data"}, 400
+
+	courseCollection = CourseCollection.query.filter_by(id=data["collection_id"]).first()
+	if not courseCollection:
+		return {"error": "CourseCollection not found"}, 404
+	if courseCollection.user_id != current_user.id:
+		return {"error": "User does not have access to this CourseCollection"}, 403
+	
+	course = Course.query.filter_by(id=data["course_id"]).first()
+	if not course:
+		return {"error": "Course not found"}, 404
+	
+	userCourse = UserCourse(courseCollection.id, course.id)
+
+	db.session.add(userCourse)
+	db.session.commit()
+	
+	return {"success": True}, 200
 
 #
 # PUT
@@ -29,8 +68,8 @@ def putUserCourse(data={}):
 		data = request.form.to_dict()
 		if not data:
 			return {"error": "no data provided"}, 400
-		if not "id" in data:
-			return {"error": "no UserCourse id provided in data"}, 400
+	if not "id" in data:
+		return {"error": "no UserCourse id provided in data"}, 400
 
 	userCourse = UserCourse.query.filter_by(id=data["id"]).first()
 
@@ -107,4 +146,5 @@ def delCourseCollection(data={}, id=None):
 
 	db.session.delete(collection)
 	db.session.commit()
+
 	return {"success": True}, 200

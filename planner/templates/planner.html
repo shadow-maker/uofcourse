@@ -2,6 +2,27 @@
 
 {% block content %}
 
+<!--Tags-->
+<div class="container">
+	<h2 class="mb-3">Tags</h2>
+	<div>
+		{% for tag in userTags %}
+		<div class="card h-100">
+			<div class="card-header text-center">
+				&#{{tag.emoji}}
+				{{tag.name}}
+			</div>
+			<div class="course-container card-body p-1" db-id="{{tag.id}}">
+
+			</div>
+			<div class="card-footer">
+
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+
 <!--Courses per term-->
 <div class="container-fluid">
 	<h2 class="mb-3">Courses per term</h2>
@@ -30,7 +51,8 @@
 				</div>
 				<div class="course-container card-body p-1" db-id="{{collection.id}}">
 					{% for uCourse in collection.userCourses %}
-					<div class="course-item m-1 btn bg-light card" db-id="{{uCourse.id}}" db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" draggable="true"
+					<div class="course-item m-1 btn bg-light card" db-id="{{uCourse.id}}"
+						db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" draggable="true"
 						data-bs-toggle="modal" data-bs-target="#modalEditUserCourse">
 						<div class="row">
 							<span class="col-3">&#{{uCourse.course.getEmoji()}}</span>
@@ -47,6 +69,9 @@
 					</div>
 					{% endfor %}
 				</div>
+				<button class="btn btn-secondary m-2 add-course" data-bs-toggle="modal" data-bs-target="#modalAddCourse" db-id="{{collection.id}}">
+					Add course
+				</button>
 				<div class="card-footer">
 					<div class="row">
 						<span class="col-9 text-center">Term GPA</span>
@@ -77,8 +102,7 @@
 
 <!--Form add CourseCollection-->
 <form id="formAddCollection" name="formAddCollection" action="/my/add/collection" method="POST">
-	<div class="modal fade" id="modalAddCollection" tabindex="-1" aria-labelledby="exampleModalLabel"
-		aria-hidden="true">
+	<div class="modal fade" id="modalAddCollection" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -117,6 +141,43 @@
 	</div>
 </form>
 
+<!--Form add UserCourse-->
+<form id="formAddCourse" name="formAddCourse" action="/my/add/course" method="POST">
+	<div class="modal fade" id="modalAddCourse" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add course to term</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body px-5">
+					<input type="number" name="collection_id" id="selectCollectionId" value="" readonly hidden>
+					<input type="number" name="course_id" id="selectCourseId" value="" readonly hidden>
+					<div class="d-flex flex-row justify-content-center">
+						<input type="text" class="form-control form-control-lg selectCourse mono-font text-end" id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;">
+						<span class="h-100 p-2 m-0 h4">–</span>
+						<input type="text" class="form-control form-control-lg selectCourse mono-font text-begin" id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;">
+						<span class="h-100 p-2 m-0 ms-1 h4" id="selectCourseStatus" style="width: 1em;">
+							<span class="error" style="display: none;">
+								<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Course does not exist" title="Course does not exist"></i>
+							</span>
+							<span class="success" style="display: none;">
+								<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Course does not exist" title="Course does not exist"></i>
+							</span>
+							<span class="spinner-border loading" role="status" style="display: none;">
+								<span class="visually-hidden">Loading...</span>
+							</span>
+						</span>
+					</div>
+				</div>
+				<div class="modal-footer d-flex justify-content-around">
+					<button id="selectCourseSubmit" type="submit" class="btn btn-primary" disabled>Add</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
 <!--Form edit UserCourse-->
 <form id="formEditUserCourse" name="formEditUserCourse" action="/my/edit/course" method="POST">
 	<div class="modal fade" id="modalEditUserCourse" tabindex="-1" aria-hidden="true">
@@ -131,8 +192,8 @@
 						<label for="selectCoursePlaceholder" class="col-3 col-form-label">Course</label>
 						<div class="col-9">
 							<input type="hidden" id="selectCourse" name="id" value="">
-							<input type="text" id="selectCoursePlaceholder" class="form-control col-9" value=""
-								disabled readonly>
+							<input type="text" id="selectCoursePlaceholder" class="form-control col-9" value="" disabled
+								readonly>
 						</div>
 					</div>
 					<div class="row">
@@ -156,7 +217,8 @@
 						<label class="col-3 col-form-label">Passed</label>
 						<div class="col-9 py-2">
 							<div class="form-check form-check-inline">
-								<input class="form-check-input" type="radio" name="passed" id="selectPassedTrue" value="true">
+								<input class="form-check-input" type="radio" name="passed" id="selectPassedTrue"
+									value="true">
 								<label class="form-check-label" for="selectPassedTrue">Yes</label>
 							</div>
 							<div class="form-check form-check-inline">
@@ -169,8 +231,7 @@
 					<div class="row">
 						<label class="col-3 col-form-label" for="selectGrade">Grade</label>
 						<div class="col-9">
-							<select class="form-select" aria-label="Select grade" name="grade"
-								id="selectGrade">
+							<select class="form-select" aria-label="Select grade" name="grade" id="selectGrade">
 								<option value="0">-</option>
 								{% for grade in grades %}
 								<option value="{{grade.id}}">

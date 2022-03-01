@@ -5,14 +5,16 @@ const courseItems = document.querySelectorAll(".course-item")
 
 function requestEditCollection(data) {
 	$.ajax({
-		data: data,
-		type: "PUT",
 		url: "/api/users/course",
-	}).done(function (data) {
-		console.log(data);
-		if (data.error)
+		method: "PUT",
+		data: data,
+		error: (response) => {
+			if (data.responseJSON)
+				$("#errorPopup .message").text(response.responseJSON.error)
+			else
+				$("#errorPopup .message").text(response.statusText + " (" + response.staus + ")")
 			$("#errorPopup").show()
-			$("#errorPopup .message").text(data.error)
+		}
 	})
 }
 
@@ -26,7 +28,7 @@ courseItems.forEach(item => {
 
 	item.addEventListener("dragend", () => {
 		item.classList.remove("dragging")
-		
+
 		if (oldContainer != item.parentElement)
 			requestEditCollection({
 				id: item.getAttribute("db-id"),
@@ -44,10 +46,64 @@ courseContainers.forEach(container => {
 })
 
 
-// Normal form submission
+// UserCourse-add form logic
+
+function selectCourseStatus(status) {
+	$("#selectCourseStatus").children("span").hide()
+	if (status)
+		$("#selectCourseStatus ." + status).show()
+}
+
+function checkCourse() {
+	//selectCourseStatus("loading")
+
+	$.ajax({
+		url: "/api/courses/code/" + $("#selectCourseSubject").val() + "/" + $("#selectCourseNumber").val(),
+		method: "GET",
+		success: (data) => {
+			$("#selectCourseId").val(data.id)
+			$("#selectCourseSubmit").prop("disabled", false)
+			selectCourseStatus("success")
+		},
+		error: (data) => {
+			$("#selectCourseId").val("")
+			$("#selectCourseSubmit").prop("disabled", true)
+			selectCourseStatus("error")
+		}
+	})
+}
+
+$("#selectCourseSubject").keyup(function() {
+	if ($(this).val().length < $(this).attr("minLength")) {
+		$("#selectCourseNumber").prop("disabled", true)
+		$("#selectCourseSubmit").prop("disabled", true)
+		selectCourseStatus("")
+	} else {
+		$("#selectCourseNumber").prop("disabled", false)
+		if ($("#selectCourseNumber").val().length == $("#selectCourseNumber").attr("maxLength"))
+			checkCourse()
+	}
+
+	if ($(this).val().length == $(this).attr("maxLength"))
+		$("#selectCourseNumber").focus()
+})
+
+$("#selectCourseNumber").keyup(function() {
+	if ($(this).val().length == $(this).attr("maxLength"))
+		checkCourse()
+	else
+		$("#selectCourseSubmit").prop("disabled", true)
+	selectCourseStatus("")
+})
+
+$(document).on("click", ".add-course", function() {
+	$("#selectCollectionId").val(this.getAttribute("db-id"))
+})
 
 
-$(document).on("click", ".course-item", function () {
+// UserCourse-edit form logic
+
+$(document).on("click", ".course-item", function() {
 	if (!this.classList.contains("dragging")) {
 		let form = $("#formEditUserCourse")
 
@@ -75,4 +131,4 @@ $(document).on("click", ".course-item", function () {
 			form.find("#selectPassedFalse").prop("checked", false)
 		}
 	}
-});
+})

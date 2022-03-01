@@ -30,6 +30,7 @@ def planner():
 	return render_template("planner.html",
 		title = "My Plan",
 		header = "My Course Plan",
+		userTags = current_user.tags,
 		courseCollections = sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0),
 		grades = Grade.query.all(),
 		seasons = Season.query.all(),
@@ -103,6 +104,16 @@ def delCourseCollection():
 	db.session.commit()
 
 	flash(f"Term removed!", "success")
+
+	return redirect(url_for("view.planner"))
+
+
+@view.route("/my/add/course", methods=["POST"])
+def addUserCourse():
+	response, _ = postUserCourse(request.form.to_dict())
+
+	if "error" in response:
+		flash(f"ERROR: {response['error']}", "danger")
 
 	return redirect(url_for("view.planner"))
 
