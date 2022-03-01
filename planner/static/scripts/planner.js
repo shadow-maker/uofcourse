@@ -36,7 +36,7 @@ function editCollection(data, containers) {
 			})
 		},
 		error: (response) => {
-			if (data.responseJSON)
+			if (response.responseJSON)
 				$("#errorPopup .message").text(response.responseJSON.error)
 			else
 				$("#errorPopup .message").text(response.statusText + " (" + response.staus + ")")

@@ -57,17 +57,20 @@ def postUserCourse(data={}):
 	if not "course_id" in data:
 		return {"error": "no Course id provided in data"}, 400
 
-	courseCollection = CourseCollection.query.filter_by(id=data["collection_id"]).first()
-	if not courseCollection:
+	collection = CourseCollection.query.filter_by(id=data["collection_id"]).first()
+	if not collection:
 		return {"error": "CourseCollection not found"}, 404
-	if courseCollection.user_id != current_user.id:
+	if collection.user_id != current_user.id:
 		return {"error": "User does not have access to this CourseCollection"}, 403
 	
 	course = Course.query.filter_by(id=data["course_id"]).first()
 	if not course:
 		return {"error": "Course not found"}, 404
+	for userCourse in collection.userCourses:
+		if course.id == userCourse.course_id:
+			return {"error": "a UserCourse with the same Course already exists in this CourseCollection"}, 400
 	
-	userCourse = UserCourse(courseCollection.id, course.id)
+	userCourse = UserCourse(collection.id, course.id)
 
 	db.session.add(userCourse)
 	db.session.commit()
@@ -100,12 +103,15 @@ def putUserCourse(data={}):
 		return {"error": "User does not have access to this UserCourse"}, 403
 	
 	if "collection_id" in data:
-		courseCollection = CourseCollection.query.filter_by(id=data["collection_id"]).first()
-		if not courseCollection:
+		collection = CourseCollection.query.filter_by(id=data["collection_id"]).first()
+		if not collection:
 			return {"error": "CourseCollection not found"}, 404
-		if courseCollection.user_id != current_user.id:
+		if collection.user_id != current_user.id:
 			return {"error": "User does not have access to this CourseCollection"}, 403
-		userCourse.course_collection_id = courseCollection.id
+		for uCourse in collection.userCourses:
+			if userCourse.course_id == uCourse.course_id:
+				return {"error": "a UserCourse with the same Course already exists in this CourseCollection"}, 400
+		userCourse.course_collection_id = collection.id
 	
 	if "grade" in data:
 		try:
