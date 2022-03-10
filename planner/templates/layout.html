@@ -25,25 +25,13 @@
 <body>
 	{% include "components/nav.html" %}
 
-	{% if backlinks %}
-	<nav class="container" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-		<ol class="breadcrumb">
-			{% for item in backlinks %}
-			<li class="breadcrumb-item">
-				<a href="{{item[1]}}">{{item[0]}}</a>
-			</li>
-			{% endfor %}
-		</ol>
-	</nav>
-	{% endif %}
+	{% include "components/back.html" %}
 
+	{% if header %}
 	<div class="container mb-4 border-bottom">
-		{% include "components/back.html" %}
-
-		{% if header %}
 		<h1>{{header}}</h1>
-		{% endif %}
 	</div>
+	{% endif %}
 
 	<div class="container">
 		{% block content%}{% endblock %}
