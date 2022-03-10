@@ -326,7 +326,8 @@ class UserCourse(db.Model):
 	def ownedBy(self, user_id):
 		return self.collection.user_id == user_id
 
-	def getTags(self):
+	@property
+	def tags(self):
 		return [tag for tag in self.course.userTags if tag.user_id == self.collection.user_id]
 
 	def __init__(self, course_collection_id, course_id):
