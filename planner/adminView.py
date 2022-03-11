@@ -13,9 +13,9 @@ class adminModelView(ModelView):
 	def inaccessible_callback(self, name, **kwargs):
 		if current_user.is_authenticated:
 			flash(f"You do not have permission to access this page!", "warning")
-			return redirect(url_for("home"))
+			return redirect(url_for("view.home"))
 		flash(f"You need to log in first!", "warning")
-		return redirect(url_for("login"))
+		return redirect(url_for("view.login"))
 
 class adminIndexView(AdminIndexView):
 	def is_accessible(self):
@@ -24,8 +24,8 @@ class adminIndexView(AdminIndexView):
 	def inaccessible_callback(self, name, **kwargs):
 		if current_user.is_authenticated:
 			flash(f"You do not have permission to access this page!", "warning")
-			return redirect(url_for("home"))
+			return redirect(url_for("view.home"))
 		flash(f"You need to log in first!", "warning")
-		return redirect(url_for("login"))
+		return redirect(url_for("view.login"))
 
 admin = Admin(app, name="UofC Planner", template_mode="bootstrap3", index_view=adminIndexView())
