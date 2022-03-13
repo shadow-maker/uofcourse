@@ -1,50 +1,16 @@
 var prevData = {}
 
-function updateResults(data) {
+function errorPopup(msg) {
 	$(".loading").hide()
-	$(".loaded").show()
-
-	$("#coursesContainer").empty()
-	for (let course of data.results) {
-		$("#coursesContainer").append(`
-			<div class="course-item card mb-3 bg-light">
-				<a class="card-body row px-4 py-2 text-decoration-none" href="/c/` + course.subj + `/` + course.code + `">
-					<div class="col-10 h5 p-0 m-0 text-black" style="text-decoration: none;">
-						<span class="p-0 m-0">&#` + course.emoji + `</span>
-						<span class="p-0 m-0 me-md-4 me-2 font-monospace card-title">` + course.subj + `-` + course.code + `</span>
-						<span class="p-0 m-0">` + course.name + `</span>
-					</div>
-					<div class="col-2 course-actions">
-						&#11088
-					</div>
-				</a>
-			</div>
-		`)
-	}
-
-	$("#pageNav .pageSelector").remove()
-	if (pages > 15) {
-		$("#pageNav .pageEllipsis").show()
-	} else {
-		$("#pageNav .pageEllipsis").hide()
-		for (let p = pages; p > 0; p--) {
-			$("#pageNav ul li:eq(0)").after(`
-				<li class="pageSelector page-item ` + ((p == page) ? `active` : ``) + `"
-				onclick="switchPage(` + ((p == page) ? -1 : p) + `)" style="cursor: pointer;">
-					<a class="page-link">` + p +`</a>
-				</li>
-			`)
-		}
-	}
-
-	$("#numTotal").text(data.total)
-	$("#numPage").text(data.page)
-	$("#numPages").text(data.pages)
+	$("#errorPopup").show()
+	$("#errorPopup .message").text(msg)
 }
 
+//
+// REQUEST FUNCTIONS
+//
 
-
-function requestResults(suc, err) {
+function requestResults(suc) {
 	var selectedLevel = []
 	$("input[name='selectedLevel']:checked").each(function () {
 		selectedLevel.push(parseInt($(this).val()))
@@ -56,11 +22,9 @@ function requestResults(suc, err) {
 	})
 
 	var selectedSubject = []
-	for (let s in subjects) {
-		if (subjects[s].sel) {
+	for (let s in subjects)
+		if (subjects[s].sel)
 			selectedSubject.push(parseInt(subjects[s].id))
-		}
-	}
 
 	var data = {
 		sort: $("#sortBy").val(),
@@ -85,25 +49,203 @@ function requestResults(suc, err) {
 		method: "GET",
 		data: data,
 		success: (data) => {suc(data)},
-		error: (data) => {err(data)}
+		error: (data) => {errorPopup(data.responseJSON.error)}
 	})
 }
 
 
+function requestUserTags(suc) {
+	if (isAuth)
+		$.ajax({
+			url: "/api/tags",
+			method: "GET",
+			success: (data) => {suc(data)},
+			error: (data) => {errorPopup(data.responseJSON.error)}
+		})
+}
 
-$(document).ready(() => {
-	requestResults(
+
+function requestCourseTags(id, suc) {
+	if (isAuth)
+		$.ajax({
+			url: "/api/tags/course/" + id,
+			method: "GET",
+			success: (data) => {suc(data)},
+			error: (data) => {
+				console.log(data);
+				errorPopup(data.responseJSON.error)
+			}
+		})
+}
+
+//
+// UPDATE FUNCTIONS
+//
+
+function updateTags(item) {
+	requestCourseTags(
+		item.attr("db-id"),
 		(data) => {
-			page = data.page
-			pages = data.pages
-			updateResults(data)
-		},
-		(data) => {
-			$(".loading").hide()
-			$("#errorPopup").show();
-			$("#errorPopup .message").text(data.error);
+			item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
+				$(this).find(".bi-check").addClass("invisible")
+				$(this).find("a").removeClass("pe-none")
+			})
+
+			const container = item.find(".tags-selected")
+			container.empty()
+			for (tag of data.tags) {
+				container.append(`
+					<span class="course-tag btn badge btn-secondary" title="`+ tag.name + `" style="cursor: pointer; db-id="` + tag.id + `" onclick="toggleTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
+						&#` + tag.emoji + `
+					</span>
+				`)
+
+				item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
+					if($(this).attr("db-id") == tag.id) {
+						$(this).find(".bi-check").removeClass("invisible")
+						$(this).find("a").addClass("pe-none")
+					}
+				})
+			}
 		}
 	)
+}
+
+function updateResults(data, tags) {
+	$(".loading").hide()
+	$(".loaded").show()
+
+
+	function tagsUser(courseId) {
+		var html = ""
+
+		for (let tag of tags) {
+			html += `
+				<li class="tags-dropdown-item" db-id="` + tag.id +`">
+					<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + courseId + `, ` +  tag.id + `)" style="cursor: pointer;">
+						<small>
+							<i class="bi-check invisible"></i>
+							` + tag.name +`
+						</small>
+					</a>
+				</li>
+			`
+		}
+
+		return html
+	}
+
+	$("#coursesContainer").empty()
+	for (let course of data.results) {
+		$("#coursesContainer").append(`
+			<div class="course-item card mb-3 bg-light" id="course-` + course.id + `" db-id="` + course.id + `">
+				<div class="card-body row px-4 pt-0 pb-2">
+					<div class="col-10 p-0 m-0">
+						<a class="row m-0 p-0 pt-2 text-decoration-none text-body" href="/c/` + course.subj + `/` + course.code + `">
+							<div class="h4 m-0 d-flex align-items-bottom col-xl-3 col-lg-4 col-12">
+								<span class="p-0 m-0 me-2">&#` + course.emoji + `</span>
+								<span class="p-0 m-0 font-monospace">` + course.subj + `-` + course.code + `</span>
+							</div>
+							<div class="d-flex align-items-bottom col-xl-9 col-lg-8 col-12">
+								<div class="p-0 m-0 h5">` + course.name + `</div>
+							</div>
+						</a>
+						<div class="row m-0 p-0">
+							<div class="h4 m-0 col-xl-3 col-lg-4 col-12"></div>
+							<div class="col-xl-9 col-lg-8 col-12">
+								<span class="tags-selected p-0 m-0"></span>
+								<div class="btn-group">
+									<button class="btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+										<i class="bi-tag-fill"></i>
+									</button>
+									<ul class="tags-dropdown dropdown-menu fs-6 py-1">
+										` + tagsUser(course.id) + `
+										<li><hr class="dropdown-divider my-1"></li>
+										<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalAddTag">
+											<small>Create new tag</small>
+										</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>	
+					</div>
+					<div class="col-2 course-actions">
+						Taken in
+					</div>
+				</div>
+			</div>
+		`)
+		updateTags($("#coursesContainer").children().last())
+	}
+
+	$("#pageNav .pageSelector").remove()
+	if (pages > 15) {
+		$("#pageNav .pageEllipsis").show()
+	} else {
+		$("#pageNav .pageEllipsis").hide()
+		for (let p = pages; p > 0; p--) {
+			$("#pageNav ul li:eq(0)").after(`
+				<li class="pageSelector page-item ` + ((p == page) ? `active` : ``) + `"
+				onclick="switchPage(` + ((p == page) ? -1 : p) + `)" style="cursor: pointer;">
+					<a class="page-link">` + p +`</a>
+				</li>
+			`)
+		}
+	}
+
+	$("#numTotal").text(data.total)
+	$("#numPage").text(data.page)
+	$("#numPages").text(data.pages)
+}
+
+// EXTRA FUNCTIONS
+
+function toggleTag(courseId, tagId) {
+	$.ajax({
+		url: "/api/tags/course",
+		method: "PUT",
+		data: {
+			course_id: courseId,
+			tag_id: tagId
+		},
+		success: (data) => {
+			console.log(data)
+			updateTags($("#course-" + courseId))
+		},
+		error: (data) => {
+			errorPopup(data.error)
+		}
+	})
+}
+
+//
+// DOCUMENT READY
+//
+
+$(document).ready(() => {
+	var userTags = []
+	if (isAuth) {
+		requestUserTags(
+			(data) => {
+				userTags = data.tags
+				requestResults(
+					(data) => {
+						page = data.page
+						pages = data.pages
+						updateResults(data, userTags)
+					}
+				)
+			}
+		)
+	} else {
+		requestResults(
+			(data) => {
+				page = data.page
+				pages = data.pages
+				updateResults(data, userTags)
+			}
+		)
+	}
 
 	$("input").not("#subjectSearch").change(() => {
 		$("form").submit()
@@ -120,14 +262,9 @@ $(document).ready(() => {
 		updateSubjects()
 
 		requestResults((data) => {
-			if (data.error) {
-				$("#errorPopup").show();
-				$("#errorPopup .message").text(data.error);
-			} else {
-				page = data.page
-				pages = data.pages
-				updateResults(data)
-			}
+			page = data.page
+			pages = data.pages
+			updateResults(data, userTags)
 		})
 	})
 })

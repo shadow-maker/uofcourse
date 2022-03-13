@@ -278,6 +278,18 @@ class UserTag(db.Model):
 		self.color = color
 		self.emoji = emoji
 
+	def __iter__(self):
+		yield "id", self.id
+		yield "user_id", self.user_id
+		yield "name", self.name
+		yield "color", self.color
+		yield "emoji", self.emoji
+		yield "starred", self.starred
+		yield "deletable", self.deletable
+	
+	def __repr__(self):
+		return f"UserTag (#{self.id}) : User {self.user_id} - {self.name}"
+
 
 class CourseCollection(db.Model):
 	__tablename__ = "course_collection"
