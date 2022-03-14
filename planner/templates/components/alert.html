@@ -1,15 +1,29 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
-<div class="fixed-bottom mb-1">
+<div id="alerts" class="fixed-bottom mb-1">
 	{% for category, message in messages %}
-	<div id="popup{{loop.index}}" onclick="$(this).alert('close')"
-		class="popup alert alert-{{category}} fade show mx-2 mx-md-5 mb-2 mb-md-3">
-		<div class="d-flex justify-content-between">
-			<span>{{message}}</span>
-			<span><i class="bi-x-lg"></i></span>
-		</div>
+	<div class="alert alert-{{category}} alert-dismissible fade show mx-2 mx-md-5 mb-2 mb-md-3" role="alert" data-bs-dismiss="alert">
+		{{message}}
+		<button type="button" class="btn-close" aria-label="Close"></button>
 	</div>
 	{% endfor %}
 </div>
 {% endif %}
 {% endwith %}
+
+<script>
+const categories = ["success", "info", "warning", "danger", "primary", "secondary"]
+
+function alert(category, message, pre="") {
+	if (!categories.includes(category))
+		category = "warning"
+
+	$("#alerts").append(`
+		<div class="alert alert-` + category + ` alert-dismissible fade show mx-2 mx-md-5 mb-2 mb-md-3" role="alert" data-bs-dismiss="alert">
+			<b>` + pre +`</b>
+			` + message + `
+			<button type="button" class="btn-close" aria-label="Close"></button>
+		</div>
+	`)
+}
+</script>

@@ -1,11 +1,5 @@
 var prevData = {}
 
-function errorPopup(msg) {
-	$(".loading").hide()
-	$("#errorPopup").show()
-	$("#errorPopup .message").text(msg)
-}
-
 //
 // REQUEST FUNCTIONS
 //
@@ -49,7 +43,10 @@ function requestResults(suc) {
 		method: "GET",
 		data: data,
 		success: (data) => {suc(data)},
-		error: (data) => {errorPopup(data.responseJSON.error)}
+		error: (data) => {
+			$(".loading").hide()
+			alert("danger", data.responseJSON.error)
+		}
 	})
 }
 
@@ -60,7 +57,9 @@ function requestUserTags(suc) {
 			url: "/api/tags",
 			method: "GET",
 			success: (data) => {suc(data)},
-			error: (data) => {errorPopup(data.responseJSON.error)}
+			error: (data) => {
+				alert("danger", data.responseJSON.error)
+			}
 		})
 }
 
@@ -72,8 +71,7 @@ function requestCourseTags(id, suc) {
 			method: "GET",
 			success: (data) => {suc(data)},
 			error: (data) => {
-				console.log(data);
-				errorPopup(data.responseJSON.error)
+				alert("danger", data.responseJSON.error)
 			}
 		})
 }
@@ -88,22 +86,25 @@ function updateTags(item) {
 		(data) => {
 			item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
 				$(this).find(".bi-check").addClass("invisible")
-				$(this).find("a").removeClass("pe-none")
+				//$(this).find("a").removeClass("pe-none")
 			})
 
 			const container = item.find(".tags-selected")
 			container.empty()
 			for (tag of data.tags) {
+				var emoji = ""
+				if (tag.emoji)
+					emoji = "&#" + tag.emoji + " "
 				container.append(`
-					<span class="course-tag btn badge btn-secondary" title="`+ tag.name + `" style="cursor: pointer; db-id="` + tag.id + `" onclick="toggleTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
-						&#` + tag.emoji + `
+					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer; db-id="` + tag.id + `" onclick="toggleTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
+						` + emoji + tag.name + `
 					</span>
 				`)
 
 				item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
 					if($(this).attr("db-id") == tag.id) {
 						$(this).find(".bi-check").removeClass("invisible")
-						$(this).find("a").addClass("pe-none")
+						//$(this).find("a").addClass("pe-none")
 					}
 				})
 			}
@@ -209,11 +210,12 @@ function toggleTag(courseId, tagId) {
 			tag_id: tagId
 		},
 		success: (data) => {
-			console.log(data)
+			console.log(data.success)
+			alert("success", data.success)
 			updateTags($("#course-" + courseId))
 		},
 		error: (data) => {
-			errorPopup(data.error)
+			alert("danger", data.error)
 		}
 	})
 }

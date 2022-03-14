@@ -17,10 +17,9 @@ function updateCollectionGPA(container) {
 		},
 		error: (response) => {
 			if (data.responseJSON)
-				$("#errorPopup .message").text(response.responseJSON.error)
+				alert("danger", response.responseJSON.error)
 			else
-				$("#errorPopup .message").text(response.statusText + " (" + response.staus + ")")
-			$("#errorPopup").show()
+				alert("danger", response.statusText + " (" + response.staus + ")")
 		}
 	})
 }
@@ -36,11 +35,10 @@ function editCollection(data, containers) {
 			})
 		},
 		error: (response) => {
-			if (response.responseJSON)
-				$("#errorPopup .message").text(response.responseJSON.error)
+			if (data.responseJSON)
+				alert("danger", response.responseJSON.error)
 			else
-				$("#errorPopup .message").text(response.statusText + " (" + response.staus + ")")
-			$("#errorPopup").show()
+				alert("danger", response.statusText + " (" + response.staus + ")")
 		}
 	})
 }
