@@ -89,7 +89,7 @@ function toggleTag(courseId, tagId) {
 			updateTags($("#course-" + courseId))
 		},
 		error: (data) => {
-			alert("danger", data.error)
+			alert("danger", data.responseJSON.error)
 		}
 	})
 }
@@ -140,13 +140,13 @@ function updateResults(data) {
 	function tagsUser(courseId) {
 		var html = ""
 
-		for (let id in userTags) {
+		for (let tag of userTags) {
 			html += `
-				<li class="tags-dropdown-item" db-id="` + id +`">
-					<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + courseId + `, ` +  id + `)" style="cursor: pointer;">
+				<li class="tags-dropdown-item" db-id="` + tag.id +`">
+					<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + courseId + `, ` +  tag.id + `)" style="cursor: pointer;">
 						<small>
 							<i class="bi-check invisible"></i>
-							` + userTags[id].name +`
+							` + tag.name +`
 						</small>
 					</a>
 				</li>
