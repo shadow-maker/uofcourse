@@ -176,14 +176,14 @@ function updateResults(data) {
 							<div class="col-xl-9 col-lg-8 col-12">
 								<span class="tags-selected p-0 m-0"></span>
 								<div class="btn-group">
-									<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
 										<i class="bi-tag-fill"></i>
 									</button>
 									<ul class="tags-dropdown dropdown-menu fs-6 py-1">
 									` + (isAuth ?
 										tagsUser(course.id) + `
 										<li><hr class="dropdown-divider my-1"></li>
-										<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags">
+										<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
 											<small>Edit tags</small>
 										</a></li>
 									` : ``) + `
@@ -234,11 +234,11 @@ $(document).ready(() => {
 		}
 	)
 
-	$("input").not("#subjectSearch").change(() => {
+	$("#formFilterCourses input").not("#subjectSearch").change(() => {
 		$("#formFilterCourses").submit()
 	})
 
-	$("select").change(() => {
+	$("#formFilterCourses select").change(() => {
 		$("#formFilterCourses").submit()
 	})
 
@@ -259,10 +259,9 @@ $(document).on("click", ".tags-dropdown-btn", function() {
 		alert("warning", "You must be logged in to add tags")
 })
 
-function tagEditDone(after) {
+function tagEditDone() {
 	requestUserTags((data) => {
 		userTags = data.tags
-		after()
 		requestResults((data) => {
 			page = data.page
 			pages = data.pages

@@ -110,11 +110,20 @@ def editUserTag(data={}):
 			return {"error": "Tag name must be at least 3 characters long"}, 400
 		if len(data["name"]) > 16:
 			return {"error": "Tag name must be at most 16 characters long"}, 400
-		for tag in current_user.tags:
-			if tag.name == data["name"]:
+		for t in current_user.tags:
+			if t != tag and t.name == data["name"]:
 				return {"error": "Tag name already exists"}, 400
 		tag.name = data["name"]
-	
+
+	if "color" in data:
+		try:
+			color = int(data["color"])
+		except:
+			return {"error": "Tag color must be an integer"}, 400
+		if color < 0 or color > 16777215:
+			return {"error": "Tag color must be an integer between 0 and 16777215"}, 400
+		tag.color = color
+
 	db.session.commit()
 
 	return {"success": "Tag edited"}, 200
