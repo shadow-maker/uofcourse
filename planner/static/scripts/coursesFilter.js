@@ -140,13 +140,13 @@ function updateResults(data) {
 	function tagsUser(courseId) {
 		var html = ""
 
-		for (let tag of userTags) {
+		for (let id in userTags) {
 			html += `
-				<li class="tags-dropdown-item" db-id="` + tag.id +`">
-					<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + courseId + `, ` +  tag.id + `)" style="cursor: pointer;">
+				<li class="tags-dropdown-item" db-id="` + id +`">
+					<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + courseId + `, ` +  id + `)" style="cursor: pointer;">
 						<small>
 							<i class="bi-check invisible"></i>
-							` + tag.name +`
+							` + userTags[id].name +`
 						</small>
 					</a>
 				</li>

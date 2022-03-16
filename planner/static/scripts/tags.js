@@ -80,15 +80,21 @@ function tagExecuteChanges() {
 		data = {}
 		data.tag_id = $(this).attr("db-id")
 
-		if (data.tag_id) {
+		if (data.tag_id && data.tag_id in userTags) {
 			if ($(this).attr("db-delete") == "true") {
 				requestTag("DELETE", data, callback)
-			} else {
+			} else if (userTags[data.tag_id].deletable) {
+				data.name = $(this).find(".tag-name").val()
+				if (data.name.length > 0 && data.name != userTags[data.tag_id].name) {
+					requestTag("PUT", data, callback)
+				}
 			}
 		} else {
 			data.name = $(this).find(".tag-name").val()
-			data.color = 0
-			requestTag("POST", data, callback)		
+			if (data.name.length > 0) {
+				data.color = 0
+				requestTag("POST", data, callback)
+			}	
 		}
 	})
 }
@@ -97,17 +103,17 @@ function tagExecuteChanges() {
 
 function loadEditTagsModal() {
 	$("#modalEditTags .tag-items").empty()
-	for (let tag of userTags) {
+	for (let id in userTags) {
 		$("#modalEditTags .tag-items").append(`
-			<div id="tag-edit-` + tagIndex +`" db-id=` + tag.id +` db-delete="false">
+			<div id="tag-edit-` + tagIndex +`" db-id=` + id +` db-delete="false">
 				<div class="inputs row">
 					<div class="col-11">
 						<div class="input-group">
-							<input type="text" class="tag-name form-control" name="name" placeholder="Tag name" aria-label="Tag name" value="` + tag.name + `" ` + (tag.deletable ? `` : `readonly`) + `>
+							<input type="text" class="tag-name form-control" name="name" placeholder="Tag name" aria-label="Tag name" value="` + userTags[id].name + `" ` + (userTags[id].deletable ? `` : `readonly`) + `>
 						</div>
 					</div>
 					<div class="col-1 ps-0">
-						<button class="btn px-0" type="button" title="Delete tag" ` + (tag.deletable ? `onclick="tagRemove(` + tagIndex +`)"` : `disabled`) + `>
+						<button class="btn px-0" type="button" title="Delete tag" ` + (userTags[id].deletable ? `onclick="tagRemove(` + tagIndex +`)"` : `disabled`) + `>
 							<i class="h5 bi-trash text-danger"></i>
 						</button>
 					</div>
