@@ -111,14 +111,17 @@ function updateTags(item) {
 			const container = item.find(".tags-selected")
 			container.empty()
 			for (tag of data.tags) {
-				emoji = ""
-				if (tag.emoji)
-					emoji = "&#" + tag.emoji + " "
 				color = ("000000" + tag.color.toString(16)).slice(-6)
 
+				icon = ""
+				if (tag.emoji)
+					icon = "&#" + tag.emoji + " "
+				else
+					icon = "<i class='bi-circle-fill' style='color: #" + color +";'></i> "
+
 				container.append(`
-					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer; border-color: #` + color +`;" db-id="` + tag.id + `" onclick="toggleTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
-						` + emoji + tag.name + `
+					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
+						` + icon + tag.name + `
 					</span>
 				`)
 
@@ -159,7 +162,7 @@ function updateResults(data) {
 	$("#coursesContainer").empty()
 	for (let course of data.results) {
 		$("#coursesContainer").append(`
-			<div class="course-item card mb-3 bg-light" id="course-` + course.id + `" db-id="` + course.id + `">
+			<div class="course-item mb-3 card bg-light" id="course-` + course.id + `" db-id="` + course.id + `">
 				<div class="card-body row px-4 pt-0 pb-2">
 					<div class="col-10 p-0 m-0">
 						<a class="row m-0 p-0 pt-2 text-decoration-none text-body" href="/c/` + course.subj + `/` + course.code + `">
