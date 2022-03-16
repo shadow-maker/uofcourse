@@ -1,3 +1,4 @@
+from flask_login import current_user
 from planner import db
 from planner.models import Faculty, Subject, Course
 from planner.queryUtils import *
@@ -61,11 +62,10 @@ def course(subjCode, courseCode):
 		course=course,
 		subject=subject,
 		faculty=faculty,
-		backlinks={
-			faculty.name: url_for("view.faculty", facId=faculty.id),
-			subject.code: url_for("view.subject", subjCode=subject.code),
-			course.code: ""
-		}.items()
+		links = {
+			"faculty": url_for("view.faculty", facId=faculty.id),
+			"subject": url_for("view.subject", subjCode=subject.code)
+		}
 	)
 
 
@@ -102,9 +102,14 @@ def courses():
 		header = f"Courses",
 		sortOpt = 0,
 		asc = True,
+		colors = COLORS_DARK,
 		filterData = {
 			"levels": levels,
 			"faculties": faculties,
 			"subjects": subjects
+		},
+		userData = {
+			"isAuth": current_user.is_authenticated,
+			"tags": [dict(tag) for tag in current_user.tags] if current_user.is_authenticated else []
 		}
 	)

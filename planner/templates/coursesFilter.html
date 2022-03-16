@@ -4,13 +4,16 @@
 
 <script>
 	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
-	var isAuth = JSON.parse('{{ isAuth | tojson | safe }}')
+	var isAuth = JSON.parse('{{ userData["isAuth"] | tojson | safe }}')
+	var userTags = JSON.parse('{{ userData["tags"] | tojson | safe }}')
+	var colors = JSON.parse('{{ colors | tojson | safe }}')
 	var page = 1
 	var pages = 1
 </script>
 
 <script src="/static/scripts/subjectSearch.js"></script>
 <script src="/static/scripts/coursesFilter.js"></script>
+<script src="/static/scripts/tags.js"></script>
 <script src="/static/scripts/coursesPag.js"></script>
 <script src="/static/scripts/collapse.js"></script>
 
@@ -19,7 +22,7 @@
 	<!--LEFT: sort and filter options form-->
 	<div class="container col-xl-3 col-lg-4 col-sm-5 col-12 p-0 pe-md-3 ps-sm-0 ps-3 pe-3 m-0">
 		<div class="sticky-top sticky-offset">
-			<form id="form" name="form" method="POST">
+			<form id="formFilterCourses" name="formFilterCourses" method="POST">
 				<!--Sort-->
 				<nav class="card mb-2 bg-light">
 					<div class="card-body">
@@ -183,7 +186,15 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body px-5">
-					
+					<input name="color" type="color" class="form-control form-control-color" id="selectColor" value="#563d7c" title="Tag color">
+
+					<select class="form-select" id="selectColor" name="color" aria-label="Select color">
+						{% for name, color in colors.items() %}
+						<option value="{{color}}" data-content="<i class='bi-square-fill'></i>">
+							{{name | capitalize}}
+						</option>
+						{% endfor %}
+					</select>
 				</div>
 				<div class="modal-footer d-flex justify-content-around">
 					<button type="submit" class="btn btn-primary">Create</button>
@@ -192,5 +203,29 @@
 		</div>
 	</div>
 </form>
+
+<!--Modal edit tags-->
+<div class="modal fade" id="modalEditTags" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Edit tags</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="tag-items"></div>
+				<div class="d-flex justify-content-center">
+					<button type="button" class="btn btn-sm btn-secondary" onclick="addTag()">
+						<i class="bi-plus-lg"></i> Add tag
+					</button>
+				</div>
+			</div>
+			<div class="modal-footer d-flex justify-content-around">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button id="modalEditTagsSubmit" type="submit" class="btn btn-primary" onclick="tagExecuteChanges()">Save changes</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 {% endblock %}
