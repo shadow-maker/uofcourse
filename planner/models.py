@@ -277,12 +277,17 @@ class UserTag(db.Model):
 		self.name = name
 		self.color = color
 		self.emoji = emoji
+	
+	@property
+	def color_hex(self):
+		return f"{self.color:06x}"
 
 	def __iter__(self):
 		yield "id", self.id
 		yield "user_id", self.user_id
 		yield "name", self.name
 		yield "color", self.color
+		yield "color_hex", self.color_hex
 		yield "emoji", self.emoji
 		yield "starred", self.starred
 		yield "deletable", self.deletable

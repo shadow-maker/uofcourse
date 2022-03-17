@@ -100,7 +100,6 @@ function toggleTag(courseId, tagId) {
 
 function updateTags(item) {
 	var emoji = ""
-	var color = ""
 	requestCourseTags(
 		item.attr("db-id"),
 		(data) => {
@@ -111,13 +110,12 @@ function updateTags(item) {
 			const container = item.find(".tags-selected")
 			container.empty()
 			for (tag of data.tags) {
-				color = ("000000" + tag.color.toString(16)).slice(-6)
 
 				icon = ""
 				if (tag.emoji)
 					icon = "&#" + tag.emoji + " "
 				else
-					icon = "<i class='bi-circle-fill' style='color: #" + color +";'></i> "
+					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex +";'></i> "
 
 				container.append(`
 					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
