@@ -106,9 +106,11 @@ def getCoursesFilter():
 		"results": [{
 			"id": course.id,
 			"name": course.name,
-			"subj": course.subject.code,
+			"subject_id": course.subject_id,
 			"code": course.code,
+			"code_full": course.code_full,
 			"emoji": course.getEmoji(),
+			"url": course.url
 		} for course in results.items],
 		"page": page,
 		"pages": results.pages,

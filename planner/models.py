@@ -2,7 +2,7 @@ from planner import db, bcrypt
 from planner.adminView import admin, adminModelView
 from planner.constants import *
 
-from flask import request
+from flask.helpers import url_for
 from flask_login import UserMixin
 from datetime import datetime, date
 
@@ -151,6 +151,14 @@ class Course(db.Model):
 
 	userCourses = db.relationship("UserCourse", backref="course")
 
+	@property
+	def code_full(self):
+		return f"{self.subject.code}-{self.code}"
+	
+	@property
+	def url(self):
+		return url_for("view.course", subjCode=self.subject.code, courseCode=self.code)
+
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
 			return self.emoji
@@ -176,6 +184,7 @@ class Course(db.Model):
 		yield "id", self.id
 		yield "subject_id", self.subject_id
 		yield "code", self.code
+		yield "code_full", self.code_full
 		yield "level", self.level
 		yield "name", self.name
 		yield "emoji", self.emoji
@@ -184,6 +193,7 @@ class Course(db.Model):
 		yield "prereqs", self.prereqs
 		yield "antireqs", self.antireqs
 		yield "notes", self.notes
+		yield "url", self.url
 	
 #
 # USER DB

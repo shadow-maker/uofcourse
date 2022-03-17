@@ -163,10 +163,10 @@ function updateResults(data) {
 			<div class="course-item mb-3 card bg-light" id="course-` + course.id + `" db-id="` + course.id + `">
 				<div class="card-body row px-4 pt-0 pb-2">
 					<div class="col-10 p-0 m-0">
-						<a class="row m-0 p-0 pt-2 text-decoration-none text-body" href="/c/` + course.subj + `/` + course.code + `">
+						<a class="row m-0 p-0 pt-2 text-decoration-none text-body" href="` + course.url + `">
 							<div class="h4 m-0 d-flex align-items-bottom col-xl-3 col-lg-4 col-12">
 								<span class="p-0 m-0 me-2">&#` + course.emoji + `</span>
-								<span class="p-0 m-0 font-monospace">` + course.subj + `-` + course.code + `</span>
+								<span class="p-0 m-0 font-monospace">` + course.code_full + `</span>
 							</div>
 							<div class="d-flex align-items-bottom col-xl-9 col-lg-8 col-12">
 								<div class="p-0 m-0 h5">` + course.name + `</div>
