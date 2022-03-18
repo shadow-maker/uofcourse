@@ -107,8 +107,5 @@ def courses():
 			"levels": levels,
 			"faculties": faculties,
 			"subjects": subjects
-		},
-		userData = {
-			"isAuth": current_user.is_authenticated
 		}
 	)

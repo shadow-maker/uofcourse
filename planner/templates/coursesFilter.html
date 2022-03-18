@@ -4,7 +4,6 @@
 
 <script>
 	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
-	var isAuth = JSON.parse('{{ userData["isAuth"] | tojson | safe }}')
 	var colors = JSON.parse('{{ colors | tojson | safe }}')
 	var page = 1
 	var pages = 1
