@@ -234,14 +234,6 @@ function updateResults(data) {
 //
 
 $(document).ready(() => {
-	requestResults(
-		(data) => {
-			page = data.page
-			pages = data.pages
-			updateResults(data)
-		}
-	)
-
 	$("#formFilterCourses input").not("#subjectSearch").change(() => {
 		$("#formFilterCourses").submit()
 	})
@@ -269,13 +261,18 @@ $(document).on("click", ".tags-dropdown-btn", function() {
 		alert("warning", "You must be logged in to add tags")
 })
 
-function tagEditDone() {
-	requestUserTags((data) => {
-		userTags = data.tags
-		requestResults((data) => {
-			page = data.page
-			pages = data.pages
-			updateResults(data)
-		}, true)
+function tagsInit() {
+	requestResults((data) => {
+		page = data.page
+		pages = data.pages
+		updateResults(data)
 	})
+}
+
+function tagEditDone() {
+	requestResults((data) => {
+		page = data.page
+		pages = data.pages
+		updateResults(data)
+	}, true)
 }

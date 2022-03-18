@@ -1,6 +1,6 @@
 // Code for Edit Tags modal
 
-tagIndex = 0
+var tagIndex = 0
 
 function colorToHex(color) {
 	return ("000000" + color.toString(16)).slice(-6)
@@ -84,7 +84,11 @@ function tagExecuteChanges() {
 			callback = (data) => {
 				if (data.success)
 					alert("success", data.success)
-				tagEditDone()
+				requestTag("GET", {}, (data) => {
+					userTags = data.tags
+					if (typeof tagEditDone !== "undefined")
+						tagEditDone()	
+				})
 			}
 		}
 
@@ -194,5 +198,16 @@ function loadEditTagsModal() {
 // DOCUMENT READY
 
 $(document).ready(() => {
-	loadEditTagsModal()
+	if (typeof userTags === "undefined") { // If userTags was not passed from the server on template load
+		requestTag("GET", {}, (data) => {
+			userTags = data.tags
+			if (typeof tagsInit !== "undefined")
+				tagsInit()
+			loadEditTagsModal()
+		})
+	} else {
+		if (typeof tagsInit !== "undefined")
+			tagsInit()
+		loadEditTagsModal()
+	}
 })

@@ -109,7 +109,6 @@ def courses():
 			"subjects": subjects
 		},
 		userData = {
-			"isAuth": current_user.is_authenticated,
-			"tags": [dict(tag) for tag in current_user.tags] if current_user.is_authenticated else []
+			"isAuth": current_user.is_authenticated
 		}
 	)
