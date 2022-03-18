@@ -26,7 +26,7 @@ function addTag() {
 	const color = Object.keys(colors)[Math.floor(Math.random() * Object.keys(colors).length)]
 	$("#modalEditTags .tag-items").append(`
 		<div id="tag-edit-` + tagIndex +`" class="">
-		<form class="inputs row">
+		<div class="inputs row">
 			<div class="col-11">
 				<div class="input-group">
 					<span class="tag-color-indicator input-group-text" style="color: #` + colorToHex(colors[color]) + `;">
@@ -43,7 +43,7 @@ function addTag() {
 					<i class="h5 bi-trash text-danger"></i>
 				</button>
 			</div>
-		</form>
+		</div>
 		<hr class="my-3">
 		</div>
 	`)
@@ -153,7 +153,7 @@ function loadEditTagsModal() {
 	for (let tag of userTags) {
 		$("#modalEditTags .tag-items").append(`
 			<div id="tag-edit-` + tagIndex +`" db-id=` + tag.id +` db-delete="false">
-				<form class="inputs row">
+				<div class="inputs row">
 					<div class="col-11">
 						<div class="input-group">
 							<span class="tag-color-indicator input-group-text" style="color: #` + colorToHex(tag.color) + `;">
@@ -170,7 +170,7 @@ function loadEditTagsModal() {
 							<i class="h5 bi-trash text-danger"></i>
 						</button>
 					</div>
-				</form>
+				</div>
 				<div class="deleted row">
 					<div class="col-11">
 						<div class="input-group">
@@ -195,8 +195,4 @@ function loadEditTagsModal() {
 
 $(document).ready(() => {
 	loadEditTagsModal()
-
-	$("select").change(() => {
-		//console.log("Changed color");
-	})
 })
