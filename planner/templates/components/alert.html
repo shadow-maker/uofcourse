@@ -17,13 +17,21 @@ const categories = ["success", "info", "warning", "danger", "primary", "secondar
 function alert(category, message, pre="") {
 	if (!categories.includes(category))
 		category = "warning"
-
-	$("#alerts").append(`
+	
+	let newAlert = $(`
 		<div class="alert alert-` + category + ` alert-dismissible fade show mx-2 mx-md-5 mb-2 mb-md-3" role="alert" data-bs-dismiss="alert">
 			<b>` + pre +`</b>
 			` + message + `
 			<button type="button" class="btn-close" aria-label="Close"></button>
 		</div>
 	`)
+
+	$(newAlert).appendTo("#alerts")
+
+	if (category != "danger") {
+		setTimeout(() => {
+			newAlert.alert("close")
+		}, category == "warning" ? 5000 : 3000);
+	}
 }
 </script>
