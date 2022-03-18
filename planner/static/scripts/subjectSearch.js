@@ -44,11 +44,11 @@ $(document).ready(function () {
 $(document).on("click", ".subjItem", function () {
 	subjects[this.getAttribute("code")].sel = false
 	this.remove()
-	$("form").submit()
+	$("#formFilterCourses").submit()
 });
 
 $(document).on("click", ".subjSuggestion", function () {
 	$("#subjectSearch").val(this.getAttribute("code"))
-	$("form").submit()
 	$("#subjectSearchSuggestions").empty()
+	$("#formFilterCourses").submit()
 });

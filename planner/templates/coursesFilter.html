@@ -175,34 +175,6 @@
 	</div>
 </div>
 
-<!--Form create new tag-->
-<form id="formAddTag" name="formAddTag" action="/my/add/tag" method="POST">
-	<div class="modal fade" id="modalAddTag" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Create tag</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body px-5">
-					<input name="color" type="color" class="form-control form-control-color" id="selectColor" value="#563d7c" title="Tag color">
-
-					<select class="form-select" id="selectColor" name="color" aria-label="Select color">
-						{% for name, color in colors.items() %}
-						<option value="{{color}}" data-content="<i class='bi-square-fill'></i>">
-							{{name | capitalize}}
-						</option>
-						{% endfor %}
-					</select>
-				</div>
-				<div class="modal-footer d-flex justify-content-around">
-					<button type="submit" class="btn btn-primary">Create</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</form>
-
 {% include "components/editTags.html" %}
 
 {% endblock %}

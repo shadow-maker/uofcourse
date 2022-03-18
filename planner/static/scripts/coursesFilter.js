@@ -1,3 +1,10 @@
+function displayError(data) {
+	if (data.error)
+		alert("danger", data.error)
+	else
+		alert("danger", data.responseJSON.error)
+}
+
 var prevData = {}
 
 //
@@ -45,7 +52,7 @@ function requestResults(suc, ignorePrev=false) {
 		success: (data) => {suc(data)},
 		error: (data) => {
 			$(".loading").hide()
-			alert("danger", data.responseJSON.error)
+			displayError(data)
 		}
 	})
 }
@@ -58,7 +65,7 @@ function requestUserTags(suc) {
 			method: "GET",
 			success: (data) => {suc(data)},
 			error: (data) => {
-				alert("danger", data.responseJSON.error)
+				displayError(data)
 			}
 		})
 }
@@ -71,7 +78,7 @@ function requestCourseTags(id, suc) {
 			method: "GET",
 			success: (data) => {suc(data)},
 			error: (data) => {
-				alert("danger", data.responseJSON.error)
+				displayError(data)
 			}
 		})
 }
@@ -89,7 +96,7 @@ function toggleTag(courseId, tagId) {
 			updateTags($("#course-" + courseId))
 		},
 		error: (data) => {
-			alert("danger", data.responseJSON.error)
+			displayError(data)
 		}
 	})
 }
@@ -99,7 +106,7 @@ function toggleTag(courseId, tagId) {
 //
 
 function updateTags(item) {
-	var emoji = ""
+	var icon = ""
 	requestCourseTags(
 		item.attr("db-id"),
 		(data) => {
@@ -246,6 +253,8 @@ $(document).ready(() => {
 	$("#formFilterCourses").on("submit", (event) => {
 		event.preventDefault()
 		event.stopImmediatePropagation()
+
+		updateSubjects()
 
 		requestResults((data) => {
 			page = data.page
