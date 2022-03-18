@@ -198,7 +198,7 @@ function loadEditTagsModal() {
 // DOCUMENT READY
 
 $(document).ready(() => {
-	if (!isAuth || typeof isAuth === "undefined")
+	if (typeof isAuth === "undefined" || !isAuth)
 		userTags = []
 
 	if (typeof userTags === "undefined") { // If userTags was not passed from the server on template load

@@ -31,6 +31,7 @@ def planner():
 		title = "My Plan",
 		header = "My Course Plan",
 		userData = {
+			"isAuth": True,
 			"tags": current_user.tags,
 			"collections": sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0)
 		},
