@@ -222,7 +222,6 @@ class User(db.Model, UserMixin):
 	createdAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 	faculty_id = db.Column(db.Integer, db.ForeignKey("faculty.id"), nullable=False)
-	entryYear = db.Column(db.Integer)
 	neededUnits = db.Column(db.Numeric(3, 2))
 
 	collections = db.relationship("CourseCollection", backref="user")
@@ -260,7 +259,6 @@ class User(db.Model, UserMixin):
 		yield "name", self.name
 		yield "email", self.email
 		yield "faculty", dict(self.faculty)
-		yield "entryYear", self.entryYear
 		yield "neededUnits", self.neededUnits
 
 

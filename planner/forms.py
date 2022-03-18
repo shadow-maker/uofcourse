@@ -24,10 +24,6 @@ def passwValidation(form, field):
 	if len(str(field.data)) > 32:
 		raise ValidationError("Password must be less than 64 characters long")
 
-def entryYearValidation(form, field):
-	if field.data < 1966 or field.data > date.today().year:
-		raise ValidationError("Invalid year of entry")
-
 #
 # Forms
 #
@@ -44,5 +40,4 @@ class registerForm(FlaskForm):
 	email = StringField("Email", validators=[DataRequired(), Email()])
 	passw = PasswordField("Password", validators=[DataRequired(), passwValidation])
 	fac = SelectField("Faculty", choices=[(f.id, f.name) for f in Faculty.query.all()], validators=[DataRequired()])
-	entry = IntegerField("Year of entry", validators=[entryYearValidation])
 	submit = SubmitField("Create account")

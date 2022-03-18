@@ -35,8 +35,6 @@ def signup():
 			flash(f"User with UCID {form.ucid.data} already exist. Please sign in.", "danger")
 		else:
 			user = User(form.ucid.data, form.name.data, form.email.data, form.passw.data, form.fac.data)
-			if form.entry.data:
-				user.entryYear = form.entry.data
 			db.session.add(user)
 			db.session.commit()
 			flash(f"Account created!", "success")
