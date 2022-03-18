@@ -2,21 +2,53 @@
 
 {% block content %}
 
+<script>
+	var colors = JSON.parse('{{ colors | tojson | safe }}')
+</script>
+
+
 <!--Tags-->
-<div class="container mb-3">
-	<h2 class="mb-3">Tags</h2>
-	<div>
-		{% for tag in userTags %}
-		<div class="card h-100">
-			<div class="card-header text-center">
-				&#{{tag.emoji}}
-				{{tag.name}}
-			</div>
-			<div class="course-container card-body p-1" db-id="{{tag.id}}">
+<div class="container mb-5">
+	<div class="d-flex justify-content-between mb-3">
+		<h2 class="m-0">Tags</h2>
+		<button type="button" class="m-0 btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+			<i class="bi-pencil-fill"></i>
+			Edit Tags
+		</button>
+	</div>
+	<div class="row">
+		{% for tag in userData["tags"] %}
+		<div class="col-xl-3 col-lg-4 col-sm-6 col-12 p-0 px-2 mb-3">
+			<div class="card h-100">
+				<div class="card-header text-center">
+					{% if tag.emoji %}
+						&#{{tag.emoji}}
+					{% else %}
+						<i class="bi-circle-fill" style="color: #{{tag.color_hex}};"></i>
+					{% endif %}
+					{{tag.name}}
+				</div>
+				<div class="tag-course-container card-body p-1" db-id="{{tag.id}}">
+					{% for course in tag.courses | sort(attribute="subject.code") %}
+						<a class="tag-course-item m-1 btn bg-light card" db-id="{{course.id}}"
+							db-code="{{course.subject.code}}-{{course.code}}" draggable="true" href="{{course.url}}">
+							<div class="row">
+								<span class="col-3 h5 p-0 m-0">
+									&#{{course.getEmoji()}}
+								</span>
+								<span id="code" class="col-6 font-monospace">
+									{{course.code_full}}
+								</span>
+								<span class="col-3">
+									<i class="bi-box-arrow-up-right"></i>
+								</span>
+							</div>
+						</a>
+					{% endfor %}
+				</div>
+				<div class="card-footer">
 
-			</div>
-			<div class="card-footer">
-
+				</div>
 			</div>
 		</div>
 		{% endfor %}
@@ -27,7 +59,7 @@
 <div class="container-fluid">
 	<h2 class="mb-3">Courses per term</h2>
 	<div class="row flex-nowrap overflow-scroll pt-3">
-		{% for collection in courseCollections %}
+		{% for collection in userData["collections"] %}
 		<div class="col-3 mx-2 p-0">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
@@ -49,15 +81,15 @@
 					<small class="m-0 text-muted"><i>{{collection.term.start}} > {{collection.term.end}}</i></small>
 					{% endif %}
 				</div>
-				<div class="course-container card-body p-1" db-id="{{collection.id}}">
+				<div class="collection-course-container card-body p-1" db-id="{{collection.id}}">
 					{% for uCourse in collection.userCourses | sort(attribute="course.subject.code") %}
-					<div class="course-item m-1 btn bg-light card" db-id="{{uCourse.id}}"
+					<div class="collection-course-item m-1 btn bg-light card" db-id="{{uCourse.id}}"
 						db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{{uCourse.course.subject.code}}-{{uCourse.course.code}}" draggable="true"
 						data-bs-toggle="modal" data-bs-target="#modalEditUserCourse">
 						<div class="row">
-							<span class="col-3">&#{{uCourse.course.getEmoji()}}</span>
+							<span class="col-3 h5 p-0 m-0">&#{{uCourse.course.getEmoji()}}</span>
 							<span id="code"
-								class="col-6 font-monospace">{{uCourse.course.subject.code}}-{{uCourse.course.code}}</span>
+								class="col-6 font-monospace">{{uCourse.course.code_full}}</span>
 							<span class="col-3 font-monospace text-start">
 								{% if uCourse.grade %}
 								{{uCourse.grade.symbol}}
@@ -201,7 +233,7 @@
 						<div class="col-9">
 							<select class="form-select" aria-label="Select term" name="collection_id"
 								id="selectCollection">
-								{% for collection in courseCollections %}
+								{% for collection in userData["collections"] %}
 								<option value="{{collection.id}}">
 									{% if collection.transfer %}
 									Transferred
@@ -252,5 +284,7 @@
 </form>
 
 <script src="/static/scripts/planner.js"></script>
+
+{% include "components/editTags.html" %}
 
 {% endblock %}

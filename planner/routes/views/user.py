@@ -30,11 +30,14 @@ def planner():
 	return render_template("planner.html",
 		title = "My Plan",
 		header = "My Course Plan",
-		userTags = current_user.tags,
-		courseCollections = sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0),
+		userData = {
+			"tags": current_user.tags,
+			"collections": sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0)
+		},
 		grades = Grade.query.all(),
 		seasons = Season.query.all(),
-		years = getAllYears(False)
+		years = getAllYears(False),
+		colors = COLORS_DARK
 	)
 
 @view.route("/my/add/collection", methods=["POST"])

@@ -1,5 +1,36 @@
-const courseContainers = document.querySelectorAll(".course-container")
-const courseItems = document.querySelectorAll(".course-item")
+// Dragging
+
+const courseContainers = document.querySelectorAll(".collection-course-container")
+const courseItems = document.querySelectorAll(".collection-course-item")
+
+var oldContainer = null
+
+courseItems.forEach(item => {
+	item.addEventListener("dragstart", () => {
+		item.classList.add("dragging")
+		oldContainer = item.parentElement
+	})
+
+	item.addEventListener("dragend", () => {
+		item.classList.remove("dragging")
+
+		if (oldContainer != item.parentElement) {
+			editCollection({
+				id: item.getAttribute("db-id"),
+				collection_id: item.parentElement.getAttribute("db-id")
+			}, [oldContainer, item.parentElement])
+		}
+	})
+})
+
+courseContainers.forEach(container => {
+	container.addEventListener("dragover", e => {
+		e.preventDefault()
+		const item = document.querySelector(".dragging")
+		container.appendChild(item)
+		sortCourses(container)
+	})
+})
 
 // AJAX for dragging course items
 
@@ -44,7 +75,7 @@ function editCollection(data, containers) {
 }
 
 function sortCourses(container) {
-	$(container).children(".course-item").sort(function (a, b) {
+	$(container).children(".collection-course-item").sort(function (a, b) {
 		if ( ($(a).attr("db-code").toLowerCase() > $(b).attr("db-code").toLowerCase()) )
 			return 1
 		else if (($(a).attr("db-code").toLowerCase() == $(b).attr("db-code").toLowerCase()))
@@ -57,35 +88,6 @@ function sortCourses(container) {
 		$(elem).appendTo(container)
 	})
 }
-
-var oldContainer = null
-
-courseItems.forEach(item => {
-	item.addEventListener("dragstart", () => {
-		item.classList.add("dragging")
-		oldContainer = item.parentElement
-	})
-
-	item.addEventListener("dragend", () => {
-		item.classList.remove("dragging")
-
-		if (oldContainer != item.parentElement) {
-			editCollection({
-				id: item.getAttribute("db-id"),
-				collection_id: item.parentElement.getAttribute("db-id")
-			}, [oldContainer, item.parentElement])
-		}
-	})
-})
-
-courseContainers.forEach(container => {
-	container.addEventListener("dragover", e => {
-		e.preventDefault()
-		const item = document.querySelector(".dragging")
-		container.appendChild(item)
-		sortCourses(container)
-	})
-})
 
 
 // UserCourse-add form logic
@@ -140,12 +142,13 @@ $("#selectCourseNumber").keyup(function() {
 
 $(document).on("click", ".add-course", function() {
 	$("#selectCollectionId").val(this.getAttribute("db-id"))
+	$("#selectCourseSubject").focus()
 })
 
 
 // UserCourse-edit form logic
 
-$(document).on("click", ".course-item", function() {
+$(document).on("click", ".collection-course-item", function() {
 	if (!this.classList.contains("dragging")) {
 		let form = $("#formEditUserCourse")
 
