@@ -58,19 +58,6 @@ function requestResults(suc, ignorePrev=false) {
 }
 
 
-function requestUserTags(suc) {
-	if (isAuth)
-		$.ajax({
-			url: "/api/tags",
-			method: "GET",
-			success: (data) => {suc(data)},
-			error: (data) => {
-				displayError(data)
-			}
-		})
-}
-
-
 function requestCourseTags(id, suc) {
 	if (isAuth)
 		$.ajax({
@@ -93,7 +80,7 @@ function toggleTag(courseId, tagId) {
 		},
 		success: (data) => {
 			alert("success", data.success)
-			updateTags($("#course-" + courseId))
+			updateCourseTags(courseId)
 		},
 		error: (data) => {
 			displayError(data)
@@ -105,10 +92,11 @@ function toggleTag(courseId, tagId) {
 // UPDATE FUNCTIONS
 //
 
-function updateTags(item) {
+function updateCourseTags(courseId) {
+	let item = $("#course-" + courseId)
 	var icon = ""
 	requestCourseTags(
-		item.attr("db-id"),
+		courseId,
 		(data) => {
 			item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
 				$(this).find(".bi-check").addClass("invisible")
@@ -118,7 +106,6 @@ function updateTags(item) {
 			container.empty()
 			for (tag of data.tags) {
 
-				icon = ""
 				if (tag.emoji)
 					icon = "&#" + tag.emoji + " "
 				else
@@ -131,9 +118,8 @@ function updateTags(item) {
 				`)
 
 				item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
-					if($(this).attr("db-id") == tag.id) {
+					if($(this).attr("db-id") == tag.id)
 						$(this).find(".bi-check").removeClass("invisible")
-					}
 				})
 			}
 		}
@@ -144,69 +130,65 @@ function updateResults(data) {
 	$(".loading").hide()
 	$(".loaded").show()
 
-
-	function tagsUser(courseId) {
-		var html = ""
-
-		for (let tag of userTags) {
-			html += `
-				<li class="tags-dropdown-item" db-id="` + tag.id +`">
-					<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + courseId + `, ` +  tag.id + `)" style="cursor: pointer;">
-						<small>
-							<i class="bi-check invisible"></i>
-							` + tag.name +`
-						</small>
-					</a>
-				</li>
-			`
-		}
-
-		return html
-	}
-
 	$("#coursesContainer").empty()
 	for (let course of data.results) {
-		$("#coursesContainer").append(`
-			<div class="course-item mb-3 card bg-light" id="course-` + course.id + `" db-id="` + course.id + `">
-				<div class="card-body row px-4 pt-0 pb-2">
-					<div class="col-10 p-0 m-0">
-						<a class="row m-0 p-0 pt-2 text-decoration-none text-body" href="` + course.url + `">
-							<div class="h4 m-0 d-flex align-items-bottom col-xl-3 col-lg-4 col-12">
-								<span class="p-0 m-0 me-2">&#` + course.emoji + `</span>
-								<span class="p-0 m-0 font-monospace">` + course.code_full + `</span>
-							</div>
-							<div class="d-flex align-items-bottom col-xl-9 col-lg-8 col-12">
-								<div class="p-0 m-0 h5">` + course.name + `</div>
-							</div>
+		var courseItem = $("#templateCourseItem").children().first().clone()
+
+		courseItem.attr("id", "course-" + course.id)
+		courseItem.attr("db-id", course.id)
+
+		courseItem.find(".course-link").attr("href", course.url)
+		courseItem.find(".course-emoji").html("&#" + course.emoji)
+		courseItem.find(".course-code").html(course.code_full)
+		courseItem.find(".course-name").html(course.name)
+
+
+		var icon = ""
+		for (let id of course.tags) {
+			var tag = null
+
+			for (t of userTags)
+				if (t.id == id)
+					tag = t
+			
+			if (!tag)
+				continue
+
+			if (tag.emoji)
+				icon = "&#" + tag.emoji + " "
+			else
+				icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex + ";'></i> "
+
+			courseItem.find(".tags-selected").append(`
+				<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + course.id + `, ` +  tag.id+ `)">
+					` + icon + tag.name + `
+				</span>
+			`)
+		}
+
+		if (isAuth) {
+			for (tag of userTags) {
+				courseItem.find(".tags-dropdown").append(`
+					<li class="tags-dropdown-item" db-id="` + tag.id +`">
+						<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + course.id + `, ` +  tag.id + `)" style="cursor: pointer;">
+							<small>
+								<i class="bi-check ` + (course.tags.includes(tag.id) ? `` : `invisible`) + `"></i>
+								` + tag.name +`
+							</small>
 						</a>
-						<div class="row m-0 p-0">
-							<div class="h4 m-0 col-xl-3 col-lg-4 col-12"></div>
-							<div class="col-xl-9 col-lg-8 col-12">
-								<span class="tags-selected p-0 m-0"></span>
-								<div class="btn-group">
-									<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
-										<i class="bi-tag-fill"></i>
-									</button>
-									<ul class="tags-dropdown dropdown-menu fs-6 py-1">
-									` + (isAuth ?
-										tagsUser(course.id) + `
-										<li><hr class="dropdown-divider my-1"></li>
-										<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
-											<small>Edit tags</small>
-										</a></li>
-									` : ``) + `
-									</ul>
-								</div>
-							</div>
-						</div>	
-					</div>
-					<div class="col-2 course-actions">
-						Taken in
-					</div>
-				</div>
-			</div>
-		`)
-		updateTags($("#coursesContainer").children().last())
+					</li>
+				`)
+			}
+
+			courseItem.find(".tags-dropdown").append(`
+				<li><hr class="dropdown-divider my-1"></li>
+				<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+					<small>Edit tags</small>
+				</a></li>
+			`)
+		}
+
+		courseItem.appendTo("#coursesContainer")
 	}
 
 	$("#pageNav .pageSelector").remove()
