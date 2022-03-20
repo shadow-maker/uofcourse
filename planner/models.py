@@ -33,6 +33,10 @@ class Term(db.Model):
 
 	courseCollections = db.relationship("CourseCollection", backref="term")
 
+	@property
+	def name(self):
+		return f"{self.season.name} {self.year}"
+
 	def isCurrent(self):
 		return self.start and self.end and self.start <= date.today() <= self.end
 
@@ -163,6 +167,12 @@ class Course(db.Model):
 		if self.emoji:
 			return self.emoji
 		return self.subject.getEmoji(default)
+	
+	def getTags(self, userId):
+		return [tag for tag in self.userTags if tag.user_id == userId]
+	
+	def getUserCourses(self, userId):
+		return [uc for uc in self.userCourses if uc.collection.user_id == userId]
 
 	def __init__(self, subject_id, code, name, units, desc="", prereqs="", antireqs="", notes="", emoji=None):
 		self.subject_id = subject_id
