@@ -109,7 +109,7 @@ def putUserCourse(data={}):
 		if collection.user_id != current_user.id:
 			return {"error": "User does not have access to this CourseCollection"}, 403
 		for uCourse in collection.userCourses:
-			if userCourse.course_id == uCourse.course_id:
+			if userCourse != uCourse and userCourse.course_id == uCourse.course_id:
 				return {"error": "a UserCourse with the same Course already exists in this CourseCollection"}, 400
 		userCourse.course_collection_id = collection.id
 	
