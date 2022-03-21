@@ -2,42 +2,136 @@
 
 {% block content %}
 
-<h3 class="font-monospace">
-	<span class="border border-2 border-secondary bg-light rounded p-1">{{subject.code}}</span>-<span class="border border-2 border-secondary bg-light rounded p-1">{{course.code}}</span>
-</h3>
-(#{{course.id}})
-<h2>{{course.name}}</h2>
+<script>
+	var colors = JSON.parse('{{ colors | tojson | safe }}')
+</script>
 
-
-<h5>{{faculty.name}}</h5>
-<h5>{{subject.name}}</h5>
-
-<div class="container">
-	<h3>Description</h3>
-	<p>
-		{{course.desc}}
-	</p>
+<div class="mb-3">
+	<span class="h3 font-monospace">
+		<span class="border border-2 border-secondary bg-light rounded p-1">{{subject.code}}</span>-<span
+			class="border border-2 border-secondary bg-light rounded p-1">{{course.code}}</span>
+	</span>
+	(#{{course.id}})
 </div>
 
-<div class="container">
-	<h3>Prerequisites</h3>
-	<p>
-		{{course.prereqs}}
-	</p>
+<div class="row mb-1">
+	<!--Course Header-->
+	<div class="col-12 col-md-8">
+		<h1 class="mt-2">&#{{course.getEmoji()}} {{course.name}}</h1>
+
+		<h5 title="Faculty">
+			<i class="bi bi-building"></i>
+			<a href="{{links['faculty']}}" class="h5 text-body">{{faculty.name}}</a>
+			<i class="h6 bi bi-box-arrow-up-right"></i>
+		</h5>
+		<h5 title="Subject">
+			<i class="bi bi-journals"></i></i>
+			<a href="{{links['subject']}}" class="h5 text-body">{{subject.name}}</a>
+			<i class="h6 bi bi-box-arrow-up-right"></i>
+		</h5>
+	</div>
+
+	<!--Tags-->
+	<div class="col-12 col-md-4 p-2">
+		<div class="card bg-light h-100">
+			<div class="card-body">
+				<div class="d-flex justify-content-between mb-2">
+					<h4 class="m-0">Tags</h4>
+					{% if current_user.is_authenticated %}
+					<button type="button" class="btn btn-sm btn-secondary m-0" data-bs-toggle="modal"
+						data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+						<i class="bi-pencil-fill"></i>
+						Edit Tags
+					</button>
+					{% endif %}
+				</div>
+				{% if current_user.is_authenticated %}
+				<div>
+					{% for tag in userTags %}
+					<span class="course-tag btn badge btn-secondary px-1" title="{{tag.name}}" style="cursor: pointer;" db-id="{{tag.id}}`">
+						{% if tag.emoji %}
+							&#{{tag.emoji}}
+						{% else %}
+							<i class="bi-circle-fill" style="color: #{{tag.color_hex}};"></i>
+						{% endif %}
+						{{tag.name}}
+					</span>
+					{% endfor %}
+				</div>
+				{% else %}
+				<span class="fst-italic">
+					You must be logged in to see and add tags to this course
+				</span>
+				{% endif %}
+			</div>
+		</div>
+	</div>
 </div>
 
-<div class="container">
-	<h3>Antirequisites</h3>
-	<p>
-		{{course.antireqs}}
-	</p>
+<div class="row">
+	<!--Course Info-->
+	<div class="col-7 col-md-8 pe-0">
+		<div class="container row p-0 ps-lg-4">
+			{% macro textCard(title, content) %}
+			<div class="col-lg-6 col-12 p-2">
+				<div class="card h-100">
+					<div class="card-body">
+						<h3>{{title}}</h3>
+						<p>
+							{% if content %}
+							{{content}}
+							{% else %}
+							<span class="fst-italic">None</span>
+							{% endif %}
+						</p>
+					</div>
+				</div>
+			</div>
+			{% endmacro %}
+
+			{{textCard("Description", course.desc)}}
+
+			{{textCard("Notes", course.notes)}}
+
+			{{textCard("Prerequisites", course.prereqs)}}
+
+			{{textCard("Antirequisites", course.antireqs)}}
+
+		</div>
+	</div>
+
+	<!--Course Info-->
+	<div class="col-5 col-md-4 p-2">
+		<div class="card bg-light">
+			<div class="card-body">
+				<h4>Taken in</h4>
+				{% if current_user.is_authenticated %}
+				<div class="card">
+					<ul class="list-group list-group-flush">
+						{% for uCourse in userCourses %}
+						<li class="list-group-item">
+							<div class="d-flex justify-content-between">
+								<span class="">
+									{{uCourse.collection.term.name | capitalize}}
+								</span>
+								<span class="font-monospace" title="{{uCourse.grade.gpv}}">
+									{{uCourse.grade.symbol}}
+								</span>
+							</div>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+				{% else %}
+				<span class="fst-italic">
+					You must be logged in to see the terms in which you took this course
+				</span>
+				{% endif %}
+			</div>
+		</div>
+	</div>
 </div>
 
-<div class="container">
-	<h3>Notes</h3>
-	<p>
-		{{course.notes}}
-	</p>
-</div>
+{% include "components/editTags.html" %}
 
 {% endblock %}

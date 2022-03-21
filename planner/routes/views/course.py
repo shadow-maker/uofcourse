@@ -62,6 +62,9 @@ def course(subjCode, courseCode):
 		course=course,
 		subject=subject,
 		faculty=faculty,
+		userTags = course.getTags(current_user.id) if current_user.is_authenticated else [],
+		userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else [],
+		colors = COLORS_DARK,
 		links = {
 			"faculty": url_for("view.faculty", facId=faculty.id),
 			"subject": url_for("view.subject", subjCode=subject.code)
@@ -103,6 +106,7 @@ def courses():
 		sortOpt = 0,
 		asc = True,
 		colors = COLORS_DARK,
+		terms = [dict(term) for term in Term.query.all()],
 		filterData = {
 			"levels": levels,
 			"faculties": faculties,
