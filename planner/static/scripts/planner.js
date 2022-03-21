@@ -47,7 +47,9 @@ function updateCollectionGPA(container) {
 				gpaElem.text("-")
 		},
 		error: (response) => {
-			if (data.responseJSON)
+			if (response.error)
+				alert("danger", response.error)
+			else if (response.responseJSON)
 				alert("danger", response.responseJSON.error)
 			else
 				alert("danger", response.statusText + " (" + response.staus + ")")
@@ -66,7 +68,9 @@ function editCollection(data, containers) {
 			})
 		},
 		error: (response) => {
-			if (data.responseJSON)
+			if (response.error)
+				alert("danger", response.error)
+			else if (response.responseJSON)
 				alert("danger", response.responseJSON.error)
 			else
 				alert("danger", response.statusText + " (" + response.staus + ")")
