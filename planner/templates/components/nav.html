@@ -20,12 +20,12 @@
 
 			<ul class="navbar-nav text-center">
 				{% if current_user.is_authenticated %}
-					<li class="m-1">
+					<li>
 						<a class="nav-link" href="{{url_for('view.planner')}}">
 							My Planner
 						</a>
 					</li>
-					<li class="m-1">
+					<li>
 						<a class="nav-link" href="{{url_for('view.account')}}">
 							My Account
 						</a>
