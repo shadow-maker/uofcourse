@@ -2,6 +2,42 @@
 
 {% block content %}
 
-<h2>Test</h2>
+<div class="row">
+	<div class="col-12 col-md-8 container fs-5 mb-5">
+		Welcome to UofC Planner, a website created to aid UofC students in their program course planning.
+
+		<br><br>
+
+		Main features:
+
+		<ul>
+			<li>An intuitive course browser that allows users to quickly browse through the university's full course catalog, with filter and sorting options</li>
+			<li>Per-course pages with all the essential information for students</li>
+			<li>Save courses with custom tags</li>
+			<li>Arrange courses in terms in the virtual Course Planner</li>
+		</ul>
+
+		More information in the <a href="{{url_for('view.about')}}">about</a> page
+	</div>
+
+	<div class="col-12 col-md-4 container">
+		<h3>Go to...</h3>
+
+		<div class="d-flex flex-column">
+			<a type="button" class="btn btn-lg btn-primary my-1" href="{{url_for('view.courses')}}">
+				Course Search
+			</a>
+
+			<a type="button" class="btn btn-lg btn-primary my-1" href="{{url_for('view.courseRandom')}}">
+				Random Course
+			</a>
+
+			<a type="button" class="btn btn-lg btn-primary my-1" href="{{url_for('view.planner')}}">
+				My Planner
+			</a>
+		</div>
+	</div>
+
+</div>
 
 {% endblock %}
