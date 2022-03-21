@@ -31,3 +31,7 @@
 .dragging {
 	opacity: 0.5;
 }
+
+.course-link:hover {
+	color: var(--bs-gray-600) !important;
+}
