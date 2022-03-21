@@ -28,8 +28,8 @@
 					</div>
 				</div>	
 			</div>
-			<div class="col-2 course-actions">
-				Taken in
+			<div class="col-2 course-terms py-1">
+
 			</div>
 		</div>
 	</div>
@@ -38,6 +38,7 @@
 <script>
 	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
 	var colors = JSON.parse('{{ colors | tojson | safe }}')
+	var terms = JSON.parse('{{ terms | tojson | safe }}')
 	var page = 1
 	var pages = 1
 </script>

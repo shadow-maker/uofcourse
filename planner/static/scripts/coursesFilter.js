@@ -132,6 +132,7 @@ function updateResults(data) {
 
 	$("#coursesContainer").empty()
 	for (let course of data.results) {
+		console.log(course.terms)
 		var courseItem = $("#templateCourseItem").children().first().clone()
 
 		courseItem.attr("id", "course-" + course.id)
@@ -147,9 +148,12 @@ function updateResults(data) {
 		for (let id of course.tags) {
 			var tag = null
 
-			for (t of userTags)
-				if (t.id == id)
+			for (t of userTags) {
+				if (t.id == id) {
 					tag = t
+					break
+				}
+			}
 			
 			if (!tag)
 				continue
@@ -166,8 +170,29 @@ function updateResults(data) {
 			`)
 		}
 
+		for (let id of course.terms) {
+			var term = null
+
+			for (t of terms) {
+				if (t.id == id) {
+					term = t
+					break
+				}
+			}
+
+			if (!term)
+				continue
+
+			courseItem.find(".course-terms").append(`
+				<div>
+					` + term.season.charAt(0).toUpperCase() + term.season.slice(1) +`
+					` + term.year + `
+				</div>
+			`)
+		}
+
 		if (isAuth) {
-			for (tag of userTags) {
+			for (let tag of userTags) {
 				courseItem.find(".tags-dropdown").append(`
 					<li class="tags-dropdown-item" db-id="` + tag.id +`">
 						<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + course.id + `, ` +  tag.id + `)" style="cursor: pointer;">

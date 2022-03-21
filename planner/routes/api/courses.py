@@ -113,6 +113,7 @@ def getCoursesFilter():
 			"emoji": course.getEmoji(),
 			"url": course.url,
 			"tags": [tag.id for tag in course.userTags if tag.user_id == current_user.id] if current_user.is_authenticated else [],
+			"terms": [uc.collection.term.id for uc in course.getUserCourses(current_user.id)] if current_user.is_authenticated else []
 		} for course in results.items],
 		"page": page,
 		"pages": results.pages,
