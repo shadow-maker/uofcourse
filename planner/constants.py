@@ -6,9 +6,6 @@ COURSE_LEVELS = [1, 2, 3, 4, 5, 6, 7]
 
 DEFAULT_EMOJI = 128218
 
-STARRED_COLOR = 0xffd700
-STARRED_EMOJI = 11088
-
 COLORS_DARK = {
 	"red": 0xff0000,
 	"orange": 0xffa500,
@@ -30,3 +27,6 @@ COLORS_LIGHT = {
 	"purple": 0x800080,
 	"pink": 0xffc0cb
 }
+
+STARRED_COLOR = COLORS_DARK["yellow"]
+STARRED_EMOJI = 11088

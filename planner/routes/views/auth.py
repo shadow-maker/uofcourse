@@ -1,4 +1,4 @@
-from planner import db, bcrypt, loginManager
+from planner import db, loginManager
 from planner.forms import *
 from planner.queryUtils import *
 from planner.constants import *
@@ -31,10 +31,10 @@ def signup():
 
 	form = registerForm()
 	if form.validate_on_submit():
-		if User.query.filter_by(ucid=form.ucid.data).first():
-			flash(f"User with UCID {form.ucid.data} already exist. Please sign in.", "danger")
+		if User.query.filter_by(username=form.uname.data).first():
+			flash(f"User with Username {form.uname.data} already exist. Please sign in.", "danger")
 		else:
-			user = User(form.ucid.data, form.name.data, form.email.data, form.passw.data, form.fac.data)
+			user = User(form.uname.data, form.name.data, form.email.data, form.passw.data, form.fac.data)
 			db.session.add(user)
 			db.session.commit()
 			flash(f"Account created!", "success")
@@ -54,16 +54,16 @@ def login():
 		return redirect(url_for("view.home"))
 	form = loginForm()
 	if form.validate_on_submit():
-		user = User.query.filter_by(ucid=form.ucid.data).first()
+		user = User.query.filter_by(username=form.uname.data).first()
 		if user:
 			if user.checkPassw(form.passw.data):
 				login_user(user, remember=form.remember.data)
-				flash(f"Log in successful! (#{user.ucid})", "success")
+				flash(f"Log in successful!", "success")
 				return redirect(url_for("view.home"))
 			else:
 				flash(f"Incorrect password!", "danger")
 		else:
-			flash(f"User with UCID {form.ucid.data} doesn't exist. Please sign up for an account.", "danger")
+			flash(f"User with Username {form.uname.data} doesn't exist. Please sign up for an account.", "danger")
 	return render_template("login.html",
 		title="Log In",
 		header="Log In",

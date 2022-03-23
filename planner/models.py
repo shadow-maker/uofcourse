@@ -222,26 +222,25 @@ class Role(db.Model):
 class User(db.Model, UserMixin):
 	__tablename__ = "user"
 	id = db.Column(db.Integer, primary_key=True)
-	ucid = db.Column(db.Integer, unique=True)
 	name = db.Column(db.String(32))
 	email = db.Column(db.String(64), nullable=False)
-	passw = db.Column(db.String(64), nullable=False)
+	username = db.Column(db.String(16), unique=True)
+	password = db.Column(db.String(64), nullable=False)
+
+	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	
 	role_id = db.Column(db.Integer, db.ForeignKey("role.id"), nullable=False, default=1)
-
-	createdAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-
 	faculty_id = db.Column(db.Integer, db.ForeignKey("faculty.id"), nullable=False)
 	neededUnits = db.Column(db.Numeric(3, 2))
 
 	collections = db.relationship("CourseCollection", backref="user")
 	tags = db.relationship("UserTag", backref="user")
 
-	def __init__(self, ucid, name, email, passw, faculty_id):
-		self.ucid = ucid
+	def __init__(self, uname, name, email, passw, faculty_id):
+		self.username = uname
 		self.name = name
 		self.email = email
-		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
+		self.password = bcrypt.generate_password_hash(passw).decode("utf-8")
 		self.faculty_id = faculty_id
 
 		self.collections.append(CourseCollection(self.id))
@@ -252,11 +251,21 @@ class User(db.Model, UserMixin):
 		self.tags.append(starred)
 
 	def checkPassw(self, passw):
-		return bcrypt.check_password_hash(self.passw, passw)
+		return bcrypt.check_password_hash(self.password, passw)
 
-	def updatePassw(self, passw):
-		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
-		db.session.commit()
+	def updatePassw(self, passw, new):
+		if self.checkPassw(passw):
+			self.password = bcrypt.generate_password_hash(new).decode("utf-8")
+			db.session.commit()
+	
+	def delete(self, passw):
+		if self.checkPassw(passw):
+			for tag in self.tags:
+				tag.delete()
+			for collection in self.collections:
+				collection.delete()
+			db.session.delete(self)
+			db.session.commit()
 	
 	def isMod(self):
 		return self.role.id == 2
@@ -269,6 +278,7 @@ class User(db.Model, UserMixin):
 
 	def __iter__(self):
 		yield "id", self.id
+		yield "username", self.username
 		yield "name", self.name
 		yield "email", self.email
 		yield "faculty", dict(self.faculty)
@@ -293,15 +303,19 @@ class UserTag(db.Model):
 
 	courses = db.relationship("Course", secondary=course_tag, backref="userTags")
 
+	@property
+	def color_hex(self):
+		return f"{self.color:06x}"
+
 	def __init__(self, user_id, name, color, emoji=None):
 		self.user_id = user_id
 		self.name = name
 		self.color = color
 		self.emoji = emoji
-	
-	@property
-	def color_hex(self):
-		return f"{self.color:06x}"
+
+	def delete(self):
+		db.session.delete(self)
+		db.session.commit()
 
 	def __iter__(self):
 		yield "id", self.id
@@ -340,6 +354,12 @@ class CourseCollection(db.Model):
 		if accUnits == 0:
 			return None
 		return round(points / accUnits, precision)
+	
+	def delete(self):
+		for i in self.userCourses:
+			db.session.delete(i)
+		db.session.delete(self)
+		db.session.commit()
 
 	def __init__(self, user_id, term_id=None):
 		self.user_id = user_id

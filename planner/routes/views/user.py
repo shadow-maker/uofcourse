@@ -69,7 +69,7 @@ def addCourseCollection():
 		return ret("ERROR: Term does not exist", "danger")
 
 	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=term.id).first():
-		return ret(f"ERROR: User (#{current_user.ucid}) already has a collection for term {term.id}", "warning")
+		return ret(f"ERROR: User (#{current_user.id}) already has a collection for term {term.id}", "warning")
 
 	db.session.add(CourseCollection(current_user.id, term.id))
 	db.session.commit()
@@ -98,7 +98,7 @@ def delCourseCollection():
 		return ret(f"ERROR: CourseCollection does not exist!", "danger")
 
 	if collection.user_id != current_user.id:
-		return ret(f"ERROR: User (#{current_user.ucid}) does not have access to this CourseCollection", "danger")
+		return ret(f"ERROR: User (#{current_user.id}) does not have access to this CourseCollection", "danger")
 	
 	if collection.userCourses:
 		return ret(f"ERROR: CourseCollection is not empty", "danger")
