@@ -35,3 +35,12 @@ def changelog():
 		header="Changelog",
 		changelog = change
 	)
+
+
+@view.route("/api")
+def api():
+	return render_template("api.html",
+		constants = constants,
+		title="API",
+		header="Coming soon..."
+	)
