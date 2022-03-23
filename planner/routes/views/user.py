@@ -2,7 +2,7 @@ from planner import db
 from planner.queryUtils import *
 from planner.constants import *
 
-from planner.routes.views import view
+from planner.routes.views import constants, view
 from planner.routes.utils import *
 from planner.routes.api import *
 
@@ -17,6 +17,7 @@ def account():
 		return redirectLogin()
 	
 	return render_template("account.html",
+		constants = constants,
 		title = "Account",
 		header = "My acccount",
 		user = dict(current_user)
@@ -28,6 +29,7 @@ def planner():
 		return redirectLogin()
 	
 	return render_template("planner.html",
+		constants = constants,
 		title = "My Plan",
 		header = "My Course Plan",
 		userData = {

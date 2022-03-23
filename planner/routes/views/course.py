@@ -4,7 +4,7 @@ from planner.models import Faculty, Subject, Course
 from planner.queryUtils import *
 from planner.constants import *
 
-from planner.routes.views import view
+from planner.routes.views import view, constants
 
 from flask import render_template, flash, redirect
 from flask.helpers import url_for
@@ -19,6 +19,7 @@ def faculty(facId):
 		flash(f"Faculty with id {facId} does not exist!", "danger")
 		return redirect(url_for("view.home"))
 	return render_template("faculty.html",
+		constants = constants,
 		title = "Faculty",
 		header = "Faculty",
 		faculty = faculty
@@ -34,6 +35,7 @@ def subject(subjCode):
 		return redirect(url_for("view.home"))
 	faculty = subject.faculty
 	return render_template("subject.html",
+		constants = constants,
 		title=subjCode.upper(),
 		header=f"Subject - {subject.name}",
 		subject=subject,
@@ -58,6 +60,7 @@ def course(subjCode, courseCode):
 		return redirect(url_for("view.home"))
 	faculty = subject.faculty
 	return render_template("course.html",
+		constants = constants,
 		title=f"{subjCode.upper()}-{courseCode.upper()}",
 		course=course,
 		subject=subject,
@@ -101,6 +104,7 @@ def courses():
 	subjects = {k : subjects[k] for k in sorted(subjects)}
 
 	return render_template("coursesFilter.html",
+		constants = constants,
 		title = "Courses",
 		header = f"Course browser",
 		sortOpt = 0,

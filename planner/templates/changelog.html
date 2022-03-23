@@ -5,10 +5,12 @@
 {% for version, data in changelog.items() %}
 <div class="container row">
 	<div class="col-12 col-md-3 col-xl-2">
-		<h2 class="font-monospace" title="Version">{{version}}</h2>
-		{% if data["beta"] %}
-
-		{% endif %}
+		<span title="Version">
+			<span class="h2 font-monospace">{{version}}</span>
+			{% if data["beta"] %}
+			<span class="badge bg-secondary align-top">BETA</span>
+			{% endif %}
+		</span>
 
 		<span title="Publish date">{{data["date"]}}</span>
 	</div>
