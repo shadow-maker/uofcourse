@@ -217,6 +217,10 @@ class Role(db.Model):
 
 	def __repr__(self):
 		return f"Role (#{self.id}) {self.name}"
+	
+	def __iter__(self):
+		yield "id", self.id
+		yield "name", self.name
 
 
 class User(db.Model, UserMixin):
