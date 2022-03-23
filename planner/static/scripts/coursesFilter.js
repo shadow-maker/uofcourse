@@ -1,4 +1,136 @@
+function displayError(data) {
+	if (data.error)
+		alert("danger", data.error)
+	else
+		alert("danger", data.responseJSON.error)
+}
+
+function uncheckAll(container) {
+	$("#" + container + " .form-check").each(function () {
+		$(this).find("input").prop("checked", false)
+	})
+}
+
 var prevData = {}
+
+//
+// REQUEST FUNCTIONS
+//
+
+function requestResults(suc, ignorePrev=false) {
+	var selectedLevel = []
+	$("input[name='selectedLevel']:checked").each(function () {
+		selectedLevel.push(parseInt($(this).val()))
+	})
+
+	var selectedFaculty = []
+	$("input[name='selectedFaculty']:checked").each(function () {
+		selectedFaculty.push(parseInt($(this).val()))
+	})
+
+	var selectedSubject = []
+	for (let s in subjects)
+		if (subjects[s].sel)
+			selectedSubject.push(parseInt(subjects[s].id))
+
+	var data = {
+		sort: $("#sortBy").val(),
+		asc: $("#orderBy").val(),
+		levels: JSON.stringify(selectedLevel),
+		faculties: JSON.stringify(selectedFaculty),
+		subjects: JSON.stringify(selectedSubject),
+		page: page
+	}
+
+	if (!ignorePrev && JSON.stringify(data) == JSON.stringify(prevData)) {
+		return
+	}
+
+	prevData = data
+
+	$(".loading").show()
+	$(".loaded").hide()
+
+	$.ajax({
+		url: "/api/courses/filter",
+		method: "GET",
+		data: data,
+		success: (data) => {suc(data)},
+		error: (data) => {
+			$(".loading").hide()
+			displayError(data)
+		}
+	})
+}
+
+
+function requestCourseTags(id, suc) {
+	if (isAuth)
+		$.ajax({
+			url: "/api/tags/course/" + id,
+			method: "GET",
+			success: (data) => {suc(data)},
+			error: (data) => {
+				displayError(data)
+			}
+		})
+}
+
+function toggleTag(courseId, tagId) {
+	$.ajax({
+		url: "/api/tags/course",
+		method: "PUT",
+		data: {
+			course_id: courseId,
+			tag_id: tagId
+		},
+		success: (data) => {
+			alert("success", data.success)
+			updateCourseTags(courseId)
+		},
+		error: (data) => {
+			displayError(data)
+		}
+	})
+}
+
+//
+// UPDATE FUNCTIONS
+//
+
+function updateCourseTags(courseId) {
+	let item = $("#course-" + courseId)
+	var icon = ""
+	requestCourseTags(
+		courseId,
+		(data) => {
+			item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
+				$(this).find(".bi-check").addClass("invisible")
+			})
+
+			const container = item.find(".tags-selected")
+			container.empty()
+			for (tag of data.tags) {
+
+				if (tag.emoji)
+					icon = "&#" + tag.emoji + " "
+				else
+					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex +";'></i> "
+
+				container.append(`
+					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
+						` + icon + tag.name + `
+					</span>
+				`)
+
+				item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
+					if($(this).attr("db-id") == tag.id)
+						$(this).find(".bi-check").removeClass("invisible")
+				})
+			}
+		}
+	)
+}
 
 function updateResults(data) {
 	$(".loading").hide()
@@ -6,20 +138,87 @@ function updateResults(data) {
 
 	$("#coursesContainer").empty()
 	for (let course of data.results) {
-		$("#coursesContainer").append(`
-			<div class="course-item card mb-3 bg-light">
-				<div class="card-body row px-4 py-2">
-					<a class="col-10 h5 p-0 m-0 text-black" href="/c/` + course.subj + `/` + course.code + `" style="text-decoration: none;">
-						<span class="p-0 m-0">&#` + course.emoji + `</span>
-						<span class="p-0 m-0 me-md-4 me-2 mono-font card-title">` + course.subj + `-` + course.code + `</span>
-						<span class="p-0 m-0">` + course.name + `</span>
-					</a>
-					<div class="col-2 course-actions">
-						&#11088
-					</div>
+		var courseItem = $("#templateCourseItem").children().first().clone()
+
+		courseItem.attr("id", "course-" + course.id)
+		courseItem.attr("db-id", course.id)
+
+		courseItem.find(".course-link").attr("href", course.url)
+		courseItem.find(".course-emoji").html("&#" + course.emoji)
+		courseItem.find(".course-code").html(course.code_full)
+		courseItem.find(".course-name").html(course.name)
+
+
+		var icon = ""
+		for (let id of course.tags) {
+			var tag = null
+
+			for (t of userTags) {
+				if (t.id == id) {
+					tag = t
+					break
+				}
+			}
+			
+			if (!tag)
+				continue
+
+			if (tag.emoji)
+				icon = "&#" + tag.emoji + " "
+			else
+				icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex + ";'></i> "
+
+			courseItem.find(".tags-selected").append(`
+				<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + course.id + `, ` +  tag.id+ `)">
+					` + icon + tag.name + `
+				</span>
+			`)
+		}
+
+		for (let id of course.terms) {
+			var term = null
+
+			for (t of terms) {
+				if (t.id == id) {
+					term = t
+					break
+				}
+			}
+
+			if (!term)
+				continue
+
+			courseItem.find(".course-terms").append(`
+				<div>
+					` + term.season.charAt(0).toUpperCase() + term.season.slice(1) +`
+					` + term.year + `
 				</div>
-			</div>
-		`)
+			`)
+		}
+
+		if (isAuth) {
+			for (let tag of userTags) {
+				courseItem.find(".tags-dropdown").append(`
+					<li class="tags-dropdown-item" db-id="` + tag.id +`">
+						<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + course.id + `, ` +  tag.id + `)" style="cursor: pointer;">
+							<small>
+								<i class="bi-check ` + (course.tags.includes(tag.id) ? `` : `invisible`) + `"></i>
+								` + tag.name +`
+							</small>
+						</a>
+					</li>
+				`)
+			}
+
+			courseItem.find(".tags-dropdown").append(`
+				<li><hr class="dropdown-divider my-1"></li>
+				<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+					<small>Edit tags</small>
+				</a></li>
+			`)
+		}
+
+		courseItem.appendTo("#coursesContainer")
 	}
 
 	$("#pageNav .pageSelector").remove()
@@ -42,91 +241,50 @@ function updateResults(data) {
 	$("#numPages").text(data.pages)
 }
 
+//
+// DOCUMENT READY
+//
 
-
-function requestResults(after) {
-	var selectedLevel = []
-	$("input[name='selectedLevel']:checked").each(function () {
-		selectedLevel.push(parseInt($(this).val()))
+$(document).ready(() => {
+	$("#formFilterCourses input").not("#subjectSearch").change(() => {
+		$("#formFilterCourses").submit()
 	})
 
-	var selectedFaculty = []
-	$("input[name='selectedFaculty']:checked").each(function () {
-		selectedFaculty.push(parseInt($(this).val()))
+	$("#formFilterCourses select").change(() => {
+		$("#formFilterCourses").submit()
 	})
 
-	var selectedSubject = []
-	for (let s in subjects) {
-		if (subjects[s].sel) {
-			selectedSubject.push(parseInt(subjects[s].id))
-		}
-	}
-
-	var data = {
-		sort: $("#sortBy").val(),
-		asc: $("#orderBy").val(),
-		levels: JSON.stringify(selectedLevel),
-		faculties: JSON.stringify(selectedFaculty),
-		subjects: JSON.stringify(selectedSubject),
-		page: page
-	}
-
-	if (JSON.stringify(data) == JSON.stringify(prevData)) {
-		return
-	}
-
-	prevData = data
-
-	$(".loading").show()
-	$(".loaded").hide()
-
-	$.ajax({
-		data: data,
-		type: "GET",
-		url: "/api/courses/filter",
-	}).done(function (data) {
-		after(data)
-	})
-}
-
-
-
-$(document).ready(function () {
-	requestResults(function (data) {
-		if (data.error) {
-			$(".loading").hide()
-			$("#errorPopup").show();
-			$("#errorPopup .message").text(data.error);
-		} else {
-			page = data.page
-			pages = data.pages
-			updateResults(data)
-		}
-	})
-
-	$("input").not("#subjectSearch").change(function () {
-		$("form").submit()
-	})
-
-	$("select").change(function () {
-		$("form").submit()
-	})
-
-	$("form").on("submit", function (event) {
+	$("#formFilterCourses").on("submit", (event) => {
 		event.preventDefault()
 		event.stopImmediatePropagation()
 
 		updateSubjects()
 
-		requestResults(function (data) {
-			if (data.error) {
-				$("#errorPopup").show();
-				$("#errorPopup .message").text(data.error);
-			} else {
-				page = data.page
-				pages = data.pages
-				updateResults(data)
-			}
+		requestResults((data) => {
+			page = data.page
+			pages = data.pages
+			updateResults(data)
 		})
 	})
 })
+
+$(document).on("click", ".tags-dropdown-btn", function() {
+	if (!isAuth)
+		alert("warning", "You must be logged in to add tags")
+})
+
+function tagsInit() {
+	requestResults((data) => {
+		page = data.page
+		pages = data.pages
+		updateResults(data)
+	})
+}
+
+function tagEditDone() {
+	requestResults((data) => {
+		page = data.page
+		pages = data.pages
+		updateResults(data)
+	}, true)
+}

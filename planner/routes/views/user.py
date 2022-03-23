@@ -2,6 +2,7 @@ from planner import db
 from planner.queryUtils import *
 from planner.constants import *
 
+from planner.routes import constants
 from planner.routes.views import view
 from planner.routes.utils import *
 from planner.routes.api import *
@@ -12,35 +13,41 @@ from flask_login import current_user
 
 
 @view.route("/account")
-def viewAccount():
+def account():
 	if not current_user.is_authenticated:
 		return redirectLogin()
 	
 	return render_template("account.html",
+		constants = constants,
 		title = "Account",
 		header = "My acccount",
 		user = dict(current_user)
 	)
 
 @view.route("/my")
-def viewMyPlanner():
+def planner():
 	if not current_user.is_authenticated:
 		return redirectLogin()
 	
-	return render_template("myPlanner.html",
+	return render_template("planner.html",
+		constants = constants,
 		title = "My Plan",
 		header = "My Course Plan",
-		courseCollections = sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0),
+		userData = {
+			"tags": current_user.tags,
+			"collections": sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0)
+		},
 		grades = Grade.query.all(),
 		seasons = Season.query.all(),
-		years = getAllYears(False)
+		years = getAllYears(False),
+		colors = COLORS_DARK
 	)
 
 @view.route("/my/add/collection", methods=["POST"])
 def addCourseCollection():
 	def ret(message, category):
 		flash(message, category)
-		return redirect(url_for("view.viewMyPlanner"))
+		return redirect(url_for("view.planner"))
 
 	if not current_user.is_authenticated:
 		return ret("ERROR: User not logged in", "danger")
@@ -65,7 +72,7 @@ def addCourseCollection():
 		return ret("ERROR: Term does not exist", "danger")
 
 	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=term.id).first():
-		return ret(f"ERROR: User (#{current_user.ucid}) already has a collection for term {term.id}", "warning")
+		return ret(f"ERROR: User (#{current_user.id}) already has a collection for term {term.id}", "warning")
 
 	db.session.add(CourseCollection(current_user.id, term.id))
 	db.session.commit()
@@ -77,7 +84,7 @@ def addCourseCollection():
 def delCourseCollection():
 	def ret(message, category):
 		flash(message, category)
-		return redirect(url_for("view.viewMyPlanner"))
+		return redirect(url_for("view.planner"))
 
 	if not current_user.is_authenticated:
 		return ret("ERROR: User not logged in", "danger")
@@ -94,7 +101,7 @@ def delCourseCollection():
 		return ret(f"ERROR: CourseCollection does not exist!", "danger")
 
 	if collection.user_id != current_user.id:
-		return ret(f"ERROR: User (#{current_user.ucid}) does not have access to this CourseCollection", "danger")
+		return ret(f"ERROR: User (#{current_user.id}) does not have access to this CourseCollection", "danger")
 	
 	if collection.userCourses:
 		return ret(f"ERROR: CourseCollection is not empty", "danger")
@@ -102,16 +109,34 @@ def delCourseCollection():
 	db.session.delete(collection)
 	db.session.commit()
 
-	flash(f"Term removed!", "success")
-
-	return redirect(url_for("view.viewMyPlanner"))
+	return ret(f"Term removed!", "success")
 
 
-@view.route("/my/edit/course", methods=["PUT", "POST"])
-def editUserCourse():
-	response, _ = apiEditUserCourse(request.form.to_dict())
+@view.route("/my/add/course", methods=["POST"])
+def addUserCourse():
+	response, _ = postUserCourse(request.form.to_dict())
 
 	if "error" in response:
 		flash(f"ERROR: {response['error']}", "danger")
 
-	return redirect(url_for("view.viewMyPlanner"))
+	return redirect(url_for("view.planner"))
+
+@view.route("my/course", methods=["POST"])
+def modUserCourse():
+	data = request.form.to_dict()
+	if not data:
+		flash("ERROR: No form data provided to remove UserCourse", "danger")
+		return redirect(url_for("view.planner"))
+	if not "method" in data:
+		flash("ERROR: No method provided", "danger")
+		return redirect(url_for("view.planner"))
+	
+	if data["method"] == "PUT":
+		response, _ = putUserCourse(request.form.to_dict())
+	elif data["method"] == "DELETE":
+		response, _ = delUserCourse(request.form.to_dict())
+
+	if "error" in response:
+		flash(f"ERROR: {response['error']}", "danger")
+
+	return redirect(url_for("view.planner"))

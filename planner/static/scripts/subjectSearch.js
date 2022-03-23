@@ -11,7 +11,7 @@ function updateSubjects() {
 	for (let s in subjects) {
 		if (subjects[s].sel) {
 			$("#subjectSelector").append(`
-				<span class="bg-secondary px-2 py-1 m-1 rounded mono-font text-light subjItem" code="` + s + `">` + s + `</span>
+				<span class="bg-secondary px-2 py-1 m-1 rounded font-monospace text-light subjItem" code="` + s + `">` + s + `</span>
 			`)
 		}
 	}
@@ -29,7 +29,7 @@ $(document).ready(function () {
 				if (s.startsWith(subjSearch)) {
 					suggestions[s] = subjects[s]
 					$("#subjectSearchSuggestions").append(`
-						<li><a class="subjSuggestion dropdown-item form-control-sm px-2 py-1" href="#" code="` + s +`"><span class="mono-font">` +
+						<li><a class="subjSuggestion dropdown-item form-control-sm px-2 py-1" href="#" code="` + s +`"><span class="font-monospace">` +
 						s + `</span> - ` + subjects[s].name +
 						`</a></li>
 					`)
@@ -44,11 +44,11 @@ $(document).ready(function () {
 $(document).on("click", ".subjItem", function () {
 	subjects[this.getAttribute("code")].sel = false
 	this.remove()
-	$("form").submit()
+	$("#formFilterCourses").submit()
 });
 
 $(document).on("click", ".subjSuggestion", function () {
 	$("#subjectSearch").val(this.getAttribute("code"))
-	$("form").submit()
 	$("#subjectSearchSuggestions").empty()
+	$("#formFilterCourses").submit()
 });

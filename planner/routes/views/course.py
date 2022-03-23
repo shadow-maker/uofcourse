@@ -1,8 +1,10 @@
+from flask_login import current_user
 from planner import db
 from planner.models import Faculty, Subject, Course
 from planner.queryUtils import *
 from planner.constants import *
 
+from planner.routes import constants
 from planner.routes.views import view
 
 from flask import render_template, flash, redirect
@@ -16,8 +18,9 @@ def faculty(facId):
 	faculty = getById(Faculty, facId)
 	if not faculty:
 		flash(f"Faculty with id {facId} does not exist!", "danger")
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 	return render_template("faculty.html",
+		constants = constants,
 		title = "Faculty",
 		header = "Faculty",
 		faculty = faculty
@@ -30,9 +33,10 @@ def subject(subjCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 	faculty = subject.faculty
 	return render_template("subject.html",
+		constants = constants,
 		title=subjCode.upper(),
 		header=f"Subject - {subject.name}",
 		subject=subject,
@@ -50,22 +54,25 @@ def course(subjCode, courseCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
 	if not course:
 		flash(f"Course with code {subjCode}-{courseCode} does not exist!", "danger")
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 	faculty = subject.faculty
 	return render_template("course.html",
+		constants = constants,
 		title=f"{subjCode.upper()}-{courseCode.upper()}",
 		course=course,
 		subject=subject,
 		faculty=faculty,
-		backlinks={
-			faculty.name: url_for("view.faculty", facId=faculty.id),
-			subject.code: url_for("view.subject", subjCode=subject.code),
-			course.code: ""
-		}.items()
+		userTags = course.getTags(current_user.id) if current_user.is_authenticated else [],
+		userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else [],
+		colors = COLORS_DARK,
+		links = {
+			"faculty": url_for("view.faculty", facId=faculty.id),
+			"subject": url_for("view.subject", subjCode=subject.code)
+		}
 	)
 
 
@@ -74,7 +81,7 @@ def courseById(courseId):
 	course = getById(Course, courseId)
 	if not course:
 		flash(f"Course with id {courseId} does not exist!", "danger")
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 	return redirect(url_for("view.course", subjCode=course.subject.code, courseCode=course.code))
 
 
@@ -98,10 +105,13 @@ def courses():
 	subjects = {k : subjects[k] for k in sorted(subjects)}
 
 	return render_template("coursesFilter.html",
+		constants = constants,
 		title = "Courses",
-		header = f"Courses",
+		header = f"Course browser",
 		sortOpt = 0,
 		asc = True,
+		colors = COLORS_DARK,
+		terms = [dict(term) for term in Term.query.all()],
 		filterData = {
 			"levels": levels,
 			"faculties": faculties,

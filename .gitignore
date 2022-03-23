@@ -146,4 +146,5 @@ cython_debug/
 
 # Other
 migrations/
+alchemydumps-backup/
 backups/

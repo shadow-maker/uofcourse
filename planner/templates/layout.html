@@ -6,9 +6,9 @@
 	<meta http-equiv="X-UA-Compatible">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	{% if title %}
-	<title>UofC Planner - {{title}}</title>
+	<title>UofCourse - {{title}}</title>
 	{% else %}
-	<title>UofC Planner</title>
+	<title>UofCourse</title>
 	{% endif %}
 
 	<!--jQuery-->
@@ -20,30 +20,23 @@
 
 	<!--Icons-->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+	<!--Global vars-->
+	<script>
+		var isAuth = JSON.parse("{{ current_user.is_authenticated | tojson | safe }}")
+	</script>
 </head>
 
 <body>
 	{% include "components/nav.html" %}
 
-	{% if backlinks %}
-	<nav class="container" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-		<ol class="breadcrumb">
-			{% for item in backlinks %}
-			<li class="breadcrumb-item">
-				<a href="{{item[1]}}">{{item[0]}}</a>
-			</li>
-			{% endfor %}
-		</ol>
-	</nav>
-	{% endif %}
+	{% include "components/back.html" %}
 
+	{% if header %}
 	<div class="container mb-4 border-bottom">
-		{% include "components/back.html" %}
-
-		{% if header %}
 		<h1>{{header}}</h1>
-		{% endif %}
 	</div>
+	{% endif %}
 
 	<div class="container">
 		{% block content%}{% endblock %}

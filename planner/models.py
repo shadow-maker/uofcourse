@@ -2,7 +2,7 @@ from planner import db, bcrypt
 from planner.adminView import admin, adminModelView
 from planner.constants import *
 
-from flask import request
+from flask.helpers import url_for
 from flask_login import UserMixin
 from datetime import datetime, date
 
@@ -32,6 +32,10 @@ class Term(db.Model):
 	end = db.Column(db.Date)
 
 	courseCollections = db.relationship("CourseCollection", backref="term")
+
+	@property
+	def name(self):
+		return f"{self.season.name} {self.year}"
 
 	def isCurrent(self):
 		return self.start and self.end and self.start <= date.today() <= self.end
@@ -151,10 +155,24 @@ class Course(db.Model):
 
 	userCourses = db.relationship("UserCourse", backref="course")
 
+	@property
+	def code_full(self):
+		return f"{self.subject.code}-{self.code}"
+	
+	@property
+	def url(self):
+		return url_for("view.course", subjCode=self.subject.code, courseCode=self.code)
+
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
 			return self.emoji
 		return self.subject.getEmoji(default)
+	
+	def getTags(self, userId):
+		return [tag for tag in self.userTags if tag.user_id == userId]
+	
+	def getUserCourses(self, userId):
+		return [uc for uc in self.userCourses if uc.collection.user_id == userId]
 
 	def __init__(self, subject_id, code, name, units, desc="", prereqs="", antireqs="", notes="", emoji=None):
 		self.subject_id = subject_id
@@ -176,6 +194,7 @@ class Course(db.Model):
 		yield "id", self.id
 		yield "subject_id", self.subject_id
 		yield "code", self.code
+		yield "code_full", self.code_full
 		yield "level", self.level
 		yield "name", self.name
 		yield "emoji", self.emoji
@@ -184,6 +203,7 @@ class Course(db.Model):
 		yield "prereqs", self.prereqs
 		yield "antireqs", self.antireqs
 		yield "notes", self.notes
+		yield "url", self.url
 	
 #
 # USER DB
@@ -197,39 +217,59 @@ class Role(db.Model):
 
 	def __repr__(self):
 		return f"Role (#{self.id}) {self.name}"
+	
+	def __iter__(self):
+		yield "id", self.id
+		yield "name", self.name
 
 
 class User(db.Model, UserMixin):
 	__tablename__ = "user"
 	id = db.Column(db.Integer, primary_key=True)
-	ucid = db.Column(db.Integer, unique=True)
 	name = db.Column(db.String(32))
 	email = db.Column(db.String(64), nullable=False)
-	passw = db.Column(db.String(64), nullable=False)
+	username = db.Column(db.String(16), unique=True)
+	password = db.Column(db.String(64), nullable=False)
+
+	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	
 	role_id = db.Column(db.Integer, db.ForeignKey("role.id"), nullable=False, default=1)
-
-	createdAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-
 	faculty_id = db.Column(db.Integer, db.ForeignKey("faculty.id"), nullable=False)
-	entryYear = db.Column(db.Integer)
 	neededUnits = db.Column(db.Numeric(3, 2))
 
 	collections = db.relationship("CourseCollection", backref="user")
 	tags = db.relationship("UserTag", backref="user")
 
-	def __init__(self, ucid, name, email, passw, faculty_id):
-		self.ucid = ucid
+	def __init__(self, uname, name, email, passw, faculty_id):
+		self.username = uname
 		self.name = name
 		self.email = email
-		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
+		self.password = bcrypt.generate_password_hash(passw).decode("utf-8")
 		self.faculty_id = faculty_id
 
 		self.collections.append(CourseCollection(self.id))
-		self.tags.append(UserTag(self.id, "Starred", STARRED_COLOR, STARRED_EMOJI))
 
-	def updatePassw(self, passw):
-		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
+		starred = UserTag(self.id, "Starred", color=STARRED_COLOR, emoji=STARRED_EMOJI)
+		starred.starred = True
+		starred.deletable = False
+		self.tags.append(starred)
+
+	def checkPassw(self, passw):
+		return bcrypt.check_password_hash(self.password, passw)
+
+	def updatePassw(self, passw, new):
+		if self.checkPassw(passw):
+			self.password = bcrypt.generate_password_hash(new).decode("utf-8")
+			db.session.commit()
+	
+	def delete(self, passw):
+		if self.checkPassw(passw):
+			for tag in self.tags:
+				tag.delete()
+			for collection in self.collections:
+				collection.delete()
+			db.session.delete(self)
+			db.session.commit()
 	
 	def isMod(self):
 		return self.role.id == 2
@@ -238,15 +278,14 @@ class User(db.Model, UserMixin):
 		return self.role.id == 3
 
 	def __repr__(self):
-
 		return f"USER {self.name} (#{self.id})"
 
 	def __iter__(self):
 		yield "id", self.id
+		yield "username", self.username
 		yield "name", self.name
 		yield "email", self.email
 		yield "faculty", dict(self.faculty)
-		yield "entryYear", self.entryYear
 		yield "neededUnits", self.neededUnits
 
 
@@ -263,15 +302,37 @@ class UserTag(db.Model):
 	name = db.Column(db.String(16), nullable=False)
 	color = db.Column(db.Integer, nullable=False)
 	emoji = db.Column(db.Integer)
+	starred = db.Column(db.Boolean, nullable=False, default=False)
 	deletable = db.Column(db.Boolean, nullable=False, default=True)
 
 	courses = db.relationship("Course", secondary=course_tag, backref="userTags")
+
+	@property
+	def color_hex(self):
+		return f"{self.color:06x}"
 
 	def __init__(self, user_id, name, color, emoji=None):
 		self.user_id = user_id
 		self.name = name
 		self.color = color
 		self.emoji = emoji
+
+	def delete(self):
+		db.session.delete(self)
+		db.session.commit()
+
+	def __iter__(self):
+		yield "id", self.id
+		yield "user_id", self.user_id
+		yield "name", self.name
+		yield "color", self.color
+		yield "color_hex", self.color_hex
+		yield "emoji", self.emoji
+		yield "starred", self.starred
+		yield "deletable", self.deletable
+	
+	def __repr__(self):
+		return f"UserTag (#{self.id}) : User {self.user_id} - {self.name}"
 
 
 class CourseCollection(db.Model):
@@ -297,6 +358,12 @@ class CourseCollection(db.Model):
 		if accUnits == 0:
 			return None
 		return round(points / accUnits, precision)
+	
+	def delete(self):
+		for i in self.userCourses:
+			db.session.delete(i)
+		db.session.delete(self)
+		db.session.commit()
 
 	def __init__(self, user_id, term_id=None):
 		self.user_id = user_id
@@ -321,11 +388,13 @@ class UserCourse(db.Model):
 	def ownedBy(self, user_id):
 		return self.collection.user_id == user_id
 
-	def getTags(self):
+	@property
+	def tags(self):
 		return [tag for tag in self.course.userTags if tag.user_id == self.collection.user_id]
 
 	def __init__(self, course_collection_id, course_id):
 		self.course_collection_id = course_collection_id
+		self.course_id = course_id
 
 	def __repr__(self):
 		return f"USER_COURSE (#{self.id}): CourseCollection {self.course_collection_id} - Course {self.course_id}"

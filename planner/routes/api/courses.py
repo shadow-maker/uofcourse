@@ -3,6 +3,7 @@ from planner.models import Course, Subject, Faculty
 from planner.routes.api.utils import *
 
 from flask import Blueprint, request
+from flask_login import current_user
 
 import json
 
@@ -106,9 +107,13 @@ def getCoursesFilter():
 		"results": [{
 			"id": course.id,
 			"name": course.name,
-			"subj": course.subject.code,
+			"subject_id": course.subject_id,
 			"code": course.code,
+			"code_full": course.code_full,
 			"emoji": course.getEmoji(),
+			"url": course.url,
+			"tags": [tag.id for tag in course.userTags if tag.user_id == current_user.id] if current_user.is_authenticated else [],
+			"terms": [uc.collection.term.id for uc in course.getUserCourses(current_user.id)] if current_user.is_authenticated else []
 		} for course in results.items],
 		"page": page,
 		"pages": results.pages,

@@ -1,9 +1,4 @@
-.mono-font {
-	font-family: "Menlo";
-}
-
-
-.popup {
+.alert {
 	cursor: pointer;
 }
 
@@ -35,4 +30,8 @@
 
 .dragging {
 	opacity: 0.5;
+}
+
+.course-link:hover {
+	color: var(--bs-gray-600) !important;
 }

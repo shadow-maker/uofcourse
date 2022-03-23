@@ -1,10 +1,12 @@
+from planner.db_update import BACKUPS_FOLDER
+
 from planner.models import *
 
 from datetime import datetime
 from os import path, makedirs
 import csv
 
-def backupTables(tables, folder="backups"):
+def backup(tables, folder=BACKUPS_FOLDER):
 	directory = path.join(folder, datetime.now().strftime("%Y-%m-%d"), datetime.now().strftime("%H-%M"))
 
 	makedirs(directory, exist_ok=True)
@@ -17,6 +19,3 @@ def backupTables(tables, folder="backups"):
 			writer.writeheader()
 			for row in table.query.all():
 				writer.writerow(dict(row))
-
-if __name__ == "__main__":
-	backupTables([Faculty, Subject, Course])

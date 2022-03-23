@@ -5,8 +5,20 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from flask_alchemydumps import AlchemyDumps
+
+import os
+import json
+
+#
+# Init Flask app
+#
 
 app = Flask(__name__)
+
+#
+# Init db
+#
 
 dbConfig = DatabaseConfig()
 config = Config(dbConfig)
@@ -16,8 +28,21 @@ db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
 
+alchemydumps = AlchemyDumps(app, db)
+
+#
+# Init extra utils
+#
+
 bcrypt = Bcrypt(app)
 loginManager = LoginManager(app)
+
+try:
+	with open(os.path.join(app.static_folder, "changelog.json"), "r") as file:
+		changelog = json.load(file)
+except:
+	changelog = []
+
 
 from datetime import datetime, timedelta
 utcoffset = timedelta(hours=round(((datetime.now() - datetime.utcnow()).seconds / 3600) - 24))

@@ -1,8 +1,9 @@
-from planner import db, bcrypt, loginManager
+from planner import db, loginManager
 from planner.forms import *
 from planner.queryUtils import *
 from planner.constants import *
 
+from planner.routes import constants
 from planner.routes.views import view
 
 from flask import render_template, flash, redirect
@@ -23,29 +24,26 @@ def loadUser(uId):
 def signup():
 	if current_user.is_authenticated:
 		flash(f"You are already authenticated!", "success")
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 
 	if not ALLOW_ACCOUNT_CREATION:
 		flash(f"Account creation is currently disabled!", "warning")
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 
 	form = registerForm()
 	if form.validate_on_submit():
-		if userExists(form.ucid.data):
-			flash(f"User with UCID {form.ucid.data} already exist. Please sign in.", "danger")
+		if User.query.filter_by(username=form.uname.data).first():
+			flash(f"User with Username {form.uname.data} already exist. Please sign in.", "danger")
 		else:
-			user = User(form.ucid.data, form.email.data, form.passw.data, form.fac.data)
-			if form.name.data:
-				user.name = form.name.data
-			if form.entry.data:
-				user.entryYear = form.entry.data
+			user = User(form.uname.data, form.name.data, form.email.data, form.passw.data, form.fac.data)
 			db.session.add(user)
 			db.session.commit()
 			flash(f"Account created!", "success")
 			return redirect(url_for("view.login"))
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 
 	return render_template("signup.html",
+		constants = constants,
 		title="Sign Up",
 		header="Create Account",
 		form=form
@@ -55,20 +53,21 @@ def signup():
 def login():
 	if current_user.is_authenticated:
 		flash(f"You are already authenticated!", "success")
-		return redirect(url_for("view.viewHome"))
+		return redirect(url_for("view.home"))
 	form = loginForm()
 	if form.validate_on_submit():
-		if not userExists(form.ucid.data):
-			flash(f"User with UCID {form.ucid.data} doesn't exist. Please sign up for an account.", "danger")
-		else:
-			user = getById(User, form.ucid.data)
-			if bcrypt.check_password_hash(user.passw, form.passw.data):
+		user = User.query.filter_by(username=form.uname.data).first()
+		if user:
+			if user.checkPassw(form.passw.data):
 				login_user(user, remember=form.remember.data)
-				flash(f"Log in successful! (#{user.id})", "success")
-				return redirect(url_for("view.viewHome"))
+				flash(f"Log in successful!", "success")
+				return redirect(url_for("view.home"))
 			else:
 				flash(f"Incorrect password!", "danger")
+		else:
+			flash(f"User with Username {form.uname.data} doesn't exist. Please sign up for an account.", "danger")
 	return render_template("login.html",
+		constants = constants,
 		title="Log In",
 		header="Log In",
 		form=form
@@ -79,4 +78,4 @@ def logout():
 	if not current_user.is_authenticated:
 		return redirect(url_for("view.logout"))
 	logout_user()
-	return redirect(url_for("view.viewHome"))
+	return redirect(url_for("view.home"))

@@ -16,33 +16,34 @@ def ucidValidation(form, field):
 	if len(str(field.data)) != 8:
 		raise ValidationError("UCID must be 8 characters long")
 
+def unameValidation(form, field):
+	if len(str(field.data)) < 4:
+		raise ValidationError("Username must be at least 4 characters long")
+	if len(str(field.data)) > 16:
+		raise ValidationError("Username must be at most 16 characters long")
+
 def nameValidation(form, field):
 	if len(str(field.data)) > 32:
-		raise ValidationError("Name must be less than 32 characters long")
+		raise ValidationError("Name must be less at most 32 characters long")
 
 def passwValidation(form, field):
-	if len(str(field.data)) > 32:
-		raise ValidationError("Password must be less than 64 characters long")
-
-def entryYearValidation(form, field):
-	if field.data < 1966 or field.data > date.today().year:
-		raise ValidationError("Invalid year of entry")
+	if len(str(field.data)) > 64:
+		raise ValidationError("Password must be at most 64 characters long")
 
 #
 # Forms
 #
 
 class loginForm(FlaskForm):
-	ucid = IntegerField("UCID", validators=[ucidValidation])
+	uname = StringField("Username", validators=[unameValidation])
 	passw = PasswordField("Password", validators=[DataRequired()])
 	remember = BooleanField("Remember password")
-	submit = SubmitField("Sign In")
+	submit = SubmitField("Log In")
 
 class registerForm(FlaskForm):
-	ucid = IntegerField("UCID", validators=[DataRequired(), ucidValidation])
+	uname = StringField("Username", validators=[DataRequired(), unameValidation])
 	name = StringField("Name", validators=[nameValidation])
 	email = StringField("Email", validators=[DataRequired(), Email()])
 	passw = PasswordField("Password", validators=[DataRequired(), passwValidation])
 	fac = SelectField("Faculty", choices=[(f.id, f.name) for f in Faculty.query.all()], validators=[DataRequired()])
-	entry = IntegerField("Year of entry", validators=[entryYearValidation])
 	submit = SubmitField("Create account")

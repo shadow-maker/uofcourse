@@ -8,17 +8,17 @@
 
 		<fieldset class="form-group">
 			<div class="form-group mb-2 mb-lg-3">
-				{{form.ucid.label(class="form-control-label requiered-form-label")}}
+				{{form.uname.label(class="form-control-label requiered-form-label")}}
 
-				{% if form.ucid.errors %}
-					{{form.ucid(class="form-control is-invalid")}}
+				{% if form.uname.errors %}
+					{{form.uname(class="form-control is-invalid")}}
 					<div class="invalid-feedback">
-						{% for error in form.ucid.errors %}
+						{% for error in form.uname.errors %}
 							<span>{{error}}</span><br>
 						{% endfor %}
 					</div>
 				{% else %}
-					{{form.ucid(class="form-control")}}
+					{{form.uname(class="form-control")}}
 				{% endif %}
 			</div>
 			<div class="form-group mb-2 mb-lg-3">
@@ -76,20 +76,6 @@
 					</div>
 				{% else %}
 					{{form.fac(class="form-control")}}
-				{% endif %}
-			</div>
-			<div class="form-group mb-2 mb-lg-3">
-				{{form.entry.label(class="form-control-label")}}
-
-				{% if form.entry.errors %}
-					{{form.entry(class="form-control is-invalid")}}
-					<div class="invalid-feedback">
-						{% for error in form.entry.errors %}
-							<span>{{error}}</span>
-						{% endfor %}
-					</div>
-				{% else %}
-					{{form.entry(class="form-control")}}
 				{% endif %}
 			</div>
 		</fieldset>

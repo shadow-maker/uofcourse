@@ -1,0 +1,17 @@
+{
+	"0.1": {
+		"beta": true,
+		"date": "2022-03-23",
+		"title": "Initial (beta) release!",
+		"intro": [
+			"Course browser with filter and sorting options",
+			"Per-course pages with course info",
+			"Account creation",
+			"Save courses with custom tags",
+			"Arrange courses in terms and add grades in the virtual Course Planner",
+			"Public REST API ???"
+		],
+		"changes": [],
+		"fixes": []
+	}
+}

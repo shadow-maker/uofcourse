@@ -1,7 +1,16 @@
 <div class="container-fluid bg-light sticky-top px-md-5 mb-4 border-bottom border-white border-2">
-	<nav class="navbar navbar-expand-xl navbar-light px-md-5" style="z-index: 10000;">
+	<nav class="navbar navbar-expand-md navbar-light px-md-5" style="z-index: 10000;">
 
-		<a href="{{url_for('view.viewHome')}}" class="navbar-brand">UofC Planner</a>
+		<div class="me-2">
+			<a href="{{url_for('view.home')}}" class="navbar-brand me-0">
+				<span>{{constants["SITE_NAME"]}}</span>
+			</a>
+			{% if constants["CURRENT_VERSION_BETA"] %}
+			<a href="{{url_for('view.changelog')}}" class="align-top">
+				<small class="badge bg-secondary px-2 py-1">BETA</small>
+			</a>
+			{% endif %}
+		</div>
 
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#toggleMobileMenu"
 			aria-controls="toggleMobileMenu" aria-expanded="false" arial-label="Toggle navigation">
@@ -11,22 +20,22 @@
 		<div class="collapse navbar-collapse d-md-flex justify-content-between" id="toggleMobileMenu">
 			<ul class="navbar-nav text-center">
 				<li>
-					<a class="nav-link" href="{{url_for('view.courses')}}">Course Search</a>
+					<a class="nav-link" href="{{url_for('view.courses')}}">Course Browser</a>
 				</li>
 				<li>
-					<a class="nav-link" href="{{url_for('view.viewAbout')}}">About</a>
+					<a class="nav-link" href="{{url_for('view.about')}}">About</a>
 				</li>
 			</ul>
 
 			<ul class="navbar-nav text-center">
 				{% if current_user.is_authenticated %}
-					<li class="m-1">
-						<a class="nav-link" href="{{url_for('view.viewMyPlanner')}}">
+					<li>
+						<a class="nav-link" href="{{url_for('view.planner')}}">
 							My Planner
 						</a>
 					</li>
-					<li class="m-1">
-						<a class="nav-link" href="{{url_for('view.viewAccount')}}">
+					<li>
+						<a class="nav-link" href="{{url_for('view.account')}}">
 							My Account
 						</a>
 					</li>
