@@ -5,6 +5,12 @@ function displayError(data) {
 		alert("danger", data.responseJSON.error)
 }
 
+function uncheckAll(container) {
+	$("#" + container + " .form-check").each(function () {
+		$(this).find("input").prop("checked", false)
+	})
+}
+
 var prevData = {}
 
 //
@@ -132,7 +138,6 @@ function updateResults(data) {
 
 	$("#coursesContainer").empty()
 	for (let course of data.results) {
-		console.log(course.terms)
 		var courseItem = $("#templateCourseItem").children().first().clone()
 
 		courseItem.attr("id", "course-" + course.id)
