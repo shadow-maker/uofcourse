@@ -10,7 +10,15 @@ from flask_alchemydumps import AlchemyDumps
 import os
 import json
 
+#
+# Init Flask app
+#
+
 app = Flask(__name__)
+
+#
+# Init db
+#
 
 dbConfig = DatabaseConfig()
 config = Config(dbConfig)
@@ -22,9 +30,12 @@ migrate = Migrate(app, db)
 
 alchemydumps = AlchemyDumps(app, db)
 
+#
+# Init extra utils
+#
+
 bcrypt = Bcrypt(app)
 loginManager = LoginManager(app)
-
 
 try:
 	with open(os.path.join(app.static_folder, "changelog.json"), "r") as file:
