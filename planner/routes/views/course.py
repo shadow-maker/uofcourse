@@ -4,7 +4,8 @@ from planner.models import Faculty, Subject, Course
 from planner.queryUtils import *
 from planner.constants import *
 
-from planner.routes.views import view, constants
+from planner.routes import constants
+from planner.routes.views import view
 
 from flask import render_template, flash, redirect
 from flask.helpers import url_for

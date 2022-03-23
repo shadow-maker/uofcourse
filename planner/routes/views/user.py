@@ -2,7 +2,8 @@ from planner import db
 from planner.queryUtils import *
 from planner.constants import *
 
-from planner.routes.views import constants, view
+from planner.routes import constants
+from planner.routes.views import view
 from planner.routes.utils import *
 from planner.routes.api import *
 

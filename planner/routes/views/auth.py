@@ -3,7 +3,8 @@ from planner.forms import *
 from planner.queryUtils import *
 from planner.constants import *
 
-from planner.routes.views import constants, view
+from planner.routes import constants
+from planner.routes.views import view
 
 from flask import render_template, flash, redirect
 from flask.helpers import url_for

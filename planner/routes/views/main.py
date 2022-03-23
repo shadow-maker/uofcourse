@@ -3,7 +3,8 @@ from planner import changelog as change
 from planner.queryUtils import *
 from planner.constants import *
 
-from planner.routes.views import constants, view
+from planner.routes import constants
+from planner.routes.views import view
 
 from flask import render_template
 
