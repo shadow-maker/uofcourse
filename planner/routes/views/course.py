@@ -102,7 +102,7 @@ def courses():
 
 	return render_template("coursesFilter.html",
 		title = "Courses",
-		header = f"Courses",
+		header = f"Course browser",
 		sortOpt = 0,
 		asc = True,
 		colors = COLORS_DARK,
