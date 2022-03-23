@@ -251,8 +251,12 @@ class User(db.Model, UserMixin):
 		starred.deletable = False
 		self.tags.append(starred)
 
+	def checkPassw(self, passw):
+		return bcrypt.check_password_hash(self.passw, passw)
+
 	def updatePassw(self, passw):
 		self.passw = bcrypt.generate_password_hash(passw).decode("utf-8")
+		db.session.commit()
 	
 	def isMod(self):
 		return self.role.id == 2
@@ -261,7 +265,6 @@ class User(db.Model, UserMixin):
 		return self.role.id == 3
 
 	def __repr__(self):
-
 		return f"USER {self.name} (#{self.id})"
 
 	def __iter__(self):
