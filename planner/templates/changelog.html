@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+{% for version, data in changelog.items() %}
+<div class="container row">
+	<div class="col-12 col-md-3 col-xl-2">
+		<h2 class="font-monospace" title="Version">{{version}}</h2>
+		{% if data["beta"] %}
+
+		{% endif %}
+
+		<span title="Publish date">{{data["date"]}}</span>
+	</div>
+
+	<div class="col-12 col-md-9 col-xl-10 pe-xxl-5 ps-4 ps-md-2">
+		{% if data["title"] %}
+		<h3>{{data["title"]}}</h3>
+		{% endif %}
+
+		<div class="container">
+			{% if data["intro"] %}
+			<ul>
+				{% for item in data["intro"] %}
+				<li>{{item}}</li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+		
+			{% if data["changes"] %}
+			<h4>Changes</h4>
+			<ul>
+				{% for item in data["changes"] %}
+				<li>{{item}}</li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+		
+			{% if data["fixes"] %}
+			<h4>Fixes</h4>
+			<ul>
+				{% for item in data["fixes"] %}
+				<li>{{item}}</li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+		</div>
+		</div>
+</div>
+{% endfor %}
+
+{% endblock %}

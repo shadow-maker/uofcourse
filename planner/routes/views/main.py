@@ -1,3 +1,5 @@
+from planner import changelog as change
+
 from planner.queryUtils import *
 from planner.constants import *
 
@@ -15,3 +17,12 @@ def home():
 @view.route("/about")
 def about():
 	return render_template("about.html", title="About", header="About UofC Planner")
+
+
+@view.route("/changelog")
+def changelog():
+	return render_template("changelog.html",
+		title="Changelog",
+		header="Changelog",
+		changelog = change
+	)
