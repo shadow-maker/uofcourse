@@ -146,4 +146,3 @@ cython_debug/
 
 # Other
 migrations/
-backups/
