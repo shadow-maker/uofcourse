@@ -1,5 +1,7 @@
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 class DatabaseConfig:
 	def __init__(self, type="mysql", address="localhost", name="main", user="root", pssw=""):
