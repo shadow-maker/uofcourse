@@ -1,4 +1,4 @@
-from planner.db_update import BACKUPS_FOLDER
+from . import BACKUPS_FOLDER
 from planner.models import db, Season, Term
 import os
 import json

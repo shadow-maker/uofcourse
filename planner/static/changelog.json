@@ -1,4 +1,14 @@
 {
+	"0.1.1": {
+		"beta": true,
+		"date": "2022-03-25",
+		"title": "",
+		"intro": [
+			"Backend fixes"
+		],
+		"changes": [],
+		"fixes": []
+	},
 	"0.1": {
 		"beta": true,
 		"date": "2022-03-23",
