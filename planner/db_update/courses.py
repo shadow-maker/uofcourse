@@ -2,12 +2,18 @@ from planner.db_update import db, Faculty, Subject, Course
 
 from bs4 import BeautifulSoup
 import requests
+import sys
+
+TIMEOUT = 120
 
 def update():
 	baseURL = "https://www.ucalgary.ca/pubs/calendar/current/"
 	facultiesPage = "course-by-faculty.html"
 
-	r = requests.get(baseURL + facultiesPage)
+	try:
+		r = requests.get(baseURL + facultiesPage, timeout=TIMEOUT)
+	except:
+		sys.exit("FAILED REQUEST FOR FACULTIES PAGE")
 	soup = BeautifulSoup(r.text, features="html.parser")
 
 	content = soup.find(id="ctl00_ctl00_pageContent")
@@ -31,7 +37,13 @@ def update():
 
 		for subjCode, url in subjects.items():
 			print(f"  SUBJECT '{subjCode}'", end=" ")
-			r = requests.get(baseURL + url)
+
+			try:
+				r = requests.get(baseURL + url, timeout=TIMEOUT)
+			except:
+				print("REQUEST FAILED")
+				continue
+
 			soup = BeautifulSoup(r.text, features="html.parser")
 
 			content = soup.find(id="ctl00_ctl00_pageContent")
