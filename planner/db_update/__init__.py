@@ -20,7 +20,7 @@ updateFuncs = {
 }
 
 
-def update(tables=list(updateFuncs.keys()), backupTables=True, backupFolder=BACKUPS_FOLDER):
+def update(tables=list(updateFuncs.keys())):
 	for table in tables:
 		if table not in updateFuncs.keys():
 			continue
@@ -30,10 +30,3 @@ def update(tables=list(updateFuncs.keys()), backupTables=True, backupFolder=BACK
 		print(msg + "-" * (80 - len(msg)))
 		print("\n")
 		updateFuncs[table]()
-
-		if backupTables:
-			msg = f"BACKING UP TABLE {table.__tablename__} "
-			print("\n")
-			print(msg + "-" * (80 - len(msg)))
-			print("\n")
-			backup([table], backupFolder)
