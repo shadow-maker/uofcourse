@@ -11,7 +11,7 @@ def update():
 	try:
 		r = requests.get(BASE_URL + facURL, timeout=TIMEOUT)
 	except:
-		sys.exit(f"FAILED REQUEST FOR FACULTIES PAGE ({url})")
+		sys.exit(f"FAILED REQUEST FOR FACULTIES PAGE ({facURL})")
 	soup = BeautifulSoup(r.text, features="html.parser")
 
 	content = soup.find(id="ctl00_ctl00_pageContent")
@@ -37,10 +37,13 @@ def update():
 			print(f"  SUBJECT '{subjCode}'", end=" ")
 
 			try:
-				r = requests.get(BASE_URL + url, timeout=TIMEOUT)
-			except:
-				print("REQUEST FAILED")
-				continue
+				r = requests.get(BASE_URL + "print_" + url, timeout=TIMEOUT)
+			except requests.exceptions.RequestException:
+				try:
+					r = requests.get(BASE_URL + url, timeout=TIMEOUT)
+				except requests.exceptions.RequestException:
+					print("REQUEST FAILED")
+					continue
 
 			soup = BeautifulSoup(r.text, features="html.parser")
 
@@ -49,10 +52,10 @@ def update():
 			if content == None:
 				print()
 				continue
+		
+			subjName = " ".join(soup.find(class_="page-title").text.strip().split(" ")[:-1])
 
 			courses = [c for c in content.find_all("tr", recursive=False) if len(c.find_all("table")) > 0]
-			
-			subjName = " ".join(soup.find(class_="page-title").text.strip().split(" ")[:-1])
 
 			subject = Subject.query.filter_by(code=subjCode).first()
 
@@ -74,7 +77,7 @@ def update():
 			db.session.commit()
 			
 			for c in courses:
-				subjName, courseCode, courseName = [i.text for i in c.find_all(class_="course-code")]
+				_, courseCode, courseName = [i.text for i in c.find_all(class_="course-code")]
 				code = int(courseCode.replace(" ", ""))
 				name = courseName.strip()
 
@@ -96,6 +99,10 @@ def update():
 				notes = c.find(class_="course-notes")
 				if notes:
 					notes = notes.text.strip()
+
+				aka = c.find(class_="course-aka")
+				if aka:
+					aka = aka.text.strip().replace("(", "").replace(")", "").capitalize()
 
 				print(f"    COURSE '{code}'", end=" ")
 				
@@ -121,6 +128,9 @@ def update():
 					if course.notes != notes:
 						print(f"    - notes does not match: (db) {course.notes} != {notes}, updating...")
 						course.notes = notes
+					if course.aka != aka:
+						print(f"    - aka does not match: (db) {course.aka} != {aka}, updating...")
+						course.aka = aka
 				else:
 					print("creating row...")
 					course = Course(subject.id, code, name, units, desc, prereqs, antireqs)	

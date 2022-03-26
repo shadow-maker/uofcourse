@@ -9,7 +9,7 @@ def update():
 
 	try:
 		r = requests.get(BASE_URL + url, timeout=TIMEOUT)
-	except:
+	except requests.exceptions.RequestException:
 		sys.exit(f"FAILED REQUEST FOR GRADE SYSTEM PAGE ({url})")
 	soup = BeautifulSoup(r.text, features="html.parser")
 
