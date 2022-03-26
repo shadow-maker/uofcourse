@@ -1,0 +1,398 @@
+{
+	"2245": {
+		"season": "summer",
+		"year": 2024
+	},
+	"2243": {
+		"season": "spring",
+		"year": 2024
+	},
+	"2241": {
+		"season": "winter",
+		"year": 2024
+	},
+	"2237": {
+		"season": "fall",
+		"year": 2023
+	},
+	"2235": {
+		"season": "summer",
+		"year": 2023
+	},
+	"2233": {
+		"season": "spring",
+		"year": 2023
+	},
+	"2231": {
+		"season": "winter",
+		"year": 2023
+	},
+	"2227": {
+		"season": "fall",
+		"year": 2022
+	},
+	"2225": {
+		"season": "summer",
+		"year": 2022
+	},
+	"2223": {
+		"season": "spring",
+		"year": 2022
+	},
+	"2221": {
+		"season": "winter",
+		"year": 2022
+	},
+	"2217": {
+		"season": "fall",
+		"year": 2021
+	},
+	"2215": {
+		"season": "summer",
+		"year": 2021
+	},
+	"2213": {
+		"season": "spring",
+		"year": 2021
+	},
+	"2211": {
+		"season": "winter",
+		"year": 2021
+	},
+	"2207": {
+		"season": "fall",
+		"year": 2020
+	},
+	"2205": {
+		"season": "summer",
+		"year": 2020
+	},
+	"2203": {
+		"season": "spring",
+		"year": 2020
+	},
+	"2201": {
+		"season": "winter",
+		"year": 2020
+	},
+	"2197": {
+		"season": "fall",
+		"year": 2019
+	},
+	"2195": {
+		"season": "summer",
+		"year": 2019
+	},
+	"2193": {
+		"season": "spring",
+		"year": 2019
+	},
+	"2191": {
+		"season": "winter",
+		"year": 2019
+	},
+	"2187": {
+		"season": "fall",
+		"year": 2018
+	},
+	"2185": {
+		"season": "summer",
+		"year": 2018
+	},
+	"2183": {
+		"season": "spring",
+		"year": 2018
+	},
+	"2181": {
+		"season": "winter",
+		"year": 2018
+	},
+	"2177": {
+		"season": "fall",
+		"year": 2017
+	},
+	"2175": {
+		"season": "summer",
+		"year": 2017
+	},
+	"2173": {
+		"season": "spring",
+		"year": 2017
+	},
+	"2171": {
+		"season": "winter",
+		"year": 2017
+	},
+	"2167": {
+		"season": "fall",
+		"year": 2016
+	},
+	"2165": {
+		"season": "summer",
+		"year": 2016
+	},
+	"2163": {
+		"season": "spring",
+		"year": 2016
+	},
+	"2161": {
+		"season": "winter",
+		"year": 2016
+	},
+	"2157": {
+		"season": "fall",
+		"year": 2015
+	},
+	"2155": {
+		"season": "summer",
+		"year": 2015
+	},
+	"2153": {
+		"season": "spring",
+		"year": 2015
+	},
+	"2151": {
+		"season": "winter",
+		"year": 2015
+	},
+	"2147": {
+		"season": "fall",
+		"year": 2014
+	},
+	"2145": {
+		"season": "summer",
+		"year": 2014
+	},
+	"2143": {
+		"season": "spring",
+		"year": 2014
+	},
+	"2141": {
+		"season": "winter",
+		"year": 2014
+	},
+	"2137": {
+		"season": "fall",
+		"year": 2013
+	},
+	"2135": {
+		"season": "summer",
+		"year": 2013
+	},
+	"2133": {
+		"season": "spring",
+		"year": 2013
+	},
+	"2131": {
+		"season": "winter",
+		"year": 2013
+	},
+	"2127": {
+		"season": "fall",
+		"year": 2012
+	},
+	"2125": {
+		"season": "summer",
+		"year": 2012
+	},
+	"2123": {
+		"season": "spring",
+		"year": 2012
+	},
+	"2121": {
+		"season": "winter",
+		"year": 2012
+	},
+	"2117": {
+		"season": "fall",
+		"year": 2011
+	},
+	"2115": {
+		"season": "summer",
+		"year": 2011
+	},
+	"2113": {
+		"season": "spring",
+		"year": 2011
+	},
+	"2111": {
+		"season": "winter",
+		"year": 2011
+	},
+	"2107": {
+		"season": "fall",
+		"year": 2010
+	},
+	"2105": {
+		"season": "summer",
+		"year": 2010
+	},
+	"2103": {
+		"season": "spring",
+		"year": 2010
+	},
+	"2101": {
+		"season": "winter",
+		"year": 2010
+	},
+	"2097": {
+		"season": "fall",
+		"year": 2009
+	},
+	"2095": {
+		"season": "summer",
+		"year": 2009
+	},
+	"2093": {
+		"season": "spring",
+		"year": 2009
+	},
+	"2091": {
+		"season": "winter",
+		"year": 2009
+	},
+	"2087": {
+		"season": "fall",
+		"year": 2008
+	},
+	"2085": {
+		"season": "summer",
+		"year": 2008
+	},
+	"2083": {
+		"season": "spring",
+		"year": 2008
+	},
+	"2081": {
+		"season": "winter",
+		"year": 2008
+	},
+	"2077": {
+		"season": "fall",
+		"year": 2007
+	},
+	"2075": {
+		"season": "summer",
+		"year": 2007
+	},
+	"2073": {
+		"season": "spring",
+		"year": 2007
+	},
+	"2071": {
+		"season": "winter",
+		"year": 2007
+	},
+	"2067": {
+		"season": "fall",
+		"year": 2006
+	},
+	"2065": {
+		"season": "summer",
+		"year": 2006
+	},
+	"2063": {
+		"season": "spring",
+		"year": 2006
+	},
+	"2061": {
+		"season": "winter",
+		"year": 2006
+	},
+	"2057": {
+		"season": "fall",
+		"year": 2005
+	},
+	"2055": {
+		"season": "summer",
+		"year": 2005
+	},
+	"2053": {
+		"season": "spring",
+		"year": 2005
+	},
+	"2051": {
+		"season": "winter",
+		"year": 2005
+	},
+	"2047": {
+		"season": "fall",
+		"year": 2004
+	},
+	"2045": {
+		"season": "summer",
+		"year": 2004
+	},
+	"2043": {
+		"season": "spring",
+		"year": 2004
+	},
+	"2041": {
+		"season": "winter",
+		"year": 2004
+	},
+	"2037": {
+		"season": "fall",
+		"year": 2003
+	},
+	"2035": {
+		"season": "summer",
+		"year": 2003
+	},
+	"2033": {
+		"season": "spring",
+		"year": 2003
+	},
+	"2031": {
+		"season": "winter",
+		"year": 2003
+	},
+	"2027": {
+		"season": "fall",
+		"year": 2002
+	},
+	"2025": {
+		"season": "summer",
+		"year": 2002
+	},
+	"2023": {
+		"season": "spring",
+		"year": 2002
+	},
+	"2021": {
+		"season": "winter",
+		"year": 2002
+	},
+	"2017": {
+		"season": "fall",
+		"year": 2001
+	},
+	"2015": {
+		"season": "summer",
+		"year": 2001
+	},
+	"2013": {
+		"season": "spring",
+		"year": 2001
+	},
+	"2011": {
+		"season": "winter",
+		"year": 2001
+	},
+	"2007": {
+		"season": "fall",
+		"year": 2000
+	},
+	"2005": {
+		"season": "summer",
+		"year": 2000
+	},
+	"2003": {
+		"season": "spring",
+		"year": 2000
+	},
+	"2001": {
+		"season": "winter",
+		"year": 2000
+	}
+}
