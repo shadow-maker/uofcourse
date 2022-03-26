@@ -4,12 +4,14 @@
 
 BASE_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
 BACKUPS_FOLDER = "backups"
-TIMEOUT = (5, 60) # Connection timeout, Read timeout
+TIMEOUT = (5, 30) # Connection timeout, Read timeout
 
-from planner.models import *
+from planner.models import Course, Grade, Role, Season, Term
+
 from planner.db_update import courses, grades, roles, seasons, terms
 from planner.db_update.backup import backup
 from planner.db_update.load import load
+
 
 updateFuncs = {
 	Course : courses.update,
