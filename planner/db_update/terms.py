@@ -1,25 +1,27 @@
-from . import BACKUPS_FOLDER
 from planner.models import db, Season, Term
-import os
 import json
+import os
 
 def update():
-	termsFile = os.path.join(BACKUPS_FOLDER, "terms.json")
+	termsFile = "terms.json"
+	termsPath = os.path.join(os.path.dirname(os.path.realpath(__file__)), termsFile)
 
-	with open(termsFile, "r") as file:
+	with open(termsPath, "r") as file:
 		terms = json.load(file)
 
 	for tId, term in terms.items():
 		try:
-			season, year = term.split(" ")
+			season = term["season"]
+			year = term["year"]
 		except:
 			print(f"ERROR: term '{term}' is not formatted correctly")
 			continue
-		try:
-			sId = Season.query.filter_by(name=season.lower()).first().id
-		except:
+
+		s = Season.query.filter_by(name=season.lower()).first()
+		if not s:
 			print(f"ERROR: Season '{season}' not found")
 			continue
+
 		try:
 			year = int(year)
 		except:
@@ -29,15 +31,15 @@ def update():
 		t = Term.query.filter_by(id=tId).first()
 		if t:
 			print(f"TERM {tId} ALREADY EXISTS")
-			if t.season_id != sId:
-				print(f"  - seasonId does not match: (db) {t.season_id} != {sId}, updating...")
-				t.season_id = sId
+			if t.season_id != s.id:
+				print(f"  - seasonId does not match: (db) {t.season_id} != {s.id}, updating...")
+				t.season_id = s.id
 			if t.year != year:
 				print(f"  - year does not match: (db) {t.year} != {year}, updating...")
 				t.year = year
 			db.session.commit()
 		else:
 			print(f"CREATING TERM {tId}")
-			t = Term(id=tId, season_id=sId, year=year)
+			t = Term(id=tId, season_id=s.id, year=year)
 			db.session.add(t)
 			db.session.commit()
