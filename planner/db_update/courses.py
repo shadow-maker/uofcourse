@@ -133,6 +133,6 @@ def update():
 						course.aka = aka
 				else:
 					print("creating row...")
-					course = Course(subject.id, code, name, units, desc, prereqs, antireqs)	
+					course = Course(subject.id, code, name, units, desc, prereqs, antireqs, notes, aka)	
 					db.session.add(course)
 				db.session.commit()
