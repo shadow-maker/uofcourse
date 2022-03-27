@@ -1,4 +1,4 @@
-from planner.routes.errors import error
+from planner.routes.views import view
 
 from flask import render_template
 
@@ -8,9 +8,9 @@ messages = {
 	500: "Server error"
 }
 
-@error.app_errorhandler(403)
-@error.app_errorhandler(404)
-@error.app_errorhandler(500)
+@view.app_errorhandler(403)
+@view.app_errorhandler(404)
+@view.app_errorhandler(500)
 def renderError(error):
 	return render_template("error.html",
 		title = error.code,
