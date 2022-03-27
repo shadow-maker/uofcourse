@@ -37,6 +37,7 @@
 	<!--Global vars-->
 	<script>
 		var isAuth = JSON.parse("{{ current_user.is_authenticated | tojson | safe }}")
+		var colors = JSON.parse('{{ COLORS | tojson | safe }}')
 	</script>
 </head>
 

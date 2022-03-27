@@ -26,7 +26,6 @@ def faculty(facId):
 
 
 @view.route("/s/<subjCode>")
-@view.route("/c/<subjCode>")
 def subject(subjCode):
 	subject = getSubjectByCode(subjCode)
 	if not subject:
@@ -65,7 +64,6 @@ def course(subjCode, courseCode):
 		faculty=faculty,
 		userTags = course.getTags(current_user.id) if current_user.is_authenticated else [],
 		userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else [],
-		colors = COLORS_DARK,
 		links = {
 			"faculty": url_for("view.faculty", facId=faculty.id),
 			"subject": url_for("view.subject", subjCode=subject.code)
@@ -107,7 +105,6 @@ def courses():
 		description = "Course browser : Filter and sort through UofC's full catalogue of courses",
 		sortOpt = 0,
 		asc = True,
-		colors = COLORS_DARK,
 		terms = [dict(term) for term in Term.query.all()],
 		filterData = {
 			"levels": levels,
