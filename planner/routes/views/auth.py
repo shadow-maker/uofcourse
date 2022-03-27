@@ -1,9 +1,7 @@
 from planner import db, loginManager
 from planner.forms import *
-from planner.queryUtils import *
-from planner.constants import *
+from planner.constants import ALLOW_ACCOUNT_CREATION
 
-from planner.routes import constants
 from planner.routes.views import view
 
 from flask import render_template, flash, redirect
@@ -43,7 +41,6 @@ def signup():
 		return redirect(url_for("view.home"))
 
 	return render_template("signup.html",
-		constants = constants,
 		title="Sign Up",
 		header="Create Account",
 		form=form
@@ -67,7 +64,6 @@ def login():
 		else:
 			flash(f"User with Username {form.uname.data} doesn't exist. Please sign up for an account.", "danger")
 	return render_template("login.html",
-		constants = constants,
 		title="Log In",
 		header="Log In",
 		form=form

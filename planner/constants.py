@@ -1,6 +1,15 @@
+from dotenv import load_dotenv
+from os import getenv
+
+load_dotenv()
+
 SITE_NAME = "UofCourse"
 
-CURRENT_VERSION = "0.1.1"
+DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
+
+GANALYTICS_ID = getenv("GANALYTICS_ID")
+
+CURRENT_VERSION = "0.1.6"
 
 ALLOW_ACCOUNT_CREATION = False
 
