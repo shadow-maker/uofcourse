@@ -3,21 +3,24 @@
 {% block content %}
 
 {% for version, data in changelog.items() %}
-<div class="container row">
+<div class="container row my-2">
 	<div class="col-12 col-md-3 col-xl-2">
-		<span title="Version">
+		<div title="Version">
 			<span class="h2 font-monospace">{{version}}</span>
 			{% if data["beta"] %}
 			<span class="badge bg-secondary align-top">BETA</span>
 			{% endif %}
-		</span>
+		</div>
 
-		<span title="Publish date">{{data["date"]}}</span>
+		<div title="Publish date">
+			<i class="bi-calendar-event"></i>
+			{{data["date"]}}
+		</div>
 	</div>
 
 	<div class="col-12 col-md-9 col-xl-10 pe-xxl-5 ps-4 ps-md-2">
 		{% if data["title"] %}
-		<h3>{{data["title"]}}</h3>
+		<h4>{{data["title"]}}</h4>
 		{% endif %}
 
 		<div class="container">
@@ -30,7 +33,7 @@
 			{% endif %}
 		
 			{% if data["changes"] %}
-			<h4>Changes</h4>
+			<h5>Changes</h5>
 			<ul>
 				{% for item in data["changes"] %}
 				<li>{{item}}</li>
@@ -39,7 +42,7 @@
 			{% endif %}
 		
 			{% if data["fixes"] %}
-			<h4>Fixes</h4>
+			<h5>Fixes</h5>
 			<ul>
 				{% for item in data["fixes"] %}
 				<li>{{item}}</li>
@@ -47,7 +50,9 @@
 			</ul>
 			{% endif %}
 		</div>
-		</div>
+	</div>
+
+	<hr>
 </div>
 {% endfor %}
 
