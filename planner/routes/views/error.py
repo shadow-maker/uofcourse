@@ -1,4 +1,4 @@
-from planner.routes.views import view
+from planner.routes.views import view, constants
 
 from flask import render_template
 
@@ -13,6 +13,7 @@ messages = {
 @view.app_errorhandler(500)
 def renderError(error):
 	return render_template("error.html",
+		**constants,
 		title = error.code,
 		errorCode = error.code,
 		errorMessage = messages[error.code]
