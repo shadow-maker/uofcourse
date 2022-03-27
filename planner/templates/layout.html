@@ -2,13 +2,22 @@
 <html lang="en">
 
 <head>
+	<!--Meta tags-->
+
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	{% if title %}
-	<title>UofCourse - {{title}}</title>
+	<title>{{SITE_NAME}} - {{title}}</title>
 	{% else %}
-	<title>UofCourse</title>
+	<title>{{SITE_NAME}}</title>
+	{% endif %}
+
+	{% if description %}
+	<meta name="description" content="{{description}}">
+	{% else %}
+	<meta name="description" content="{{DEF_DESCRIPTION}}">
 	{% endif %}
 
 	<!--jQuery-->

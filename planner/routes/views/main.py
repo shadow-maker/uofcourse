@@ -12,8 +12,7 @@ from flask import render_template
 @view.route("/")
 def home():
 	return render_template("index.html",
-		header="UofC Course Planner",
-		description = "UofC Course Planner is a web application that helps students in their program course planning"
+		header="UofC Course Planner"
 	)
 
 

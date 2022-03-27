@@ -9,6 +9,7 @@ view = Blueprint("view", __name__, url_prefix="/")
 def viewConstants():
     return dict(
 		SITE_NAME = SITE_NAME,
+		DEF_DESCRIPTION = DEF_DESCRIPTION,
 		CURRENT_VERSION = CURRENT_VERSION,
 		CURRENT_VERSION_BETA = change[CURRENT_VERSION]["beta"] if CURRENT_VERSION in change else False,
 		DEBUG = app.debug

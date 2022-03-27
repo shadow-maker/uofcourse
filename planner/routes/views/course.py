@@ -58,7 +58,8 @@ def course(subjCode, courseCode):
 		return redirect(url_for("view.home"))
 	faculty = subject.faculty
 	return render_template("course.html",
-		title=f"{subjCode.upper()}-{courseCode.upper()}",
+		title=f"{course.code_full}",
+		description = f"Course info for {course.code_full} : {course.name}",
 		course=course,
 		subject=subject,
 		faculty=faculty,
@@ -103,6 +104,7 @@ def courses():
 	return render_template("coursesFilter.html",
 		title = "Courses",
 		header = f"Course browser",
+		description = "Course browser : Filter and sort through UofC's full catalogue of courses",
 		sortOpt = 0,
 		asc = True,
 		colors = COLORS_DARK,
