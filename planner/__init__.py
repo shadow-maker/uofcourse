@@ -47,10 +47,8 @@ except:
 from datetime import datetime, timedelta
 utcoffset = timedelta(hours=round(((datetime.now() - datetime.utcnow()).seconds / 3600) - 24))
 
-from planner.routes.api import api
-from planner.routes.views import view
-from planner.routes.errors import error
+from planner.routes.api import *
+from planner.routes.views import *
 
 app.register_blueprint(api)
 app.register_blueprint(view)
-app.register_blueprint(error)

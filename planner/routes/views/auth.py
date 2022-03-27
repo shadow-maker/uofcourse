@@ -1,7 +1,6 @@
 from planner import db, loginManager
 from planner.forms import *
-from planner.queryUtils import *
-from planner.constants import *
+from planner.constants import ALLOW_ACCOUNT_CREATION
 
 from planner.routes.views import view
 

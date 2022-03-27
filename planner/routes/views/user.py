@@ -1,4 +1,5 @@
 from planner import db
+from planner.models import Season, Grade, CourseCollection
 from planner.queryUtils import *
 from planner.constants import *
 
