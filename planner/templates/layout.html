@@ -20,6 +20,10 @@
 	<meta name="description" content="{{DEF_DESCRIPTION}}">
 	{% endif %}
 
+	{% if not DEBUG %}
+	{% include "components/analytics.html" %}
+	{% endif %}
+
 	<!--jQuery-->
 	<script src="/static/scripts/jQuery.js"></script>
 

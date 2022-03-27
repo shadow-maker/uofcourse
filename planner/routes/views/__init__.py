@@ -12,7 +12,8 @@ def viewConstants():
 		DEF_DESCRIPTION = DEF_DESCRIPTION,
 		CURRENT_VERSION = CURRENT_VERSION,
 		CURRENT_VERSION_BETA = change[CURRENT_VERSION]["beta"] if CURRENT_VERSION in change else False,
-		DEBUG = app.debug
+		DEBUG = app.debug,
+		GANALYTICS_ID = GANALYTICS_ID
 	)
 
 from planner.routes.views.main import *
