@@ -4,6 +4,7 @@ from planner.routes.api.utils import *
 
 from flask import Blueprint, request
 from flask_login import current_user
+from sqlalchemy import and_, or_
 
 import json
 
@@ -94,8 +95,15 @@ def getCoursesFilter():
 
 	# Query database
 
+	queryLevels = []
+	for l in levels:
+		if queryLevels and queryLevels[-1][1] == l:
+			queryLevels[-1][1] = l + 1
+		else:
+			queryLevels.append([l, l + 1])
+
 	query = Course.query.filter(
-		Course.level.in_(levels),
+		or_(and_(Course.code >= l[0] * 100, Course.code < l[1] * 100) for l in queryLevels),
 		Course.subject_id.in_(
 			[s for s in subjects if Subject.query.filter_by(id=s).first().faculty_id in faculties]
 		)
