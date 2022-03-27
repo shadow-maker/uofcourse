@@ -9,7 +9,7 @@ DEF_DESCRIPTION = "UofCourse is a web application that helps students in their p
 
 GANALYTICS_ID = getenv("GANALYTICS_ID")
 
-CURRENT_VERSION = "0.1.1"
+CURRENT_VERSION = "0.1.6"
 
 ALLOW_ACCOUNT_CREATION = False
 
