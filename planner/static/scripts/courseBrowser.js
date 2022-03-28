@@ -167,25 +167,33 @@ function updateResults(data) {
 			`)
 		}
 
-		for (let id of course.terms) {
-			var term = null
-
-			for (t of terms) {
-				if (t.id == id) {
-					term = t
-					break
-				}
-			}
-
-			if (!term)
-				continue
-
-			courseItem.find(".course-terms").append(`
+		for (let collection of course.collections) {
+			if (collection.transfer) {
+				courseItem.find(".course-terms").append(`
 				<div>
-					` + term.season.charAt(0).toUpperCase() + term.season.slice(1) +`
-					` + term.year + `
+					Transferred
 				</div>
 			`)
+			} else {
+				var term = null
+
+				for (t of terms) {
+					if (t.id == collection.term_id) {
+						term = t
+						break
+					}
+				}
+
+				if (!term)
+					continue
+
+				courseItem.find(".course-terms").append(`
+					<div>
+						` + term.season.charAt(0).toUpperCase() + term.season.slice(1) +`
+						` + term.year + `
+					</div>
+				`)
+			}
 		}
 
 		if (isAuth) {

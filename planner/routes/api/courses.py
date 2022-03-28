@@ -113,16 +113,16 @@ def getCoursesFilter():
 
 	return {
 		"results": [{
-			"id": course.id,
-			"name": course.name,
-			"subject_id": course.subject_id,
-			"code": course.code,
-			"code_full": course.code_full,
-			"emoji": course.getEmoji(),
-			"url": course.url,
-			"tags": [tag.id for tag in course.userTags if tag.user_id == current_user.id] if current_user.is_authenticated else [],
-			"terms": [uc.collection.term.id for uc in course.getUserCourses(current_user.id)] if current_user.is_authenticated else []
-		} for course in results.items],
+			"id": c.id,
+			"name": c.name,
+			"subject_id": c.subject_id,
+			"code": c.code,
+			"code_full": c.code_full,
+			"emoji": c.getEmoji(),
+			"url": c.url,
+			"tags": [tag.id for tag in c.userTags if tag.user_id == current_user.id] if current_user.is_authenticated else [],
+			"collections": [dict(uc.collection) for uc in c.getUserCourses(current_user.id)] if current_user.is_authenticated else []
+		} for c in results.items],
 		"page": page,
 		"pages": results.pages,
 		"total": results.total
