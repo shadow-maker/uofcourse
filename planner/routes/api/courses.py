@@ -42,26 +42,26 @@ def getCoursesFilter(data={}):
 	allFaculties = [f[0] for f in list(db.session.query(Faculty).values(Faculty.id))]
 	allSubjects = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
 
-	try:
-		if not data:
-			data = {
-				"sort": request.args.get("sort", default=0, type=int),
-				"asc": request.args.get("asc", default="true", type=str).lower(),
-				"levels": json.loads(request.args.get("levels", default="[]", type=str)),
-				"faculties": json.loads(request.args.get("faculties", default="[]", type=str)),
-				"subjects": json.loads(request.args.get("subjects", default="[]", type=str)),
-				"limit": request.args.get("limit", default=30, type=int),
-				"page": request.args.get("page", default=1, type=int)
-			}
-		elif type(data) != dict:
-			return {"error": f"Invalid data type ({type(data)} instead of dict)"}, 400
+	if not data:
+		data = {
+			"sort": request.args.get("sort", default=0, type=int),
+			"asc": request.args.get("asc", default="true", type=str).lower(),
+			"levels": json.loads(request.args.get("levels", default="[]", type=str)),
+			"faculties": json.loads(request.args.get("faculties", default="[]", type=str)),
+			"subjects": json.loads(request.args.get("subjects", default="[]", type=str)),
+			"limit": request.args.get("limit", default=30, type=int),
+			"page": request.args.get("page", default=1, type=int)
+		}
+	elif type(data) != dict:
+		return {"error": f"Invalid data type ({type(data)} instead of dict)"}, 400
 
+	try:
 		if data["asc"] not in ["true", "1", "false", "0"]:
 			return {"error": f"'{data['asc']}' is not a valid value for asc (boolean)"}, 400
 
-		if data["sort"] not in range(len(SORT_OPTIONS)):
+		if data["sort"] not in range(len(COURSE_SORT_OPTIONS)):
 			data["sort"] = 0
-		sortBy = SORT_OPTIONS[data["sort"]]
+		sortBy = COURSE_SORT_OPTIONS[data["sort"]]
 
 		if data["asc"] in ["false", "0"]:
 			sortBy = [i.desc() for i in sortBy]
@@ -70,14 +70,14 @@ def getCoursesFilter(data={}):
 		if not levels:
 			levels = allLevels
 		
-		faculties = [f for f in data["faculties"] if f in allFaculties]
+		faculties = [int(f) for f in data["faculties"] if int(f) in allFaculties]
 		if not faculties:
 			faculties = allFaculties
 
 		subjects = []
 		for s in data["subjects"]:
-			if s in allSubjects:
-				subjects.append(s)
+			if int(s) in allSubjects:
+				subjects.append(int(s))
 			else:
 				try:
 					subjects.append(utils.getSubjectByCode(s).id)
