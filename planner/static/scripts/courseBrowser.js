@@ -1,10 +1,3 @@
-function displayError(data) {
-	if (data.error)
-		alert("danger", data.error)
-	else
-		alert("danger", data.responseJSON.error)
-}
-
 function uncheckAll(container) {
 	$("#" + container + " .form-check").each(function () {
 		$(this).find("input").prop("checked", false)

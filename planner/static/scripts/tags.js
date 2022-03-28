@@ -15,7 +15,7 @@ function requestTag(method, data, suc) {
 		data: data,
 		success: (data) => {suc(data)},
 		error: (data) => {
-			alert("danger", data.responseJSON.error)
+			displayError(data)
 		}
 	})
 }
