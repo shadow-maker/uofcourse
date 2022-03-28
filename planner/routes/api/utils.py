@@ -1,10 +1,15 @@
 from planner import queryUtils as utils
 from planner.constants import *
-from planner.models import Course
+from planner.models import Course, Subject
 
-SORT_OPTIONS = [
+COURSE_SORT_OPTIONS = [
 	[Course.code, Course.name],
 	[Course.name, Course.code]
+]
+
+SUBJECT_SORT_OPTIONS = [
+	[Subject.code, Subject.name],
+	[Subject.name, Subject.code]
 ]
 
 def getById(table, id):
