@@ -42,9 +42,8 @@ function requestResults(suc, ignorePrev=false) {
 		page: page
 	}
 
-	if (!ignorePrev && JSON.stringify(data) == JSON.stringify(prevData)) {
+	if (!ignorePrev && JSON.stringify(data) == JSON.stringify(prevData))
 		return
-	}
 
 	prevData = data
 
@@ -222,14 +221,14 @@ function updateResults(data) {
 	}
 
 	$("#pageNav .pageSelector").remove()
-	if (pages > 15) {
+	if (data.pages > 15) {
 		$("#pageNav .pageEllipsis").show()
 	} else {
 		$("#pageNav .pageEllipsis").hide()
-		for (let p = pages; p > 0; p--) {
+		for (let p = data.pages; p > 0; p--) {
 			$("#pageNav ul li:eq(0)").after(`
-				<li class="pageSelector page-item ` + ((p == page) ? `active` : ``) + `"
-				onclick="switchPage(` + ((p == page) ? -1 : p) + `)" style="cursor: pointer;">
+				<li class="pageSelector page-item ` + ((p == data.page) ? `active` : ``) + `"
+				onclick="switchPage(` + ((p == data.page) ? -1 : p) + `)" style="cursor: pointer;">
 					<a class="page-link">` + p +`</a>
 				</li>
 			`)
@@ -239,6 +238,8 @@ function updateResults(data) {
 	$("#numTotal").text(data.total)
 	$("#numPage").text(data.page)
 	$("#numPages").text(data.pages)
+
+	page = data.page
 }
 
 //
@@ -246,6 +247,8 @@ function updateResults(data) {
 //
 
 $(document).ready(() => {
+	updateSubjects()
+
 	$("#formFilterCourses input").not("#subjectSearch").change(() => {
 		$("#formFilterCourses").submit()
 	})
@@ -260,9 +263,9 @@ $(document).ready(() => {
 
 		updateSubjects()
 
+		window.history.pushState({}, document.title, window.location.pathname)
+
 		requestResults((data) => {
-			page = data.page
-			pages = data.pages
 			updateResults(data)
 		})
 	})
@@ -275,16 +278,12 @@ $(document).on("click", ".tags-dropdown-btn", function() {
 
 function tagsInit() {
 	requestResults((data) => {
-		page = data.page
-		pages = data.pages
 		updateResults(data)
 	})
 }
 
 function tagEditDone() {
 	requestResults((data) => {
-		page = data.page
-		pages = data.pages
 		updateResults(data)
 	}, true)
 }

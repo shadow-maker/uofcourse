@@ -6,7 +6,7 @@ from planner.constants import *
 
 from planner.routes.views import view
 
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, request
 from flask.helpers import url_for
 
 import random
@@ -43,6 +43,15 @@ def subject(subjCode):
 			subject.code: ""
 		}.items()
 	)
+
+
+@view.route("/c/<subjCode>")
+def courseBrowserSubject(subjCode):
+	subject = getSubjectByCode(subjCode)
+	if not subject:
+		flash(f"Subject with code {subjCode} does not exist!", "danger")
+		return redirect(url_for("view.home"))
+	return redirect(url_for("view.courseBrowser", subjCode=subjCode))
 
 
 @view.route("/c/<subjCode>/<courseCode>")
@@ -88,15 +97,23 @@ def courseRandom():
 	return redirect(url_for("view.courseById", courseId=course.id))
 
 
-@view.route("/c", methods=["GET", "POST"])
-def courses():
+@view.route("/c", methods=["GET"])
+def courseBrowser():
+	subjCode = request.args.get("subjCode")
+
+	if subjCode:
+		if not getSubjectByCode(subjCode):
+			flash(f"Subject with code {subjCode} does not exist!", "danger")
+			return redirect(url_for("view.home"))
+
 	levels = {str(l) : True for l in COURSE_LEVELS}
 	faculties = {
 		str(f[0]) : {"name": f[1], "sel": True}
 	for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))}
 	subjects = {
-		s[0] : {"id": s[1], "name": s[2], "sel": False}
+		s[0] : {"id": s[1], "name": s[2], "sel": s[0] == subjCode}
 	for s in list(db.session.query(Subject).values(Subject.code, Subject.id, Subject.name))}
+
 	subjects = {k : subjects[k] for k in sorted(subjects)}
 
 	return render_template("coursesFilter.html",
