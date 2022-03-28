@@ -38,7 +38,7 @@ function alert(category, message, pre="") {
 function displayError(response) {
 	if (response.error)
 		alert("danger", response.error)
-	else if (data.responseJSON)
+	else if (response.responseJSON)
 		alert("danger", response.responseJSON.error)
 	else
 		alert("danger", response.statusText + " (" + response.status + ")")
