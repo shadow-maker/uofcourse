@@ -37,25 +37,27 @@ def getCourseByCode(subjCode, courseCode):
 
 
 @course.route("/filter", methods=["GET"])
-def getCoursesFilter():
+def getCoursesFilter(data=None):
 	allLevels = COURSE_LEVELS
 	allFaculties = [f[0] for f in list(db.session.query(Faculty).values(Faculty.id))]
 	allSubjects = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
 
 	try:
-		data ={
-			"sort": request.args.get("sort", default=0, type=int),
-			"asc": request.args.get("asc", default="true", type=str).lower(),
-			"levels": json.loads(request.args.get("levels", default="[]", type=str)),
-			"faculties": json.loads(request.args.get("faculties", default="[]", type=str)),
-			"subjects": json.loads(request.args.get("subjects", default="[]", type=str)),
-			"limit": request.args.get("limit", default=30, type=int),
-			"page": request.args.get("page", default=1, type=int)
-		}
+		if not data:
+			data = {
+				"sort": request.args.get("sort", default=0, type=int),
+				"asc": request.args.get("asc", default="true", type=str).lower(),
+				"levels": json.loads(request.args.get("levels", default="[]", type=str)),
+				"faculties": json.loads(request.args.get("faculties", default="[]", type=str)),
+				"subjects": json.loads(request.args.get("subjects", default="[]", type=str)),
+				"limit": request.args.get("limit", default=30, type=int),
+				"page": request.args.get("page", default=1, type=int)
+			}
+		elif type(data) != dict:
+			return {"error": f"Invalid data type ({type(data)} instead of dict)"}, 400
 
 		if data["asc"] not in ["true", "1", "false", "0"]:
 			return {"error": f"'{data['asc']}' is not a valid value for asc (boolean)"}, 400
-
 
 		if data["sort"] not in range(len(SORT_OPTIONS)):
 			data["sort"] = 0
