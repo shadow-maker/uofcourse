@@ -376,6 +376,10 @@ class CourseCollection(db.Model):
 			return None
 		return round(points / accUnits, precision)
 	
+	@property
+	def gpa(self):
+		return self.getGPA()
+	
 	def delete(self):
 		for i in self.userCourses:
 			db.session.delete(i)
@@ -388,6 +392,13 @@ class CourseCollection(db.Model):
 			self.term_id = term_id
 		else:
 			self.transfer = True
+	
+	def __iter__(self):
+		yield "id", self.id
+		yield "user_id", self.user_id
+		yield "term_id", self.term_id
+		yield "transfer", self.transfer
+		yield "gpa", self.gpa
 
 	def __repr__(self):
 		return f"COLLECTION (#{self.id}) : User {self.user_id} - " + ("Transfer" if self.transfer else f"Term {self.term_id}")
