@@ -15,13 +15,16 @@ subject = Blueprint("subjects", __name__, url_prefix="/subjects")
 # GET
 #
 
+
 @subject.route("", methods=["GET"])
 def getSubjects():
 	return getAll(Subject, request.args)
 
+
 @subject.route("/<id>", methods=["GET"])
 def getSubjectById(id):
 	return getById(Subject, id)
+
 
 @subject.route("/<id>/courses", methods=["GET"])
 def getSubjectCourses(id):
@@ -36,6 +39,7 @@ def getSubjectCourses(id):
 		"limit": request.args.get("limit", default=30, type=int),
 		"page": request.args.get("page", default=1, type=int)
 	})
+
 
 @subject.route("/code/<code>", methods=["GET"])
 def getSubjectByCode(code):
