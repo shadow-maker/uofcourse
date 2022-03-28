@@ -98,6 +98,10 @@ class Faculty(db.Model):
 	users = db.relationship("User", backref="faculty")
 	subjects = db.relationship("Subject", backref="faculty")
 
+	@property
+	def url(self):
+		return url_for("view.faculty", facId=self.id)
+
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
 			return self.emoji
@@ -122,6 +126,10 @@ class Subject(db.Model):
 	site = db.Column(db.String(64))
 
 	courses = db.relationship("Course", backref="subject")
+
+	@property
+	def url(self):
+		return url_for("view.subject", subjCode=self.code)
 
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
