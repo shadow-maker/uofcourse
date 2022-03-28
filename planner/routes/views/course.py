@@ -21,7 +21,8 @@ def faculty(facId):
 	return render_template("faculty.html",
 		title = "Faculty",
 		header = "Faculty",
-		faculty = faculty
+		faculty = faculty,
+		lenSubjects=len(faculty.subjects)
 	)
 
 
@@ -34,13 +35,9 @@ def subject(subjCode):
 	faculty = subject.faculty
 	return render_template("subject.html",
 		title=subjCode.upper(),
-		header=f"Subject - {subject.name}",
 		subject=subject,
 		faculty=faculty,
-		backlinks={
-			faculty.name: url_for("view.faculty", facId=faculty.id),
-			subject.code: ""
-		}.items()
+		lenCourses=len(subject.courses)
 	)
 
 
@@ -71,11 +68,7 @@ def course(subjCode, courseCode):
 		subject=subject,
 		faculty=faculty,
 		userTags = course.getTags(current_user.id) if current_user.is_authenticated else [],
-		userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else [],
-		links = {
-			"faculty": url_for("view.faculty", facId=faculty.id),
-			"subject": url_for("view.subject", subjCode=subject.code)
-		}
+		userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else []
 	)
 
 

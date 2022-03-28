@@ -3,11 +3,9 @@
 {% block content %}
 
 <div class="mb-3">
-	<span class="h3 font-monospace">
-		<span class="border border-2 border-secondary bg-light rounded p-1">{{subject.code}}</span>-<span
-			class="border border-2 border-secondary bg-light rounded p-1">{{course.code}}</span>
-	</span>
-	(#{{course.id}})
+	<span class="h3 font-monospace align-top">c/</span><span class="h3 font-monospace my-0 mx-1"><span class="border border-2 border-secondary bg-light rounded p-1">{{subject.code}}</span>-<span
+	class="border border-2 border-secondary bg-light rounded p-1">{{course.code}}</span></span>
+	<span class="align-bottom text-muted fs-6">(#{{course.id}})</span>
 </div>
 
 <div class="row mb-1">
@@ -66,7 +64,7 @@
 
 <div class="row">
 	<!--Course Info-->
-	<div class="col-7 col-md-8 pe-0">
+	<div class="order-2 order-sm-1 col-12 col-sm-7 col-md-8 pe-0">
 		<div class="container row p-0 ps-lg-4">
 			{% macro textCard(title, content) %}
 			<div class="col-lg-6 col-12 p-2">
@@ -97,7 +95,7 @@
 	</div>
 
 	<!--Course Info-->
-	<div class="col-5 col-md-4 p-2">
+	<div class="order-1 order-sm-2 col-12 col-sm-5 col-md-4 p-2">
 		<div class="card bg-light">
 			<div class="card-body">
 				<h4>Taken in</h4>
