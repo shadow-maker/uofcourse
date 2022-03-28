@@ -36,11 +36,11 @@ function alert(category, message, pre="") {
 }
 
 function displayError(response) {
-	if (data.error)
+	if (response.error)
 		alert("danger", response.error)
 	else if (data.responseJSON)
 		alert("danger", response.responseJSON.error)
 	else
-		alert("danger", response.statusText + " (" + data.status + ")")
+		alert("danger", response.statusText + " (" + response.status + ")")
 }
 </script>

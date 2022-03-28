@@ -98,12 +98,12 @@ function checkCourse() {
 	$.ajax({
 		url: "/api/courses/code/" + $("#selectCourseSubject").val() + "/" + $("#selectCourseNumber").val(),
 		method: "GET",
-		success: (data) => {
-			$("#selectCourseId").val(data.id)
+		success: (response) => {
+			$("#selectCourseId").val(response.id)
 			$("#selectCourseSubmit").prop("disabled", false)
 			selectCourseStatus("success")
 		},
-		error: (data) => {
+		error: (response) => {
 			$("#selectCourseId").val("")
 			$("#selectCourseSubmit").prop("disabled", true)
 			selectCourseStatus("error")

@@ -47,10 +47,10 @@ function requestResults(suc, ignorePrev=false) {
 		url: "/api/courses/filter",
 		method: "GET",
 		data: data,
-		success: (data) => {suc(data)},
-		error: (data) => {
+		success: (response) => {suc(response)},
+		error: (response) => {
 			$(".loading").hide()
-			displayError(data)
+			displayError(response)
 		}
 	})
 }
@@ -61,9 +61,9 @@ function requestCourseTags(id, suc) {
 		$.ajax({
 			url: "/api/tags/course/" + id,
 			method: "GET",
-			success: (data) => {suc(data)},
-			error: (data) => {
-				displayError(data)
+			success: (response) => {suc(response)},
+			error: (response) => {
+				displayError(response)
 			}
 		})
 }
@@ -95,14 +95,14 @@ function updateCourseTags(courseId) {
 	var icon = ""
 	requestCourseTags(
 		courseId,
-		(data) => {
+		(response) => {
 			item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
 				$(this).find(".bi-check").addClass("invisible")
 			})
 
 			const container = item.find(".tags-selected")
 			container.empty()
-			for (tag of data.tags) {
+			for (tag of response.tags) {
 
 				if (tag.emoji)
 					icon = "&#" + tag.emoji + " "
@@ -258,8 +258,8 @@ $(document).ready(() => {
 
 		window.history.pushState({}, document.title, window.location.pathname)
 
-		requestResults((data) => {
-			updateResults(data)
+		requestResults((response) => {
+			updateResults(response)
 		})
 	})
 })

@@ -13,9 +13,9 @@ function requestTag(method, data, suc) {
 		url: "/api/tags",
 		method: method,
 		data: data,
-		success: (data) => {suc(data)},
-		error: (data) => {
-			displayError(data)
+		success: (response) => {suc(response)},
+		error: (response) => {
+			displayError(response)
 		}
 	})
 }
@@ -74,9 +74,9 @@ function tagUpdateColor(index) {
 function tagExecuteChanges() {
 	$("#modalEditTags").modal("hide")
 	var data = {}
-	var callback = (data) => {
-		if (data.success)
-			alert("success", data.success)
+	var callback = (response) => {
+		if (response.success)
+			alert("success", response.success)
 	}
 
 	$("#modalEditTags .tag-items").children().each(function(i) {
@@ -84,8 +84,8 @@ function tagExecuteChanges() {
 			callback = (data) => {
 				if (data.success)
 					alert("success", data.success)
-				requestTag("GET", {}, (data) => {
-					userTags = data.tags
+				requestTag("GET", {}, (response) => {
+					userTags = response.tags
 					if (typeof tagEditDone !== "undefined")
 						tagEditDone()	
 				})
