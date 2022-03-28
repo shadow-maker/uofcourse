@@ -37,7 +37,6 @@ def subject(subjCode):
 		header=f"Subject - {subject.name}",
 		subject=subject,
 		faculty=faculty,
-		courses=subject.courses,
 		backlinks={
 			faculty.name: url_for("view.faculty", facId=faculty.id),
 			subject.code: ""
@@ -116,7 +115,7 @@ def courseBrowser():
 
 	subjects = {k : subjects[k] for k in sorted(subjects)}
 
-	return render_template("coursesFilter.html",
+	return render_template("courseBrowser.html",
 		title = "Courses",
 		header = f"Course browser",
 		description = "Course browser : Filter and sort through UofC's full catalogue of courses",
