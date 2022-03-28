@@ -7,6 +7,8 @@ SITE_NAME = "UofCourse"
 
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
 
+DATA_BASE_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
+
 GANALYTICS_ID = getenv("GANALYTICS_ID")
 
 CURRENT_VERSION = "0.1.6"

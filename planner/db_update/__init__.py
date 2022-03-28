@@ -2,7 +2,6 @@
 # SCRIPTS TO UPDATE DATABASE BASED ON CONSTANT OR UNI DATA
 #
 
-BASE_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
 BACKUPS_FOLDER = "backups"
 TIMEOUT = (5, 30) # Connection timeout, Read timeout
 

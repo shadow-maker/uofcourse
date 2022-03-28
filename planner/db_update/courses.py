@@ -1,4 +1,5 @@
-from . import BASE_URL, TIMEOUT
+from . import TIMEOUT
+from planner.constants import DATA_BASE_URL
 from planner.models import db, Faculty, Subject, Course
 
 from bs4 import BeautifulSoup
@@ -9,7 +10,7 @@ def update():
 	facURL = "course-by-faculty.html"
 
 	try:
-		r = requests.get(BASE_URL + facURL, timeout=TIMEOUT)
+		r = requests.get(DATA_BASE_URL + facURL, timeout=TIMEOUT)
 	except:
 		sys.exit(f"FAILED REQUEST FOR FACULTIES PAGE ({facURL})")
 	soup = BeautifulSoup(r.text, features="html.parser")
@@ -37,10 +38,10 @@ def update():
 			print(f"  SUBJECT '{subjCode}'", end=" ")
 
 			try:
-				r = requests.get(BASE_URL + "print_" + url, timeout=TIMEOUT)
+				r = requests.get(DATA_BASE_URL + "print_" + url, timeout=TIMEOUT)
 			except requests.exceptions.RequestException:
 				try:
-					r = requests.get(BASE_URL + url, timeout=TIMEOUT)
+					r = requests.get(DATA_BASE_URL + url, timeout=TIMEOUT)
 				except requests.exceptions.RequestException:
 					print("REQUEST FAILED")
 					continue

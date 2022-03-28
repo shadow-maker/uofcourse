@@ -1,4 +1,5 @@
-from . import BASE_URL, TIMEOUT
+from . import TIMEOUT
+from planner.constants import DATA_BASE_URL
 from planner.models import db, Grade
 from bs4 import BeautifulSoup
 import requests
@@ -8,7 +9,7 @@ def update():
 	url = "f-1-1.html"
 
 	try:
-		r = requests.get(BASE_URL + url, timeout=TIMEOUT)
+		r = requests.get(DATA_BASE_URL + url, timeout=TIMEOUT)
 	except requests.exceptions.RequestException:
 		sys.exit(f"FAILED REQUEST FOR GRADE SYSTEM PAGE ({url})")
 	soup = BeautifulSoup(r.text, features="html.parser")
