@@ -37,7 +37,7 @@ def getCourseByCode(subjCode, courseCode):
 
 
 @course.route("/filter", methods=["GET"])
-def getCoursesFilter(data=None):
+def getCoursesFilter(data={}):
 	allLevels = COURSE_LEVELS
 	allFaculties = [f[0] for f in list(db.session.query(Faculty).values(Faculty.id))]
 	allSubjects = [s[0] for s in list(db.session.query(Subject).values(Subject.id))]
