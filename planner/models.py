@@ -149,6 +149,8 @@ class Subject(db.Model):
 		yield "code", self.code
 		yield "name", self.name
 		yield "emoji", self.emoji
+		yield "url", self.url
+		yield "url_uni", self.url_uni
 
 
 class Course(db.Model):
