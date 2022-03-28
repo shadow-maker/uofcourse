@@ -130,6 +130,10 @@ class Subject(db.Model):
 	@property
 	def url(self):
 		return url_for("view.subject", subjCode=self.code)
+	
+	@property
+	def url_uni(self):
+		return DATA_BASE_URL + self.site
 
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
