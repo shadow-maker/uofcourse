@@ -17,7 +17,7 @@ faculty = Blueprint("faculties", __name__, url_prefix="/faculties")
 
 @faculty.route("", methods=["GET"])
 def getFaculties():
-	return getAll(Faculty, request.args)
+	return getAll(Faculty)
 
 
 @faculty.route("/<id>", methods=["GET"])

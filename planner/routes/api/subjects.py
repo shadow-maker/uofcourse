@@ -18,7 +18,7 @@ subject = Blueprint("subjects", __name__, url_prefix="/subjects")
 
 @subject.route("", methods=["GET"])
 def getSubjects():
-	return getAll(Subject, request.args)
+	return getAll(Subject)
 
 
 @subject.route("/<id>", methods=["GET"])

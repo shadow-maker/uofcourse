@@ -12,7 +12,7 @@ grade = Blueprint("grades", __name__, url_prefix="/grades")
 
 @grade.route("", methods=["GET"])
 def getGrades():
-	return getAll(Grade, request.args)
+	return getAll(Grade)
 
 @grade.route("/<id>", methods=["GET"])
 def getGradeById(id):

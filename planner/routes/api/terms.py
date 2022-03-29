@@ -12,7 +12,7 @@ term = Blueprint("terms", __name__, url_prefix="/terms")
 
 @term.route("", methods=["GET"])
 def getTerms():
-	return getAll(Term, request.args)
+	return getAll(Term)
 
 @term.route("/<id>", methods=["GET"])
 def getTermById(id):
