@@ -4,16 +4,6 @@ from planner.models import Course, Subject
 
 from flask import request
 
-COURSE_SORT_OPTIONS = [
-	[Course.code, Course.name],
-	[Course.name, Course.code]
-]
-
-SUBJECT_SORT_OPTIONS = [
-	[Subject.code, Subject.name],
-	[Subject.name, Subject.code]
-]
-
 def getById(table, id):
 	obj = utils.getById(table, id)
 	if not obj:

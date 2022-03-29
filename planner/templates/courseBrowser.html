@@ -37,6 +37,9 @@
 	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
 	var terms = JSON.parse('{{ terms | tojson | safe }}')
 	var page = 1
+	var pages = 0
+
+	let sortOptions = JSON.parse('{{ sortOptions | tojson | safe }}')
 </script>
 
 <script src="/static/scripts/subjectSearch.js"></script>
@@ -57,13 +60,16 @@
 						<div class="input-group">
 							<select id="sortBy" name="sortBy" class="form-select form-select-sm"
 								aria-label="Sort options">
-								<option value="0" {% if sortOpt == 0 %}selected{% endif %}>Course level</option>
-								<option value="1" {% if sortOpt == 1 %}selected{% endif %}>Course name</option>
+								{% for option in sortOptions %}
+									<option value="{{loop.index0}}" {% if loop.index0 == 0 %}selected{% endif %}>
+										{{option.label}}
+									</option>
+								{% endfor %}
 							</select>
 							<select id="orderBy" name="orderBy" class="form-select form-select-sm"
 								aria-label="Sort options">
-								<option value="1" {% if asc %}selected{% endif %}>Ascending</option>
-								<option value="0" {% if not asc %}selected{% endif %}>Descending</option>
+								<option value="1" selected>Ascending</option>
+								<option value="0">Descending</option>
 							</select>
 						</div>
 					</div>

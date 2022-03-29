@@ -25,13 +25,13 @@ function requestResults(suc, ignorePrev=false) {
 	for (let s in subjects)
 		if (subjects[s].sel)
 			selectedSubject.push(parseInt(subjects[s].id))
-
+	
 	var data = {
-		sort: $("#sortBy").val(),
+		sort: sortOptions[$("#sortBy").val()].value,
 		asc: $("#orderBy").val(),
-		levels: JSON.stringify(selectedLevel),
-		faculties: JSON.stringify(selectedFaculty),
-		subjects: JSON.stringify(selectedSubject),
+		levels: selectedLevel,
+		faculties: selectedFaculty,
+		subjects: selectedSubject,
 		page: page
 	}
 
@@ -241,6 +241,7 @@ function updateResults(data) {
 	$("#numPages").text(data.pages)
 
 	page = data.page
+	pages = data.pages
 }
 
 //

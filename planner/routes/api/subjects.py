@@ -31,13 +31,9 @@ def getSubjectCourses(id):
 	if not utils.getById(Subject, id):
 		return {"error": f"Subject with id {id} does not exist"}, 404
 	return getCoursesFilter(data={
-		"sort": request.args.get("sort", default=0, type=int),
-		"asc": request.args.get("asc", default="true", type=str).lower(),
 		"levels": json.loads(request.args.get("levels", default="[]", type=str)),
 		"faculties": [],
-		"subjects": [int(id)],
-		"limit": request.args.get("limit", default=30, type=int),
-		"page": request.args.get("page", default=1, type=int)
+		"subjects": [int(id)]
 	})
 
 
@@ -50,55 +46,19 @@ def getSubjectByCode(code):
 
 
 @subject.route("/filter", methods=["GET"])
-def getSubjectsFilter(data={}):
-	allFaculties = [f[0] for f in list(db.session.query(Faculty).values(Faculty.id))]
-
-	if not data:
-		data = {
-			"sort": request.args.get("sort", default=0, type=int),
-			"asc": request.args.get("asc", default="true", type=str).lower(),
-			"faculties": json.loads(request.args.get("faculties", default="[]", type=str)),
-			"limit": request.args.get("limit", default=30, type=int),
-			"page": request.args.get("page", default=1, type=int)
-		}
-	elif type(data) != dict:
-		return {"error": f"Invalid data type ({type(data)} instead of dict)"}, 400
-
+def getSubjectsFilter(faculties=[]):
 	try:
-		if data["asc"] not in ["true", "1", "false", "0"]:
-			return {"error": f"'{data['asc']}' is not a valid value for asc (boolean)"}, 400
-
-		if data["sort"] not in range(len(SUBJECT_SORT_OPTIONS)):
-			data["sort"] = 0
-		sortBy = SUBJECT_SORT_OPTIONS[data["sort"]]
-
-		if data["asc"] in ["false", "0"]:
-			sortBy = [i.desc() for i in sortBy]
-		
-		faculties = [int(f) for f in data["faculties"] if int(f) in allFaculties]
-		if not faculties:
-			faculties = allFaculties
-
-		limit = data["limit"]
-		if limit > MAX_ITEMS_PER_PAGE:
-			return {"error": f"limit of items per page cannot be greater than {MAX_ITEMS_PER_PAGE}"}, 400
-
-		page = data["page"]
-
+		if not faculties: # faculties not passed as function argument
+			faculties = request.args.getlist("faculties" + "[]", type=int)
+		if not faculties: # faculties not passed as url argument
+			faculties = [f[0] for f in list(db.session.query(Faculty).with_entities(Faculty.id))]
+		else: # check if faculties are valid
+			for f in faculties:
+				if not Faculty.query.filter_by(id=f).first():
+					return {"error": f"Invalid faculty {f}"}, 400
 	except:
-		return {"error": "could not parse data, invalid format"}, 400
-
-	# Query database
-
-	query = Subject.query.filter(
-		Subject.faculty_id.in_(faculties)
-	).order_by(*sortBy)
-
-	results = query.paginate(per_page=limit, page=page)
-
-	return {
-		"results": [dict(s) for s in results.items],
-		"page": page,
-		"pages": results.pages,
-		"total": results.total
-	}, 200
+		return {"error": "Could not parse faculties, invalid format"}, 400
+	
+	filters = (Subject.faculty_id.in_(faculties))
+	
+	return getAll(Course, filters)

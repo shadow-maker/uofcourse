@@ -113,7 +113,10 @@ def courseBrowser():
 		header = f"Course browser",
 		description = "Course browser : Filter and sort through UofC's full catalogue of courses",
 		sortOpt = 0,
-		asc = True,
+		sortOptions = [
+			{"label": "Course number", "value": ["code", "name"]},
+			{"label": "Course name", "value": ["name", "code"]},
+		],
 		terms = [dict(term) for term in Term.query.all()],
 		filterData = {
 			"levels": levels,
