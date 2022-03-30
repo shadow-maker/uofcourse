@@ -13,16 +13,32 @@
 	<div class="col-12 col-md-8">
 		<h1 class="mt-2">&#{{course.getEmoji()}} {{course.name}}</h1>
 
-		<h5 title="Faculty">
-			<i class="bi bi-building"></i>
-			<a href="{{faculty.url}}" class="h5 text-body">{{faculty.name}}</a>
-			<i class="h6 bi bi-box-arrow-up-right"></i>
-		</h5>
-		<h5 title="Subject">
-			<i class="bi bi-journals"></i></i>
-			<a href="{{subject.url}}" class="h5 text-body">{{subject.name}}</a>
-			<i class="h6 bi bi-box-arrow-up-right"></i>
-		</h5>
+		<div class="row">
+			<div class="col-12 col-md-6">
+				<h5 title="Faculty">
+					<i class="bi bi-building"></i>
+					<a href="{{faculty.url}}" class="text-body">{{faculty.name}}</a>
+					<i class="h6 bi bi-box-arrow-up-right"></i>
+				</h5>
+				<h5 title="Subject">
+					<i class="bi bi-journals"></i></i>
+					<a href="{{subject.url}}" class="text-body">{{subject.name}}</a>
+					<i class="h6 bi bi-box-arrow-up-right"></i>
+				</h5>
+			</div>
+			<div class="col-12 col-md-6 ps-3 py-2 py-md-0">
+				{% if course.aka %}
+				<div title="Also known as" class="fst-italic">
+					<span class="fw-bold">AKA:</span>
+					{{course.aka}}
+				</div>
+				{% endif %}
+				<div title="Units" class="fst-italic">
+					<span class="fw-bold">Units:</span>
+					{{course.units}}
+				</div>		
+			</div>
+		</div>
 	</div>
 
 	<!--Tags-->
