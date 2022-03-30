@@ -18,6 +18,7 @@ subject = Blueprint("subjects", __name__, url_prefix="/subjects")
 
 @subject.route("", methods=["GET"])
 def getSubjects(faculties=[]):
+	# Parse faculties
 	try:
 		if not faculties: # faculties not passed as function argument
 			faculties = request.args.getlist("faculties" + "[]", type=int)
@@ -30,8 +31,10 @@ def getSubjects(faculties=[]):
 	except:
 		return {"error": "Could not parse faculties, invalid format"}, 400
 	
+	# Filters tuple to check that the subject is in the selected faculties
 	filters = (Subject.faculty_id.in_(faculties),)
 	
+	# Get results
 	return getAll(Subject, filters)
 
 
