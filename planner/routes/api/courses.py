@@ -16,28 +16,7 @@ course = Blueprint("courses", __name__, url_prefix="/courses")
 #
 
 @course.route("", methods=["GET"])
-def getCourses():
-	return getAll(Course)
-
-
-@course.route("/<id>", methods=["GET"])
-def getCourseById(id):
-	return getById(Course, id)
-
-
-@course.route("/code/<subjCode>/<courseCode>", methods=["GET"])
-def getCourseByCode(subjCode, courseCode):
-	subject = utils.getSubjectByCode(subjCode)
-	if not subject:
-		return {"error": f"Subject with code {subjCode} does not exist"}, 404
-	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
-	if not course:
-		return {"error": f"Course with code {subjCode}-{courseCode} does not exist"}, 404
-	return dict(course)
-
-
-@course.route("/filter", methods=["GET"])
-def getCoursesFilter(levels=[], subjects=[], faculties=[]):
+def getCourses(levels=[], subjects=[], faculties=[]):
 	try:
 		if not levels: # levels not passed as function argument
 			levels = request.args.getlist("levels" + "[]", type=int)
@@ -49,18 +28,6 @@ def getCoursesFilter(levels=[], subjects=[], faculties=[]):
 					return {"error": f"Invalid level {l}"}, 400
 	except:
 		return {"error": "Could not parse levels, invalid format"}, 400
-
-	try:
-		if not faculties: # faculties not passed as function argument
-			faculties = request.args.getlist("faculties" + "[]", type=int)
-		if not faculties: # faculties not passed as url argument
-			faculties = [f[0] for f in list(db.session.query(Faculty).with_entities(Faculty.id))]
-		else: # check if faculties are valid
-			for f in faculties:
-				if not Faculty.query.filter_by(id=f).first():
-					return {"error": f"Invalid faculty {f}"}, 400
-	except:
-		return {"error": "Could not parse faculties, invalid format"}, 400
 
 	try:
 		if not subjects: # subjects not passed as function argument
@@ -78,6 +45,18 @@ def getCoursesFilter(levels=[], subjects=[], faculties=[]):
 					return {"error": f"Invalid subject {s}"}, 400
 	except:
 		return {"error": "Could not parse subjects, invalid format"}, 400
+
+	try:
+		if not faculties: # faculties not passed as function argument
+			faculties = request.args.getlist("faculties" + "[]", type=int)
+		if not faculties: # faculties not passed as url argument
+			faculties = [f[0] for f in list(db.session.query(Faculty).with_entities(Faculty.id))]
+		else: # check if faculties are valid
+			for f in faculties:
+				if not Faculty.query.filter_by(id=f).first():
+					return {"error": f"Invalid faculty {f}"}, 400
+	except:
+		return {"error": "Could not parse faculties, invalid format"}, 400
 
 	levelsFilter = []
 	for l in levels:
@@ -110,3 +89,20 @@ def getCoursesFilter(levels=[], subjects=[], faculties=[]):
 		}
 	
 	return getAll(Course, filters, serializer)
+
+
+
+@course.route("/<id>", methods=["GET"])
+def getCourseById(id):
+	return getById(Course, id)
+
+
+@course.route("/code/<subjCode>/<courseCode>", methods=["GET"])
+def getCourseByCode(subjCode, courseCode):
+	subject = utils.getSubjectByCode(subjCode)
+	if not subject:
+		return {"error": f"Subject with code {subjCode} does not exist"}, 404
+	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
+	if not course:
+		return {"error": f"Course with code {subjCode}-{courseCode} does not exist"}, 404
+	return dict(course)

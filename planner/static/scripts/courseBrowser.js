@@ -44,7 +44,7 @@ function requestResults(suc, ignorePrev=false) {
 	$(".loaded").hide()
 
 	$.ajax({
-		url: "/api/courses/filter",
+		url: "/api/courses",
 		method: "GET",
 		data: data,
 		success: (response) => {suc(response)},
