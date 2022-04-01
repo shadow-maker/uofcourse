@@ -11,7 +11,9 @@ function updateSubjects() {
 	for (let s in subjects) {
 		if (subjects[s].sel) {
 			$("#subjectSelector").append(`
-				<span class="bg-secondary px-2 py-1 m-1 rounded font-monospace text-light subjItem" code="` + s + `">` + s + `</span>
+				<span class="badge btn btn-secondary border-secondary px-1 py-1 m-1 ms-0 font-monospace text-light fs-6 fw-normal subjItem" code="` + s + `"  title="Click to remove">
+					` + s + `
+				</span>
 			`)
 		}
 	}
