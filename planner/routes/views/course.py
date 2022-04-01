@@ -3,6 +3,7 @@ from planner import db
 from planner.models import Faculty, Subject, Course
 from planner.queryUtils import *
 from planner.constants import *
+from planner.routes.api import subjects
 
 from planner.routes.views import view
 
@@ -22,7 +23,14 @@ def faculty(facId):
 		title = "Faculty",
 		faculty = faculty,
 		lenSubjects=len(faculty.subjects),
-		lenCourses = sum([len(s.courses) for s in faculty.subjects])
+		lenCourses = sum([len(s.courses) for s in faculty.subjects]),
+		subjects = [{
+			"id": s.id,
+			"emoji": s.getEmoji(),
+			"code": s.code,
+			"name": s.name,
+			"url": s.url
+		} for s in faculty.subjects],
 	)
 
 
