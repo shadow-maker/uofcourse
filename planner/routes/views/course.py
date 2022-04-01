@@ -20,7 +20,6 @@ def faculty(facId):
 		return redirect(url_for("view.home"))
 	return render_template("faculty.html",
 		title = "Faculty",
-		header = "Faculty",
 		faculty = faculty,
 		lenSubjects=len(faculty.subjects)
 	)
@@ -47,7 +46,7 @@ def courseBrowserSubject(subjCode):
 	if not subject:
 		flash(f"Subject with code {subjCode} does not exist!", "danger")
 		return redirect(url_for("view.home"))
-	return redirect(url_for("view.courseBrowser", subjCode=subjCode))
+	return redirect(url_for("view.courseBrowser", subject=subjCode))
 
 
 @view.route("/c/<subjCode>/<courseCode>")
@@ -91,19 +90,29 @@ def courseRandom():
 
 @view.route("/c", methods=["GET"])
 def courseBrowser():
-	subjCode = request.args.get("subjCode")
+	selSubject = request.args.get("subject")
+	selFaculty = request.args.get("faculty")
 
-	if subjCode:
-		if not getSubjectByCode(subjCode):
-			flash(f"Subject with code {subjCode} does not exist!", "danger")
+	if selSubject:
+		if not getSubjectByCode(selSubject):
+			flash(f"Subject with code {selSubject} does not exist!", "danger")
+			return redirect(url_for("view.home"))
+	if selFaculty:
+		if not getById(Faculty, selFaculty):
+			flash(f"Faculty with id {selFaculty} does not exist!", "danger")
 			return redirect(url_for("view.home"))
 
 	levels = {str(l) : True for l in COURSE_LEVELS}
+
 	faculties = {
-		str(f[0]) : {"name": f[1], "sel": True}
+		str(f[0]) : {"name": f[1], "sel": not selFaculty}
 	for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))}
+
+	if selFaculty:
+		faculties[selFaculty]["sel"] = True
+
 	subjects = {
-		s[0] : {"id": s[1], "name": s[2], "sel": s[0] == subjCode}
+		s[0] : {"id": s[1], "name": s[2], "sel": s[0] == selSubject}
 	for s in list(db.session.query(Subject).values(Subject.code, Subject.id, Subject.name))}
 
 	subjects = {k : subjects[k] for k in sorted(subjects)}
