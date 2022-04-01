@@ -9,7 +9,7 @@
 
 <div class="row mb-1">
 	<!--Course Header-->
-	<div class="col-12 col-md-8">
+	<div class="col-12 col-lg-7 col-xxl-8 mb-4">
 		<h1 class="mt-2">&#{{subject.getEmoji()}} {{subject.name}}</h1>
 
 		<h5 title="Faculty">
@@ -18,25 +18,26 @@
 			<i class="h6 bi bi-box-arrow-up-right"></i>
 		</h5>
 	</div>
-</div>
 
-<hr class="mb-4">
+	<!--Links-->
+	<div class="col-12 col-lg-5 col-xxl-4">
+		<div class="card bg-light">
+			<div class="card-body">
+				<div class="h5">{{lenCourses}} Courses in this subject</div>
 
-<div class="container">
-
-	<div class="h5">{{lenCourses}} Courses in this subject</div>
-
-	<div class="container">
-		<div>
-			<a href="{{url_for('view.courseBrowser', subjCode=subject.code)}}" class="h6 text-body">View subject courses in Course Browser</a>
-			<i class="h6 bi bi-box-arrow-up-right"></i>
-		</div>
-		<div>
-			<a href="{{subject.url_uni}}" class="h6 text-body">View subject courses in Official uni site</a>
-			<i class="h6 bi bi-box-arrow-up-right"></i>
+				<div class="container">
+					<div>
+						<a href="{{url_for('view.courseBrowser', subject=subject.code)}}" class="h6 text-body">View courses in Course Browser</a>
+						<i class="h6 bi bi-box-arrow-up-right"></i>
+					</div>
+					<div>
+						<a href="{{subject.url_uni}}" class="h6 text-body">View courses in Official uni site</a>
+						<i class="h6 bi bi-box-arrow-up-right"></i>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
-
 
 {% endblock %}

@@ -21,7 +21,8 @@ def faculty(facId):
 	return render_template("faculty.html",
 		title = "Faculty",
 		faculty = faculty,
-		lenSubjects=len(faculty.subjects)
+		lenSubjects=len(faculty.subjects),
+		lenCourses = sum([len(s.courses) for s in faculty.subjects])
 	)
 
 
