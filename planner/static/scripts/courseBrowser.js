@@ -130,7 +130,7 @@ function updateResults(data) {
 
 	$("#coursesContainer").empty()
 	for (let course of data.results) {
-		var courseItem = $("#templateCourseItem").children().first().clone()
+		var courseItem = $("#templates .course-item").clone()
 
 		courseItem.attr("id", "course-" + course.id)
 		courseItem.attr("db-id", course.id)
