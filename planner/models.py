@@ -1,5 +1,4 @@
 from planner import db, bcrypt
-from planner.adminView import admin, adminModelView
 from planner.constants import *
 
 from flask.helpers import url_for
@@ -431,11 +430,3 @@ class UserCourse(db.Model):
 		
 
 db.create_all()
-
-admin.add_view(adminModelView(User, db.session))
-admin.add_view(adminModelView(Grade, db.session))
-admin.add_view(adminModelView(Course, db.session))
-admin.add_view(adminModelView(Subject, db.session))
-admin.add_view(adminModelView(Faculty, db.session))
-admin.add_view(adminModelView(Term, db.session))
-admin.add_view(adminModelView(Season, db.session))

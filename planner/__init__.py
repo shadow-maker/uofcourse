@@ -52,3 +52,5 @@ from planner.routes.views import *
 
 app.register_blueprint(api)
 app.register_blueprint(view)
+
+from planner.adminView import admin
