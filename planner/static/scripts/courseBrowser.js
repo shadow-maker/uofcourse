@@ -101,8 +101,8 @@ function toggleTag(courseId, tagId) {
 //
 
 function updateCourseTags(courseId) {
-	let item = $("#course-" + courseId)
-	var icon = ""
+	const item = $("#course-" + courseId)
+	let icon = ""
 	requestCourseTags(
 		courseId,
 		(response) => {
@@ -260,12 +260,18 @@ function updateResults(data) {
 //
 
 $(document).ready(() => {
-	tagsInit(() => {
-		prevData = {}
+	if (isAuth) {
+		tagsInit(() => {
+			prevData = {}
+			requestResults((data) => {
+				updateResults(data)
+			})
+		})
+	} else {
 		requestResults((data) => {
 			updateResults(data)
 		})
-	})
+	}
 
 	updateSubjects()
 
