@@ -26,6 +26,12 @@ class Subject(db.Model):
 		if self.emoji:
 			return self.emoji
 		return self.faculty.getEmoji(default)
+	
+	def __init__(self, faculty_id, code, name, site=""):
+		self.faculty_id = faculty_id
+		self.code = code
+		self.name = name
+		self.site = site
 
 	def __repr__(self):
 		return f"SUBJECT {self.name} (#{self.id}) - {self.code}"
