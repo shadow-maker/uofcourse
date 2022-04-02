@@ -36,7 +36,7 @@
 
 	<!--Extra info-->
 	<div class="col-12 col-md-4 p-2">
-		<div class="card h-100">
+		<div class="card h-100 border-0">
 			<div class="card-body">
 				{% if course.aka %}
 				<div title="Also known as" class="fst-italic">
@@ -175,7 +175,7 @@
 					</div>
 
 					{% if current_user.is_authenticated %}
-					<div class="card">
+					<div class="card bg-light">
 						<ul class="list-group list-group-flush">
 							{% for uCourse in userCourses %}
 							<li class="list-group-item">
