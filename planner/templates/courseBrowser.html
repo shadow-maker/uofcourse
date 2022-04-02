@@ -6,12 +6,16 @@
 	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
 	var terms = JSON.parse('{{ terms | tojson | safe }}')
 	let sortOptions = JSON.parse('{{ sortOptions | tojson | safe }}')
+
+	function collapse(element) {
+		$(element).find(".toggleOn").toggle()
+		$(element).find(".toggleOff").toggle()
+	}
 </script>
 
 <script src="/static/scripts/switchPage.js"></script>
 <script src="/static/scripts/subjectSearch.js"></script>
 <script src="/static/scripts/courseBrowser.js"></script>
-<script src="/static/scripts/collapse.js"></script>
 
 
 <!--TEMPLATES-->
@@ -82,7 +86,7 @@
 						<fieldset class="form-group">
 							<hr class="mt-1 mb-2">
 							<div data-bs-toggle="collapse" href="#levelSelector" role="button" aria-expanded="false"
-								aria-controls="levelSelector" id="levelLabel" onclick="collapse('levelLabel')">
+								aria-controls="levelSelector" id="levelLabel" onclick="collapse(this)">
 								<span class="toggleOff">
 									<small><i class="bi-chevron-right"></i></small>
 								</span>
@@ -112,7 +116,7 @@
 						<fieldset class="form-group">
 							<hr class="mt-1 mb-2">
 							<div data-bs-toggle="collapse" href="#facSelector" role="button" aria-expanded="false"
-								aria-controls="facSelector" id="facLabel" onclick="collapse('facLabel')">
+								aria-controls="facSelector" id="facLabel" onclick="collapse(this)">
 								<span class="toggleOff">
 									<small><i class="bi-chevron-right"></i></small>
 								</span>
