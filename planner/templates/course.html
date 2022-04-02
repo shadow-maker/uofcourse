@@ -3,76 +3,63 @@
 {% block content %}
 
 <div class="mb-3">
-	<span class="h3 font-monospace align-top">c/</span><span class="h3 font-monospace my-0 mx-1"><span class="border border-2 border-secondary bg-light rounded p-1">{{subject.code}}</span>-<span
-	class="border border-2 border-secondary bg-light rounded p-1">{{course.code}}</span></span>
+	<span class="h3 font-monospace align-top">c/</span><span class="h3 font-monospace my-0 mx-1"><span class="border border-2 border-secondary bg-light rounded p-1" title="Subject code">{{subject.code}}</span>-<span
+	class="border border-2 border-secondary bg-light rounded p-1" title="Course number">{{course.number}}</span></span>
 	<span class="align-bottom text-muted fs-6">(#{{course.id}})</span>
 </div>
 
 <div class="row mb-1">
 	<!--Course Header-->
 	<div class="col-12 col-md-8">
-		<h1 class="mt-2">&#{{course.getEmoji()}} {{course.name}}</h1>
+		<h1 class="mt-2" title="Course name">&#{{course.getEmoji()}} {{course.name}}</h1>
 
-		<div class="row">
-			<div class="col-12 col-md-6">
-				<h5 title="Faculty">
-					<i class="bi bi-building"></i>
-					<a href="{{faculty.url}}" class="text-body">{{faculty.name}}</a>
-					<i class="h6 bi bi-box-arrow-up-right"></i>
-				</h5>
-				<h5 title="Subject">
-					<i class="bi bi-journals"></i></i>
-					<a href="{{subject.url}}" class="text-body">{{subject.name}}</a>
-					<i class="h6 bi bi-box-arrow-up-right"></i>
-				</h5>
-			</div>
-			<div class="col-12 col-md-6 ps-3 py-2 py-md-0">
+		<div class="">
+			<h5 title="Faculty">
+				<i class="bi bi-building"></i>
+				<a href="{{faculty.url}}" class="text-body">{{faculty.name}}</a>
+				<i class="h6 bi bi-box-arrow-up-right"></i>
+			</h5>
+			<h5 title="Subject">
+				<i class="bi bi-journals"></i></i>
+				<a href="{{subject.url}}" class="text-body">{{subject.name}}</a>
+				<i class="h6 bi bi-box-arrow-up-right"></i>
+			</h5>
+		</div>
+	</div>
+
+	<!--Extra info-->
+	<div class="col-12 col-md-4 p-2">
+		<div class="card h-100">
+			<div class="card-body">
 				{% if course.aka %}
 				<div title="Also known as" class="fst-italic">
 					<span class="fw-bold">AKA:</span>
 					{{course.aka}}
 				</div>
 				{% endif %}
+
 				<div title="Units" class="fst-italic">
 					<span class="fw-bold">Units:</span>
 					{{course.units}}
-				</div>		
-			</div>
-		</div>
-	</div>
+				</div>
 
-	<!--Tags-->
-	<div class="col-12 col-md-4 p-2">
-		<div class="card bg-light h-100">
-			<div class="card-body">
-				<div class="d-flex justify-content-between mb-2">
-					<h4 class="m-0">Tags</h4>
-					{% if current_user.is_authenticated %}
-					<button type="button" class="btn btn-sm btn-secondary m-0" data-bs-toggle="modal"
-						data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
-						<i class="bi-pencil-fill"></i>
-						Edit Tags
-					</button>
+				<div title="Repeat for credit" class="fst-italic">
+					<span class="fw-bold">Repeat for credit:</span>
+					{% if course.repeat %}
+					Yes
+					{% else %}
+					No
 					{% endif %}
 				</div>
-				{% if current_user.is_authenticated %}
-				<div>
-					{% for tag in userTags %}
-					<span class="course-tag btn badge btn-secondary px-1" title="{{tag.name}}" style="cursor: pointer;" db-id="{{tag.id}}`">
-						{% if tag.emoji %}
-							&#{{tag.emoji}}
-						{% else %}
-							<i class="bi-circle-fill" style="color: #{{tag.color_hex}};"></i>
-						{% endif %}
-						{{tag.name}}
-					</span>
-					{% endfor %}
+
+				<div title="Count GPA" class="fst-italic">
+					<span class="fw-bold">Included in GPA:</span>
+					{% if course.nogpa %}
+					No
+					{% else %}
+					Yes
+					{% endif %}
 				</div>
-				{% else %}
-				<span class="fst-italic">
-					You must be logged in to see and add tags to this course
-				</span>
-				{% endif %}
 			</div>
 		</div>
 	</div>
@@ -89,9 +76,12 @@
 						<h3>{{title}}</h3>
 						<p>
 							{% if content %}
-							{{content}}
+								{% set lines = content.split("\n") %}
+								{% for line in lines %}
+									{{line}}<br>
+								{% endfor %}
 							{% else %}
-							<span class="fst-italic">None</span>
+								<span class="fst-italic">None</span>
 							{% endif %}
 						</p>
 					</div>
@@ -107,36 +97,74 @@
 
 			{{textCard("Antirequisites", course.antireqs)}}
 
+			{% if course.coreqs %}
+			{{textCard("Corequisites", course.coreqs)}}
+			{% endif %}
 		</div>
 	</div>
 
-	<!--Course collections-->
+	<!--User data-->
 	<div class="order-1 order-sm-2 col-12 col-sm-5 col-md-4 p-2">
 		<div class="card bg-light">
 			<div class="card-body">
-				<h4>Taken in</h4>
-				{% if current_user.is_authenticated %}
-				<div class="card">
-					<ul class="list-group list-group-flush">
-						{% for uCourse in userCourses %}
-						<li class="list-group-item">
-							<div class="d-flex justify-content-between">
-								<span class="">
-									{{uCourse.collection.term.name | capitalize}}
-								</span>
-								<span class="font-monospace" title="{{uCourse.grade.gpv}}">
-									{{uCourse.grade.symbol}}
-								</span>
-							</div>
-						</li>
+				<!--Tags-->
+				<div class="mb-3">
+					<div class="d-flex justify-content-between mb-2">
+						<h4 class="m-0">Tags</h4>
+						{% if current_user.is_authenticated %}
+						<button type="button" class="btn btn-sm btn-secondary m-0" data-bs-toggle="modal"
+							data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+							<i class="bi-pencil-fill"></i>
+							Edit Tags
+						</button>
+						{% endif %}
+					</div>
+					{% if current_user.is_authenticated %}
+					<div>
+						{% for tag in userTags %}
+						<span class="course-tag btn badge btn-secondary px-1" title="{{tag.name}}" style="cursor: pointer;" db-id="{{tag.id}}`">
+							{% if tag.emoji %}
+								&#{{tag.emoji}}
+							{% else %}
+								<i class="bi-circle-fill" style="color: #{{tag.color_hex}};"></i>
+							{% endif %}
+							{{tag.name}}
+						</span>
 						{% endfor %}
-					</ul>
+					</div>
+					{% else %}
+					<span class="fst-italic">
+						You must be logged in to see and add tags to this course
+					</span>
+					{% endif %}
 				</div>
-				{% else %}
-				<span class="fst-italic">
-					You must be logged in to see the terms in which you took this course
-				</span>
-				{% endif %}
+	
+				<!--Course collections-->
+				<div class="">
+					<h4>Taken in</h4>
+					{% if current_user.is_authenticated %}
+					<div class="card">
+						<ul class="list-group list-group-flush">
+							{% for uCourse in userCourses %}
+							<li class="list-group-item">
+								<div class="d-flex justify-content-between">
+									<span class="">
+										{{uCourse.collection.term.name | capitalize}}
+									</span>
+									<span class="font-monospace" title="{{uCourse.grade.gpv}}">
+										{{uCourse.grade.symbol}}
+									</span>
+								</div>
+							</li>
+							{% endfor %}
+						</ul>
+					</div>
+					{% else %}
+					<span class="fst-italic">
+						You must be logged in to see the terms in which you took this course
+					</span>
+					{% endif %}
+				</div>
 			</div>
 		</div>
 	</div>
