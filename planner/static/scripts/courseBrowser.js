@@ -214,10 +214,8 @@ function updateResults(data) {
 				courseItem.find(".tags-dropdown").append(`
 					<li class="tags-dropdown-item" db-id="` + tag.id +`">
 						<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + course.id + `, ` +  tag.id + `)" style="cursor: pointer;">
-							<small>
-								<i class="bi-check ` + (course.tags.includes(tag.id) ? `` : `invisible`) + `"></i>
-								` + tag.name +`
-							</small>
+							<i class="bi-check ` + (course.tags.includes(tag.id) ? `` : `invisible`) + `"></i>
+							<small>` + tag.name +`</small>
 						</a>
 					</li>
 				`)
