@@ -32,8 +32,21 @@ function toggleTag(tagId) {
 	})
 }
 
-function addTerm() {
-
+function addCollection(collectionId) {
+	$.ajax({
+		url: "/api/users/course",
+		method: "POST",
+		data: {
+			course_id: course_id,
+			collection_id: collectionId
+		},
+		success: (data) => {
+			location.reload()
+		},
+		error: (data) => {
+			displayError(data)
+		}
+	})
 }
 
 //
@@ -94,7 +107,6 @@ function updateTags() {
 					$(this).find(".bi-check").removeClass("invisible")
 			})
 		}
-
 	})
 }
 

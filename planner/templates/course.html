@@ -2,6 +2,13 @@
 
 {% block content %}
 
+<script>
+	var course_id = parseInt("{{course.id}}")
+</script>
+
+<script src="/static/scripts/tags.js"></script>
+<script src="/static/scripts/course.js"></script>
+
 <div class="mb-3">
 	<span class="h3 font-monospace align-top">c/</span><span class="h3 font-monospace my-0 mx-1"><span class="border border-2 border-secondary bg-light rounded p-1" title="Subject code">{{subject.code}}</span>-<span
 	class="border border-2 border-secondary bg-light rounded p-1" title="Course number">{{course.number}}</span></span>
@@ -70,7 +77,7 @@
 	<div class="order-2 order-sm-1 col-12 col-sm-7 col-md-8 pe-0">
 		<div class="container row p-0 ps-lg-4">
 			{% macro textCard(title, content, tooltip) %}
-			<div class="col-lg-6 col-12 p-2">
+			<div class="col-12 col-lg-6 p-2">
 				<div class="card h-100">
 					<div class="card-body">
 						<div class="d-flex justify-content-between mb-2">
@@ -114,49 +121,70 @@
 		<div class="card bg-light">
 			<div class="card-body">
 				<!--Tags-->
-				<div class="mb-3">
+				<div id="tags">
 					<div class="d-flex justify-content-between mb-2">
 						<h4 class="m-0">Tags</h4>
 						{% if current_user.is_authenticated %}
-						<button type="button" class="btn btn-sm btn-secondary m-0" data-bs-toggle="modal"
-							data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
-							<i class="bi-pencil-fill"></i>
-							Edit Tags
+
+						<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
+							Add tags
 						</button>
+						<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
 						{% endif %}
 					</div>
-					{% if current_user.is_authenticated %}
-					<div>
-						{% for tag in userTags %}
-						<span class="course-tag btn badge btn-secondary px-1" title="{{tag.name}}" style="cursor: pointer;" db-id="{{tag.id}}`">
-							{% if tag.emoji %}
-								&#{{tag.emoji}}
-							{% else %}
-								<i class="bi-circle-fill" style="color: #{{tag.color_hex}};"></i>
-							{% endif %}
-							{{tag.name}}
-						</span>
-						{% endfor %}
-					</div>
-					{% else %}
+					<div class="tags-selected"></div>
+					{% if not current_user.is_authenticated %}
 					<span class="fst-italic">
 						You must be logged in to see and add tags to this course
 					</span>
 					{% endif %}
 				</div>
+
+				<hr class="my-4">
 	
 				<!--Course collections-->
-				<div class="">
-					<h4>Taken in</h4>
+				<div id="collections">
+					<div class="d-flex justify-content-between mb-2">
+						<h4 class="m-0">Terms taken</h4>
+						
+						{% if current_user.is_authenticated %}
+						<button class="collections-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
+							Add to term
+						</button>
+						<ul class="collections-dropdown dropdown-menu fs-6 py-1">
+							{% for collection in collections %}
+							<li>
+								<a class="dropdown-item px-2 py-1" style="cursor: pointer;" {% if collection not in courseCollections %}onclick="addCollection('{{collection.id}}')"{% endif %}>
+									<i class="bi-check {% if collection not in courseCollections %}invisible{% endif %}"></i>
+									{% if collection.transfer %}
+									<small>Transferred</small>
+									{% else %}
+									<small>{{collection.term.name | capitalize}}</small>
+									{% endif %}
+								</a>
+							</li>
+							{% endfor %}
+							<li><hr class="dropdown-divider my-1"></li>
+							<li>
+								<a class="dropdown-item px-2 p-y1" href="{{url_for('view.planner')}}">
+									<small>Edit in My Planner</small>
+								</a>
+							</li>
+						</ul>
+						{% endif %}
+					</div>
+
 					{% if current_user.is_authenticated %}
 					<div class="card">
 						<ul class="list-group list-group-flush">
 							{% for uCourse in userCourses %}
 							<li class="list-group-item">
 								<div class="d-flex justify-content-between">
-									<span class="">
-										{{uCourse.collection.term.name | capitalize}}
-									</span>
+									{% if uCourse.collection.transfer %}
+									<span>Transferred</span>
+									{% else %}
+									<span>{{uCourse.collection.term.name | capitalize}}</span>
+									{% endif %}
 									<span class="font-monospace" title="{{uCourse.grade.gpv}}">
 										{{uCourse.grade.symbol}}
 									</span>
@@ -173,6 +201,13 @@
 				</div>
 			</div>
 		</div>
+	</div>
+
+	<div class="order-3 col-12 ms-4 mt-3 ps-lg-4">
+		<a href="{{course.url_uni}}" target="_blank" rel="noopener noreferrer" class="h6 text-body">
+			View course in Official Uni site
+		</a>
+		<i class="h6 bi bi-box-arrow-up-right"></i>
 	</div>
 </div>
 

@@ -75,8 +75,6 @@ def course(subjectCode, courseNumber):
 		course=course,
 		subject=subject,
 		faculty=faculty,
-		userTags = current_user.tags if current_user.is_authenticated else [],
-		courseTags = course.getTags(current_user.id) if current_user.is_authenticated else [],
 		userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else [],
 		courseCollections = [uc.collection for uc in course.getUserCourses(current_user.id)] if current_user.is_authenticated else [],
 		collections = current_user.collections if current_user.is_authenticated else [],
