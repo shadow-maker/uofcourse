@@ -13,7 +13,7 @@
 	}
 </script>
 
-<script src="/static/scripts/switchPage.js"></script>
+<script src="/static/scripts/pagination.js"></script>
 <script src="/static/scripts/subjectSearch.js"></script>
 <script src="/static/scripts/courseBrowser.js"></script>
 
@@ -192,27 +192,7 @@
 		<div id="coursesContainer" class="loaded"></div>
 
 		<!--Page navigation-->
-		<nav aria-label="Page navigation" id="pageNav" class="loaded">
-			<ul class="pagination justify-content-center mb-2">
-				<li class="page-item" onclick="page.prev()" style="cursor: pointer;">
-					<a class="page-link" aria-label="Previous">
-						<span aria-hidden="true">&laquo;</span>
-					</a>
-				</li>
-				<li class="pageEllipsis page-item" style="cursor: pointer;" display: none>
-					<a class="page-link">...</a>
-				</li>
-				<li class="page-item" onclick="page.next()" style="cursor: pointer;">
-					<a class="page-link" aria-label="Next">
-						<span aria-hidden="true">&raquo;</span>
-					</a>
-				</li>
-			</ul>
-			<p class="text-center text-secondary mt-0"><small>
-					Page <span id="numPage">1</span> / <span id="numPages">1</span>
-				</small>
-			</p>
-		</nav>
+		{% include "components/navPage.html" %}
 	</div>
 </div>
 

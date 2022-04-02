@@ -232,27 +232,12 @@ function updateResults(data) {
 		courseItem.appendTo("#coursesContainer")
 	}
 
-	$("#pageNav .pageSelector").remove()
-	if (data.pages > 15) {
-		$("#pageNav .pageEllipsis").show()
-	} else {
-		$("#pageNav .pageEllipsis").hide()
-		for (let p = data.pages; p > 0; p--) {
-			$("#pageNav ul li:eq(0)").after(`
-				<li class="pageSelector page-item ` + ((p == data.page) ? `active` : ``) + `"
-				onclick="page.switch(` + ((p == data.page) ? -1 : p) + `)" style="cursor: pointer;">
-					<a class="page-link">` + p +`</a>
-				</li>
-			`)
-		}
-	}
-
 	$("#numTotal").text(data.total)
-	$("#numPage").text(data.page)
-	$("#numPages").text(data.pages)
 
 	page.current = data.page
 	page.total = data.pages
+
+	page.updateNav()
 }
 
 //
