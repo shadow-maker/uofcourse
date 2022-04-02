@@ -1,10 +1,20 @@
+// GLOBAL VARS
+
+var page = new Page(0, () => {
+	requestResults((data) => {
+		updateResults(data)
+	})
+})
+
+var prevData = {}
+
+// UTIL FUNCTIONS
+
 function uncheckAll(container) {
 	$("#" + container + " .form-check").each(function () {
 		$(this).find("input").prop("checked", false)
 	})
 }
-
-var prevData = {}
 
 //
 // REQUEST FUNCTIONS
@@ -32,7 +42,7 @@ function requestResults(suc, ignorePrev=false) {
 		levels: selectedLevel,
 		faculties: selectedFaculty,
 		subjects: selectedSubject,
-		page: page
+		page: page.current
 	}
 
 	if (!ignorePrev && JSON.stringify(data) == JSON.stringify(prevData))
@@ -229,7 +239,7 @@ function updateResults(data) {
 		for (let p = data.pages; p > 0; p--) {
 			$("#pageNav ul li:eq(0)").after(`
 				<li class="pageSelector page-item ` + ((p == data.page) ? `active` : ``) + `"
-				onclick="switchPage(` + ((p == data.page) ? -1 : p) + `)" style="cursor: pointer;">
+				onclick="page.switch(` + ((p == data.page) ? -1 : p) + `)" style="cursor: pointer;">
 					<a class="page-link">` + p +`</a>
 				</li>
 			`)
@@ -240,8 +250,8 @@ function updateResults(data) {
 	$("#numPage").text(data.page)
 	$("#numPages").text(data.pages)
 
-	page = data.page
-	pages = data.pages
+	page.current = data.page
+	page.total = data.pages
 }
 
 //
@@ -266,6 +276,8 @@ $(document).ready(() => {
 		updateSubjects()
 
 		window.history.pushState({}, document.title, window.location.pathname)
+
+		page.current = 1
 
 		requestResults((response) => {
 			updateResults(response)

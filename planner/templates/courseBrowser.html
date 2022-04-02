@@ -2,6 +2,19 @@
 
 {% block content %}
 
+<script>
+	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
+	var terms = JSON.parse('{{ terms | tojson | safe }}')
+	let sortOptions = JSON.parse('{{ sortOptions | tojson | safe }}')
+</script>
+
+<script src="/static/scripts/switchPage.js"></script>
+<script src="/static/scripts/subjectSearch.js"></script>
+<script src="/static/scripts/courseBrowser.js"></script>
+<script src="/static/scripts/collapse.js"></script>
+
+
+<!--TEMPLATES-->
 <div id="templates" class="d-none">
 	<div class="course-item mb-3 card bg-light">
 		<div class="card-body row px-2 px-sm-3 px-lg-4 pt-0 pb-0 pb-lg-2">
@@ -32,20 +45,6 @@
 		</div>
 	</div>
 </div>
-
-<script>
-	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
-	var terms = JSON.parse('{{ terms | tojson | safe }}')
-	var page = 1
-	var pages = 0
-
-	let sortOptions = JSON.parse('{{ sortOptions | tojson | safe }}')
-</script>
-
-<script src="/static/scripts/subjectSearch.js"></script>
-<script src="/static/scripts/courseBrowser.js"></script>
-<script src="/static/scripts/coursesPag.js"></script>
-<script src="/static/scripts/collapse.js"></script>
 
 
 <div class="row justify-content-between">
@@ -192,7 +191,7 @@
 		<!--Page navigation-->
 		<nav aria-label="Page navigation" id="pageNav" class="loaded">
 			<ul class="pagination justify-content-center mb-2">
-				<li class="page-item" onclick="switchPagePrev()" style="cursor: pointer;">
+				<li class="page-item" onclick="page.prev()" style="cursor: pointer;">
 					<a class="page-link" aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
 					</a>
@@ -200,7 +199,7 @@
 				<li class="pageEllipsis page-item" style="cursor: pointer;" display: none>
 					<a class="page-link">...</a>
 				</li>
-				<li class="page-item" onclick="switchPageNext()" style="cursor: pointer;">
+				<li class="page-item" onclick="page.next()" style="cursor: pointer;">
 					<a class="page-link" aria-label="Next">
 						<span aria-hidden="true">&raquo;</span>
 					</a>
