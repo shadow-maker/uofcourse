@@ -150,63 +150,66 @@ function updateResults(data) {
 		courseItem.find(".course-code").html(course.code)
 		courseItem.find(".course-name").html(course.name)
 
+		// Add content only available if user is authenticated
+		if (isAuth) {
+			// Add course collections
+			for (let collection of course.collections) {
+				if (collection.transfer) {
+					courseItem.find(".course-terms").append(`
+					<div>
+						Transferred
+					</div>
+				`)
+				} else {
+					var term = null
 
-		var icon = ""
-		for (let id of course.tags) {
-			var tag = null
+					for (t of terms) {
+						if (t.id == collection.term_id) {
+							term = t
+							break
+						}
+					}
 
-			for (t of userTags) {
-				if (t.id == id) {
-					tag = t
-					break
+					if (!term)
+						continue
+
+					courseItem.find(".course-terms").append(`
+						<div>
+							` + term.season.charAt(0).toUpperCase() + term.season.slice(1) +`
+							` + term.year + `
+						</div>
+					`)
 				}
 			}
-			
-			if (!tag)
-				continue
 
-			if (tag.emoji)
-				icon = "&#" + tag.emoji + " "
-			else
-				icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex + ";'></i> "
+			// Add tag badges
+			var icon = ""
+			for (let id of course.tags) {
+				var tag = null
 
-			courseItem.find(".tags-selected").append(`
-				<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + course.id + `, ` +  tag.id+ `)">
-					` + icon + tag.name + `
-				</span>
-			`)
-		}
-
-		for (let collection of course.collections) {
-			if (collection.transfer) {
-				courseItem.find(".course-terms").append(`
-				<div>
-					Transferred
-				</div>
-			`)
-			} else {
-				var term = null
-
-				for (t of terms) {
-					if (t.id == collection.term_id) {
-						term = t
+				for (t of userTags) {
+					if (t.id == id) {
+						tag = t
 						break
 					}
 				}
-
-				if (!term)
+				
+				if (!tag)
 					continue
 
-				courseItem.find(".course-terms").append(`
-					<div>
-						` + term.season.charAt(0).toUpperCase() + term.season.slice(1) +`
-						` + term.year + `
-					</div>
+				if (tag.emoji)
+					icon = "&#" + tag.emoji + " "
+				else
+					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex + ";'></i> "
+
+				courseItem.find(".tags-selected").append(`
+					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + course.id + `, ` +  tag.id+ `)">
+						` + icon + tag.name + `
+					</span>
 				`)
 			}
-		}
 
-		if (isAuth) {
+			// Add tag dropdown items to tag dropdown
 			for (let tag of userTags) {
 				courseItem.find(".tags-dropdown").append(`
 					<li class="tags-dropdown-item" db-id="` + tag.id +`">
