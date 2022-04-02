@@ -75,7 +75,7 @@ def getCourses(levels=[], subjects=[], faculties=[]):
 	
 	# Filters tuple to check that the course is in the selected levels and subjects
 	filters = (
-		or_(and_(Course.code >= l[0] * 100, Course.code < l[1] * 100) for l in levelsFilter),
+		or_(and_(Course.number >= l[0] * 100, Course.number < l[1] * 100) for l in levelsFilter),
 		Course.subject_id.in_(subjectsFilter)
 	)
 
@@ -85,8 +85,8 @@ def getCourses(levels=[], subjects=[], faculties=[]):
 			"id": course.id,
 			"name": course.name,
 			"subject_id": course.subject_id,
+			"number": course.number,
 			"code": course.code,
-			"code_full": course.code_full,
 			"emoji": course.getEmoji(),
 			"url": course.url,
 			"tags": [tag.id for tag in course.userTags if tag.user_id == current_user.id] if current_user.is_authenticated else [],
@@ -102,12 +102,12 @@ def getCourseById(id):
 	return getById(Course, id)
 
 
-@course.route("/code/<subjCode>/<courseCode>", methods=["GET"])
-def getCourseByCode(subjCode, courseCode):
-	subject = utils.getSubjectByCode(subjCode)
+@course.route("/code/<subjectCode>/<courseNumber>", methods=["GET"])
+def getCourseByCode(subjectCode, courseNumber):
+	subject = utils.getSubjectByCode(subjectCode)
 	if not subject:
-		return {"error": f"Subject with code {subjCode} does not exist"}, 404
-	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
+		return {"error": f"Subject with code {subjectCode} does not exist"}, 404
+	course = Course.query.filter_by(subject_id=subject.id, number=courseNumber).first()
 	if not course:
-		return {"error": f"Course with code {subjCode}-{courseCode} does not exist"}, 404
+		return {"error": f"Course with code {subjectCode}-{courseNumber} does not exist"}, 404
 	return dict(course)

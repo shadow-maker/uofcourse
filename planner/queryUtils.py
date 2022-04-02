@@ -24,11 +24,11 @@ def getCurrentTerm():
 			return term
 	return None
 
-def getSubjectByCode(subjCode):
-	return Subject.query.filter_by(code=subjCode.upper()).first()
+def getSubjectByCode(subjectCode):
+	return Subject.query.filter_by(code=subjectCode.upper()).first()
 
-def getCourseByCode(subjCode, courseCode):
-	subject = getSubjectByCode(subjCode)
+def getCourseByCode(subjectCode, courseNumber):
+	subject = getSubjectByCode(subjectCode)
 	if not subject:
 		return None
-	return Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
+	return Course.query.filter_by(subject_id=subject.id, code=courseNumber).first()

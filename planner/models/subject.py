@@ -16,7 +16,7 @@ class Subject(db.Model):
 
 	@property
 	def url(self):
-		return url_for("view.subject", subjCode=self.code)
+		return url_for("view.subject", subjectCode=self.code)
 	
 	@property
 	def url_uni(self):

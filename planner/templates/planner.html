@@ -31,13 +31,13 @@
 				<div class="tag-course-container card-body p-1" db-id="{{tag.id}}">
 					{% for course in tag.courses | sort(attribute="subject.code") %}
 						<a class="tag-course-item m-1 btn bg-light card" db-id="{{course.id}}"
-							db-code="{{course.subject.code}}-{{course.code}}" draggable="true" href="{{course.url}}">
+							db-code="{{course.code}}" draggable="true" href="{{course.url}}">
 							<div class="row">
 								<span class="col-3 h5 p-0 m-0">
 									&#{{course.getEmoji()}}
 								</span>
 								<span id="code" class="col-6 font-monospace">
-									{{course.code_full}}
+									{{course.code}}
 								</span>
 								<span class="col-3">
 									<i class="bi-box-arrow-up-right"></i>
@@ -84,12 +84,12 @@
 				<div class="collection-course-container card-body p-1" db-id="{{collection.id}}">
 					{% for uCourse in collection.userCourses | sort(attribute="course.subject.code") %}
 					<div class="collection-course-item m-1 btn bg-light card" db-id="{{uCourse.id}}"
-						db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{{uCourse.course.subject.code}}-{{uCourse.course.code}}" draggable="true"
+						db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{uCourse.course.code}}" draggable="true"
 						data-bs-toggle="modal" data-bs-target="#modalEditUserCourse">
 						<div class="row">
 							<span class="col-3 h5 p-0 m-0">&#{{uCourse.course.getEmoji()}}</span>
 							<span id="code"
-								class="col-6 font-monospace">{{uCourse.course.code_full}}</span>
+								class="col-6 font-monospace">{{uCourse.course.code}}</span>
 							<span class="col-3 font-monospace text-start" title="{{uCourse.grade.gpv}} GPV">
 								{% if uCourse.grade %}
 								{{uCourse.grade.symbol}}

@@ -7,7 +7,7 @@ class Course(db.Model):
 	__tablename__ = "course"
 	id = db.Column(db.Integer, primary_key=True)
 	subject_id = db.Column(db.Integer, db.ForeignKey("subject.id"), nullable=False)
-	code = db.Column(db.Integer, nullable=False, unique=False)
+	number = db.Column(db.Integer, nullable=False, unique=False)
 	name = db.Column(db.String(256))
 	emoji = db.Column(db.Integer, nullable=True, unique=False)
 	units = db.Column(db.Numeric(4, 2))
@@ -24,16 +24,16 @@ class Course(db.Model):
 	userCourses = db.relationship("UserCourse", backref="course")
 
 	@property
-	def code_full(self):
-		return f"{self.subject.code}-{self.code}"
+	def code(self):
+		return f"{self.subject.code}-{self.number}"
 	
 	@property
 	def level(self):
-		return self.code // 100
+		return self.number // 100
 	
 	@property
 	def url(self):
-		return url_for("view.course", subjCode=self.subject.code, courseCode=self.code)
+		return url_for("view.course", subjectCode=self.subject.code, courseNumber=self.number)
 
 	@property
 	def url_uni(self):
@@ -50,20 +50,20 @@ class Course(db.Model):
 	def getUserCourses(self, userId):
 		return [uc for uc in self.userCourses if uc.collection.user_id == userId]
 
-	def __init__(self, subject_id, code, name, units):
+	def __init__(self, subject_id, number, name, units):
 		self.subject_id = subject_id
-		self.code = code
+		self.number = number
 		self.name = name
 		self.units = units
 
 	def __repr__(self):
-		return f"COURSE {self.name} (#{self.id}) - {self.code}"
+		return f"COURSE {self.name} (#{self.id}) - {self.number}"
 	
 	def __iter__(self):
 		yield "id", self.id
 		yield "subject_id", self.subject_id
+		yield "number", self.number
 		yield "code", self.code
-		yield "code_full", self.code_full
 		yield "level", self.level
 		yield "name", self.name
 		yield "emoji", self.emoji

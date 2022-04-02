@@ -108,12 +108,12 @@ def update():
 				if not c.find_all("table"):
 					continue
 				
-				# Get Course code and name data
-				_, code, name = [i.text for i in c.find_all(class_="course-code")]
-				code = int(code.replace(" ", ""))
+				# Get Course number and name data
+				_, number, name = [i.text for i in c.find_all(class_="course-code")]
+				number = int(number.replace(" ", ""))
 				name = name.strip()
 
-				print(f"    COURSE '{code}'", end=" ")
+				print(f"    COURSE '{number}'", end=" ")
 
 				# Get units data
 				try:
@@ -171,11 +171,11 @@ def update():
 
 				# Get subsite data
 				subsite = None
-				if code in courseLinks:
-					subsite = courseLinks[code]
+				if number in courseLinks:
+					subsite = courseLinks[number]
 				
 				# Check for existing Course
-				course = Course.query.filter_by(subject_id=subject.id).filter_by(code=code).first()
+				course = Course.query.filter_by(subject_id=subject.id, number=number).first()
 
 				if course: # Update Course attributes
 					print(f"ALREADY EXISTS (# {course.id}), checking for changed values...")
@@ -214,7 +214,7 @@ def update():
 						course.subsite = subsite
 				else: # Create new course
 					print("creating row...")
-					course = Course(subject.id, code, name, units)
+					course = Course(subject.id, number, name, units)
 					course.desc = desc
 					course.prereqs = prereqs
 					course.coreqs = coreqs

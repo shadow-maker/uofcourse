@@ -147,7 +147,7 @@ function updateResults(data) {
 
 		courseItem.find(".course-link").attr("href", course.url)
 		courseItem.find(".course-emoji").html("&#" + course.emoji)
-		courseItem.find(".course-code").html(course.code_full)
+		courseItem.find(".course-code").html(course.code)
 		courseItem.find(".course-name").html(course.name)
 
 

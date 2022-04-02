@@ -34,44 +34,44 @@ def faculty(facId):
 	)
 
 
-@view.route("/s/<subjCode>")
-def subject(subjCode):
-	subject = getSubjectByCode(subjCode)
+@view.route("/s/<subjectCode>")
+def subject(subjectCode):
+	subject = getSubjectByCode(subjectCode)
 	if not subject:
-		flash(f"Subject with code {subjCode} does not exist!", "danger")
+		flash(f"Subject with code {subjectCode} does not exist!", "danger")
 		return redirect(url_for("view.home"))
 	faculty = subject.faculty
 	return render_template("subject.html",
-		title=subjCode.upper(),
+		title=subjectCode.upper(),
 		subject=subject,
 		faculty=faculty,
 		lenCourses=len(subject.courses)
 	)
 
 
-@view.route("/c/<subjCode>")
-def courseBrowserSubject(subjCode):
-	subject = getSubjectByCode(subjCode)
+@view.route("/c/<subjectCode>")
+def courseBrowserSubject(subjectCode):
+	subject = getSubjectByCode(subjectCode)
 	if not subject:
-		flash(f"Subject with code {subjCode} does not exist!", "danger")
+		flash(f"Subject with code {subjectCode} does not exist!", "danger")
 		return redirect(url_for("view.home"))
-	return redirect(url_for("view.courseBrowser", subject=subjCode))
+	return redirect(url_for("view.courseBrowser", subject=subjectCode))
 
 
-@view.route("/c/<subjCode>/<courseCode>")
-def course(subjCode, courseCode):
-	subject = getSubjectByCode(subjCode)
+@view.route("/c/<subjectCode>/<courseNumber>")
+def course(subjectCode, courseNumber):
+	subject = getSubjectByCode(subjectCode)
 	if not subject:
-		flash(f"Subject with code {subjCode} does not exist!", "danger")
+		flash(f"Subject with code {subjectCode} does not exist!", "danger")
 		return redirect(url_for("view.home"))
-	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
+	course = Course.query.filter_by(subject_id=subject.id, number=courseNumber).first()
 	if not course:
-		flash(f"Course with code {subjCode}-{courseCode} does not exist!", "danger")
+		flash(f"Course with code {subjectCode}-{courseNumber} does not exist!", "danger")
 		return redirect(url_for("view.home"))
 	faculty = subject.faculty
 	return render_template("course.html",
-		title=f"{course.code_full}",
-		description = f"Course info for {course.code_full} : {course.name}",
+		title=f"{course.code}",
+		description = f"Course info for {course.code} : {course.name}",
 		course=course,
 		subject=subject,
 		faculty=faculty,
@@ -86,7 +86,7 @@ def courseById(courseId):
 	if not course:
 		flash(f"Course with id {courseId} does not exist!", "danger")
 		return redirect(url_for("view.home"))
-	return redirect(url_for("view.course", subjCode=course.subject.code, courseCode=course.code))
+	return redirect(url_for("view.course", subjectCode=course.subject.code, courseNumber=course.number))
 
 
 @view.route("/c/random")
@@ -132,8 +132,8 @@ def courseBrowser():
 		description = "Course browser : Filter and sort through UofC's full catalogue of courses",
 		sortOpt = 0,
 		sortOptions = [
-			{"label": "Number", "value": ["code", "name"]},
-			{"label": "Name", "value": ["name", "code"]},
+			{"label": "Number", "value": ["number", "name"]},
+			{"label": "Name", "value": ["name", "number"]},
 		],
 		terms = [dict(term) for term in Term.query.all()],
 		filterData = {
