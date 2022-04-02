@@ -37,7 +37,9 @@ class Course(db.Model):
 
 	@property
 	def url_uni(self):
-		return self.subject.url_uni + "#" + self.subsite
+		if self.subsite:
+			return self.subject.url_uni + "#" + self.subsite
+		return self.subject.url_uni
 
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
@@ -63,14 +65,18 @@ class Course(db.Model):
 		yield "id", self.id
 		yield "subject_id", self.subject_id
 		yield "number", self.number
-		yield "code", self.code
 		yield "level", self.level
+		yield "code", self.code
 		yield "name", self.name
 		yield "emoji", self.emoji
 		yield "units", self.units
 		yield "desc", self.desc
 		yield "prereqs", self.prereqs
+		yield "coreqs", self.coreqs
 		yield "antireqs", self.antireqs
 		yield "notes", self.notes
 		yield "aka", self.aka
+		yield "repeat", self.repeat
+		yield "nogpa", self.nogpa
 		yield "url", self.url
+		yield "url_uni", self.url_uni
