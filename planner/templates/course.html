@@ -69,11 +69,17 @@
 	<!--Course Info-->
 	<div class="order-2 order-sm-1 col-12 col-sm-7 col-md-8 pe-0">
 		<div class="container row p-0 ps-lg-4">
-			{% macro textCard(title, content) %}
+			{% macro textCard(title, content, tooltip) %}
 			<div class="col-lg-6 col-12 p-2">
 				<div class="card h-100">
 					<div class="card-body">
-						<h3>{{title}}</h3>
+						<div class="d-flex justify-content-between mb-2">
+							<span class="h3 m-0">{{title}}</span>
+							{% if tooltip %}
+							<i class="bi-info-circle text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{tooltip}}"></i>
+							{% endif %}
+						</div>
+						
 						<p>
 							{% if content %}
 								{% set lines = content.split("\n") %}
@@ -91,14 +97,14 @@
 
 			{{textCard("Description", course.desc)}}
 
-			{{textCard("Notes", course.notes)}}
+			{{textCard("Notes", course.notes, "This contains any information that may be helpful regarding enrolment in the course.")}}
 
-			{{textCard("Prerequisites", course.prereqs)}}
+			{{textCard("Prerequisites", course.prereqs, "Courses that must be completed or currently registered in before a student may be able to register in this course.")}}
 
-			{{textCard("Antirequisites", course.antireqs)}}
+			{{textCard("Antirequisites", course.antireqs, "Students may take these courses if they wish, but credit for both courses will not be granted towards their degree.")}}
 
 			{% if course.coreqs %}
-			{{textCard("Corequisites", course.coreqs)}}
+			{{textCard("Corequisites", course.coreqs, "Must be completed at the same time as this class.")}}
 			{% endif %}
 		</div>
 	</div>
