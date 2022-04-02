@@ -35,7 +35,7 @@ def update():
 
 		if grade: # Update Grade attributes
 			print(f"GRADE with symbol '{symbol}' ALREADY EXISTS")
-			if (float(grade.gpv) if g.gpv else None) != gpv:
+			if (float(grade.gpv) if grade.gpv else None) != gpv:
 				print(f"  - gpv does not match: (db) {grade.gpv} != {gpv}, updating...")
 				grade.gpv = gpv
 			if grade.desc != desc:
