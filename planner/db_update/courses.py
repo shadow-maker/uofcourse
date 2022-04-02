@@ -124,22 +124,22 @@ def update():
 				# Get desc data
 				desc = c.find(class_="course-desc")
 				if desc:
-					desc = desc.text.strip()
+					desc = desc.text.strip().replace("\n", " ")
 				
 				# Get prereqs data
 				prereqs = c.find(class_="course-prereq")
 				if prereqs:
-					prereqs = prereqs.text.strip()
+					prereqs = prereqs.text.strip().replace("\n", " ")
 
 				# Get coreqs data
 				coreqs = c.find(class_="course-coreq")
 				if coreqs:
-					coreqs = coreqs.text.strip()
+					coreqs = coreqs.text.strip().replace("\n", " ")
 
 				# Get antireqs data
 				antireqs = c.find(class_="course-antireq")
 				if antireqs:
-					antireqs = antireqs.text.strip()
+					antireqs = antireqs.text.strip().replace("\n", " ")
 				
 				# Get notes data
 				notes = c.find(class_="course-notes")
