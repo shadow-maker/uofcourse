@@ -13,9 +13,13 @@ class Course(db.Model):
 	units = db.Column(db.Numeric(4, 2))
 	desc = db.Column(db.Text)
 	prereqs = db.Column(db.Text)
+	coreqs = db.Column(db.Text)
 	antireqs = db.Column(db.Text)
 	notes = db.Column(db.Text)
 	aka = db.Column(db.Text)
+	repeat = db.Column(db.Boolean, nullable=False, default=False)
+	nogpa = db.Column(db.Boolean, nullable=False, default=False)
+	subsite = db.Column(db.String(32))
 
 	userCourses = db.relationship("UserCourse", backref="course")
 
@@ -31,6 +35,10 @@ class Course(db.Model):
 	def url(self):
 		return url_for("view.course", subjCode=self.subject.code, courseCode=self.code)
 
+	@property
+	def url_uni(self):
+		return self.subject.url_uni + "#" + self.subsite
+
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
 			return self.emoji
@@ -42,18 +50,11 @@ class Course(db.Model):
 	def getUserCourses(self, userId):
 		return [uc for uc in self.userCourses if uc.collection.user_id == userId]
 
-	def __init__(self, subject_id, code, name, units, desc="", prereqs="", antireqs="", notes="", aka="", emoji=None):
+	def __init__(self, subject_id, code, name, units):
 		self.subject_id = subject_id
 		self.code = code
 		self.name = name
 		self.units = units
-		self.desc = desc
-		self.prereqs = prereqs
-		self.antireqs = antireqs
-		self.notes = notes
-		self.aka = aka
-		if emoji:
-			self.emoji = emoji
 
 	def __repr__(self):
 		return f"COURSE {self.name} (#{self.id}) - {self.code}"
