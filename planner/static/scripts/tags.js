@@ -1,5 +1,7 @@
 // Code for Edit Tags modal
 
+var tagsCallback = () => {}
+
 var tagIndex = 0
 
 function colorToHex(color) {
@@ -86,8 +88,7 @@ function tagExecuteChanges() {
 					alert("success", data.success)
 				requestTag("GET", {}, (response) => {
 					userTags = response.tags
-					if (typeof tagEditDone !== "undefined")
-						tagEditDone()	
+					tagsCallback()	
 				})
 			}
 		}
@@ -197,20 +198,22 @@ function loadEditTagsModal() {
 
 // DOCUMENT READY
 
-$(document).ready(() => {
-	if (typeof isAuth === "undefined" || !isAuth)
-		userTags = []
+function tagsInit(callback = () => {}) {
+	tagsCallback = callback
 
-	if (typeof userTags === "undefined") { // If userTags was not passed from the server on template load
-		requestTag("GET", {}, (data) => {
-			userTags = data.tags
-			if (typeof tagsInit !== "undefined")
-				tagsInit()
-			loadEditTagsModal()
-		})
-	} else {
-		if (typeof tagsInit !== "undefined")
-			tagsInit()
-		loadEditTagsModal()
+	if (!isAuth) {
+		userTags = []
 	}
-})
+	else {
+		if (typeof userTags === "undefined") { // If userTags was not passed on template load
+			requestTag("GET", {}, (data) => {
+				userTags = data.tags
+				tagsCallback()
+				loadEditTagsModal()
+			})
+		} else {
+			tagsCallback()
+			loadEditTagsModal()
+		}
+	}
+}

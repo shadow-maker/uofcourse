@@ -260,6 +260,13 @@ function updateResults(data) {
 //
 
 $(document).ready(() => {
+	tagsInit(() => {
+		prevData = {}
+		requestResults((data) => {
+			updateResults(data)
+		})
+	})
+
 	updateSubjects()
 
 	$("#formFilterCourses input").not("#subjectSearch").change(() => {
@@ -290,15 +297,3 @@ $(document).on("click", ".tags-dropdown-btn", function() {
 	if (!isAuth)
 		alert("warning", "You must be logged in to add tags")
 })
-
-function tagsInit() {
-	requestResults((data) => {
-		updateResults(data)
-	})
-}
-
-function tagEditDone() {
-	requestResults((data) => {
-		updateResults(data)
-	}, true)
-}
