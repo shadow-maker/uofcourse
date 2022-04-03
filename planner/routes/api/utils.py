@@ -1,11 +1,7 @@
 from planner import queryUtils as utils
 from planner.constants import *
-from planner.models import Course
 
-SORT_OPTIONS = [
-	[Course.code, Course.name],
-	[Course.name, Course.code]
-]
+from flask import request
 
 def getById(table, id):
 	obj = utils.getById(table, id)
@@ -14,38 +10,58 @@ def getById(table, id):
 	return dict(obj), 200
 
 
-def getAll(table, args):
-	data = {
-		"sort": args.get("sort", default="id", type=str).lower(),
-		"asc": args.get("asc", default="true", type=str).lower(),
-		"limit": args.get("limit", default=30, type=int),
-		"page": args.get("page", default=1, type=int)
-	}
+def getAll(table, filters=(), serializer=None):
+	if not serializer: # default serializer
+		serializer = lambda item : dict(item)
 
-	try:
-		column = getattr(table, data["sort"])
-	except:
-		return {"error": f"'{data['sort']}' is not a valid column for {table.__tablename__}"}, 400
+	# Validate filters and serializer
+	if type(filters) != tuple:
+		return {"error": "filters must be of type tuple"}, 400
+	if not callable(serializer):
+		return {"error": "serializer must be a function"}, 400
 
-	if data["asc"] not in ["true", "1", "false", "0"]:
-		return {"error": f"'{data['asc']}' is not a valid value for asc (boolean)"}, 400
-	
+	# Get data from url arguments
+	sort = request.args.getlist("sort" + "[]", type=str)
+	asc = request.args.get("asc", default="true", type=str).lower()
+	limit = request.args.get("limit", default=30, type=int)
+	page = request.args.get("page", default=1, type=int)
 
-	if data["asc"] in ["false", "0"]:
-		column = table.id.desc()
-	
-	for i in ["page", "limit"]:
-		if data[i] < 1:
-			return {"error": f"{i} cannot be lower than 1 (got {data[i]})"}, 400
-
-	if data["limit"] > MAX_ITEMS_PER_PAGE:
+	# Validate data
+	if asc not in ["true", "1", "false", "0"]:
+		return {"error": f"'{asc}' is not a valid value for asc (boolean)"}, 400
+	if limit < 1:
+		return {"error": f"limit cannot be lower than 1 (got {limit})"}, 400
+	if limit > MAX_ITEMS_PER_PAGE:
 		return {"error": f"limit of items per page cannot be greater than {MAX_ITEMS_PER_PAGE}"}, 400
+	if page < 1:
+		return {"error": f"page cannot be lower than 1 (got {page})"}, 400
 
-	results = table.query.order_by(column).paginate(per_page=data["limit"], page=data["page"])
+	# Get list of table columns for sorting
+	sortBy = []
+	for column in sort:
+		try:
+			sortBy.append(getattr(table, column))
+		except:
+			return {"error": f"'{column}' is not a valid column for {table.__tablename__}"}, 400
+	if table.id not in sortBy:
+		sortBy.append(table.id)
+
+	# Add .desc() to sorting columns if asc is false
+	if asc in ["false", "0"]:
+		sortBy = [i.desc() for i in sortBy]
+
+	# Query database with filters
+	try:
+		query = table.query.filter(*filters).order_by(*sortBy)
+	except:
+		return {"error": "filters are not valid"}, 400
+
+	# Get  results
+	results = query.paginate(per_page=limit, page=page)
 
 	return {
-		"results": [dict(i) for i in results.items],
-		"page": data["page"],
+		"results": [serializer(i) for i in results.items], # pass every result item through serializer
+		"page": results.page,
 		"pages": results.pages,
 		"total": results.total
 	}, 200

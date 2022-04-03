@@ -31,7 +31,16 @@ function alert(category, message, pre="") {
 	if (category != "danger") {
 		setTimeout(() => {
 			newAlert.alert("close")
-		}, category == "warning" ? 5000 : 3000);
+		}, (category == "warning" || category == "danger") ? 5000 : 3000);
 	}
+}
+
+function displayError(response) {
+	if (response.error)
+		alert("danger", response.error)
+	else if (response.responseJSON)
+		alert("danger", response.responseJSON.error)
+	else
+		alert("danger", response.statusText + " (" + response.status + ")")
 }
 </script>

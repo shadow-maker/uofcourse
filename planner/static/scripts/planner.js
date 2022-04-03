@@ -47,12 +47,7 @@ function updateCollectionGPA(container) {
 				gpaElem.text("-")
 		},
 		error: (response) => {
-			if (response.error)
-				alert("danger", response.error)
-			else if (response.responseJSON)
-				alert("danger", response.responseJSON.error)
-			else
-				alert("danger", response.statusText + " (" + response.staus + ")")
+			displayError(response)
 		}
 	})
 }
@@ -68,12 +63,7 @@ function editCollection(data, containers) {
 			})
 		},
 		error: (response) => {
-			if (response.error)
-				alert("danger", response.error)
-			else if (response.responseJSON)
-				alert("danger", response.responseJSON.error)
-			else
-				alert("danger", response.statusText + " (" + response.staus + ")")
+			displayError(response)
 		}
 	})
 }
@@ -108,12 +98,12 @@ function checkCourse() {
 	$.ajax({
 		url: "/api/courses/code/" + $("#selectCourseSubject").val() + "/" + $("#selectCourseNumber").val(),
 		method: "GET",
-		success: (data) => {
-			$("#selectCourseId").val(data.id)
+		success: (response) => {
+			$("#selectCourseId").val(response.id)
 			$("#selectCourseSubmit").prop("disabled", false)
 			selectCourseStatus("success")
 		},
-		error: (data) => {
+		error: (response) => {
 			$("#selectCourseId").val("")
 			$("#selectCourseSubmit").prop("disabled", true)
 			selectCourseStatus("error")

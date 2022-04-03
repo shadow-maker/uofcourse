@@ -2,49 +2,80 @@
 
 {% block content %}
 
-<div id="templateCourseItem" class="d-none">
-	<div class="course-item mb-3 card bg-light" id="course-">
-		<div class="card-body row px-2 px-sm-3 px-lg-4 pt-0 pb-0 pb-lg-2">
-			<div class="col-12 col-lg-10 p-0 m-0">
-				<a class="course-link row m-0 p-0 pt-2 text-decoration-none text-body" href="">
-					<div class="h4 m-0 d-flex align-items-bottom col-12 col-lg-4 col-xl-3">
-						<span class="course-emoji p-0 m-0 me-2"></span>
-						<span class="course-code p-0 m-0 font-monospace"></span>
+<script>
+	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
+	let sortOptions = JSON.parse('{{ sortOptions | tojson | safe }}')
+
+	function collapse(element) {
+		$(element).find(".toggleOn").toggle()
+		$(element).find(".toggleOff").toggle()
+	}
+</script>
+
+<script src="/static/scripts/pagination.js"></script>
+<script src="/static/scripts/subjectSearch.js"></script>
+<script src="/static/scripts/courseBrowser.js"></script>
+
+
+<!--TEMPLATES-->
+<div id="templates" class="d-none">
+	<div class="course-item mb-3 card">
+		<div class="card-body px-1 py-2">
+			<!--Course Link-->
+			<a class="course-link row m-0 text-decoration-none text-body" href="">
+				<!--Course emoji and code-->
+				<div class="col-12 col-md-5 col-lg-4 col-xl-3 ps-2 px-lg-3 ps-xl-4 h4 m-0 d-flex align-items-bottom">
+					<span class="course-emoji p-0 m-0 me-2"></span>
+					<span class="course-code p-0 m-0 font-monospace"></span>
+				</div>
+				<!--Course name-->
+				<div class="col-12 col-md-7 col-lg-8 col-xl-9 ps-2 ps-lg-0 pe-2">
+					<div class="course-name p-0 m-0 h5"></div>
+				</div>
+			</a>
+			<div class="row m-0 p-0">
+				<!--Separator-->
+				<div class="h4 m-0 col-0 col-md-5 col-lg-4 col-xl-3"></div>
+
+				<!--Tags-->
+				<div class="col-7 col-xs-6 col-sm-12 col-lg-5 col-xl-7 ps-2 ps-lg-0 pe-1">
+					<span class="tags-selected p-0 m-0"></span>
+					<div class="btn-group">
+						<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
+							<i class="bi-tag-fill"></i>
+						</button>
+						<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
 					</div>
-					<div class="d-flex align-items-bottom col-12 col-lg-8 col-xl-9">
-						<div class="course-name p-0 m-0 h5"></div>
-					</div>
-				</a>
-				<div class="row m-0 p-0">
-					<div class="h4 m-0 col-12 col-lg-4 col-xl-3"></div>
-					<div class="col-12 col-lg-8 col-xl-9">
-						<span class="tags-selected p-0 m-0"></span>
-						<div class="btn-group">
-							<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
-								<i class="bi-tag-fill"></i>
-							</button>
-							<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
-						</div>
-					</div>
-				</div>	
-			</div>
-			<div class="col-12 col-lg-2 course-terms py-1"></div>
+				</div>
+
+				<!--Collections-->
+				<div class="col-5 col-sm-12 col-lg-3 col-xl-2 course-collections ps-2 ps-lg-0 pe-1 text-end text-sm-start text-lg-end">
+					<button class="collections-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add to terms"></button>
+					<ul class="collections-dropdown dropdown-menu fs-6 mt-1">
+						{% for collection in collections %}
+						<li class="collections-dropdown-item" db-id="{{collection.id}}">
+							<a class="dropdown-item px-2 py-1" style="cursor: pointer;">
+								<i class="bi-check {% if collection not in courseCollections %}invisible{% endif %}"></i>
+								{% if collection.transfer %}
+								<small>Transferred</small>
+								{% else %}
+								<small>{{collection.term.name | capitalize}}</small>
+								{% endif %}
+							</a>
+						</li>
+						{% endfor %}
+						<li><hr class="dropdown-divider my-1"></li>
+						<li>
+							<a class="dropdown-item px-2 p-y1" href="{{url_for('view.planner')}}">
+								<small>Edit in My Planner</small>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>	
 		</div>
 	</div>
 </div>
-
-<script>
-	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
-	var colors = JSON.parse('{{ colors | tojson | safe }}')
-	var terms = JSON.parse('{{ terms | tojson | safe }}')
-	var page = 1
-	var pages = 1
-</script>
-
-<script src="/static/scripts/subjectSearch.js"></script>
-<script src="/static/scripts/coursesFilter.js"></script>
-<script src="/static/scripts/coursesPag.js"></script>
-<script src="/static/scripts/collapse.js"></script>
 
 
 <div class="row justify-content-between">
@@ -59,13 +90,16 @@
 						<div class="input-group">
 							<select id="sortBy" name="sortBy" class="form-select form-select-sm"
 								aria-label="Sort options">
-								<option value="0" {% if sortOpt == 0 %}selected{% endif %}>Course level</option>
-								<option value="1" {% if sortOpt == 1 %}selected{% endif %}>Course name</option>
+								{% for option in sortOptions %}
+									<option value="{{loop.index0}}" {% if loop.index0 == 0 %}selected{% endif %}>
+										{{option.label}}
+									</option>
+								{% endfor %}
 							</select>
 							<select id="orderBy" name="orderBy" class="form-select form-select-sm"
 								aria-label="Sort options">
-								<option value="1" {% if asc %}selected{% endif %}>Ascending</option>
-								<option value="0" {% if not asc %}selected{% endif %}>Descending</option>
+								<option value="1" selected>Ascending</option>
+								<option value="0">Descending</option>
 							</select>
 						</div>
 					</div>
@@ -79,7 +113,7 @@
 						<fieldset class="form-group">
 							<hr class="mt-1 mb-2">
 							<div data-bs-toggle="collapse" href="#levelSelector" role="button" aria-expanded="false"
-								aria-controls="levelSelector" id="levelLabel" onclick="collapse('levelLabel')">
+								aria-controls="levelSelector" id="levelLabel" onclick="collapse(this)">
 								<span class="toggleOff">
 									<small><i class="bi-chevron-right"></i></small>
 								</span>
@@ -109,7 +143,7 @@
 						<fieldset class="form-group">
 							<hr class="mt-1 mb-2">
 							<div data-bs-toggle="collapse" href="#facSelector" role="button" aria-expanded="false"
-								aria-controls="facSelector" id="facLabel" onclick="collapse('facLabel')">
+								aria-controls="facSelector" id="facLabel" onclick="collapse(this)">
 								<span class="toggleOff">
 									<small><i class="bi-chevron-right"></i></small>
 								</span>
@@ -145,11 +179,10 @@
 							<label for="subjectSearch" class="ms-1 mb-0 form-label text-uppercase">
 								<small>Subjects</small>
 							</label>
-							<div id="subjectSelector" class="d-flex flex-wrap ms-3">
+							<div id="subjectSelector" class="d-flex flex-wrap ms-3 ps-1">
 								{% for s, data in filterData["subjects"].items() %}
 								{% if data["sel"] %}
-								<span class="bg-secondary px-2 py-1 m-1 rounded font-monospace text-light subjItem"
-									id="subj{{s}}" onclick="remSubj('{{s}}')">{{data["code"]}}</span>
+								<span class="bg-secondary px-2 py-1 m-1 rounded font-monospace text-light subjItem">{{data["code"]}}</span>
 								{% endif %}
 								{% endfor %}
 							</div>
@@ -186,27 +219,7 @@
 		<div id="coursesContainer" class="loaded"></div>
 
 		<!--Page navigation-->
-		<nav aria-label="Page navigation" id="pageNav" class="loaded">
-			<ul class="pagination justify-content-center mb-2">
-				<li class="page-item" onclick="switchPagePrev()" style="cursor: pointer;">
-					<a class="page-link" aria-label="Previous">
-						<span aria-hidden="true">&laquo;</span>
-					</a>
-				</li>
-				<li class="pageEllipsis page-item" style="cursor: pointer;" display: none>
-					<a class="page-link">...</a>
-				</li>
-				<li class="page-item" onclick="switchPageNext()" style="cursor: pointer;">
-					<a class="page-link" aria-label="Next">
-						<span aria-hidden="true">&raquo;</span>
-					</a>
-				</li>
-			</ul>
-			<p class="text-center text-secondary mt-0"><small>
-					Page <span id="numPage">1</span> / <span id="numPages">1</span>
-				</small>
-			</p>
-		</nav>
+		{% include "components/navPage.html" %}
 	</div>
 </div>
 

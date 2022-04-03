@@ -1,5 +1,7 @@
 // Code for Edit Tags modal
 
+var tagsCallback = () => {}
+
 var tagIndex = 0
 
 function colorToHex(color) {
@@ -13,9 +15,9 @@ function requestTag(method, data, suc) {
 		url: "/api/tags",
 		method: method,
 		data: data,
-		success: (data) => {suc(data)},
-		error: (data) => {
-			alert("danger", data.responseJSON.error)
+		success: (response) => {suc(response)},
+		error: (response) => {
+			displayError(response)
 		}
 	})
 }
@@ -74,9 +76,9 @@ function tagUpdateColor(index) {
 function tagExecuteChanges() {
 	$("#modalEditTags").modal("hide")
 	var data = {}
-	var callback = (data) => {
-		if (data.success)
-			alert("success", data.success)
+	var callback = (response) => {
+		if (response.success)
+			alert("success", response.success)
 	}
 
 	$("#modalEditTags .tag-items").children().each(function(i) {
@@ -84,10 +86,9 @@ function tagExecuteChanges() {
 			callback = (data) => {
 				if (data.success)
 					alert("success", data.success)
-				requestTag("GET", {}, (data) => {
-					userTags = data.tags
-					if (typeof tagEditDone !== "undefined")
-						tagEditDone()	
+				requestTag("GET", {}, (response) => {
+					userTags = response.tags
+					tagsCallback()	
 				})
 			}
 		}
@@ -197,20 +198,22 @@ function loadEditTagsModal() {
 
 // DOCUMENT READY
 
-$(document).ready(() => {
-	if (typeof isAuth === "undefined" || !isAuth)
-		userTags = []
+function tagsInit(callback = () => {}) {
+	tagsCallback = callback
 
-	if (typeof userTags === "undefined") { // If userTags was not passed from the server on template load
-		requestTag("GET", {}, (data) => {
-			userTags = data.tags
-			if (typeof tagsInit !== "undefined")
-				tagsInit()
-			loadEditTagsModal()
-		})
-	} else {
-		if (typeof tagsInit !== "undefined")
-			tagsInit()
-		loadEditTagsModal()
+	if (!isAuth) {
+		userTags = []
 	}
-})
+	else {
+		if (typeof userTags === "undefined") { // If userTags was not passed on template load
+			requestTag("GET", {}, (data) => {
+				userTags = data.tags
+				tagsCallback()
+				loadEditTagsModal()
+			})
+		} else {
+			tagsCallback()
+			loadEditTagsModal()
+		}
+	}
+}

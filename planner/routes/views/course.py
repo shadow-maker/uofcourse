@@ -3,10 +3,11 @@ from planner import db
 from planner.models import Faculty, Subject, Course
 from planner.queryUtils import *
 from planner.constants import *
+from planner.routes.api import subjects
 
 from planner.routes.views import view
 
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, request
 from flask.helpers import url_for
 
 import random
@@ -20,56 +21,65 @@ def faculty(facId):
 		return redirect(url_for("view.home"))
 	return render_template("faculty.html",
 		title = "Faculty",
-		header = "Faculty",
-		faculty = faculty
+		faculty = faculty,
+		lenSubjects=len(faculty.subjects),
+		lenCourses = sum([len(s.courses) for s in faculty.subjects]),
+		subjects = [{
+			"id": s.id,
+			"emoji": s.getEmoji(),
+			"code": s.code,
+			"name": s.name,
+			"url": s.url
+		} for s in faculty.subjects],
 	)
 
 
-@view.route("/s/<subjCode>")
-@view.route("/c/<subjCode>")
-def subject(subjCode):
-	subject = getSubjectByCode(subjCode)
+@view.route("/s/<subjectCode>")
+def subject(subjectCode):
+	subject = getSubjectByCode(subjectCode)
 	if not subject:
-		flash(f"Subject with code {subjCode} does not exist!", "danger")
+		flash(f"Subject with code {subjectCode} does not exist!", "danger")
 		return redirect(url_for("view.home"))
 	faculty = subject.faculty
 	return render_template("subject.html",
-		title=subjCode.upper(),
-		header=f"Subject - {subject.name}",
+		title=subjectCode.upper(),
 		subject=subject,
 		faculty=faculty,
-		courses=subject.courses,
-		backlinks={
-			faculty.name: url_for("view.faculty", facId=faculty.id),
-			subject.code: ""
-		}.items()
+		lenCourses=len(subject.courses)
 	)
 
 
-@view.route("/c/<subjCode>/<courseCode>")
-def course(subjCode, courseCode):
-	subject = getSubjectByCode(subjCode)
+@view.route("/c/<subjectCode>")
+def courseBrowserSubject(subjectCode):
+	subject = getSubjectByCode(subjectCode)
 	if not subject:
-		flash(f"Subject with code {subjCode} does not exist!", "danger")
+		flash(f"Subject with code {subjectCode} does not exist!", "danger")
 		return redirect(url_for("view.home"))
-	course = Course.query.filter_by(subject_id=subject.id, code=courseCode).first()
+	return redirect(url_for("view.courseBrowser", subject=subjectCode))
+
+
+@view.route("/c/<subjectCode>/<courseNumber>")
+def course(subjectCode, courseNumber):
+	subject = getSubjectByCode(subjectCode)
+	if not subject:
+		flash(f"Subject with code {subjectCode} does not exist!", "danger")
+		return redirect(url_for("view.home"))
+	course = Course.query.filter_by(subject_id=subject.id, number=courseNumber).first()
 	if not course:
-		flash(f"Course with code {subjCode}-{courseCode} does not exist!", "danger")
+		flash(f"Course with code {subjectCode}-{courseNumber} does not exist!", "danger")
 		return redirect(url_for("view.home"))
-	faculty = subject.faculty
+
+	userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else []
+	collections = current_user.collections if current_user.is_authenticated else []
 	return render_template("course.html",
-		title=f"{course.code_full}",
-		description = f"Course info for {course.code_full} : {course.name}",
+		title=f"{course.code}",
+		description = f"Course info for {course.code} : {course.name}",
 		course=course,
 		subject=subject,
-		faculty=faculty,
-		userTags = course.getTags(current_user.id) if current_user.is_authenticated else [],
-		userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else [],
-		colors = COLORS_DARK,
-		links = {
-			"faculty": url_for("view.faculty", facId=faculty.id),
-			"subject": url_for("view.subject", subjCode=subject.code)
-		}
+		faculty=subject.faculty,
+		userCourses = userCourses,
+		collections = collections,
+		hasCourse = lambda collection : bool(sum([uc.course_collection_id == collection.id for uc in userCourses]))
 	)
 
 
@@ -79,7 +89,7 @@ def courseById(courseId):
 	if not course:
 		flash(f"Course with id {courseId} does not exist!", "danger")
 		return redirect(url_for("view.home"))
-	return redirect(url_for("view.course", subjCode=course.subject.code, courseCode=course.code))
+	return redirect(url_for("view.course", subjectCode=course.subject.code, courseNumber=course.number))
 
 
 @view.route("/c/random")
@@ -90,25 +100,45 @@ def courseRandom():
 	return redirect(url_for("view.courseById", courseId=course.id))
 
 
-@view.route("/c", methods=["GET", "POST"])
-def courses():
+@view.route("/c", methods=["GET"])
+def courseBrowser():
+	selSubject = request.args.get("subject")
+	selFaculty = request.args.get("faculty")
+
+	if selSubject:
+		if not getSubjectByCode(selSubject):
+			flash(f"Subject with code {selSubject} does not exist!", "danger")
+			return redirect(url_for("view.home"))
+	if selFaculty:
+		if not getById(Faculty, selFaculty):
+			flash(f"Faculty with id {selFaculty} does not exist!", "danger")
+			return redirect(url_for("view.home"))
+
 	levels = {str(l) : True for l in COURSE_LEVELS}
+
 	faculties = {
-		str(f[0]) : {"name": f[1], "sel": True}
+		str(f[0]) : {"name": f[1], "sel": not selFaculty}
 	for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))}
+
+	if selFaculty:
+		faculties[selFaculty]["sel"] = True
+
 	subjects = {
-		s[0] : {"id": s[1], "name": s[2], "sel": False}
+		s[0] : {"id": s[1], "name": s[2], "sel": s[0] == selSubject}
 	for s in list(db.session.query(Subject).values(Subject.code, Subject.id, Subject.name))}
+
 	subjects = {k : subjects[k] for k in sorted(subjects)}
 
-	return render_template("coursesFilter.html",
+	return render_template("courseBrowser.html",
 		title = "Courses",
 		header = f"Course browser",
 		description = "Course browser : Filter and sort through UofC's full catalogue of courses",
 		sortOpt = 0,
-		asc = True,
-		colors = COLORS_DARK,
-		terms = [dict(term) for term in Term.query.all()],
+		sortOptions = [
+			{"label": "Number", "value": ["number", "name"]},
+			{"label": "Name", "value": ["name", "number"]},
+		],
+		collections = current_user.collections if current_user.is_authenticated else [],
 		filterData = {
 			"levels": levels,
 			"faculties": faculties,

@@ -12,7 +12,7 @@ season = Blueprint("seasons", __name__, url_prefix="/seasons")
 
 @season.route("", methods=["GET"])
 def getSeasons():
-	return getAll(Season, request.args)
+	return getAll(Season)
 
 @season.route("/<id>", methods=["GET"])
 def getSeasonById(id):

@@ -2,13 +2,46 @@
 
 {% block content %}
 
-<div class="container">
-	{% for c in courses %}
-		<a class="container row bg-light m-2 px-3 py-2 rounded" href="{{url_for('view.course', subjCode=subject.code, courseCode=c.code)}}">
-			<h5 class="col-1 p-0 m-0 font-monospace">{{c.code}}</h5>
-			<h5 class="col-10 p-0 m-0">{{c.name}}</h5>
-		</a>
-	{% endfor %}
+<div class="mb-3">
+	<span class="h3 font-monospace align-top">s/</span><span class="h3 align-middle font-monospace border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{{subject.code}}</span>
+	<span class="align-bottom text-muted fs-6">(#{{subject.id}})</span>
+</div>
+
+<div class="row mb-1">
+	<!--Subject Header-->
+	<div class="col-12 col-lg-7 col-xxl-8 mb-4">
+		<h1 class="mt-2">&#{{subject.getEmoji()}} {{subject.name}}</h1>
+
+		<h5 title="Faculty">
+			<i class="bi bi-building"></i>
+			<a href="{{faculty.url}}" class="h5 text-body">{{faculty.name}}</a>
+			<i class="h6 bi bi-box-arrow-up-right"></i>
+		</h5>
+	</div>
+
+	<!--Links-->
+	<div class="col-12 col-lg-5 col-xxl-4">
+		<div class="card bg-light">
+			<div class="card-body">
+				<div class="h5">{{lenCourses}} Courses in this subject</div>
+
+				<div class="container">
+					<div>
+						<a href="{{url_for('view.courseBrowser', subject=subject.code)}}" class="h6 text-body">
+							View courses in Course Browser
+						</a>
+						<i class="h6 bi bi-box-arrow-up-right"></i>
+					</div>
+					<div>
+						<a href="{{subject.url_uni}}" target="_blank" rel="noopener noreferrer" class="h6 text-body">
+							View courses in Official Uni site
+						</a>
+						<i class="h6 bi bi-box-arrow-up-right"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 {% endblock %}
