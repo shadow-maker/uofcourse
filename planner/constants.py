@@ -11,7 +11,7 @@ UNI_BASE_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
 
 GANALYTICS_ID = getenv("GANALYTICS_ID")
 
-CURRENT_VERSION = "0.1.6"
+CURRENT_VERSION = "0.2"
 
 ALLOW_ACCOUNT_CREATION = False
 

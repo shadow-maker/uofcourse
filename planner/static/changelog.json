@@ -1,4 +1,19 @@
 {
+	"0.2": {
+		"beta": true,
+		"date": "2022-04-02",
+		"changes": [
+			"Improved Course, Subject and Faculty pages",
+			"More Course data: corequisites, repeat, nogpa",
+			"Better term viewer in course browser",
+			"API Improvements",
+			"General backend improvements"
+		],
+		"fixes": [
+			"Transferred courses caused the Course Browser to crash",
+			"Some sticky elements would appear over the nav bar"
+		]
+	},
 	"0.1.6": {
 		"beta": true,
 		"date": "2022-03-27",
