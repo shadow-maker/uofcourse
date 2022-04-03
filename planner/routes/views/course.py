@@ -68,16 +68,18 @@ def course(subjectCode, courseNumber):
 	if not course:
 		flash(f"Course with code {subjectCode}-{courseNumber} does not exist!", "danger")
 		return redirect(url_for("view.home"))
-	faculty = subject.faculty
+
+	userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else []
+	collections = current_user.collections if current_user.is_authenticated else []
 	return render_template("course.html",
 		title=f"{course.code}",
 		description = f"Course info for {course.code} : {course.name}",
 		course=course,
 		subject=subject,
-		faculty=faculty,
-		userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else [],
-		courseCollections = [uc.collection for uc in course.getUserCourses(current_user.id)] if current_user.is_authenticated else [],
-		collections = current_user.collections if current_user.is_authenticated else [],
+		faculty=subject.faculty,
+		userCourses = userCourses,
+		collections = collections,
+		hasCourse = lambda collection : bool(sum([uc.course_collection_id == collection.id for uc in userCourses]))
 	)
 
 
