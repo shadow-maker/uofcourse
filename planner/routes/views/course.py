@@ -21,6 +21,7 @@ def faculty(facId):
 		return redirect(url_for("view.home"))
 	return render_template("faculty.html",
 		title = "Faculty",
+		description = f"Faculty info for {faculty.name}",
 		faculty = faculty,
 		lenSubjects=len(faculty.subjects),
 		lenCourses = sum([len(s.courses) for s in faculty.subjects]),
@@ -43,6 +44,7 @@ def subject(subjectCode):
 	faculty = subject.faculty
 	return render_template("subject.html",
 		title=subjectCode.upper(),
+		description = f"Subject info for {subject.code} : {subject.name}",
 		subject=subject,
 		faculty=faculty,
 		lenCourses=len(subject.courses)
