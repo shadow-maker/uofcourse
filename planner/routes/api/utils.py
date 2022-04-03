@@ -52,9 +52,13 @@ def getAll(table, filters=(), serializer=None):
 
 	# Query database with filters
 	try:
-		query = table.query.filter(*filters).order_by(*sortBy)
+		query = table.query.filter(*filters)
 	except:
 		return {"error": "filters are not valid"}, 400
+	try:
+		query = query.order_by(*sortBy)
+	except:
+		return {"error": "sort columns are not valid"}, 400
 
 	# Get  results
 	results = query.paginate(per_page=limit, page=page)
