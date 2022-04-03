@@ -87,11 +87,12 @@
 							{% endif %}
 						</div>
 						
-						<p>
+						<p class="mb-2">
 							{% if content %}
 								{% set lines = content.split("\n") %}
 								{% for line in lines %}
-									{{line}}<br>
+									{{line}}
+									{% if not loop.last %}<br>{% endif %}
 								{% endfor %}
 							{% else %}
 								<span class="fst-italic">None</span>
@@ -132,6 +133,7 @@
 						<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
 						{% endif %}
 					</div>
+					<div class="loading fst-italic">Loading...</div>
 					<div class="tags-selected"></div>
 					{% if not current_user.is_authenticated %}
 					<span class="fst-italic">
