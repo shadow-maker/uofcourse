@@ -96,6 +96,26 @@ function toggleTag(courseId, tagId) {
 	})
 }
 
+function addCollection(courseId, collectionId) {
+	$.ajax({
+		url: "/api/users/course",
+		method: "POST",
+		data: {
+			course_id: courseId,
+			collection_id: collectionId
+		},
+		success: (data) => {
+			prevData = {}
+			requestResults((data) => {
+				updateResults(data)
+			})
+		},
+		error: (data) => {
+			displayError(data)
+		}
+	})
+}
+
 //
 // UPDATE FUNCTIONS
 //
@@ -153,33 +173,33 @@ function updateResults(data) {
 		// Add content only available if user is authenticated
 		if (isAuth) {
 			// Add course collections
+
+			const collections = courseItem.find(".course-collections")
+
+			let message = ""
+			if (course.collections.length == 0)
+				message = "Not taken"
+			else if (course.collections.length == 1)
+				message = "Taken in " + course.collections.length + " term"
+			else
+				message = "Taken in " + course.collections.length + " terms"
+
+			collections.find(".collections-dropdown-btn").text(message)
+
+			const dropdown = collections.find(".collections-dropdown")
+
+			dropdown.children(".collections-dropdown-item").each(function () {
+				$(this).find(".dropdown-item").attr("onclick", "addCollection('" + course.id + "', '" + $(this).attr("db-id") + "')")
+				$(this).find(".bi-check").addClass("invisible")
+			})
+
 			for (let collection of course.collections) {
-				if (collection.transfer) {
-					courseItem.find(".course-terms").append(`
-					<div>
-						Transferred
-					</div>
-				`)
-				} else {
-					var term = null
-
-					for (t of terms) {
-						if (t.id == collection.term_id) {
-							term = t
-							break
-						}
+				dropdown.children(".collections-dropdown-item").each(function () {
+					if ($(this).attr("db-id") == collection.id) {
+						$(this).find(".dropdown-item").attr("onclick", "")
+						$(this).find(".bi-check").removeClass("invisible")
 					}
-
-					if (!term)
-						continue
-
-					courseItem.find(".course-terms").append(`
-						<div>
-							` + term.season.charAt(0).toUpperCase() + term.season.slice(1) +`
-							` + term.year + `
-						</div>
-					`)
-				}
+				})
 			}
 
 			// Add tag badges

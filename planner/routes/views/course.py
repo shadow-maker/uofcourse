@@ -136,7 +136,7 @@ def courseBrowser():
 			{"label": "Number", "value": ["number", "name"]},
 			{"label": "Name", "value": ["name", "number"]},
 		],
-		terms = [dict(term) for term in Term.query.all()],
+		collections = current_user.collections if current_user.is_authenticated else [],
 		filterData = {
 			"levels": levels,
 			"faculties": faculties,

@@ -4,7 +4,6 @@
 
 <script>
 	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
-	var terms = JSON.parse('{{ terms | tojson | safe }}')
 	let sortOptions = JSON.parse('{{ sortOptions | tojson | safe }}')
 
 	function collapse(element) {
@@ -20,32 +19,60 @@
 
 <!--TEMPLATES-->
 <div id="templates" class="d-none">
-	<div class="course-item mb-3 card bg-light">
-		<div class="card-body row px-2 px-sm-3 px-lg-4 pt-0 pb-0 pb-lg-2">
-			<div class="col-12 col-lg-10 p-0 m-0">
-				<a class="course-link row m-0 p-0 pt-2 text-decoration-none text-body" href="">
-					<div class="h4 m-0 d-flex align-items-bottom col-12 col-lg-4 col-xl-3">
-						<span class="course-emoji p-0 m-0 me-2"></span>
-						<span class="course-code p-0 m-0 font-monospace"></span>
+	<div class="course-item mb-3 card">
+		<div class="card-body px-1 py-2">
+			<!--Course Link-->
+			<a class="course-link row m-0 text-decoration-none text-body" href="">
+				<!--Course emoji and code-->
+				<div class="col-12 col-md-5 col-lg-4 col-xl-3 ps-2 ps-md-2 ps-lg-3 h4 m-0 d-flex align-items-bottom">
+					<span class="course-emoji p-0 m-0 me-2"></span>
+					<span class="course-code p-0 m-0 font-monospace"></span>
+				</div>
+				<!--Course name-->
+				<div class="col-12 col-md-7 col-lg-8 col-xl-9 ps-2 ps-lg-0 pe-2 d-flex align-items-bottom">
+					<div class="course-name p-0 m-0 h5"></div>
+				</div>
+			</a>
+			<div class="row m-0 p-0">
+				<!--Separator-->
+				<div class="h4 m-0 col-0 col-md-5 col-lg-4 col-xl-3"></div>
+
+				<!--Tags-->
+				<div class="col-7 col-xs-6 col-sm-12 col-lg-5 col-xl-7 ps-2 ps-lg-0 pe-1">
+					<span class="tags-selected p-0 m-0"></span>
+					<div class="btn-group">
+						<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
+							<i class="bi-tag-fill"></i>
+						</button>
+						<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
 					</div>
-					<div class="d-flex align-items-bottom col-12 col-lg-8 col-xl-9">
-						<div class="course-name p-0 m-0 h5"></div>
-					</div>
-				</a>
-				<div class="row m-0 p-0">
-					<div class="h4 m-0 col-12 col-lg-4 col-xl-3"></div>
-					<div class="col-12 col-lg-8 col-xl-9">
-						<span class="tags-selected p-0 m-0"></span>
-						<div class="btn-group">
-							<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
-								<i class="bi-tag-fill"></i>
-							</button>
-							<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
-						</div>
-					</div>
-				</div>	
-			</div>
-			<div class="col-12 col-lg-2 course-terms py-1"></div>
+				</div>
+
+				<!--Collections-->
+				<div class="col-5 col-sm-12 col-lg-3 col-xl-2 course-collections ps-2 ps-lg-0 pe-1 text-end text-sm-start text-lg-end">
+					<button class="collections-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add to terms"></button>
+					<ul class="collections-dropdown dropdown-menu fs-6 mt-1">
+						{% for collection in collections %}
+						<li class="collections-dropdown-item" db-id="{{collection.id}}">
+							<a class="dropdown-item px-2 py-1" style="cursor: pointer;">
+								<i class="bi-check {% if collection not in courseCollections %}invisible{% endif %}"></i>
+								{% if collection.transfer %}
+								<small>Transferred</small>
+								{% else %}
+								<small>{{collection.term.name | capitalize}}</small>
+								{% endif %}
+							</a>
+						</li>
+						{% endfor %}
+						<li><hr class="dropdown-divider my-1"></li>
+						<li>
+							<a class="dropdown-item px-2 p-y1" href="{{url_for('view.planner')}}">
+								<small>Edit in My Planner</small>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>	
 		</div>
 	</div>
 </div>
