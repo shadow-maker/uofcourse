@@ -9,7 +9,7 @@
 <script src="/static/scripts/faculty.js"></script>
 
 <div id="templates" class="d-none">
-	<div class="subject-item mb-3 card bg-light">
+	<div class="subject-item mb-3 card">
 		<a class="subject-link m-0 p-0 text-decoration-none text-body" href="">
 			<div class="card-body px-3 px-md-4 py-1 py-md-2">
 				<span class="h4 me-4">
@@ -23,22 +23,26 @@
 	</div>
 </div>
 
-<div class="mb-4">
+<!--Header-->
+<div class="mb-4 py-0 py-lg-3 py-xl-4">
 	<span class="h3 font-monospace">f/</span>
 	<span class="h1">{{faculty.name}}</span>
 	<span class="text-muted fs-6">(#{{faculty.id}})</span>
 </div>
 
-<div class="row mb-1 ps-0 ps-md-3">
+<div class="row mb-1 px-0 px-lg-3">
 	<!--Faculty Subjects-->
 	<div class="order-2 order-lg-1 col-12 col-lg-7 col-xxl-8">
-		<div class="container">
+		<div class="container px-0 px-md-4">
 			<div class="row mb-3 mt-0">
+				<!--Heading-->
 				<div class="col-12 col-sm-6 col-lg-12 col-xl-6 col-xxl-7">
 					<h2 class="m-0">Faculty Subjects:</h2>
 				</div>
+
+				<!--Sorting options-->
 				<div class="col-12 col-sm-6 col-lg-12 col-xl-6 col-xxl-5">
-					<div class="input-group mt-2">
+					<div class="input-group mt-2 ps-3 ps-sm-0 ps-md-3">
 						<select id="sortBy" name="sortBy" class="form-select form-select-sm bg-light"
 							aria-label="Sort options" title="Sort by">
 							<option value="code" selected>
@@ -57,13 +61,14 @@
 				</div>
 			</div>
 			
+			<!--Subjects list-->
 			<div class="container ps-3 pe-0" id="subjectsContainer"></div>
 		</div>
 	</div>
 
 	<!--Links-->
-	<div class="order-1 order-lg-2 col-12 col-lg-5 col-xxl-4 mt-lg-5 mb-4 pt-2">
-		<div class="sticky-top sticky-offset card bg-light">
+	<div class="order-1 order-lg-2 col-12 col-lg-5 col-xxl-4 pt-2">
+		<div class="sticky-top sticky-offset card bg-light mt-0 mb-4 mx-0 mx-md-4 mx-lg-0 mx-xl-4">
 			<div class="card-body">
 				<div class="mb-3">
 					<div class="h5">{{lenCourses}} Courses in this faculty</div>
