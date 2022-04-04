@@ -1,4 +1,12 @@
 {
+	"0.2.1": {
+		"beta": true,
+		"date": "2022-04-03",
+		"changes": [
+			"Small style changes to views",
+			"Added loading indicator to tags in course view"
+		]
+	},
 	"0.2": {
 		"beta": true,
 		"date": "2022-04-02",
