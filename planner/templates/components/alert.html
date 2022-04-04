@@ -1,15 +1,4 @@
-{% with messages = get_flashed_messages(with_categories=true) %}
-<div id="alerts" class="fixed-bottom mb-1">
-{% if messages %}
-	{% for category, message in messages %}
-	<div class="alert alert-{{category}} alert-dismissible fade show mx-2 mx-md-5 mb-2 mb-md-3" role="alert" data-bs-dismiss="alert">
-		{{message}}
-		<button type="button" class="btn-close" aria-label="Close"></button>
-	</div>
-	{% endfor %}
-{% endif %}
-</div>
-{% endwith %}
+<div id="alerts" class="fixed-bottom mb-1 px-2 px-md-5 pb-2 pb-md-3"></div>
 
 <script>
 const categories = ["success", "info", "warning", "danger", "primary", "secondary"]
@@ -19,7 +8,7 @@ function alert(category, message, pre="") {
 		category = "warning"
 	
 	let newAlert = $(`
-		<div class="alert alert-` + category + ` alert-dismissible fade show mx-2 mx-md-5 mb-2 mb-md-3" role="alert" data-bs-dismiss="alert">
+		<div class="alert alert-` + category + ` alert-dismissible fade show" role="alert" data-bs-dismiss="alert">
 			<b>` + pre +`</b>
 			` + message + `
 			<button type="button" class="btn-close" aria-label="Close"></button>
@@ -44,3 +33,10 @@ function displayError(response) {
 		alert("danger", response.statusText + " (" + response.status + ")")
 }
 </script>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+<script>
+for (let message of JSON.parse('{{ messages | tojson | safe }}'))
+	alert(message[0], message[1])
+</script>
+{% endwith %}
