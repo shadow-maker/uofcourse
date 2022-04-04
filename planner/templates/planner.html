@@ -18,7 +18,7 @@
 	</div>
 	<div class="row">
 		{% for tag in userData["tags"] %}
-		<div class="col-xl-3 col-lg-4 col-sm-6 col-12 p-0 px-2 mb-3">
+		<div class="col-12 col-sm-6 col-lg-4 col-xl-3 p-0 px-2 mb-3">
 			<div class="card h-100">
 				<div class="card-header text-center">
 					{% if tag.emoji %}
@@ -46,9 +46,7 @@
 						</a>
 					{% endfor %}
 				</div>
-				<div class="card-footer">
-
-				</div>
+				<div class="card-footer"></div>
 			</div>
 		</div>
 		{% endfor %}
@@ -60,7 +58,7 @@
 	<h2 class="mb-3">Courses per term</h2>
 	<div class="row flex-nowrap overflow-scroll pt-3">
 		{% for collection in userData["collections"] %}
-		<div class="col-xl-3 col-lg-4 col-sm-6 col-12 mx-2 p-0">
+		<div class="col-10 col-sm-6 col-lg-4 col-xl-3 mx-2 p-0">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
 				<form action="/my/del/collection" method="POST">
@@ -119,7 +117,7 @@
 			</div>
 		</div>
 		{% endfor %}
-		<div class="col-xl-2 col-lg-3 col-sm-4 col-6 card mx-2 p-0" data-bs-toggle="modal" data-bs-target="#modalAddCollection">
+		<div class="col-6 col-sm-4 col-lg-3 col-xl-2 card mx-2 p-0" data-bs-toggle="modal" data-bs-target="#modalAddCollection">
 			<div class="card-body btn btn-light">
 				<div class="h-100 d-flex flex-column align-content-center text-muted">
 					<div class="mt-auto"><i class="bi-plus-lg display-4"></i></div>
