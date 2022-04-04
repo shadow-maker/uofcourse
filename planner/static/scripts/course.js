@@ -55,6 +55,7 @@ function addCollection(collectionId) {
 
 function updateTags() {
 	const item = $("#tags")
+	item.find(".loading").show()
 
 	// Add dropdown items
 
@@ -108,6 +109,8 @@ function updateTags() {
 			})
 		}
 	})
+
+	item.find(".loading").hide()
 }
 
 //

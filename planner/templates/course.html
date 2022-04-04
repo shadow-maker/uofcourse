@@ -87,11 +87,12 @@
 							{% endif %}
 						</div>
 						
-						<p>
+						<p class="mb-2">
 							{% if content %}
 								{% set lines = content.split("\n") %}
 								{% for line in lines %}
-									{{line}}<br>
+									{{line}}
+									{% if not loop.last %}<br>{% endif %}
 								{% endfor %}
 							{% else %}
 								<span class="fst-italic">None</span>
@@ -132,6 +133,7 @@
 						<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
 						{% endif %}
 					</div>
+					<div class="loading fst-italic">Loading...</div>
 					<div class="tags-selected"></div>
 					{% if not current_user.is_authenticated %}
 					<span class="fst-italic">
@@ -203,10 +205,8 @@
 		</div>
 	</div>
 
-	<div class="order-3 col-12 ms-4 mt-3 ps-lg-4">
-		<a href="{{course.url_uni}}" target="_blank" rel="noopener noreferrer" class="h6 text-body">
-			View course in Official Uni site
-		</a>
+	<div class="order-3 col-12 mt-3 ps-4 ps-lg-5">
+		<a href="{{course.url_uni}}" target="_blank" rel="noopener noreferrer" class="h6 text-body">View course in Official Uni site</a>
 		<i class="h6 bi bi-box-arrow-up-right"></i>
 	</div>
 </div>

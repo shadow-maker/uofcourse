@@ -3,7 +3,7 @@
 {% block content %}
 
 {% for version, data in changelog.items() %}
-<div class="container row my-2">
+<div id="{{version}}" class="container row my-2">
 	<div class="col-12 col-md-3 col-xl-2">
 		<div title="Version">
 			<span class="h2 font-monospace">{{version}}</span>
@@ -52,7 +52,7 @@
 		</div>
 	</div>
 
-	<hr>
+	<hr class="my-4">
 </div>
 {% endfor %}
 
