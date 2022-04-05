@@ -39,9 +39,12 @@ function requestResults(suc, ignorePrev=false) {
 	var data = {
 		sort: sortOptions[$("#sortBy").val()].value,
 		asc: $("#orderBy").val(),
+		search: $("#searchCourses").val(),
 		levels: selectedLevel,
 		faculties: selectedFaculty,
 		subjects: selectedSubject,
+		repeat: $("#repeat").is(":checked"),
+		nogpa: $("#nogpa").is(":checked"),
 		page: page.current
 	}
 
@@ -252,7 +255,7 @@ function updateResults(data) {
 		courseItem.appendTo("#coursesContainer")
 	}
 
-	$("#numTotal").text(data.total)
+	$(".num-total").text(data.total)
 
 	page.current = data.page
 	page.total = data.pages
@@ -284,7 +287,7 @@ $(document).ready(() => {
 		$("#formFilterCourses").submit()
 	})
 
-	$("#formFilterCourses select").change(() => {
+	$("#sortSelector select").change(() => {
 		$("#formFilterCourses").submit()
 	})
 
