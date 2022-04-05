@@ -26,6 +26,8 @@ def update():
 			symbol, gpv, desc = [j.text.strip().split("\n")[0] for j in row.find_all("td")]
 			if gpv:
 				gpv = float(gpv)
+			else:
+				gpv = None
 		except:
 			print(f"ERROR: Could not parse row {i + 1}")
 			pass
@@ -35,7 +37,7 @@ def update():
 
 		if grade: # Update Grade attributes
 			print(f"GRADE with symbol '{symbol}' ALREADY EXISTS")
-			if (float(grade.gpv) if grade.gpv else None) != gpv:
+			if (float(grade.gpv) if grade.gpv != None else None) != gpv:
 				print(f"  - gpv does not match: (db) {grade.gpv} != {gpv}, updating...")
 				grade.gpv = gpv
 			if grade.desc != desc:
