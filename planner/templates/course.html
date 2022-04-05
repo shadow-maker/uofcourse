@@ -126,14 +126,15 @@
 					<div class="d-flex justify-content-between mb-2">
 						<h4 class="m-0">Tags</h4>
 						{% if current_user.is_authenticated %}
-
 						<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
 							Add tags
 						</button>
 						<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
 						{% endif %}
 					</div>
+					{% if current_user.is_authenticated %}
 					<div class="loading fst-italic">Loading...</div>
+					{% endif %}
 					<div class="tags-selected"></div>
 					{% if not current_user.is_authenticated %}
 					<span class="fst-italic">
