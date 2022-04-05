@@ -60,6 +60,7 @@ function requestResults(suc, ignorePrev=false) {
 		url: "/api/courses",
 		method: "GET",
 		data: data,
+		traditional: true,
 		success: (response) => {suc(response)},
 		error: (response) => {
 			$(".loading").hide()

@@ -21,7 +21,7 @@ def getSubjects(faculties=[]):
 	# Parse faculties
 	try:
 		if not faculties: # faculties not passed as function argument
-			faculties = request.args.getlist("faculties" + "[]", type=int)
+			faculties = request.args.getlist("faculties", type=int)
 		if not faculties: # faculties not passed as url argument
 			faculties = [f[0] for f in list(db.session.query(Faculty).with_entities(Faculty.id))]
 		else: # check if faculties are valid
