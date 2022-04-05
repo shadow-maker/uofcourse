@@ -4,7 +4,7 @@ from planner.routes.api.utils import *
 
 from flask import Blueprint, request
 from flask_login import current_user
-from sqlalchemy import and_, or_
+from sqlalchemy import func, and_, or_
 
 course = Blueprint("courses", __name__, url_prefix="/courses")
 
@@ -14,7 +14,12 @@ course = Blueprint("courses", __name__, url_prefix="/courses")
 #
 
 @course.route("", methods=["GET"])
-def getCourses(levels=[], subjects=[], faculties=[]):
+def getCourses(search="", levels=[], subjects=[], faculties=[], repeat=None, nogpa=None):
+	# Parse search
+	if not search:
+		search = request.args.get("search", default="", type=str)
+	search = search.strip().lower()
+
 	# Parse levels
 	try:
 		if not levels: # levels not passed as function argument
@@ -58,6 +63,20 @@ def getCourses(levels=[], subjects=[], faculties=[]):
 					return {"error": f"Invalid faculty {f}"}, 400
 	except:
 		return {"error": "Could not parse faculties, invalid format"}, 400
+	
+	# Parse repeat
+	if repeat == None:
+		repeat = request.args.get("repeat", default="false", type=str).lower()
+	if type(repeat) != bool and repeat not in ["true", "1", "false", "0"]:
+		return {"error": f"'{repeat}' is not a valid value for repeat (boolean)"}, 400
+	repeat = repeat in [True, "true", "1"]
+
+	# Parse nogpa
+	if nogpa == None:
+		nogpa = request.args.get("nogpa", default="false", type=str).lower()
+	if type(nogpa) != bool and nogpa not in ["true", "1", "false", "0"]:
+		return {"error": f"'{nogpa}' is not a valid value for nogpa (boolean)"}, 400
+	nogpa = nogpa in [True, "true", "1"]
 
 	# Convert levels list into a list of tuples where each tuple is a range of levels
 	levelsFilter = []
@@ -76,7 +95,10 @@ def getCourses(levels=[], subjects=[], faculties=[]):
 	# Filters tuple to check that the course is in the selected levels and subjects
 	filters = (
 		or_(and_(Course.number >= l[0] * 100, Course.number < l[1] * 100) for l in levelsFilter),
-		Course.subject_id.in_(subjectsFilter)
+		Course.subject_id.in_(subjectsFilter),
+		Course.repeat == repeat,
+		Course.nogpa == nogpa,
+		Course.name.ilike(f"%{search}%")
 	)
 
 	# Serializer function to convert a Course object into a JSON-serializable dictionary
