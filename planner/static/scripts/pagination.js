@@ -12,7 +12,7 @@ class Page {
 		} else {
 			$("#pageNav .pageEllipsis").hide()
 			for (let p = this.total; p > 0; p--) {
-				$("#pageNav ul li:eq(0)").after(`
+				$("#pageNav .page-prev").after(`
 					<li class="pageSelector page-item ` + ((p == this.current) ? `active` : ``) + `"
 					onclick="page.switch(` + ((p == this.current) ? -1 : p) + `)" style="cursor: pointer;">
 						<a class="page-link">` + p +`</a>
@@ -21,8 +21,19 @@ class Page {
 			}
 		}
 
-		$("#numPage").text(this.current)
-		$("#numPages").text(this.total)
+		if (this.current == 1)
+			$("#pageNav .page-prev").addClass("disabled")
+		else
+			$("#pageNav .page-prev").removeClass("disabled")
+		
+		if (this.current == this.total)
+			$("#pageNav .page-next").addClass("disabled")
+		else
+			$("#pageNav .page-next").removeClass("disabled")
+
+
+		$(".num-page").text(this.current)
+		$(".num-pages").text(this.total)
 	}
 
 	switch(_page) {
