@@ -1,9 +1,11 @@
+from planner.models import User, Faculty
+
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, BooleanField, PasswordField, SelectField, SelectMultipleField, SubmitField
+
+from wtforms import StringField, TextAreaField, IntegerField, BooleanField, PasswordField, SelectField, SelectMultipleField, SubmitField
 #from wtforms.fields.html5 import IntegerRangeField
 #from wtforms.widgets.html5 import NumberInput
 from wtforms.validators import ValidationError, DataRequired, Email, NumberRange, Length
-from planner.models import User, Faculty
 
 from datetime import date
 
@@ -39,6 +41,7 @@ class loginForm(FlaskForm):
 	remember = BooleanField("Remember password")
 	submit = SubmitField("Log In")
 
+
 class registerForm(FlaskForm):
 	uname = StringField("Username", validators=[DataRequired(), unameValidation])
 	name = StringField("Name", validators=[nameValidation])
@@ -46,3 +49,9 @@ class registerForm(FlaskForm):
 	passw = PasswordField("Password", validators=[DataRequired(), passwValidation])
 	fac = SelectField("Faculty", choices=[(f.id, f.name) for f in Faculty.query.all()], validators=[DataRequired()])
 	submit = SubmitField("Create account")
+
+
+class contactForm(FlaskForm):
+	email = StringField("Email", validators=[DataRequired(), Email()])
+	message = TextAreaField("Message", validators=[DataRequired()])
+	submit = SubmitField("Send")
