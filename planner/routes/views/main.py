@@ -4,7 +4,8 @@ from planner.forms import contactForm
 from planner.routes.views import view
 from planner.utils import sendMessage
 
-from flask import render_template, flash
+from flask import render_template, flash, redirect
+from flask.helpers import url_for
 from flask_login import current_user
 from flask_mail import Message
 
@@ -53,6 +54,7 @@ def contact():
 			flash("An error occured while sending the message.", "danger")
 		else:
 			flash("Message received!", "success")
+		return redirect(url_for("view.contact"))
 
 	return render_template("contact.html",
 		title = "Contact",

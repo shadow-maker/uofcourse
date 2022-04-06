@@ -10,4 +10,4 @@ def sendMessage(recipients, subject, body):
 		recipients = recipients,
 		body = body
 	)
-	print(mail.send(msg))
+	mail.send(msg)
