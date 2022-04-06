@@ -1,10 +1,9 @@
-from planner import queryUtils as utils
 from planner.constants import *
 
 from flask import request
 
 def getById(table, id):
-	obj = utils.getById(table, id)
+	obj = table.query.get(id)
 	if not obj:
 		return {"error": f"{table.__name__} with id {id} does not exist"}, 404
 	return dict(obj), 200

@@ -53,7 +53,7 @@ def getSubjectById(id):
 
 @subject.route("/<id>/courses", methods=["GET"])
 def getSubjectCourses(id):
-	if not utils.getById(Subject, id):
+	if not Subject.query.get(id):
 		return {"error": f"Subject with id {id} does not exist"}, 404
 	return getCourses(subjects=[int(id)])
 

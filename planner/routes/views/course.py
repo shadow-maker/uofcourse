@@ -1,9 +1,8 @@
 from flask_login import current_user
 from planner import db
 from planner.models import Faculty, Subject, Course
-from planner.queryUtils import *
+from planner.queryUtils import getSubjectByCode
 from planner.constants import *
-from planner.routes.api import subjects
 
 from planner.routes.views import view
 
@@ -15,7 +14,7 @@ import random
 
 @view.route("/f/<facId>")
 def faculty(facId):
-	faculty = getById(Faculty, facId)
+	faculty = Faculty.query.get(facId)
 	if not faculty:
 		flash(f"Faculty with id {facId} does not exist!", "danger")
 		return redirect(url_for("view.home"))
@@ -87,7 +86,7 @@ def course(subjectCode, courseNumber):
 
 @view.route("/c/id/<courseId>")
 def courseById(courseId):
-	course = getById(Course, courseId)
+	course = Course.query.get(courseId)
 	if not course:
 		flash(f"Course with id {courseId} does not exist!", "danger")
 		return redirect(url_for("view.home"))
@@ -112,7 +111,7 @@ def courseBrowser():
 			flash(f"Subject with code {selSubject} does not exist!", "danger")
 			return redirect(url_for("view.home"))
 	if selFaculty:
-		if not getById(Faculty, selFaculty):
+		if not Faculty.query.get(selFaculty):
 			flash(f"Faculty with id {selFaculty} does not exist!", "danger")
 			return redirect(url_for("view.home"))
 

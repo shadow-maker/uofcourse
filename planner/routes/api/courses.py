@@ -1,10 +1,11 @@
 from planner import db
+from planner import queryUtils as utils
 from planner.models import Course, Subject, Faculty
 from planner.routes.api.utils import *
 
 from flask import Blueprint, request
 from flask_login import current_user
-from sqlalchemy import func, and_, or_
+from sqlalchemy import and_, or_
 
 course = Blueprint("courses", __name__, url_prefix="/courses")
 
@@ -42,7 +43,7 @@ def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, nogpa
 		else: # check if subjects are valid
 			for i, s in enumerate(subjects):
 				if s.isdigit():
-					if not utils.getById(Subject, s):
+					if not Subject.query.get(s):
 						return {"error": f"Invalid subject {s}"}, 400
 				elif utils.getSubjectByCode(s).first():
 					subjects[i] = utils.getSubjectByCode(s).id
@@ -59,7 +60,7 @@ def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, nogpa
 			faculties = [f[0] for f in list(db.session.query(Faculty).with_entities(Faculty.id))]
 		else: # check if faculties are valid
 			for f in faculties:
-				if not utils.getById(Faculty, f):
+				if not Faculty.query.get(f):
 					return {"error": f"Invalid faculty {f}"}, 400
 	except:
 		return {"error": "Could not parse faculties, invalid format"}, 400

@@ -1,5 +1,4 @@
-from planner.models import Faculty, Subject
-from planner import queryUtils as utils
+from planner.models import Faculty
 from planner.routes.api.utils import *
 from planner.routes.api.subjects import getSubjects
 from planner.routes.api.courses import getCourses
@@ -35,13 +34,13 @@ def getFacultyById(id):
 
 @faculty.route("/<id>/subjects", methods=["GET"])
 def getFacultySubjects(id):
-	if not utils.getById(Faculty, id):
+	if not Faculty.query.get(id):
 		return {"error": f"Faculty with id {id} does not exist"}, 404
 	return getSubjects(faculties=[int(id)])
 
 
 @faculty.route("/<id>/courses", methods=["GET"])
 def getFacultyCourses(id):
-	if not utils.getById(Faculty, id):
+	if not Faculty.query.get(id):
 		return {"error": f"Faculty with id {id} does not exist"}, 404
 	return getCourses(faculties=[int(id)])

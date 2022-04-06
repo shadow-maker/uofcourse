@@ -1,9 +1,6 @@
 from planner import utcoffset
 from planner.models import Term, Faculty, Subject, Course, User
 
-def getById(table, id):
-	return table.query.filter_by(id=id).first()
-
 def getAllTerms(asc=True):
 	results = Term.query.order_by(Term.year.asc, Term.season_id.asc).all()
 	if not asc:
