@@ -14,11 +14,11 @@ course = Blueprint("courses", __name__, url_prefix="/courses")
 #
 
 @course.route("", methods=["GET"])
-def getCourses(search="", levels=[], subjects=[], faculties=[], repeat=None, nogpa=None):
-	# Parse search
-	if not search:
-		search = request.args.get("search", default="", type=str)
-	search = search.strip().lower()
+def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, nogpa=None):
+	# Parse name search query
+	if not name:
+		name = request.args.get("name", default="", type=str)
+	name = name.strip().lower()
 
 	# Parse levels
 	try:
@@ -92,13 +92,13 @@ def getCourses(search="", levels=[], subjects=[], faculties=[], repeat=None, nog
 		if Subject.query.filter(Subject.id == s, Subject.faculty_id.in_(faculties)).first():
 			subjectsFilter.append(s)
 	
-	# Filters tuple to check that the course is in the selected levels and subjects
+	# Filters tuple
 	filters = (
 		or_(and_(Course.number >= l[0] * 100, Course.number < l[1] * 100) for l in levelsFilter),
 		Course.subject_id.in_(subjectsFilter),
 		Course.repeat == repeat,
 		Course.nogpa == nogpa,
-		Course.name.ilike(f"%{search}%")
+		Course.name.ilike(f"%{name}%")
 	)
 
 	# Serializer function to convert a Course object into a JSON-serializable dictionary

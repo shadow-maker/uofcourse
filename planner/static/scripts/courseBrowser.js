@@ -39,7 +39,7 @@ function requestResults(suc, ignorePrev=false) {
 	var data = {
 		sort: sortOptions[$("#sortBy").val()].value,
 		asc: $("#orderBy").val(),
-		search: $("#searchCourses").val(),
+		name: $("#searchCourses").val(),
 		levels: selectedLevel,
 		faculties: selectedFaculty,
 		subjects: selectedSubject,

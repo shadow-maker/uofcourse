@@ -16,8 +16,16 @@ faculty = Blueprint("faculties", __name__, url_prefix="/faculties")
 #
 
 @faculty.route("", methods=["GET"])
-def getFaculties():
-	return getAll(Faculty)
+def getFaculties(name=""):
+	# Parse name search query
+	if not name:
+		name = request.args.get("name", default="", type=str)
+	name = name.strip().lower()
+	
+	# Filters tuple to check that the name query is included in the the selected faculties' name
+	filters = (Faculty.name.ilike(f"%{name}%"),)
+	
+	return getAll(Faculty, filters)
 
 
 @faculty.route("/<id>", methods=["GET"])
