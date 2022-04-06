@@ -1,5 +1,5 @@
 from planner import db
-from planner import queryUtils as utils
+from planner.models import utils as utils
 from planner.models import Course, Subject, Faculty
 from planner.routes.api.utils import *
 

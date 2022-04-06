@@ -1,6 +1,6 @@
 from planner import db
 from planner.models import Season, Grade, CourseCollection
-from planner.queryUtils import *
+from planner.models.utils import getAllYears
 from planner.constants import *
 
 from planner.routes.views import view

@@ -4,7 +4,6 @@
 
 from planner import db
 from planner.models import Course, User, UserTag
-from planner.queryUtils import *
 from planner.constants import *
 
 from planner.routes.api.utils import *

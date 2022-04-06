@@ -4,7 +4,6 @@ from wtforms import StringField, IntegerField, BooleanField, PasswordField, Sele
 #from wtforms.widgets.html5 import NumberInput
 from wtforms.validators import ValidationError, DataRequired, Email, NumberRange, Length
 from planner.models import User, Faculty
-from planner.queryUtils import *
 
 from datetime import date
 

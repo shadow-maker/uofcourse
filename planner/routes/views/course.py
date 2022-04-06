@@ -1,7 +1,7 @@
 from flask_login import current_user
 from planner import db
 from planner.models import Faculty, Subject, Course
-from planner.queryUtils import getSubjectByCode
+from planner.models.utils import getSubjectByCode
 from planner.constants import *
 
 from planner.routes.views import view
