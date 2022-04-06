@@ -1,9 +1,10 @@
-from planner.config import DatabaseConfig, Config
+from planner.config import DatabaseConfig, MailConfig, Config
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
+from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_alchemydumps import AlchemyDumps
 
@@ -16,15 +17,19 @@ import json
 
 app = Flask(__name__)
 
-#
-# Init db
-#
-
 dbConfig = DatabaseConfig()
-config = Config(dbConfig)
-app.config.from_object(Config)
+mailConfig = MailConfig()
+config = Config(dbConfig, mailConfig)
+
+app.config.from_object(config)
+
+#
+# Init extra objects
+#
 
 db = SQLAlchemy(app)
+
+mail = Mail(app)
 
 migrate = Migrate(app, db)
 
