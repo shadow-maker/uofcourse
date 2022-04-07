@@ -42,11 +42,11 @@ def subject(subjectCode):
 		return redirect(url_for("view.home"))
 	faculty = subject.faculty
 	return render_template("subject.html",
-		title=subjectCode.upper(),
+		title = subjectCode.upper(),
 		description = f"Subject info for {subject.code} : {subject.name}",
-		subject=subject,
-		faculty=faculty,
-		lenCourses=len(subject.courses)
+		subject = subject,
+		faculty = faculty,
+		lenCourses = len(subject.courses)
 	)
 
 
@@ -73,11 +73,11 @@ def course(subjectCode, courseNumber):
 	userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else []
 	collections = current_user.collections if current_user.is_authenticated else []
 	return render_template("course.html",
-		title=f"{course.code}",
+		title = f"{course.code}",
 		description = f"Course info for {course.code} : {course.name}",
-		course=course,
-		subject=subject,
-		faculty=subject.faculty,
+		course = course,
+		subject = subject,
+		faculty = subject.faculty,
 		userCourses = userCourses,
 		collections = collections,
 		hasCourse = lambda collection : bool(sum([uc.course_collection_id == collection.id for uc in userCourses]))
