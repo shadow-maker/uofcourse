@@ -136,8 +136,8 @@ def courseBrowser():
 		description = "Course browser : Filter and sort through UofC's full catalogue of courses",
 		sortOpt = 0,
 		sortOptions = [
-			{"label": "Number", "value": ["number", "name"]},
-			{"label": "Name", "value": ["name", "number"]},
+			{"label": "Number", "value": ["number", "subject_id", "name"]},
+			{"label": "Name", "value": ["name", "number", "subject_id"]},
 		],
 		collections = current_user.collections if current_user.is_authenticated else [],
 		filterData = {
