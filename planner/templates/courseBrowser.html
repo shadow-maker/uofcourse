@@ -81,7 +81,7 @@
 <div class="row justify-content-between">
 	<!--LEFT: sort and filter options form-->
 	<div class="container col-12 col-sm-5 col-lg-4 col-xl-3 m-0 p-0 pe-3 pe-md-3 ps-3 ps-sm-0">
-		<div class="sticky-top sticky-offset h-100">
+		<div class="sticky-top sticky-offset">
 			<form id="formFilterCourses" name="formFilterCourses" method="POST">
 				<!--Search-->
 				<div class="card mb-2 bg-light">
@@ -90,30 +90,6 @@
 						<input class="form-control form-control-sm" type="search" name="search" placeholder="Type something...." id="searchCourses">
 					</div>
 				</div>
-
-				<!--Sort-->
-				<!--
-				<div class="card mb-2 bg-light">
-					<div class="card-body">
-						<h5 class="card-title">Sort results</h5>
-						<div class="input-group">
-							<select id="sortBy" name="sortBy" class="form-select form-select-sm"
-								aria-label="Sort options">
-								{% for option in sortOptions %}
-									<option value="{{loop.index0}}" {% if loop.index0 == 0 %}selected{% endif %}>
-										{{option.label}}
-									</option>
-								{% endfor %}
-							</select>
-							<select id="orderBy" name="orderBy" class="form-select form-select-sm"
-								aria-label="Sort options">
-								<option value="1" selected>Ascending</option>
-								<option value="0">Descending</option>
-							</select>
-						</div>
-					</div>
-				</div>
-				-->
 
 				<!--Filter-->
 				<div class="card bg-light">
