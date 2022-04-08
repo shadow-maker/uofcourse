@@ -9,6 +9,8 @@ DEF_DESCRIPTION = "UofCourse is a web application that helps students in their p
 
 UNI_BASE_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
 
+REDDIT_URL = "https://www.reddit.com/r/UCalgary/"
+
 GANALYTICS_ID = getenv("GANALYTICS_ID")
 
 CURRENT_VERSION = "0.2.1"

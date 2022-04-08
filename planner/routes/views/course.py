@@ -2,8 +2,7 @@ from flask_login import current_user
 from planner import db
 from planner.models import Faculty, Subject, Course
 from planner.models.utils import getSubjectByCode
-from planner.constants import *
-
+from planner.constants import COURSE_LEVELS, REDDIT_URL
 from planner.routes.views import view
 
 from flask import render_template, flash, redirect, request
@@ -78,6 +77,7 @@ def course(subjectCode, courseNumber):
 		course = course,
 		subject = subject,
 		faculty = subject.faculty,
+		redditSearch = REDDIT_URL + "search/?q=" + course.code.replace("-", "%20"),
 		userCourses = userCourses,
 		collections = collections,
 		hasCourse = lambda collection : bool(sum([uc.course_collection_id == collection.id for uc in userCourses]))
