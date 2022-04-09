@@ -35,14 +35,14 @@ def passwValidation(form, field):
 # Forms
 #
 
-class loginForm(FlaskForm):
+class formLogin(FlaskForm):
 	uname = StringField("Username", validators=[unameValidation])
 	passw = PasswordField("Password", validators=[DataRequired()])
 	remember = BooleanField("Remember password")
 	submit = SubmitField("Log In")
 
 
-class registerForm(FlaskForm):
+class formSignup(FlaskForm):
 	uname = StringField("Username", validators=[DataRequired(), unameValidation])
 	name = StringField("Name", validators=[nameValidation])
 	email = StringField("Email", validators=[DataRequired(), Email()])
@@ -51,7 +51,7 @@ class registerForm(FlaskForm):
 	submit = SubmitField("Create account")
 
 
-class contactForm(FlaskForm):
+class formContact(FlaskForm):
 	email = StringField("Email", validators=[DataRequired(), Email()])
 	message = TextAreaField("Message", validators=[DataRequired()])
 	submit = SubmitField("Send")

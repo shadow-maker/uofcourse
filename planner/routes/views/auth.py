@@ -1,5 +1,6 @@
 from planner import db, loginManager
-from planner.forms import *
+from planner.models import User
+from planner.forms import formLogin, formSignup
 from planner.constants import ALLOW_ACCOUNT_CREATION
 
 from planner.routes.views import view
@@ -28,7 +29,7 @@ def signup():
 		flash(f"Account creation is currently disabled!", "warning")
 		return redirect(url_for("view.home"))
 
-	form = registerForm()
+	form = formSignup()
 	if form.validate_on_submit():
 		if User.query.filter_by(username=form.uname.data).first():
 			flash(f"User with Username {form.uname.data} already exist. Please sign in.", "danger")
@@ -51,7 +52,7 @@ def login():
 	if current_user.is_authenticated:
 		flash(f"You are already authenticated!", "success")
 		return redirect(url_for("view.home"))
-	form = loginForm()
+	form = formLogin()
 	if form.validate_on_submit():
 		user = User.query.filter_by(username=form.uname.data).first()
 		if user:
