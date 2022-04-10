@@ -80,11 +80,11 @@
 
 <div class="row justify-content-between">
 	<!--LEFT: sort and filter options form-->
-	<div class="container col-12 col-sm-5 col-lg-4 col-xl-3 m-0 p-0 pe-3 pe-md-3 ps-3 ps-sm-0">
-		<div class="sticky-top sticky-offset">
+	<div class="container col-12 col-sm-5 col-lg-4 col-xl-3 m-0 pe-3 pe-md-3 ps-3 ps-sm-0 pt-0 pb-3">
+		<div class="sticky-top sticky-offset ">
 			<form id="formFilterCourses" name="formFilterCourses" method="POST">
 				<!--Search-->
-				<div class="card mb-2 bg-light">
+				<div class="card bg-light mb-2">
 					<div class="card-body">
 						<h5 class="card-title">Search courses</h5>
 						<input class="form-control form-control-sm" type="search" name="search" placeholder="Type something...." id="searchCourses">
@@ -201,8 +201,8 @@
 					</div>
 				</div>
 			</form>
-			<p class="mt-2 text-center text-secondary">
-				<span class="loaded d-none d-lg-inline"><span class="num-total">...</span> results found</span>
+			<p class="my-2 text-center text-secondary d-none d-lg-block">
+				<span class="loaded"><span class="num-total">...</span> results found</span>
 				<span class="loading">Loading...</span>
 			</p>
 		</div>
@@ -211,7 +211,7 @@
 	<!--RIGHT: Courses list and page navigation-->
 	<div class="container col-12 col-sm-7 col-lg-8 col-xl-9 m-0 p-0 px-3 px-md-4 px-lg-5">
 		<!--Sort options-->
-		<div class="row mb-3 justify-content-between">
+		<div class="row mb-2 mb-lg-3 justify-content-between">
 			<div class="col-12 col-lg-6 col-xl-5 pe-lg-0">
 				<div id="sortSelector" class="input-group input-group-sm">	
 					<span class="input-group-text bg-light" title="Sort by">
@@ -235,6 +235,7 @@
 			<div class="col-12 col-lg-6 col-xl-7 ps-lg-4 pt-1 d-flex justify-content-between">
 				<p class="text-secondary m-0">
 					<span class="loaded d-lg-none"><span class="num-total">...</span> results found</span>
+					<span class="loading d-lg-none">Loading...</span>
 				</p>
 				<p class="text-secondary m-0">
 					Page <span class="num-page">1</span> / <span class="num-pages">1</span>
