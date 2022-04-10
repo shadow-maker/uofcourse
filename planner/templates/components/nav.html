@@ -38,7 +38,7 @@
 
 			<ul class="navbar-nav text-center">
 				{% if current_user.is_authenticated %}
-					{% if current_user.role_id == 3 %}
+					{% if current_user.role == ROLE_ADMIN %}
 					<li>
 						<a class="nav-link {% if request.path == url_for('admin.index') %}active{% endif %}" href="{{url_for('admin.index')}}">
 							Admin
