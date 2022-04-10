@@ -2,22 +2,104 @@
 
 {% block content %}
 
-<h2>{{user["name"]}}</h2>
-<h3>Username: <span>{{user["username"]}}</span></h3>
+<h2>
+	<span class="align-middle">
+		{{user["name"]}}
+	</span>
+	<span class="h6 m-0 align-middle" title="User role">
+		{% if user.role == Role.moderator%}
+		<span class="badge rounded-pill border border-2 border-info text-info">
+			MODERATOR
+		</span>
+		{% elif user.role == Role.admin%}
+		<span class="badge rounded-pill border border-2 border-success text-success">
+			ADMIN
+		</span>
+		{% endif %}
+	</span>
+</h2>
 
-<h4>Email: <span>{{user["email"]}}</span></h4>
+<div class="row">
+	<div class="col-12 col-md-6 col-lg-8 fs-5">
+		<div title="Username">
+			<i class="bi-person-circle"></i>
+			<span class="">{{user.username}}</span>
+		</div>
+		<div title="User email">
+			<i class="bi-envelope"></i>
+			<span>{{user.email}}</span>
+		</div>
+		<div title="User faculty">
+			<i class="bi-building"></i>
+			<a href="{{user.faculty.url}}" class="text-body">{{user.faculty.name}}</a>
+			<i class="fs-6 bi-box-arrow-up-right"></i>
+		</div>
+	</div>
+	<div class="col-12 col-md-6 col-lg-4">
+		<div class="card-body">
+			<a type="button" class="text-danger" data-bs-toggle="modal" data-bs-target="#modalChangePassword">
+				Change Password
+			</a>
+		</div>
+	</div>
+</div>
 
+<!--Form change password-->
+<form id="formChangePassword" name="formChangePassword" method="POST">
+	{{formPassw.hidden_tag()}}
+	<div class="modal fade" id="modalChangePassword" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Change Password</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body px-5">
+					<!--Old Password-->
+					<div class="form-group mb-2">
+						{{formPassw.oldPassw.label(class="form-control-label")}}
 
+						{% if formPassw.oldPassw.errors %}
+							{{formPassw.oldPassw(class="form-control is-invalid", placeholder="")}}
+							<div class="invalid-feedback">
+								{% for error in formPassw.oldPassw.errors %}
+									<span>{{error}}</span><br>
+								{% endfor %}
+							</div>
+						{% else %}
+							{{formPassw.oldPassw(class="form-control", placeholder="")}}
+						{% endif %}
+					</div>
 
-<h4>Faculty: <span>{{user["faculty"]["name"]}}</span></h4>
-
-<form action="POST">
-	<fieldset class="form-group">
-	</fieldset>
+					<!--New Password-->
+					<div class="form-group mb-2">	
+						{{formPassw.newPassw.label(class="form-control-label")}}
+							
+						{% if formPassw.newPassw.errors %}
+							{{formPassw.newPassw(class="form-control is-invalid", placeholder="")}}
+							<div class="invalid-feedback">
+								{% for error in formPassw.newPassw.errors %}
+									<span>{{error}}</span><br>
+								{% endfor %}
+							</div>
+						{% else %}
+							{{formPassw.newPassw(class="form-control", placeholder="")}}
+						{% endif %}
+					</div>
+				</div>
+				<div class="modal-footer d-flex justify-content-around">
+					{{formPassw.submit(class="btn btn-outline-info")}}
+				</div>
+			</div>
+		</div>
+	</div>
+	{% if formPassw.errors %}
+	<script>
+		$(document).ready(() => {
+			$("#modalChangePassword").modal("show")
+		})
+	</script>
+	{% endif %}
 </form>
-
-<h4>Units needed to graduate: <span>{{user["neededUnits"]}}</span></h4>
-
-
 
 {% endblock %}

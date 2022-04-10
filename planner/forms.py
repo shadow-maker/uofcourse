@@ -28,6 +28,8 @@ def nameValidation(form, field):
 		raise ValidationError("Name must be less at most 32 characters long")
 
 def passwValidation(form, field):
+	if len(str(field.data)) < 6:
+		raise ValidationError("Password must be at least 8 characters long")
 	if len(str(field.data)) > 64:
 		raise ValidationError("Password must be at most 64 characters long")
 
@@ -49,6 +51,12 @@ class formSignup(FlaskForm):
 	passw = PasswordField("Password", validators=[DataRequired(), passwValidation])
 	fac = SelectField("Faculty", choices=[(f.id, f.name) for f in Faculty.query.all()], validators=[DataRequired()])
 	submit = SubmitField("Create account")
+
+
+class formChangePassw(FlaskForm):
+	oldPassw = PasswordField("Current password", validators=[DataRequired()])
+	newPassw = PasswordField("New password", validators=[DataRequired(), passwValidation])
+	submit = SubmitField("Save")
 
 
 class formContact(FlaskForm):
