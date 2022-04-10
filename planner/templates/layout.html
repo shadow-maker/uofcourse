@@ -42,22 +42,28 @@
 </head>
 
 <body>
+	<!--Nav bar-->
 	{% include "components/nav.html" %}
 
+	<!--Back buttons-->
 	{% include "components/back.html" %}
 
+	<!--Page header-->
 	{% if header %}
 	<div class="container mb-4 border-bottom">
 		<h1>{{header}}</h1>
 	</div>
 	{% endif %}
 
+	<!--Page content-->
 	<div class="container">
 		{% block content%}{% endblock %}
 	</div>
 
+	<!--Alerts-->
 	{% include "components/alert.html" %}
 
+	<!--Page footer-->
 	{% include "components/foot.html" %}
 
 	<!--Bootstrap-->
@@ -65,11 +71,14 @@
 		integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous">
 	</script>
 	<script>
+	$(document).ready(() => {
+		// Activate Bootstrap tooltips
 		var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 		var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 			return new bootstrap.Tooltip(tooltipTriggerEl)
 		})
 		
+		// Activate Bootstrap scrollspy
 		if ($("#scrollspy-nav").length) {
 			var scrollSpy = new bootstrap.ScrollSpy(document.body, {
 				target: "#scrollspy-nav",
@@ -102,6 +111,7 @@
 				}, 200)
 			})
 		}
+	})
 	</script>
 </body>
 
