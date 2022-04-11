@@ -8,7 +8,7 @@ from planner.routes.views import view
 from flask import render_template, flash, redirect, request
 from flask.helpers import url_for
 
-import random
+from sqlalchemy.sql import func
 
 
 @view.route("/f/<fac>")
@@ -102,7 +102,7 @@ def courseById(courseId):
 def courseRandom():
 	course = None
 	while not course:
-		course = Course.query[random.randrange(0, Course.query.count())]
+		course = Course.query.order_by(func.random()).first()
 	return redirect(url_for("view.courseById", courseId=course.id))
 
 
