@@ -1,5 +1,5 @@
 from . import TIMEOUT
-from planner.constants import UNI_BASE_URL
+from planner.constants import UNI_CAL_URL
 from planner.models import db, Faculty, Subject, Course
 
 from bs4 import BeautifulSoup
@@ -11,7 +11,7 @@ def update():
 
 	# Request page
 	try:
-		r = requests.get(UNI_BASE_URL + facURL, timeout=TIMEOUT)
+		r = requests.get(UNI_CAL_URL + facURL, timeout=TIMEOUT)
 	except:
 		sys.exit(f"FAILED REQUEST FOR FACULTIES PAGE ({facURL})")
 	
@@ -54,11 +54,11 @@ def update():
 
 			# Request Subject page
 			try:
-				r = requests.get(UNI_BASE_URL + url, timeout=TIMEOUT)
+				r = requests.get(UNI_CAL_URL + url, timeout=TIMEOUT)
 			except requests.exceptions.RequestException:
 				# In case normal page does not work, request print page
 				try:
-					r = requests.get(UNI_BASE_URL + "print_" + url, timeout=TIMEOUT)
+					r = requests.get(UNI_CAL_URL + "print_" + url, timeout=TIMEOUT)
 				except requests.exceptions.RequestException:
 					print("REQUEST FAILED")
 					continue

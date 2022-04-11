@@ -7,7 +7,7 @@ SITE_NAME = "UofCourse"
 
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
 
-UNI_BASE_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
+UNI_CAL_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
 
 REDDIT_URL = "https://www.reddit.com/r/UCalgary/"
 
