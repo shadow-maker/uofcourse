@@ -15,7 +15,7 @@ class Faculty(db.Model):
 
 	@property
 	def url(self):
-		return url_for("view.faculty", fac=self.subdomain)
+		return url_for("view.faculty", fac=(self.subdomain if self.subdomain else self.id))
 	
 	@property
 	def url_uni(self):
