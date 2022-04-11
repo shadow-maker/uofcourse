@@ -11,12 +11,17 @@ from flask.helpers import url_for
 import random
 
 
-@view.route("/f/<facId>")
-def faculty(facId):
-	faculty = Faculty.query.get(facId)
+@view.route("/f/<fac>")
+def faculty(fac):
+	faculty = Faculty.query.filter_by(subdomain=fac).first()
 	if not faculty:
-		flash(f"Faculty with id {facId} does not exist!", "danger")
-		return redirect(url_for("view.home"))
+		faculty = Faculty.query.get(fac)
+		if faculty:
+			if faculty.subdomain:
+				return redirect(url_for("view.faculty", fac=faculty.subdomain))
+		else:
+			flash(f"Faculty with id {fac} does not exist!", "danger")
+			return redirect(url_for("view.home"))
 	return render_template("faculty.html",
 		title = "Faculty",
 		description = f"Faculty info for {faculty.name}",
