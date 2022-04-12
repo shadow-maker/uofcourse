@@ -69,23 +69,40 @@
 		</div>
 	</div>
 
-	<!--Links-->
+	<!--Side bar-->
 	<div class="order-1 order-lg-2 col-12 col-lg-5 col-xxl-4 pt-2">
-		<div class="sticky-top sticky-offset card bg-light mt-0 mb-4 mx-0 mx-md-4 mx-lg-0 mx-xl-4">
-			<div class="card-body">
-				<div class="mb-3">
-					<div class="h5">{{lenCourses}} Courses in this faculty</div>
-
-					<div class="container">
-						<div>
-							<a href="{{url_for('view.courseBrowser', faculty=faculty.id)}}" class="h6 text-body">View courses in Course Browser</a>
-							<i class="h6 bi bi-box-arrow-up-right"></i>
+		<div class="sticky-top sticky-offset row p-0 mb-4 mx-0 mx-md-4 mx-lg-0 mx-xl-4">
+			<!--Stats-->
+			<div class="col-12 col-md-6 col-lg-12 px-0 pe-md-2 pe-lg-0">
+				<div class="card bg-light mt-0 mb-2">
+					<div class="card-body">
+						<div class="fs-5">
+							{% for col, amount in len.items() %}
+							<div class="row ps-0 pe-3 pe-md-2 pe-lg-0">
+								<div class="col-2 col-md-3 col-lg-2 p-0 pe-2 fw-bold text-end">{{amount}}</div>
+								<div class="col px-0">{{col | capitalize}} in this faculty</div>
+							</div>
+							{% endfor %}
 						</div>
-					</div>					
+					</div>
 				</div>
+			</div>
 
-				<div class="">
-					<div class="h5">{{lenSubjects}} Subjects in this faculty</div>
+			<!--Links-->
+			<div class="col-12 col-md-6 col-lg-12 px-0 ps-md-2 ps-lg-0">
+				<div class="card bg-light mt-0 mb-2">
+					<div class="card-body">
+						<div>
+							<a href="{{url_for('view.courseBrowser', faculty=faculty.id)}}" class="text-body">View courses in Course Browser</a>
+							<i class="bi bi-box-arrow-up-right"></i>
+						</div>
+						{% if faculty.url_uni %}
+						<div>
+							<a href="{{faculty.url_uni}}" class="text-body" target="_blank" rel="noopener noreferrer">Go to official faculty site</a>
+							<i class="bi bi-box-arrow-up-right"></i>
+						</div>
+						{% endif %}
+					</div>
 				</div>
 			</div>
 		</div>

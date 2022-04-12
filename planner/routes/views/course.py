@@ -26,8 +26,11 @@ def faculty(fac):
 		title = "Faculty",
 		description = f"Faculty info for {faculty.name}",
 		faculty = faculty,
-		lenSubjects=len(faculty.subjects),
-		lenCourses = sum([len(s.courses) for s in faculty.subjects]),
+		len = {
+			"subjects": len(faculty.subjects),
+			"courses": sum([len(s.courses) for s in faculty.subjects]),
+			"users": len(faculty.users)
+		},
 		subjects = [{
 			"id": s.id,
 			"emoji": s.getEmoji(),
