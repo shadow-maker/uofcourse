@@ -33,3 +33,5 @@ class Faculty(db.Model):
 		yield "id", self.id
 		yield "name", self.name
 		yield "emoji", self.emoji
+		yield "url", self.url
+		yield "url_uni", self.url_uni
