@@ -105,7 +105,6 @@ def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, nogpa
 	# Serializer function to convert a Course object into a JSON-serializable dictionary
 	def serializer(course):
 		data = dict(course)
-		data["emoji"] = course.getEmoji()
 		if current_user.is_authenticated:
 			data["tags"] = [tag.id for tag in course.userTags if tag.user_id == current_user.id]
 			data["collections"] = [dict(uc.collection) for uc in course.getUserCourses(current_user.id)]

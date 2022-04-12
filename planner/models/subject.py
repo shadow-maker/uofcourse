@@ -25,7 +25,7 @@ class Subject(db.Model):
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
 			return self.emoji
-		return self.faculty.getEmoji(default)
+		return default
 	
 	def __init__(self, faculty_id, code, name, site=""):
 		self.faculty_id = faculty_id

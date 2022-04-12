@@ -8,7 +8,6 @@ class Faculty(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(64))
 	subdomain = db.Column(db.String(16))
-	emoji = db.Column(db.Integer, nullable=True, unique=False)
 
 	users = db.relationship("User", backref="faculty")
 	subjects = db.relationship("Subject", backref="faculty")
@@ -21,17 +20,11 @@ class Faculty(db.Model):
 	def url_uni(self):
 		return UNI_URL.replace("www", self.subdomain) if self.subdomain else None
 
-	def getEmoji(self, default=DEFAULT_EMOJI):
-		if self.emoji:
-			return self.emoji
-		return default
-
 	def __repr__(self):
 		return f"FACULTY {self.name} (#{self.id})"
 
 	def __iter__(self):
 		yield "id", self.id
 		yield "name", self.name
-		yield "emoji", self.emoji
 		yield "url", self.url
 		yield "url_uni", self.url_uni

@@ -9,7 +9,6 @@ class Course(db.Model):
 	subject_id = db.Column(db.Integer, db.ForeignKey("subject.id"), nullable=False)
 	number = db.Column(db.Integer, nullable=False, unique=False)
 	name = db.Column(db.String(256))
-	emoji = db.Column(db.Integer, nullable=True, unique=False)
 	units = db.Column(db.Numeric(4, 2))
 	desc = db.Column(db.Text)
 	prereqs = db.Column(db.Text)
@@ -45,6 +44,10 @@ class Course(db.Model):
 		if self.emoji:
 			return self.emoji
 		return self.subject.getEmoji(default)
+	
+	@property
+	def emoji(self):
+		return self.subject.getEmoji()
 	
 	def getTags(self, userId):
 		return [tag for tag in self.userTags if tag.user_id == userId]

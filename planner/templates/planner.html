@@ -34,7 +34,7 @@
 							db-code="{{course.code}}" draggable="true" href="{{course.url}}">
 							<div class="row">
 								<span class="col-3 h5 p-0 m-0">
-									&#{{course.getEmoji()}}
+									&#{{course.emoji}}
 								</span>
 								<span id="code" class="col-6 font-monospace">
 									{{course.code}}
@@ -85,7 +85,7 @@
 						db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{uCourse.course.code}}" draggable="true"
 						data-bs-toggle="modal" data-bs-target="#modalEditUserCourse">
 						<div class="row">
-							<span class="col-3 h5 p-0 m-0">&#{{uCourse.course.getEmoji()}}</span>
+							<span class="col-3 h5 p-0 m-0">&#{{uCourse.course.emoji}}</span>
 							<span id="code"
 								class="col-6 font-monospace">{{uCourse.course.code}}</span>
 							<span class="col-3 font-monospace text-start" title="{{uCourse.grade.gpv}} GPV">
