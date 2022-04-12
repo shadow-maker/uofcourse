@@ -22,6 +22,7 @@ constants = {
 	"DEBUG" : app.debug,
 	"GANALYTICS_ID" : GANALYTICS_ID,
 	"COLORS" : COLORS_DARK,
+	"DEFAULT_EMOJI" : DEFAULT_EMOJI,
 	"ROLE_ADMIN": Role.admin
 }
 

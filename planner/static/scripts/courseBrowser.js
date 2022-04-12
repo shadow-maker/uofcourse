@@ -170,7 +170,7 @@ function updateResults(data) {
 		courseItem.attr("db-id", course.id)
 
 		courseItem.find(".course-link").attr("href", course.url)
-		courseItem.find(".course-emoji").html("&#" + course.emoji)
+		courseItem.find(".course-emoji").html("&#" + (course.emoji ? course.emoji : DEFAULT_EMOJI))
 		courseItem.find(".course-code").html(course.code)
 		courseItem.find(".course-name").html(course.name)
 

@@ -9,13 +9,13 @@ class Course(db.Model):
 	subject_id = db.Column(db.Integer, db.ForeignKey("subject.id"), nullable=False)
 	number = db.Column(db.Integer, nullable=False, unique=False)
 	name = db.Column(db.String(256))
+	aka = db.Column(db.Text)
 	units = db.Column(db.Numeric(4, 2))
 	desc = db.Column(db.Text)
 	prereqs = db.Column(db.Text)
 	coreqs = db.Column(db.Text)
 	antireqs = db.Column(db.Text)
 	notes = db.Column(db.Text)
-	aka = db.Column(db.Text)
 	repeat = db.Column(db.Boolean, nullable=False, default=False)
 	nogpa = db.Column(db.Boolean, nullable=False, default=False)
 	subsite = db.Column(db.String(32))
@@ -71,14 +71,14 @@ class Course(db.Model):
 		yield "level", self.level
 		yield "code", self.code
 		yield "name", self.name
-		yield "emoji", self.emoji
+		yield "aka", self.aka
+		yield "emoji", self.subject.emoji
 		yield "units", self.units
 		yield "desc", self.desc
 		yield "prereqs", self.prereqs
 		yield "coreqs", self.coreqs
 		yield "antireqs", self.antireqs
 		yield "notes", self.notes
-		yield "aka", self.aka
 		yield "repeat", self.repeat
 		yield "nogpa", self.nogpa
 		yield "url", self.url
