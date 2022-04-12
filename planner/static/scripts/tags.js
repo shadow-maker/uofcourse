@@ -25,17 +25,17 @@ function requestTag(method, data, suc) {
 // ONCLICK FUNCS
 
 function addTag() {
-	const color = Object.keys(colors)[Math.floor(Math.random() * Object.keys(colors).length)]
+	const color = Object.keys(COLORS)[Math.floor(Math.random() * Object.keys(COLORS).length)]
 	$("#modalEditTags .tag-items").append(`
 		<div id="tag-edit-` + tagIndex +`" class="">
 		<div class="inputs row">
 			<div class="col-11">
 				<div class="input-group">
-					<span class="tag-color-indicator input-group-text" style="color: #` + colorToHex(colors[color]) + `;">
+					<span class="tag-color-indicator input-group-text" style="color: #` + colorToHex(COLORS[color]) + `;">
 						<i class="bi-circle-fill"></i>
 					</span>
 					<select class="tag-color form-select" name="color" onchange="tagUpdateColor(` + tagIndex +`)" >
-						` + colorOptions(colors[color]) + `
+						` + colorOptions(COLORS[color]) + `
 					</select>
 					<input type="text" class="tag-name form-control w-25" name="name" placeholder="Tag name" aria-label="Tag name">
 				</div>
@@ -129,12 +129,12 @@ function colorOptions(tagColor) {
 
 	var colorFound = false
 
-	for (let color in colors) {
-		if (colors[color] == tagColor)
+	for (let color in COLORS) {
+		if (COLORS[color] == tagColor)
 			colorFound = true
 	
 		html += `
-			<option value='` + colors[color] +`' `  + (colors[color] == tagColor ? `selected` : ``) + `>
+			<option value='` + COLORS[color] +`' `  + (COLORS[color] == tagColor ? `selected` : ``) + `>
 				` + color.charAt(0).toUpperCase() + color.slice(1) +`
 			</option>
 		`
