@@ -86,7 +86,7 @@
 		if ($("#scrollspy-nav").length) {
 			var scrollSpy = new bootstrap.ScrollSpy(document.body, {
 				target: "#scrollspy-nav",
-				offset: $(navbar).height() * 1.3
+				offset: $(navbar).height() * 1.5
 			})
 
 			function collapseShow(element) {
@@ -106,13 +106,14 @@
 	
 				setTimeout(function () {
 					scrollLink = $("#scrollspy-nav .nav-link[href='" + scrollSpy._activeTarget +"']").first()
+					console.log(scrollLink.next())
 					if (scrollLink.next().hasClass("collapse"))
 						collapseShow(scrollLink.next())
 					else if (scrollLink.parent().parent().hasClass("collapse"))
 						collapseShow(scrollLink.parent().parent())
 					else
 						$("#scrollspy-nav .collapse").collapse("hide")
-				}, 200)
+				}, 210)
 			})
 		}
 	})
