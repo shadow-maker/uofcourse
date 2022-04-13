@@ -52,6 +52,7 @@ def api():
 	return render_template("api.html",
 		title = "API",
 		header = "API Documentation",
+		description = "UofCourse API Documentation - Easily get course specific data within your program.",
 		html = html
 	)
 
