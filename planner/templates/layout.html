@@ -106,7 +106,7 @@
 	
 				setTimeout(function () {
 					scrollLink = $("#scrollspy-nav .nav-link[href='" + scrollSpy._activeTarget +"']").first()
-					console.log(scrollLink.next())
+
 					if (scrollLink.next().hasClass("collapse"))
 						collapseShow(scrollLink.next())
 					else if (scrollLink.parent().parent().hasClass("collapse"))
