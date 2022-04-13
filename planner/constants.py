@@ -1,8 +1,3 @@
-from dotenv import load_dotenv
-from os import getenv
-
-load_dotenv()
-
 #
 # SITE INFO
 #
@@ -18,12 +13,6 @@ CURRENT_VERSION = "0.3"
 UNI_URL = "https://www.ucalgary.ca"
 UNI_CAL_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
 REDDIT_URL = "https://www.reddit.com/r/UCalgary/"
-
-#
-# ENV CONSTANTS
-#
-
-GANALYTICS_ID = getenv("GANALYTICS_ID")
 
 #
 # OTHER
