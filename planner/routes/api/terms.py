@@ -1,7 +1,7 @@
 from planner.models import Term
 from planner.routes.api.utils import *
 
-from flask import Blueprint, request
+from flask import Blueprint
 
 term = Blueprint("terms", __name__, url_prefix="/terms")
 

@@ -1,7 +1,7 @@
 from planner.models import Season
 from planner.routes.api.utils import *
 
-from flask import Blueprint, request
+from flask import Blueprint
 
 season = Blueprint("seasons", __name__, url_prefix="/seasons")
 

@@ -31,7 +31,7 @@ def getSubjects(name="", faculties=[]):
 			faculties = [f[0] for f in list(db.session.query(Faculty).with_entities(Faculty.id))]
 		else: # check if faculties are valid
 			for f in faculties:
-				if not Faculty.query.filter_by(id=f).first():
+				if not Faculty.query.get(f):
 					return {"error": f"Invalid faculty {f}"}, 400
 	except:
 		return {"error": "Could not parse faculties, invalid format"}, 400

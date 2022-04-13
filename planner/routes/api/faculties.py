@@ -5,8 +5,6 @@ from planner.routes.api.courses import getCourses
 
 from flask import Blueprint, request
 
-import json
-
 faculty = Blueprint("faculties", __name__, url_prefix="/faculties")
 
 

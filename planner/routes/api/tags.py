@@ -3,15 +3,12 @@
 # TODO: Add try statements to db.session.commit()
 
 from planner import db
-from planner.models import Course, User, UserTag
-from planner.constants import *
+from planner.models import Course, UserTag
 
 from planner.routes.api.utils import *
 
 from flask import Blueprint, request
 from flask_login import current_user
-
-import json
 
 tag = Blueprint("tags", __name__, url_prefix="/tags")
 
