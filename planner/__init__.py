@@ -8,6 +8,8 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_alchemydumps import AlchemyDumps
 
+from jinja2 import Environment as JinjaEnvironment
+
 import os
 import json
 
@@ -38,6 +40,8 @@ alchemydumps = AlchemyDumps(app, db)
 #
 # Init extra utils
 #
+
+jinja = JinjaEnvironment()
 
 bcrypt = Bcrypt(app)
 loginManager = LoginManager(app)
