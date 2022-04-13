@@ -7,6 +7,7 @@
 			"Support searching Course, Subject and Faculty by name in API",
 			"Filter Course by repeat and nogpa in API",
 			"New Go-To Course modal that can be activated anywhere by pressing the G key",
+			"Improved account page (/account) with support for changing the password",
 			"Support for searching Course in Reddit in Course view",
 			"Support for going to Faculty uni page in Faculty view",
 			"Added documentation page for the UofCourse API (on /api)",
