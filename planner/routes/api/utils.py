@@ -1,4 +1,5 @@
 from planner.constants import *
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 from flask import request
 
@@ -29,7 +30,7 @@ def getAll(table, filters=(), serializer=None):
 	if asc not in ["true", "1", "false", "0"]:
 		return {"error": f"'{asc}' is not a valid value for asc (boolean)"}, 400
 	if limit < 1:
-		return {"error": f"limit cannot be lower than 1 (got {limit})"}, 400
+		return {"error": f"limit of items per page cannot be lower than 1 (got {limit})"}, 400
 	if limit > MAX_ITEMS_PER_PAGE:
 		return {"error": f"limit of items per page cannot be greater than {MAX_ITEMS_PER_PAGE}"}, 400
 	if page < 1:
@@ -39,9 +40,12 @@ def getAll(table, filters=(), serializer=None):
 	sortBy = []
 	for column in sort:
 		try:
-			sortBy.append(getattr(table, column))
-		except:
+			col = getattr(table, column)
+			if type(col) != InstrumentedAttribute:
+				raise AttributeError
+		except AttributeError:
 			return {"error": f"'{column}' is not a valid column for {table.__tablename__}"}, 400
+		sortBy.append(col)
 	if table.id not in sortBy:
 		sortBy.append(table.id)
 
