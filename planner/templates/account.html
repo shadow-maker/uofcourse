@@ -20,7 +20,8 @@
 </h2>
 
 <div class="row">
-	<div class="col-12 col-md-6 col-lg-8 fs-5">
+	<!--Account info-->
+	<div class="col-12 col-md-6 col-lg-8 fs-5 mb-4">
 		<div title="Username">
 			<i class="bi-person-circle"></i>
 			<span class="">{{user.username}}</span>
@@ -35,11 +36,18 @@
 			<i class="fs-6 bi-box-arrow-up-right"></i>
 		</div>
 	</div>
+
+	<!--Security settings-->
 	<div class="col-12 col-md-6 col-lg-4">
-		<div class="card-body">
-			<a type="button" class="text-danger" data-bs-toggle="modal" data-bs-target="#modalChangePassword">
-				Change Password
-			</a>
+		<div class="card border-danger">
+			<div class="card-header h5 alert-danger border-danger">
+				Security
+			</div>
+			<div class="card-body">
+				<a type="button" class="text-danger" data-bs-toggle="modal" data-bs-target="#modalChangePassword">
+					Change Password
+				</a>
+			</div>
 		</div>
 	</div>
 </div>
