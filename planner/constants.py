@@ -35,6 +35,10 @@ MAX_ITEMS_PER_PAGE = 50
 
 COURSE_LEVELS = [1, 2, 3, 4, 5, 6, 7]
 
+IFTTT_EVENTS = {
+	"message": "uofcourse_message"
+}
+
 DEFAULT_EMOJI = 128218
 
 COLORS_DARK = {

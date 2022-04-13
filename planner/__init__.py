@@ -1,10 +1,11 @@
-from planner.config import DatabaseConfig, MailConfig, Config
+from planner.config import DatabaseConfig, Config
+from planner.constants import IFTTT_EVENTS
+from planner.ifttt import IFTTT
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_alchemydumps import AlchemyDumps
 
@@ -20,8 +21,7 @@ import json
 app = Flask(__name__)
 
 dbConfig = DatabaseConfig()
-mailConfig = MailConfig()
-config = Config(dbConfig, mailConfig)
+config = Config(dbConfig)
 
 app.config.from_object(config)
 
@@ -31,11 +31,11 @@ app.config.from_object(config)
 
 db = SQLAlchemy(app)
 
-mail = Mail(app)
-
 migrate = Migrate(app, db)
 
 alchemydumps = AlchemyDumps(app, db)
+
+ifttt = IFTTT(IFTTT_EVENTS)
 
 #
 # Init extra utils
