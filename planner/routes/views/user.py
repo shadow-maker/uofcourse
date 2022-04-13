@@ -55,8 +55,7 @@ def planner():
 		},
 		grades = Grade.query.all(),
 		seasons = Season.query.all(),
-		years = getAllYears(False),
-		colors = COLORS_DARK
+		years = getAllYears(False)
 	)
 
 
