@@ -19,8 +19,7 @@ from planner.models.grade import Grade
 # User related models
 #
 
-from planner.models.user import User
-from planner.models.role import Role
+from planner.models.user import Role, User
 from planner.models.course_tag import CourseTag
 from planner.models.user_tag import UserTag
 from planner.models.user_course import UserCourse

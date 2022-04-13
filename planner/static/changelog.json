@@ -1,4 +1,26 @@
 {
+	"0.3": {
+		"beta": true,
+		"date": "2022-04-13",
+		"changes": [
+			"Support searching Course by name and filter by repeat and nogpa in Course Browser",
+			"Support searching Course, Subject and Faculty by name in API",
+			"Filter Course by repeat and nogpa in API",
+			"New Go-To Course modal that can be activated anywhere by pressing the G key",
+			"Support for searching Course in Reddit in Course view",
+			"Support for going to Faculty uni page in Faculty view",
+			"Added documentation page for the UofCourse API (on /api)",
+			"API now uses traditional method for arrays in url parameters (without [])",
+			"Add contact form with support for contacting admins (on /contact)",
+			"Backend improvements to Users' role handling"
+		],
+		"fixes": [
+			"User Tags were not initialized on planner load",
+			"Loading indicator on course view would be visible if user not signed in",
+			"Fixed nav bar spacing",
+			"Improve getting random course (/c/random)"
+		]
+	},
 	"0.2.1": {
 		"beta": true,
 		"date": "2022-04-03",

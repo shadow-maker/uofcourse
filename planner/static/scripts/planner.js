@@ -171,3 +171,11 @@ $(document).on("click", ".collection-course-item", function() {
 		}
 	}
 })
+
+//
+// DOCUMENT READY
+//
+
+$(document).ready(() => {
+	tagsInit()
+})

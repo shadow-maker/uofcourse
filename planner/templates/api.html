@@ -2,4 +2,154 @@
 
 {% block content %}
 
+<div class="row" style="position: relative;">
+	<div class="container col-12 col-sm-5 col-lg-4 col-xl-3 mb-4 mb-sm-0 ps-0">
+		<nav id="scrollspy-nav"
+			class="navbar card navbar-light bg-light sticky-top sticky-offset flex-column align-items-stretch p-3">
+			<a class="navbar-brand">Table of contents</a>
+
+			<nav class="nav nav-pills flex-column">
+				<!--Introduction-->
+				<a class="nav-link py-1 mb-1" href="#introduction">Introduction</a>
+
+				<!--General Structure-->
+				<a class="nav-link py-1 mb-1" href="#general-structure">General Structure</a>
+				<nav class="nav nav-pills flex-column ps-3">
+					<a class="nav-link py-1 mb-1" href="#retrieve-single">Retrieve single row</a>
+					<a class="nav-link py-1 mb-1" href="#retrieve-all">Retrieve all rows</a>
+					<a class="nav-link py-1 mb-1" href="#error-handling">Error handling</a>
+				</nav>
+
+				<!--Endpoints-->
+				<a class="nav-link py-1 mb-1" href="#endpoints">Endpoints</a>
+				<nav class="nav nav-pills flex-column ps-3">
+					<!--Grades-->
+					<a class="nav-link py-1 mb-1" href="#grades">Grades</a>
+					<div class="collapse" id="gradesCollapse">
+						<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
+							<a class="nav-link py-1 mb-1" href="#grades-1">
+								<small>/grades</small>
+							</a>
+							<a class="nav-link py-1 mb-1" href="#grades-2">
+								<small>/grades/{id}</small>
+							</a>
+						</nav>
+					</div>
+
+					<!--Seasons-->
+					<a class="nav-link py-1 mb-1" href="#seasons">Seasons</a>
+					<div class="collapse" id="seasonsCollapse">
+						<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
+							<a class="nav-link py-1 mb-1" href="#seasons-1">
+								<small>/seasons</small>
+							</a>
+							<a class="nav-link py-1 mb-1" href="#seasons-2">
+								<small>/seasons/{id}</small>
+							</a>
+						</nav>
+					</div>
+
+					<!--Terms-->
+					<a class="nav-link py-1 mb-1" href="#terms">Terms</a>
+					<div class="collapse" id="termsCollapse">
+						<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
+							<a class="nav-link py-1 mb-1" href="#terms-1">
+								<small>/terms</small>
+							</a>
+							<a class="nav-link py-1 mb-1" href="#terms-2">
+								<small>/terms/{id}</small>
+							</a>
+						</nav>
+					</div>
+
+					<!--Faculties-->
+					<a class="nav-link py-1 mb-1" href="#faculties">Faculties</a>
+					<div class="collapse" id="facultiesCollapse">
+						<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
+							<a class="nav-link py-1 mb-1" href="#faculties-1">
+								<small>/faculties</small>
+							</a>
+							<a class="nav-link py-1 mb-1" href="#faculties-2">
+								<small>/faculties/{id}</small>
+							</a>
+							<a class="nav-link py-1 mb-1" href="#faculties-3">
+								<small>/faculties/{id}/subjects</small>
+							</a>
+							<a class="nav-link py-1 mb-1" href="#faculties-4">
+								<small>/faculties/{id}/courses</small>
+							</a>
+						</nav>
+					</div>
+
+					<!--Subjects-->
+					<a class="nav-link py-1 mb-1" href="#subjects">Subjects</a>
+					<div class="collapse" id="subjectsCollapse">
+						<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
+							<a class="nav-link py-1 mb-1" href="#subjects-1">
+								<small>/subjects</small>
+							</a>
+							<a class="nav-link py-1 mb-1" href="#subjects-2">
+								<small>/subjects/{id}</small>
+							</a>
+							<a class="nav-link py-1 mb-1" href="#subjects-3">
+								<small>/subjects/{id}/courses</small>
+							</a>
+							<a class="nav-link py-1 mb-1" href="#subjects-4">
+								<small>/subjects/code/{subj}</small>
+							</a>
+						</nav>
+					</div>
+
+					<!--Courses-->
+					<a class="nav-link py-1 mb-1" href="#courses">Courses</a>
+					<div class="collapse" id="coursesCollapse">
+						<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
+							<a class="nav-link py-1 mb-1" href="#courses-1">
+								<small>/courses</small>
+							</a>
+							<a class="nav-link py-1 mb-1" href="#courses-2">
+								<small>/courses/{id}</small>
+							</a>
+							<a class="nav-link py-1 mb-1" href="#courses-3">
+								<small>/courses/code/{subj}/{num}</small>
+							</a>
+						</nav>
+					</div>
+				</nav>
+			</nav>
+		</nav>
+	</div>
+
+	<div class="container col-12 col-sm-7 col-lg-8 col-xl-9 px-md-4 px-lg-5">
+		<div id="scrollspy-content" data-bs-spy="scroll" data-bs-target="#scrollspy-nav" data-bs-offset="0" tabindex="0" class="pb-5">
+			{{html | safe}}
+
+			<hr class="my-5">
+		</div>
+	</div>
+</div>
+
+
+<script>
+$(document).ready(function () {
+	$("#scrollspy-nav").find(".nav-link").each(function () {
+		$(this).removeClass("active")
+	})
+})
+
+// Copy endpoint to clipboard when clicked
+$(document).on("click", "#scrollspy-content blockquote", function () {
+	navigator.clipboard.writeText($(this).find("code").text()).then(
+		() => {alert("success", "Copied endpoint to clipboard!")},
+		() => {alert("danger", "Failed to copy endpoint to clipboard")}
+	)
+})
+
+// Add clipboard icon to endpoint
+$("#scrollspy-content blockquote").each(function () {
+	$(this).append("<i class='bi-clipboard'></i>")
+})
+
+</script>
+
 {% endblock %}

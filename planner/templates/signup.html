@@ -7,6 +7,7 @@
 		{{form.hidden_tag()}}
 
 		<fieldset class="form-group">
+			<!--Username-->
 			<div class="form-group mb-2 mb-lg-3">
 				{{form.uname.label(class="form-control-label requiered-form-label")}}
 
@@ -21,6 +22,8 @@
 					{{form.uname(class="form-control")}}
 				{% endif %}
 			</div>
+
+			<!--Name-->
 			<div class="form-group mb-2 mb-lg-3">
 				{{form.name.label(class="form-control-label")}}
 
@@ -35,6 +38,8 @@
 					{{form.name(class="form-control")}}
 				{% endif %}
 			</div>
+
+			<!--Email-->
 			<div class="form-group mb-2 mb-lg-3">
 				{{form.email.label(class="form-control-label requiered-form-label")}}
 
@@ -49,6 +54,8 @@
 					{{form.email(class="form-control")}}
 				{% endif %}
 			</div>
+
+			<!--Password-->
 			<div class="form-group mb-2 mb-lg-3">
 				{{form.passw.label(class="form-control-label requiered-form-label")}}
 
@@ -64,6 +71,8 @@
 				{% endif %}
 				<div class="form-text ms-1">Password saved securely in our servers using bcrypt hashing.</div>
 			</div>
+
+			<!--Faculty-->
 			<div class="form-group mb-2 mb-lg-3">
 				{{form.fac.label(class="form-control-label requiered-form-label")}}
 

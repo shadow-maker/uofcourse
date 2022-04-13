@@ -7,6 +7,7 @@
 		{{form.hidden_tag()}}
 
 		<fieldset class="form-group">
+			<!--Username-->
 			<div class="form-group mb-2">
 				{{form.uname.label(class="form-control-label")}}
 
@@ -21,6 +22,8 @@
 					{{form.uname(class="form-control")}}
 				{% endif %}
 			</div>
+
+			<!--Password-->
 			<div class="form-group mb-2">
 				{{form.passw.label(class="form-control-label")}}
 
@@ -35,6 +38,8 @@
 					{{form.passw(class="form-control")}}
 				{% endif %}
 			</div>
+
+			<!--Remember me-->
 			<div class="form-checked">
 				{{form.remember(class="form-checked-input")}}
 				{{form.remember.label(class="form-checked-label")}}

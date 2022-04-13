@@ -39,9 +39,12 @@ function requestResults(suc, ignorePrev=false) {
 	var data = {
 		sort: sortOptions[$("#sortBy").val()].value,
 		asc: $("#orderBy").val(),
+		name: $("#searchCourses").val(),
 		levels: selectedLevel,
 		faculties: selectedFaculty,
 		subjects: selectedSubject,
+		repeat: $("#repeat").is(":checked"),
+		nogpa: $("#nogpa").is(":checked"),
 		page: page.current
 	}
 
@@ -57,6 +60,7 @@ function requestResults(suc, ignorePrev=false) {
 		url: "/api/courses",
 		method: "GET",
 		data: data,
+		traditional: true,
 		success: (response) => {suc(response)},
 		error: (response) => {
 			$(".loading").hide()
@@ -166,7 +170,7 @@ function updateResults(data) {
 		courseItem.attr("db-id", course.id)
 
 		courseItem.find(".course-link").attr("href", course.url)
-		courseItem.find(".course-emoji").html("&#" + course.emoji)
+		courseItem.find(".course-emoji").html("&#" + (course.emoji ? course.emoji : DEFAULT_EMOJI))
 		courseItem.find(".course-code").html(course.code)
 		courseItem.find(".course-name").html(course.name)
 
@@ -252,7 +256,7 @@ function updateResults(data) {
 		courseItem.appendTo("#coursesContainer")
 	}
 
-	$("#numTotal").text(data.total)
+	$(".num-total").text(data.total)
 
 	page.current = data.page
 	page.total = data.pages
@@ -284,7 +288,7 @@ $(document).ready(() => {
 		$("#formFilterCourses").submit()
 	})
 
-	$("#formFilterCourses select").change(() => {
+	$("#sortSelector select").change(() => {
 		$("#formFilterCourses").submit()
 	})
 

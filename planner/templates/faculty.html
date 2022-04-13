@@ -12,11 +12,11 @@
 	<div class="subject-item mb-3 card">
 		<a class="subject-link m-0 p-0 text-decoration-none text-body" href="">
 			<div class="card-body px-3 px-md-4 py-1 py-md-2">
-				<span class="h4 me-4">
+				<span class="h4 me-1 me-md-2 me-xl-3">
 					<span class="subject-emoji p-0 m-0 me-1 me-md-2"></span>
 					<span class="subject-code p-0 m-0 font-monospace fw-bold d-inline-block" style="width:4rem;"></span>
 				</span>
-				<br class="d-md-none">
+				<br class="d-sm-none">
 				<span class="subject-name p-0 m-0 h5"></span>
 			</div>
 		</a>
@@ -36,14 +36,17 @@
 		<div class="container px-0 px-md-4">
 			<div class="row mb-3 mt-0">
 				<!--Heading-->
-				<div class="col-12 col-sm-6 col-lg-12 col-xl-6 col-xxl-7">
+				<div class="col-12 col-sm-5 col-md-6 col-lg-12 col-xl-6 col-xxl-7 pe-0">
 					<h2 class="m-0">Faculty Subjects:</h2>
 				</div>
 
 				<!--Sorting options-->
-				<div class="col-12 col-sm-6 col-lg-12 col-xl-6 col-xxl-5">
-					<div class="input-group mt-2 ps-3 ps-sm-0 ps-md-3">
-						<select id="sortBy" name="sortBy" class="form-select form-select-sm bg-light"
+				<div class="col-12 col-sm-7 col-md-6 col-lg-12 col-xl-6 col-xxl-5">
+					<div class="input-group input-group-sm mt-2 ps-0 ps-lg-3 ps-xl-0">
+						<span class="input-group-text bg-light" title="Sort by">
+							<i class="bi-sort-down fw-bold"></i>
+						</span>
+						<select id="sortBy" name="sortBy" class="form-select bg-light"
 							aria-label="Sort options" title="Sort by">
 							<option value="code" selected>
 								Code
@@ -52,7 +55,7 @@
 								Name
 							</option>
 						</select>
-						<select id="orderBy" name="orderBy" class="form-select form-select-sm bg-light"
+						<select id="orderBy" name="orderBy" class="form-select bg-light"
 							aria-label="Sort options" title="Order by">
 							<option value="1" selected>Ascending</option>
 							<option value="0">Descending</option>
@@ -62,27 +65,44 @@
 			</div>
 			
 			<!--Subjects list-->
-			<div class="container ps-3 pe-0" id="subjectsContainer"></div>
+			<div class="container ps-0 ps-sm-3 pe-0" id="subjectsContainer"></div>
 		</div>
 	</div>
 
-	<!--Links-->
+	<!--Side bar-->
 	<div class="order-1 order-lg-2 col-12 col-lg-5 col-xxl-4 pt-2">
-		<div class="sticky-top sticky-offset card bg-light mt-0 mb-4 mx-0 mx-md-4 mx-lg-0 mx-xl-4">
-			<div class="card-body">
-				<div class="mb-3">
-					<div class="h5">{{lenCourses}} Courses in this faculty</div>
-
-					<div class="container">
-						<div>
-							<a href="{{url_for('view.courseBrowser', faculty=faculty.id)}}" class="h6 text-body">View courses in Course Browser</a>
-							<i class="h6 bi bi-box-arrow-up-right"></i>
+		<div class="sticky-top sticky-offset row p-0 mb-4 mx-0 mx-md-4 mx-lg-0 mx-xl-4">
+			<!--Stats-->
+			<div class="col-12 col-md-6 col-lg-12 px-0 pe-md-2 pe-lg-0">
+				<div class="card bg-light mt-0 mb-2">
+					<div class="card-body">
+						<div class="fs-5">
+							{% for col, amount in len.items() %}
+							<div class="row ps-0 pe-3 pe-md-2 pe-lg-0">
+								<div class="col-2 col-md-3 col-lg-2 p-0 pe-2 fw-bold text-end">{{amount}}</div>
+								<div class="col px-0">{{col | capitalize}} in this faculty</div>
+							</div>
+							{% endfor %}
 						</div>
-					</div>					
+					</div>
 				</div>
+			</div>
 
-				<div class="">
-					<div class="h5">{{lenSubjects}} Subjects in this faculty</div>
+			<!--Links-->
+			<div class="col-12 col-md-6 col-lg-12 px-0 ps-md-2 ps-lg-0">
+				<div class="card bg-light mt-0 mb-2">
+					<div class="card-body">
+						<div>
+							<a href="{{url_for('view.courseBrowser', faculty=faculty.id)}}" class="text-body">View courses in Course Browser</a>
+							<i class="bi bi-box-arrow-up-right"></i>
+						</div>
+						{% if faculty.url_uni %}
+						<div>
+							<a href="{{faculty.url_uni}}" class="text-body" target="_blank" rel="noopener noreferrer">Go to official faculty site</a>
+							<i class="bi bi-box-arrow-up-right"></i>
+						</div>
+						{% endif %}
+					</div>
 				</div>
 			</div>
 		</div>

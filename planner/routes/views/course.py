@@ -1,30 +1,36 @@
 from flask_login import current_user
 from planner import db
 from planner.models import Faculty, Subject, Course
-from planner.queryUtils import *
-from planner.constants import *
-from planner.routes.api import subjects
-
+from planner.models.utils import getSubjectByCode
+from planner.constants import COURSE_LEVELS, REDDIT_URL
 from planner.routes.views import view
 
 from flask import render_template, flash, redirect, request
 from flask.helpers import url_for
 
-import random
+from sqlalchemy.sql import func
 
 
-@view.route("/f/<facId>")
-def faculty(facId):
-	faculty = getById(Faculty, facId)
+@view.route("/f/<fac>")
+def faculty(fac):
+	faculty = Faculty.query.filter_by(subdomain=fac).first()
 	if not faculty:
-		flash(f"Faculty with id {facId} does not exist!", "danger")
-		return redirect(url_for("view.home"))
+		faculty = Faculty.query.get(fac)
+		if faculty:
+			if faculty.subdomain:
+				return redirect(url_for("view.faculty", fac=faculty.subdomain))
+		else:
+			flash(f"Faculty with id {fac} does not exist!", "danger")
+			return redirect(url_for("view.home"))
 	return render_template("faculty.html",
 		title = "Faculty",
 		description = f"Faculty info for {faculty.name}",
 		faculty = faculty,
-		lenSubjects=len(faculty.subjects),
-		lenCourses = sum([len(s.courses) for s in faculty.subjects]),
+		len = {
+			"subjects": len(faculty.subjects),
+			"courses": sum([len(s.courses) for s in faculty.subjects]),
+			"users": len(faculty.users)
+		},
 		subjects = [{
 			"id": s.id,
 			"emoji": s.getEmoji(),
@@ -43,11 +49,11 @@ def subject(subjectCode):
 		return redirect(url_for("view.home"))
 	faculty = subject.faculty
 	return render_template("subject.html",
-		title=subjectCode.upper(),
+		title = subjectCode.upper(),
 		description = f"Subject info for {subject.code} : {subject.name}",
-		subject=subject,
-		faculty=faculty,
-		lenCourses=len(subject.courses)
+		subject = subject,
+		faculty = faculty,
+		lenCourses = len(subject.courses)
 	)
 
 
@@ -74,11 +80,12 @@ def course(subjectCode, courseNumber):
 	userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else []
 	collections = current_user.collections if current_user.is_authenticated else []
 	return render_template("course.html",
-		title=f"{course.code}",
+		title = f"{course.code}",
 		description = f"Course info for {course.code} : {course.name}",
-		course=course,
-		subject=subject,
-		faculty=subject.faculty,
+		course = course,
+		subject = subject,
+		faculty = subject.faculty,
+		redditSearch = REDDIT_URL + "search/?q=" + course.code.replace("-", "%20"),
 		userCourses = userCourses,
 		collections = collections,
 		hasCourse = lambda collection : bool(sum([uc.course_collection_id == collection.id for uc in userCourses]))
@@ -87,7 +94,7 @@ def course(subjectCode, courseNumber):
 
 @view.route("/c/id/<courseId>")
 def courseById(courseId):
-	course = getById(Course, courseId)
+	course = Course.query.get(courseId)
 	if not course:
 		flash(f"Course with id {courseId} does not exist!", "danger")
 		return redirect(url_for("view.home"))
@@ -98,7 +105,7 @@ def courseById(courseId):
 def courseRandom():
 	course = None
 	while not course:
-		course = Course.query[random.randrange(0, Course.query.count())]
+		course = Course.query.order_by(func.random()).first()
 	return redirect(url_for("view.courseById", courseId=course.id))
 
 
@@ -112,7 +119,7 @@ def courseBrowser():
 			flash(f"Subject with code {selSubject} does not exist!", "danger")
 			return redirect(url_for("view.home"))
 	if selFaculty:
-		if not getById(Faculty, selFaculty):
+		if not Faculty.query.get(selFaculty):
 			flash(f"Faculty with id {selFaculty} does not exist!", "danger")
 			return redirect(url_for("view.home"))
 
@@ -137,8 +144,8 @@ def courseBrowser():
 		description = "Course browser : Filter and sort through UofC's full catalogue of courses",
 		sortOpt = 0,
 		sortOptions = [
-			{"label": "Number", "value": ["number", "name"]},
-			{"label": "Name", "value": ["name", "number"]},
+			{"label": "Number", "value": ["number", "subject_id", "name"]},
+			{"label": "Name", "value": ["name", "number", "subject_id"]},
 		],
 		collections = current_user.collections if current_user.is_authenticated else [],
 		filterData = {

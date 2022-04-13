@@ -1,7 +1,7 @@
 from planner.models import Grade
 from planner.routes.api.utils import *
 
-from flask import Blueprint, request
+from flask import Blueprint
 
 grade = Blueprint("grades", __name__, url_prefix="/grades")
 

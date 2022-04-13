@@ -29,7 +29,8 @@ class Term(db.Model):
 	
 	def __iter__(self):
 		yield "id", self.id
+		yield "season_id", self.season_id
 		yield "season", self.season.name
 		yield "year", self.year
-		yield "start", self.start
-		yield "end", self.end
+		yield "start", self.start.isoformat() if self.start else None
+		yield "end", self.end.isoformat() if self.end else None

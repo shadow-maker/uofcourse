@@ -1,3 +1,7 @@
+html {
+	scroll-padding-top: 70px;
+}
+
 .alert {
 	cursor: pointer;
 }
@@ -34,4 +38,8 @@
 
 .course-link:hover, .subject-link:hover {
 	color: var(--bs-gray-600) !important;
+}
+
+.collapsing {
+	transition: 0.2s;
 }

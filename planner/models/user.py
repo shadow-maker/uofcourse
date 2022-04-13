@@ -6,6 +6,13 @@ from planner.models.course_collection import CourseCollection
 from flask_login import UserMixin
 from datetime import datetime
 
+from enum import Enum
+
+class Role(Enum):
+	user = 1
+	moderator = 2
+	admin = 3
+
 class User(db.Model, UserMixin):
 	__tablename__ = "user"
 	id = db.Column(db.Integer, primary_key=True)
@@ -13,10 +20,10 @@ class User(db.Model, UserMixin):
 	email = db.Column(db.String(64), nullable=False)
 	username = db.Column(db.String(16), unique=True)
 	password = db.Column(db.String(64), nullable=False)
+	role = db.Column(db.Enum(Role), default=Role.user)
 
 	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	
-	role_id = db.Column(db.Integer, db.ForeignKey("role.id"), nullable=False, default=1)
 	faculty_id = db.Column(db.Integer, db.ForeignKey("faculty.id"), nullable=False)
 	neededUnits = db.Column(db.Numeric(3, 2))
 
@@ -53,12 +60,6 @@ class User(db.Model, UserMixin):
 				collection.delete()
 			db.session.delete(self)
 			db.session.commit()
-	
-	def isMod(self):
-		return self.role.id == 2
-
-	def isAdmin(self):
-		return self.role.id == 3
 
 	def __repr__(self):
 		return f"USER {self.name} (#{self.id})"

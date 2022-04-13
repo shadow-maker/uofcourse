@@ -1,6 +1,7 @@
 from planner import db
-from planner.models import Season, Grade, CourseCollection
-from planner.queryUtils import *
+from planner.models import Role, Season, Term, Grade, CourseCollection
+from planner.models.utils import getAllYears
+from planner.forms import formChangePassw
 from planner.constants import *
 
 from planner.routes.views import view
@@ -12,16 +13,33 @@ from flask.helpers import url_for
 from flask_login import current_user
 
 
-@view.route("/account")
+@view.route("/account", methods=["GET", "POST"])
 def account():
 	if not current_user.is_authenticated:
 		return redirectLogin()
 	
+	formPassw = formChangePassw()
+
+	if formPassw.validate_on_submit():
+		if current_user.checkPassw(formPassw.oldPassw.data):
+			try:
+				current_user.updatePassw(formPassw.oldPassw.data, formPassw.newPassw.data)
+				db.session.commit()
+			except:
+				flash(f"Error updating password!", "danger")
+			else:
+				flash(f"Password changed!", "success")
+		else:
+			flash(f"Current password is incorrect! - Password not changed", "danger")
+	
 	return render_template("account.html",
 		title = "Account",
-		header = "My acccount",
-		user = dict(current_user)
+		header = "My Acccount",
+		user = current_user,
+		Role = Role,
+		formPassw = formPassw
 	)
+
 
 @view.route("/my")
 def planner():
@@ -37,9 +55,9 @@ def planner():
 		},
 		grades = Grade.query.all(),
 		seasons = Season.query.all(),
-		years = getAllYears(False),
-		colors = COLORS_DARK
+		years = getAllYears(False)
 	)
+
 
 @view.route("/my/add/collection", methods=["POST"])
 def addCourseCollection():
@@ -75,7 +93,6 @@ def addCourseCollection():
 	db.session.add(CourseCollection(current_user.id, term.id))
 	db.session.commit()
 	return ret("Term added!", "success")
-
 
 
 @view.route("/my/del/collection", methods=["DELETE", "POST"])
@@ -118,6 +135,7 @@ def addUserCourse():
 		flash(f"ERROR: {response['error']}", "danger")
 
 	return redirect(url_for("view.planner"))
+
 
 @view.route("my/course", methods=["POST"])
 def modUserCourse():

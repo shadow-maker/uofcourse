@@ -37,27 +37,37 @@
 	<!--Global vars-->
 	<script>
 		var isAuth = JSON.parse("{{ current_user.is_authenticated | tojson | safe }}")
-		var colors = JSON.parse('{{ COLORS | tojson | safe }}')
+		const COLORS = JSON.parse('{{ COLORS | tojson | safe }}')
+		const DEFAULT_EMOJI = parseInt('{{ DEFAULT_EMOJI }}')
 	</script>
 </head>
 
 <body>
+	<!--Nav bar-->
 	{% include "components/nav.html" %}
 
+	<!--Back buttons-->
 	{% include "components/back.html" %}
 
+	<!--Page header-->
 	{% if header %}
 	<div class="container mb-4 border-bottom">
 		<h1>{{header}}</h1>
 	</div>
 	{% endif %}
 
+	<!--Go to course modal-->
+	{% include "components/gotoCourse.html" %}
+
+	<!--Page content-->
 	<div class="container">
 		{% block content%}{% endblock %}
 	</div>
 
+	<!--Alerts-->
 	{% include "components/alert.html" %}
 
+	<!--Page footer-->
 	{% include "components/foot.html" %}
 
 	<!--Bootstrap-->
@@ -65,10 +75,48 @@
 		integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous">
 	</script>
 	<script>
+	$(document).ready(() => {
+		// Activate Bootstrap tooltips
 		var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 		var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 			return new bootstrap.Tooltip(tooltipTriggerEl)
 		})
+		
+		// Activate Bootstrap scrollspy
+		if ($("#scrollspy-nav").length) {
+			var scrollSpy = new bootstrap.ScrollSpy(document.body, {
+				target: "#scrollspy-nav",
+				offset: $(navbar).height() * 1.5
+			})
+
+			function collapseShow(element) {
+				$("#scrollspy-nav .collapse").each(function () {
+					if (!$(this).is(element))
+						$(this).collapse("hide")
+				})
+
+				if (element)
+					element.collapse("show")
+			}
+
+			$(window).on("activate.bs.scrollspy", function (e) {
+				var scrollLink = $("#scrollspy-nav .nav-link[href='" + scrollSpy._activeTarget +"']").first()
+				if (!scrollLink.parent().parent().hasClass("collapse"))
+					$("#scrollspy-nav .collapse").collapse("hide")
+	
+				setTimeout(function () {
+					scrollLink = $("#scrollspy-nav .nav-link[href='" + scrollSpy._activeTarget +"']").first()
+
+					if (scrollLink.next().hasClass("collapse"))
+						collapseShow(scrollLink.next())
+					else if (scrollLink.parent().parent().hasClass("collapse"))
+						collapseShow(scrollLink.parent().parent())
+					else
+						$("#scrollspy-nav .collapse").collapse("hide")
+				}, 210)
+			})
+		}
+	})
 	</script>
 </body>
 

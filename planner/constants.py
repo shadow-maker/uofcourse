@@ -3,15 +3,31 @@ from os import getenv
 
 load_dotenv()
 
+#
+# SITE INFO
+#
+
 SITE_NAME = "UofCourse"
-
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
+CURRENT_VERSION = "0.3"
 
-UNI_BASE_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
+#
+# URLS
+#
+
+UNI_URL = "https://www.ucalgary.ca"
+UNI_CAL_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
+REDDIT_URL = "https://www.reddit.com/r/UCalgary/"
+
+#
+# ENV CONSTANTS
+#
 
 GANALYTICS_ID = getenv("GANALYTICS_ID")
 
-CURRENT_VERSION = "0.2.1"
+#
+# OTHER
+#
 
 ALLOW_ACCOUNT_CREATION = False
 

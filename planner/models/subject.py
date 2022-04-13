@@ -1,5 +1,5 @@
 from planner import db
-from planner.constants import UNI_BASE_URL, DEFAULT_EMOJI
+from planner.constants import UNI_CAL_URL, DEFAULT_EMOJI
 
 from flask.helpers import url_for
 
@@ -20,12 +20,12 @@ class Subject(db.Model):
 	
 	@property
 	def url_uni(self):
-		return UNI_BASE_URL + self.site
+		return UNI_CAL_URL + self.site
 
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
 			return self.emoji
-		return self.faculty.getEmoji(default)
+		return default
 	
 	def __init__(self, faculty_id, code, name, site=""):
 		self.faculty_id = faculty_id

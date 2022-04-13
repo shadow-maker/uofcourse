@@ -1,5 +1,6 @@
 from planner import app
 from planner import changelog as change
+from planner.models import Role
 from planner.constants import *
 from flask import Blueprint
 
@@ -20,7 +21,9 @@ constants = {
 	"CURRENT_VERSION_BETA" : CURRENT_VERSION in change and change[CURRENT_VERSION]["beta"],
 	"DEBUG" : app.debug,
 	"GANALYTICS_ID" : GANALYTICS_ID,
-	"COLORS" : COLORS_DARK
+	"COLORS" : COLORS_DARK,
+	"DEFAULT_EMOJI" : DEFAULT_EMOJI,
+	"ROLE_ADMIN": Role.admin
 }
 
 @view.context_processor

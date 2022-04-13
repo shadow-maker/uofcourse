@@ -3,8 +3,7 @@
 # TODO: Add try statements to db.session.commit()
 
 from planner import db
-from planner.models import UserCourse, CourseCollection, Grade
-from planner.queryUtils import *
+from planner.models import Grade, Course, UserCourse, CourseCollection
 from planner.constants import *
 
 from planner.routes.api.utils import *

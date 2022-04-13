@@ -2,11 +2,6 @@
 
 {% block content %}
 
-<script>
-	var colors = JSON.parse('{{ colors | tojson | safe }}')
-</script>
-
-
 <!--Tags-->
 <div class="container mb-5">
 	<div class="d-flex justify-content-between mb-3">
@@ -34,7 +29,7 @@
 							db-code="{{course.code}}" draggable="true" href="{{course.url}}">
 							<div class="row">
 								<span class="col-3 h5 p-0 m-0">
-									&#{{course.getEmoji()}}
+									&#{{course.emoji}}
 								</span>
 								<span id="code" class="col-6 font-monospace">
 									{{course.code}}
@@ -85,7 +80,7 @@
 						db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{uCourse.course.code}}" draggable="true"
 						data-bs-toggle="modal" data-bs-target="#modalEditUserCourse">
 						<div class="row">
-							<span class="col-3 h5 p-0 m-0">&#{{uCourse.course.getEmoji()}}</span>
+							<span class="col-3 h5 p-0 m-0">&#{{uCourse.course.emoji}}</span>
 							<span id="code"
 								class="col-6 font-monospace">{{uCourse.course.code}}</span>
 							<span class="col-3 font-monospace text-start" title="{{uCourse.grade.gpv}} GPV">
@@ -192,7 +187,7 @@
 								<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Course does not exist" title="Course does not exist"></i>
 							</span>
 							<span class="success" style="display: none;">
-								<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Course does not exist" title="Course does not exist"></i>
+								<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Course exists" title="Course exists"></i>
 							</span>
 							<span class="spinner-border loading" role="status" style="display: none;">
 								<span class="visually-hidden">Loading...</span>

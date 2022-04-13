@@ -1,11 +1,16 @@
 <div class="container mb-4 mt-5">
-	<footer class="py-3 border-top text-muted px-3 px-md-5">
-		<span class="fw-bold">© 2022 {{SITE_NAME}}</span>
-		<a href="{{url_for('view.changelog')}}">
-			v{{CURRENT_VERSION}}
-			{% if CURRENT_VERSION_BETA %}
-			Beta
-			{% endif %}
-		</a>
+	<footer class="py-3 border-top text-muted px-3 px-md-5 d-sm-flex justify-content-between">
+		<div class="mb-2 mb-sm-0">
+			<span class="fw-bold">© 2022 {{SITE_NAME}}</span>
+			<a href="{{url_for('view.changelog')}}">
+				v{{CURRENT_VERSION}}
+				{% if CURRENT_VERSION_BETA %}
+				Beta
+				{% endif %}
+			</a>
+		</div>
+		<div>
+			Need assistance? <a href="{{url_for('view.contact')}}">Contact us</a>
+		</div>
 	</footer>
 </div>

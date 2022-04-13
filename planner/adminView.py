@@ -1,5 +1,5 @@
 from planner import app, db
-from planner.models import User, Grade, Course, Subject, Faculty, Term, Season
+from planner.models import Role, User, Grade, Course, Subject, Faculty, Term, Season
 
 from flask import redirect, flash
 from flask.helpers import url_for
@@ -9,7 +9,7 @@ from flask_login import current_user
 
 class adminModelView(ModelView):
 	def is_accessible(self):
-		return current_user.is_authenticated and current_user.isAdmin()
+		return current_user.is_authenticated and current_user.role == Role.admin
 
 	def inaccessible_callback(self, name, **kwargs):
 		if current_user.is_authenticated:
@@ -20,7 +20,7 @@ class adminModelView(ModelView):
 
 class adminIndexView(AdminIndexView):
 	def is_accessible(self):
-		return current_user.is_authenticated and current_user.isAdmin()
+		return current_user.is_authenticated and current_user.role == Role.admin
 
 	def inaccessible_callback(self, name, **kwargs):
 		if current_user.is_authenticated:
