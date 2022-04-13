@@ -90,7 +90,7 @@ function gotoCourseCheck() {
 // On any key pressed (keyup)
 $(document).on("keyup", (e) => {
 	// Open modal if g key pressed
-	if (e.key == "g")
+	if (e.key == "g" && !$("input").is(":focus") && !$("textarea").is(":focus"))
 		modalGoToCourse.modal("show")
 })
 
