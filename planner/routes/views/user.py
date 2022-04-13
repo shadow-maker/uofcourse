@@ -1,5 +1,5 @@
 from planner import db
-from planner.models import Role, Season, Grade, CourseCollection
+from planner.models import Role, Season, Term, Grade, CourseCollection
 from planner.models.utils import getAllYears
 from planner.forms import formChangePassw
 from planner.constants import *
