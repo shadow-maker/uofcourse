@@ -8,10 +8,12 @@ from datetime import datetime
 
 from enum import Enum
 
+
 class Role(Enum):
 	user = 1
 	moderator = 2
 	admin = 3
+
 
 class User(db.Model, UserMixin):
 	__tablename__ = "user"

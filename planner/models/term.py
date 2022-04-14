@@ -3,11 +3,13 @@ from planner import db
 from enum import Enum
 from datetime import date
 
+
 class Season(Enum):
 	winter = 1
 	spring = 2
 	summer = 3
 	fall = 4
+
 
 class Term(db.Model):
 	__tablename__ = "term"
