@@ -2,7 +2,7 @@ from planner import utcoffset
 from planner.models import Term, Faculty, Subject, Course, User
 
 def getAllTerms(asc=True):
-	results = Term.query.order_by(Term.year.asc, Term.season_id.asc).all()
+	results = Term.query.order_by(Term.year.asc, Term.season.asc).all()
 	if not asc:
 		results.reverse()
 	return results

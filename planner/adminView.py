@@ -1,5 +1,5 @@
 from planner import app, db
-from planner.models import Role, User, Grade, Course, Subject, Faculty, Term, Season
+from planner.models import Role, User, Grade, Course, Subject, Faculty, Term
 from planner.constants import SITE_NAME
 
 from flask import redirect, flash
@@ -38,4 +38,3 @@ admin.add_view(adminModelView(Course, db.session))
 admin.add_view(adminModelView(Subject, db.session))
 admin.add_view(adminModelView(Faculty, db.session))
 admin.add_view(adminModelView(Term, db.session))
-admin.add_view(adminModelView(Season, db.session))

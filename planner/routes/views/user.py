@@ -54,7 +54,7 @@ def planner():
 			"collections": sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0)
 		},
 		grades = Grade.query.all(),
-		seasons = Season.query.all(),
+		seasons = list(Season),
 		years = getAllYears(False)
 	)
 
@@ -77,12 +77,15 @@ def addCourseCollection():
 	elif not (("season" in data) and ("year" in data)):
 		return ret("ERROR: Term not specified", "danger")
 	else:
-		season = Season.query.filter_by(id=data["season"]).first()
-		if not season:
-			season = Season.query.filter_by(name=data["season"].lower()).first()
-		if not season:
+		try:
+			if data["season"].isdigit():
+				season = Season(int(data["season"]))
+			else:
+				season = getattr(Season, data["season"])
+		except:
 			return ret("ERROR: Season not found", "danger")
-		term = Term.query.filter_by(season_id=season.id, year=data["year"]).first()
+		term = Term.query.filter_by(season=season, year=data["year"]).first()
+		pass
 
 	if not term:
 		return ret("ERROR: Term does not exist", "danger")

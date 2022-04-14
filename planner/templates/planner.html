@@ -140,7 +140,7 @@
 							<div class="form-floating">
 								<select class="form-select" id="selectSeason" name="season" aria-label="Select season">
 									{% for season in seasons %}
-									<option value="{{season.id}}">{{season.name | capitalize}}</option>
+									<option value="{{season.value}}">{{season.name | capitalize}}</option>
 									{% endfor %}
 								</select>
 								<label for="selectSeason">Season</label>
