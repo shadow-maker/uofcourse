@@ -8,7 +8,7 @@ Below you'll find a list of all available endpoints, each with a unique path tha
 
 ## General structure {: #general-structure}
 
-There are 6 main data tables that can be retrieved though the API's endpoints. Each data table has specific columns that correspond to its relevant data. The only column that is available for all the tables is the `id` column, which is the primary key for each row.
+There are 5 main data tables that can be retrieved though the API's endpoints. Each data table has specific columns that correspond to its relevant data. The only column that is available for all the tables is the `id` column, which is the primary key for each row.
 
 With the API the developer can retrieve all rows for a selected table, or a single row by passing its `id` (or `code`, if aplicable) to the endpoint.
 
@@ -50,10 +50,9 @@ The UofCourse API returns [HTTP status codes](https://developer.mozilla.org/en-U
 
 ## Endpoints {: #endpoints}
 
-The API has 6 main endpoint paths that correspond to the available data tables:
+The API has 5 main endpoint paths that correspond to the available data tables:
 
 - Grade - `/grade`
-- Season - `/season`
 - Term - `/term`
 - Course - `/course`
 - Subject - `/subject`
@@ -100,41 +99,6 @@ Returns a JSON object with the data for the Grade item with the specified `id`. 
 
 A `404` error code will be returned if the `id` specified does not correspond to a row in the Grade table.
 
-### Seasons {: #seasons}
-
-The following data columns (key-value pairs) are available for the Season table:
-
-| Key {: .col-2} | Value type {: .col-2} | Can be null {: .col-2} | Value contents             |
-| -------------- | --------------------- | ---------------------- | -------------------------- |
-| `id`           | int                   | No                     | Unique ID                  |
-| `name`         | string                | No                     | Name describing the season |
-
-#### Get all seasons {: #seasons-1}
-
-> **GET**{: .badge .bg-primary .me-1}  `/seasons`
-{: .p-0 .m-0}
-
-Returns a JSON object of the paginated results. See [retrieving all rows](#retrieve-all) for more information.
-
-The `results` key will contain an array of JSON objects, each of which corresponds to a row in the Season table. Each element in the array will have the same key-value pairs as described [above](#seasons).
-
-This endpoint does not support other URL parameters apart from those specified in [retrieving all rows](#retrieve-all). The following columns are available to be used with the `sort` URL parameter:
-{: .mb-0}
-
-* `id`
-* `name`
-
-A `400` error code will be returned if any other column name is used with the `sort` parameter.
-
-#### Get a season {: #seasons-2}
-
-> **GET**{: .badge .bg-primary .me-1}  `/season/{id}`
-{: .p-0 .m-0}
-
-Returns a JSON object with the data for the Season item with the specified `id`. The key-value pairs in the object are the same as specified in [Seasons](#seasons).
-
-A `404` error code will be returned if the `id` specified does not correspond to a row in the Season table.
-
 ### Terms {: #terms}
 
 The following data columns (key-value pairs) are available for the Term table:
@@ -143,8 +107,7 @@ The following data columns (key-value pairs) are available for the Term table:
 | -------------- | --------------------- | ---------------------- | ------------------------------------------------------------ |
 | `id`           | int                   | No                     | Unique ID                                                    |
 | `year`         | int                   | No                     | Year of the term                                             |
-| `season_id`    | int                   | No                     | ID of the term season                                        |
-| `season`       | string                | No                     | Name of the term season                                      |
+| `season`       | string                | No                     | Name of the season of the term                               |
 | `start`        | string                | Yes                    | Start date of the term, formatted in the ISO date standard YYYY-MM-DD |
 | `end`          | string                | Yes                    | End date of the term, formatted in the ISO date standard YYYY-MM-DD |
 
@@ -162,7 +125,7 @@ This endpoint does not support other URL parameters apart from those specified i
 
 * `id`
 * `year`
-* `season_id`
+* `season`
 * `start`
 * `end`
 
