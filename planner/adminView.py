@@ -1,5 +1,6 @@
 from planner import app, db
 from planner.models import Role, User, Grade, Course, Subject, Faculty, Term, Season
+from planner.constants import SITE_NAME
 
 from flask import redirect, flash
 from flask.helpers import url_for
@@ -29,7 +30,7 @@ class adminIndexView(AdminIndexView):
 		flash(f"You need to log in first!", "warning")
 		return redirect(url_for("view.login"))
 
-admin = Admin(app, name="UofC Planner", template_mode="bootstrap3", index_view=adminIndexView())
+admin = Admin(app, name=SITE_NAME, template_mode="bootstrap3", index_view=adminIndexView())
 
 admin.add_view(adminModelView(User, db.session))
 admin.add_view(adminModelView(Grade, db.session))
