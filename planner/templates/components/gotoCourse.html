@@ -115,6 +115,9 @@ $("#gotoCourseSubject").on("keyup", function(e) {
 	// Convert subject into uppercase
 	$(this).val($(this).val().toUpperCase())
 
+	// Remove numeric characters
+	$(this).val($(this).val().replace(/[0-9]/g, ""))
+
 	if ($(this).val().length < $(this).attr("minLength")) {
 		gotoCourse.find(".selectNumber").prop("disabled", true)
 		gotoCourse.find(".submit").prop("disabled", true)
@@ -136,6 +139,8 @@ $("#gotoCourseNumber").on("keydown", function(e) {
 	// If pressing backspace and the value is empty, move focus to subject selection
 	if ($(this).val().length == 0 && e.keyCode == 8)
 		gotoCourse.find(".selectSubject").focus()
+	else if (e.keyCode == 13)
+		gotoCourse.submit()
 })
 
 // On key down inside number selection
