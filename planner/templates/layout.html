@@ -3,23 +3,25 @@
 
 <head>
 	<!--Meta tags-->
-
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
+	<!--Page title-->
 	{% if title %}
 	<title>{{SITE_NAME}} - {{title}}</title>
 	{% else %}
 	<title>{{SITE_NAME}}</title>
 	{% endif %}
 
+	<!--Page description-->
 	{% if description %}
 	<meta name="description" content="{{description}}">
 	{% else %}
 	<meta name="description" content="{{DEF_DESCRIPTION}}">
 	{% endif %}
 
+	<!--Google Analytics tracking code-->
 	{% if not DEBUG %}
 	{% include "components/analytics.html" %}
 	{% endif %}
@@ -32,7 +34,7 @@
 	<link rel="stylesheet" href="/static/styles/main.css">
 
 	<!--Icons-->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
 	<!--Global vars-->
 	<script>
@@ -43,6 +45,12 @@
 </head>
 
 <body>
+	<!--Alerts-->
+	{% include "components/alert.html" %}
+
+	<!--Go to course modal-->
+	{% include "components/gotoCourse.html" %}
+
 	<!--Nav bar-->
 	{% include "components/nav.html" %}
 
@@ -56,16 +64,10 @@
 	</div>
 	{% endif %}
 
-	<!--Go to course modal-->
-	{% include "components/gotoCourse.html" %}
-
 	<!--Page content-->
 	<div class="container">
 		{% block content%}{% endblock %}
 	</div>
-
-	<!--Alerts-->
-	{% include "components/alert.html" %}
 
 	<!--Page footer-->
 	{% include "components/foot.html" %}
