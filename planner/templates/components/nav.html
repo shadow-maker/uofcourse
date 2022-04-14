@@ -19,6 +19,11 @@
 
 		<div class="collapse navbar-collapse d-md-flex justify-content-between" id="toggleMobileMenu">
 			<ul class="navbar-nav text-center">
+				<li title="Press G to activate">
+					<a class="nav-link" href="" data-bs-toggle="modal" data-bs-target="#modalGoToCourse">
+						Go To
+					</a>
+				</li>
 				<li>
 					<a class="nav-link {% if request.path == url_for('view.courseBrowser') %}active{% endif %}" href="{{url_for('view.courseBrowser')}}">
 						Course Browser
@@ -55,18 +60,18 @@
 							My Account
 						</a>
 					</li>
-					<li class="px-1">
+					<li class="py-1 py-md-0 px-1">
 						<a class="btn btn-outline-primary d-block" href="{{url_for('view.logout')}}">
 							Log Out
 						</a>
 					</li>
 				{% else %}
-					<li class="px-1">
+					<li class="py-1 py-md-0 px-1">
 						<a class="btn btn-outline-info d-block" href="{{url_for('view.login')}}">
 							Log In
 						</a>
 					</li>
-					<li class="px-1">
+					<li class="py-1 py-md-0 px-1">
 						<a class="btn btn-outline-primary d-block" href="{{url_for('view.signup')}}">
 							Sign Up
 						</a>
@@ -74,6 +79,5 @@
 				{% endif %}
 			</ul>
 		</div>
-
 	</nav>
 </div>

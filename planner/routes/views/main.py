@@ -1,14 +1,12 @@
-from planner import app, jinja
+from planner import app, jinja, ifttt
 from planner import changelog as change
-from planner.models import Role, User
 from planner.forms import formContact
 from planner.routes.views import view
-from planner.utils import sendMessage
 
 from flask import render_template, flash, redirect
-from flask.helpers import url_for
 from flask_login import current_user
-from flask_mail import Message
+from flask.helpers import url_for
+
 from markdown import markdown
 import os
 
@@ -61,6 +59,7 @@ def api():
 def contact():
 	form = formContact()
 	if form.validate_on_submit():
+		# Format message body
 		if current_user.is_authenticated:
 			body = "A USER HAS SENT A MESSAGE\n\n"
 			body += f"NAME: {current_user.name}\n"
@@ -70,10 +69,13 @@ def contact():
 			body = "A (GUEST) USER HAS SENT A MESSAGE\n\n"
 			body += f"EMAIL: {form.email.data}\n"
 		body += f"\n--- MESSAGE ---\n{form.message.data}\n---\n"
+
+		# Send message to IFTTT webhook
 		try:
-			recipients = User.query.filter(User.role == Role.admin).all()
-			sendMessage(recipients, f"New message received", body)
-		except:
+			r = ifttt.message(body)
+			if r.status_code != 200:
+				raise Exception
+		except Exception:
 			flash("An error occured while sending the message.", "danger")
 		else:
 			flash("Message received!", "success")

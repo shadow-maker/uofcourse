@@ -1,15 +1,10 @@
-from dotenv import load_dotenv
-from os import getenv
-
-load_dotenv()
-
 #
 # SITE INFO
 #
 
 SITE_NAME = "UofCourse"
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
-CURRENT_VERSION = "0.3"
+CURRENT_VERSION = "0.3.1"
 
 #
 # URLS
@@ -20,12 +15,6 @@ UNI_CAL_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
 REDDIT_URL = "https://www.reddit.com/r/UCalgary/"
 
 #
-# ENV CONSTANTS
-#
-
-GANALYTICS_ID = getenv("GANALYTICS_ID")
-
-#
 # OTHER
 #
 
@@ -34,6 +23,10 @@ ALLOW_ACCOUNT_CREATION = False
 MAX_ITEMS_PER_PAGE = 50
 
 COURSE_LEVELS = [1, 2, 3, 4, 5, 6, 7]
+
+IFTTT_EVENTS = {
+	"message": "uofcourse_message"
+}
 
 DEFAULT_EMOJI = 128218
 

@@ -1,4 +1,3 @@
-<!--Form Go to course-->
 <form id="formGoToCourse" name="formGoToCourse" method="GET" autocomplete="off">
 	<div class="modal fade" id="modalGoToCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-sm">
@@ -90,7 +89,7 @@ function gotoCourseCheck() {
 // On any key pressed (keyup)
 $(document).on("keyup", (e) => {
 	// Open modal if g key pressed
-	if (e.key == "g")
+	if (e.key == "g" && !$("input").is(":focus") && !$("textarea").is(":focus"))
 		modalGoToCourse.modal("show")
 })
 
@@ -116,6 +115,9 @@ $("#gotoCourseSubject").on("keyup", function(e) {
 	// Convert subject into uppercase
 	$(this).val($(this).val().toUpperCase())
 
+	// Remove numeric characters
+	$(this).val($(this).val().replace(/[0-9]/g, ""))
+
 	if ($(this).val().length < $(this).attr("minLength")) {
 		gotoCourse.find(".selectNumber").prop("disabled", true)
 		gotoCourse.find(".submit").prop("disabled", true)
@@ -137,6 +139,8 @@ $("#gotoCourseNumber").on("keydown", function(e) {
 	// If pressing backspace and the value is empty, move focus to subject selection
 	if ($(this).val().length == 0 && e.keyCode == 8)
 		gotoCourse.find(".selectSubject").focus()
+	else if (e.keyCode == 13)
+		gotoCourse.submit()
 })
 
 // On key down inside number selection

@@ -1,4 +1,14 @@
 {
+	"0.3.1": {
+		"beta": true,
+		"date": "2022-04-13",
+		"fixes": [
+			"Fix email sending on /contact by sending messages through IFTTT",
+			"Prevent go-to courses modal to pop-up if input or textarea is in focus",
+			"Fix go-to courses modal submission on Safari",
+			"Fix spacing on mobile devices for the nav bar, /about and /api"
+		]
+	},
 	"0.3": {
 		"beta": true,
 		"date": "2022-04-13",
@@ -7,6 +17,7 @@
 			"Support searching Course, Subject and Faculty by name in API",
 			"Filter Course by repeat and nogpa in API",
 			"New Go-To Course modal that can be activated anywhere by pressing the G key",
+			"Improved account page (/account) with support for changing the password",
 			"Support for searching Course in Reddit in Course view",
 			"Support for going to Faculty uni page in Faculty view",
 			"Added documentation page for the UofCourse API (on /api)",
