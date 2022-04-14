@@ -4,7 +4,7 @@
 
 SITE_NAME = "UofCourse"
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
-CURRENT_VERSION = "0.3"
+CURRENT_VERSION = "0.3.1"
 
 #
 # URLS
