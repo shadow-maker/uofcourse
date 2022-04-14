@@ -35,16 +35,16 @@ migrate = Migrate(app, db)
 
 alchemydumps = AlchemyDumps(app, db)
 
+bcrypt = Bcrypt(app)
+loginManager = LoginManager(app)
+
+jinja = JinjaEnvironment()
+
 ifttt = IFTTT(IFTTT_EVENTS)
 
 #
 # Init extra utils
 #
-
-jinja = JinjaEnvironment()
-
-bcrypt = Bcrypt(app)
-loginManager = LoginManager(app)
 
 try:
 	with open(os.path.join(app.static_folder, "changelog.json"), "r") as file:
@@ -55,6 +55,10 @@ except:
 
 from datetime import datetime, timedelta
 utcoffset = timedelta(hours=round(((datetime.now() - datetime.utcnow()).seconds / 3600) - 24))
+
+#
+# Import routes
+#
 
 from planner.routes.api import *
 from planner.routes.views import *
