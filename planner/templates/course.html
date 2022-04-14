@@ -2,6 +2,8 @@
 
 {% block content %}
 
+{% from "components/disqus.html" import disqusThread with context %}
+
 <script>
 	var course_id = parseInt("{{course.id}}")
 </script>
@@ -17,7 +19,7 @@
 
 <div class="row mb-1">
 	<!--Course Header-->
-	<div class="col-12 col-md-8">
+	<div class="col-12 col-md-7 col-lg-8">
 		<h1 class="mt-2" title="Course name">&#{{course.emoji}} {{course.name}}</h1>
 
 		<div class="">
@@ -34,10 +36,11 @@
 		</div>
 	</div>
 
-	<!--Extra info-->
-	<div class="col-12 col-md-4 p-2">
-		<div class="card h-100 border-0">
-			<div class="card-body">
+	<!--Other info-->
+	<div class="col-12 col-md-5 col-lg-4 row pt-2 pt-md-3 ps-4 ps-md-3 pe-0">
+		<!--Extra info-->
+		<div class="card border-0 col-12 col-sm-6 col-md-12 ps-2 pe-2 ps-sm-0 ps-md-2 pb-1">
+			<div class="card-body p-0">
 				{% if course.aka %}
 				<div title="Also known as" class="fst-italic">
 					<span class="fw-bold">AKA:</span>
@@ -69,15 +72,29 @@
 				</div>
 			</div>
 		</div>
+		<!--Links-->
+		<div class="card border-0 col-12 col-sm-6 col-md-12 ps-2 pe-2 pe-sm-0 pe-md-2 pb-1">
+			<div class="card-body p-0">
+				<div>
+					<a href="{{course.url_uni}}" target="_blank" rel="noopener noreferrer" class="text-body">View in official Uni calendar</a>
+					<i class="bi-box-arrow-up-right"></i>
+				</div>
+				<div>
+					<a href="{{redditSearch}}" target="_blank" rel="noopener noreferrer" class="text-body">Search on r/UCalgary</a>
+					<i class="bi-box-arrow-up-right"></i>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
 <div class="row">
-	<!--Course Info-->
-	<div class="order-2 order-sm-1 col-12 col-sm-7 col-md-8 pe-0">
-		<div class="container row p-0 ps-lg-4">
+	<!--LEFT-->
+	<div class="order-2 order-sm-1 col-12 col-sm-6 col-md-7 col-lg-8 pe-0">
+		<!--Course Info-->
+		<div class="container p-0 ps-lg-4 row mb-4">
 			{% macro textCard(title, content, tooltip) %}
-			<div class="col-12 col-lg-6 p-2">
+			<div class="col-12 col-lg-6 p-2 pe-0 pe-md-2">
 				<div class="card h-100">
 					<div class="card-body">
 						<div class="d-flex justify-content-between mb-2">
@@ -115,105 +132,106 @@
 			{{textCard("Corequisites", course.coreqs, "Must be completed at the same time as this class.")}}
 			{% endif %}
 		</div>
-	</div>
 
-	<!--User data-->
-	<div class="order-1 order-sm-2 col-12 col-sm-5 col-md-4 p-2">
-		<div class="card bg-light">
-			<div class="card-body">
-				<!--Tags-->
-				<div id="tags">
-					<div class="d-flex justify-content-between mb-2">
-						<h4 class="m-0">Tags</h4>
-						{% if current_user.is_authenticated %}
-						<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
-							Add tags
-						</button>
-						<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
-						{% endif %}
-					</div>
-					{% if current_user.is_authenticated %}
-					<div class="loading fst-italic">Loading...</div>
-					{% endif %}
-					<div class="tags-selected"></div>
-					{% if not current_user.is_authenticated %}
-					<span class="fst-italic">
-						You must be logged in to see and add tags to this course
-					</span>
-					{% endif %}
-				</div>
-
-				<hr class="my-4">
-	
-				<!--Course collections-->
-				<div id="collections">
-					<div class="d-flex justify-content-between mb-2">
-						<h4 class="m-0">Terms taken</h4>
-						
-						{% if current_user.is_authenticated %}
-						<button class="collections-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
-							Add to term
-						</button>
-						<ul class="collections-dropdown dropdown-menu fs-6 py-1">
-							{% for collection in collections %}
-							<li>
-								<a class="dropdown-item px-2 py-1" style="cursor: pointer;" {% if not hasCourse(collection) %}onclick="addCollection('{{collection.id}}')"{% endif %}>
-									<i class="bi-check {% if not hasCourse(collection) %}invisible{% endif %}"></i>
-									{% if collection.transfer %}
-									<small>Transferred</small>
-									{% else %}
-									<small>{{collection.term.name | capitalize}}</small>
-									{% endif %}
-								</a>
-							</li>
-							{% endfor %}
-							<li><hr class="dropdown-divider my-1"></li>
-							<li>
-								<a class="dropdown-item px-2 p-y1" href="{{url_for('view.planner')}}">
-									<small>Edit in My Planner</small>
-								</a>
-							</li>
-						</ul>
-						{% endif %}
-					</div>
-
-					{% if current_user.is_authenticated %}
-					<div class="card bg-light">
-						<ul class="list-group list-group-flush">
-							{% for uCourse in userCourses %}
-							<li class="list-group-item">
-								<div class="d-flex justify-content-between">
-									{% if uCourse.collection.transfer %}
-									<span>Transferred</span>
-									{% else %}
-									<span>{{uCourse.collection.term.name | capitalize}}</span>
-									{% endif %}
-									<span class="font-monospace" title="{{uCourse.grade.gpv}}">
-										{{uCourse.grade.symbol}}
-									</span>
-								</div>
-							</li>
-							{% endfor %}
-						</ul>
-					</div>
-					{% else %}
-					<span class="fst-italic">
-						You must be logged in to see the terms in which you took this course
-					</span>
-					{% endif %}
-				</div>
+		<!--Comments-->
+		<div class="container ps-2 ps-lg-4 pe-0 row">
+			<hr>
+			<div>
+				<h3>Discussion</h3>
+				{{disqusThread(request.url, course.id)}}
 			</div>
 		</div>
 	</div>
 
-	<div class="order-3 col-12 mt-3 ps-4 ps-lg-5 fs-6">
-		<div>
-			<a href="{{course.url_uni}}" target="_blank" rel="noopener noreferrer" class="text-body">View course in Official Uni site</a>
-			<i class="bi-box-arrow-up-right"></i>
-		</div>
-		<div>
-			<a href="{{redditSearch}}" target="_blank" rel="noopener noreferrer" class="text-body">Search on r/UCalgary</a>
-			<i class="bi-box-arrow-up-right"></i>
+	<!--RIGHT-->
+	<div class="order-1 order-sm-2 col-12 col-sm-6 col-md-5 col-lg-4 p-2">
+		<div class="sticky-sm-top sticky-offset">
+			<!--User data-->
+			<div class="card bg-light">
+				<div class="card-body">
+					<!--Tags-->
+					<div id="tags">
+						<div class="d-flex justify-content-between mb-2">
+							<h4 class="m-0">Tags</h4>
+							{% if current_user.is_authenticated %}
+							<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
+								Add tags
+							</button>
+							<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
+							{% endif %}
+						</div>
+						{% if current_user.is_authenticated %}
+						<div class="loading fst-italic">Loading...</div>
+						{% endif %}
+						<div class="tags-selected"></div>
+						{% if not current_user.is_authenticated %}
+						<span class="fst-italic">
+							You must be logged in to see and add tags to this course
+						</span>
+						{% endif %}
+					</div>
+
+					<hr class="my-4">
+		
+					<!--Course collections-->
+					<div id="collections">
+						<div class="d-flex justify-content-between mb-2">
+							<h4 class="m-0">Terms taken</h4>
+							
+							{% if current_user.is_authenticated %}
+							<button class="collections-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
+								Add to term
+							</button>
+							<ul class="collections-dropdown dropdown-menu fs-6 py-1">
+								{% for collection in collections %}
+								<li>
+									<a class="dropdown-item px-2 py-1" style="cursor: pointer;" {% if not hasCourse(collection) %}onclick="addCollection('{{collection.id}}')"{% endif %}>
+										<i class="bi-check {% if not hasCourse(collection) %}invisible{% endif %}"></i>
+										{% if collection.transfer %}
+										<small>Transferred</small>
+										{% else %}
+										<small>{{collection.term.name | capitalize}}</small>
+										{% endif %}
+									</a>
+								</li>
+								{% endfor %}
+								<li><hr class="dropdown-divider my-1"></li>
+								<li>
+									<a class="dropdown-item px-2 p-y1" href="{{url_for('view.planner')}}">
+										<small>Edit in My Planner</small>
+									</a>
+								</li>
+							</ul>
+							{% endif %}
+						</div>
+
+						{% if current_user.is_authenticated %}
+						<div class="card bg-light">
+							<ul class="list-group list-group-flush">
+								{% for uCourse in userCourses %}
+								<li class="list-group-item">
+									<div class="d-flex justify-content-between">
+										{% if uCourse.collection.transfer %}
+										<span>Transferred</span>
+										{% else %}
+										<span>{{uCourse.collection.term.name | capitalize}}</span>
+										{% endif %}
+										<span class="font-monospace" title="{{uCourse.grade.gpv}}">
+											{{uCourse.grade.symbol}}
+										</span>
+									</div>
+								</li>
+								{% endfor %}
+							</ul>
+						</div>
+						{% else %}
+						<span class="fst-italic">
+							You must be logged in to see the terms in which you took this course
+						</span>
+						{% endif %}
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

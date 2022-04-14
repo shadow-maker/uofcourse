@@ -28,6 +28,8 @@ IFTTT_EVENTS = {
 	"message": "uofcourse_message"
 }
 
+DISQUS_EMBED = "https://uofcourse.disqus.com/embed.js"
+
 DEFAULT_EMOJI = 128218
 
 COLORS_DARK = {

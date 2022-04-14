@@ -21,6 +21,7 @@ constants = {
 	"CURRENT_VERSION_BETA" : CURRENT_VERSION in change and change[CURRENT_VERSION]["beta"],
 	"DEBUG" : app.debug,
 	"GANALYTICS_ID" : app.config["GANALYTICS_ID"],
+	"DISQUS_EMBED": DISQUS_EMBED,
 	"COLORS" : COLORS_DARK,
 	"DEFAULT_EMOJI" : DEFAULT_EMOJI,
 	"ROLE_ADMIN": Role.admin
