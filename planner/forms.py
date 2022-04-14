@@ -17,11 +17,22 @@ def ucidValidation(form, field):
 	if len(str(field.data)) != 8:
 		raise ValidationError("UCID must be 8 characters long")
 
+def unameCheck(uname):
+	return bool(User.query.filter_by(username=uname).first())
+
 def unameValidation(form, field):
 	if len(str(field.data)) < 4:
 		raise ValidationError("Username must be at least 4 characters long")
 	if len(str(field.data)) > 16:
 		raise ValidationError("Username must be at most 16 characters long")
+
+def unameExists(form, field):
+	if not unameCheck(field.data):
+		raise ValidationError("Username does not exist")
+
+def unameNew(form, field):
+	if unameCheck(field.data):
+		raise ValidationError("Username already exists, please choose a new one")
 
 def nameValidation(form, field):
 	if len(str(field.data)) > 32:
@@ -38,14 +49,14 @@ def passwValidation(form, field):
 #
 
 class formLogin(FlaskForm):
-	uname = StringField("Username", validators=[unameValidation])
+	uname = StringField("Username", validators=[DataRequired(), unameValidation, unameExists])
 	passw = PasswordField("Password", validators=[DataRequired()])
 	remember = BooleanField("Remember password")
 	submit = SubmitField("Log In")
 
 
 class formSignup(FlaskForm):
-	uname = StringField("Username", validators=[DataRequired(), unameValidation])
+	uname = StringField("Username", validators=[DataRequired(), unameValidation, unameNew])
 	name = StringField("Name", validators=[nameValidation])
 	email = StringField("Email", validators=[DataRequired(), Email()])
 	passw = PasswordField("Password", validators=[DataRequired(), passwValidation])
