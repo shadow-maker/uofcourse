@@ -14,6 +14,18 @@ class Role(Enum):
 	moderator = 2
 	admin = 3
 
+	def __lt__(self, other):
+		return self.value < other.value
+	
+	def __le__(self, other):
+		return self.value <= other.value
+
+	def __gt__(self, other):
+		return self.value > other.value
+	
+	def __ge__(self, other):
+		return self.value >= other.value
+
 
 class User(db.Model, UserMixin):
 	__tablename__ = "user"
