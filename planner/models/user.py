@@ -61,19 +61,15 @@ class User(db.Model, UserMixin):
 	def checkPassw(self, passw):
 		return bcrypt.check_password_hash(self.password, passw)
 
-	def updatePassw(self, passw, new):
-		if self.checkPassw(passw):
-			self.password = bcrypt.generate_password_hash(new).decode("utf-8")
-			db.session.commit()
+	def updatePassw(self, new):
+		self.password = bcrypt.generate_password_hash(new).decode("utf-8")
 	
-	def delete(self, passw):
-		if self.checkPassw(passw):
-			for tag in self.tags:
-				tag.delete()
-			for collection in self.collections:
-				collection.delete()
-			db.session.delete(self)
-			db.session.commit()
+	def delete(self):
+		for tag in self.tags:
+			tag.delete()
+		for collection in self.collections:
+			collection.delete()
+		db.session.delete(self)
 
 	def __repr__(self):
 		return f"USER {self.name} (#{self.id})"

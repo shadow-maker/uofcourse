@@ -20,7 +20,7 @@ def account():
 	if formPassw.validate_on_submit():
 		if current_user.checkPassw(formPassw.oldPassw.data):
 			try:
-				current_user.updatePassw(formPassw.oldPassw.data, formPassw.newPassw.data)
+				current_user.updatePassw(formPassw.newPassw.data)
 				db.session.commit()
 			except:
 				flash(f"Error updating password!", "danger")
