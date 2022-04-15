@@ -1,10 +1,9 @@
 from planner import db
-from planner.models import utils as utils
-from planner.models import Course, Subject, Faculty
+from planner.models import Course, Subject, Faculty, utils
+from planner.auth import current_user
 from planner.routes.api.utils import *
 
 from flask import Blueprint, request
-from flask_login import current_user
 from sqlalchemy import and_, or_
 
 course = Blueprint("courses", __name__, url_prefix="/courses")

@@ -4,12 +4,11 @@
 
 from planner import db
 from planner.models import Grade, Course, UserCourse, CourseCollection
+from planner.auth import current_user, login_required
 from planner.constants import *
-
 from planner.routes.api.utils import *
 
 from flask import Blueprint, request
-from flask_login import current_user
 
 import json
 
@@ -22,10 +21,8 @@ user = Blueprint("users", __name__, url_prefix="/users")
 # CourseCollection
 
 @user.route("/collection/<id>/gpa")
+@login_required
 def getCourseCollectionGpa(id):
-	if not current_user.is_authenticated:
-		return {"error": "User not logged in"}, 401
-
 	collection = CourseCollection.query.filter_by(id=id).first()
 
 	if not collection:
@@ -43,10 +40,8 @@ def getCourseCollectionGpa(id):
 # User Course
 
 @user.route("/course", methods=["POST"])
+@login_required
 def postUserCourse(data={}):
-	if not current_user.is_authenticated:
-		return {"error": "User not logged in"}, 401
-
 	if not data:
 		data = request.form.to_dict()
 		if not data:
@@ -83,10 +78,8 @@ def postUserCourse(data={}):
 # User Course
 
 @user.route("/course", methods=["PUT"])
+@login_required
 def putUserCourse(data={}):
-	if not current_user.is_authenticated:
-		return {"error": "User not logged in"}, 401
-
 	if not data:
 		data = request.form.to_dict()
 		if not data:
@@ -144,10 +137,8 @@ def putUserCourse(data={}):
 
 @user.route("/collection", defaults={"id":None}, methods=["DELETE"])
 @user.route("/collection/<id>", methods=["DELETE"])
+@login_required
 def delCourseCollection(data={}, id=None):
-	if not current_user.is_authenticated:
-		return {"error": "User not logged in"}, 401
-
 	if not id:
 		if not data:
 			data = request.get_json()
@@ -180,10 +171,8 @@ def delCourseCollection(data={}, id=None):
 
 @user.route("/course", defaults={"id":None}, methods=["DELETE"])
 @user.route("/course/<id>", methods=["DELETE"])
+@login_required
 def delUserCourse(data={}, id=None):
-	if not current_user.is_authenticated:
-		return {"error": "User not logged in"}, 401
-
 	if not id:
 		if not data:
 			data = request.get_json()

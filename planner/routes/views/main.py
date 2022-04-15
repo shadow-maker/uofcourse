@@ -1,10 +1,10 @@
 from planner import app, jinja, ifttt
 from planner import changelog as change
+from planner.auth import current_user
 from planner.forms import formContact
 from planner.routes.views import view
 
 from flask import render_template, flash, redirect
-from flask_login import current_user
 from flask.helpers import url_for
 
 from markdown import markdown

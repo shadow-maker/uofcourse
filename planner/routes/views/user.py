@@ -1,6 +1,7 @@
 from planner import db
 from planner.models import Role, Season, Term, Grade, CourseCollection
 from planner.models.utils import getAllYears
+from planner.auth import current_user, login_required
 from planner.forms import formChangePassw
 from planner.constants import *
 
@@ -10,14 +11,11 @@ from planner.routes.api import *
 
 from flask import render_template, flash, redirect, request
 from flask.helpers import url_for
-from flask_login import current_user
 
 
 @view.route("/account", methods=["GET", "POST"])
+@login_required
 def account():
-	if not current_user.is_authenticated:
-		return redirectLogin()
-	
 	formPassw = formChangePassw()
 
 	if formPassw.validate_on_submit():
@@ -42,10 +40,8 @@ def account():
 
 
 @view.route("/my")
+@login_required
 def planner():
-	if not current_user.is_authenticated:
-		return redirectLogin()
-	
 	return render_template("planner.html",
 		title = "My Plan",
 		header = "My Course Plan",

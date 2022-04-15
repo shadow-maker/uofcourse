@@ -4,11 +4,11 @@
 
 from planner import db
 from planner.models import Course, UserTag
+from planner.auth import current_user, login_required
 
 from planner.routes.api.utils import *
 
 from flask import Blueprint, request
-from flask_login import current_user
 
 tag = Blueprint("tags", __name__, url_prefix="/tags")
 
@@ -19,17 +19,15 @@ tag = Blueprint("tags", __name__, url_prefix="/tags")
 # User UserTags
 
 @tag.route("", methods=["GET"])
+@login_required
 def getUserTags():
-	if not current_user.is_authenticated:
-		return {"error": "User not logged in"}, 401
 	return {"tags": [dict(tag) for tag in current_user.tags]}, 200
 
 # Course UserTags
 
 @tag.route("/course/<id>", methods=["GET"])
+@login_required
 def getCourseTags(id):
-	if not current_user.is_authenticated:
-		return {"error": "User not logged in"}, 401
 	course = Course.query.filter_by(id=id).first()
 	if not course:
 		return {"error": f"Course with id {id} does not exist"}, 404
@@ -41,9 +39,8 @@ def getCourseTags(id):
 #
 
 @tag.route("", methods=["POST"])
+@login_required
 def addUserTag(data={}):
-	if not current_user.is_authenticated:
-		return {"error": "User not logged in"}, 401
 	if not data:
 		data = request.form.to_dict()
 		if not data:
@@ -82,9 +79,8 @@ def addUserTag(data={}):
 #
 
 @tag.route("", methods=["PUT"])
+@login_required
 def editUserTag(data={}):
-	if not current_user.is_authenticated:
-		return {"error": "User not logged in"}, 401
 	if not data:
 		data = request.form.to_dict()
 		if not data:
@@ -127,9 +123,8 @@ def editUserTag(data={}):
 
 
 @tag.route("/course", methods=["PUT"])
+@login_required
 def putCourseTag(data={}):
-	if not current_user.is_authenticated:
-		return {"error": "User not logged in"}, 401
 	if not data:
 		data = request.form.to_dict()
 		if not data:
@@ -167,9 +162,8 @@ def putCourseTag(data={}):
 #
 
 @tag.route("", methods=["DELETE"])
+@login_required
 def deleteUserTag(data={}):
-	if not current_user.is_authenticated:
-		return {"error": "User not logged in"}, 401
 	if not data:
 		data = request.form.to_dict()
 		if not data:
