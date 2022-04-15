@@ -9,6 +9,10 @@ from wtforms.validators import ValidationError, DataRequired, Email, NumberRange
 
 from datetime import date
 
+import re
+
+SPECIAL_CHARS = re.compile("[@!#$%^&*()<>?/\|}{~:]")
+
 #
 # Validation funcs
 #
@@ -21,6 +25,10 @@ def unameCheck(uname):
 	return bool(User.query.filter_by(username=uname).first())
 
 def unameValidation(form, field):
+	if " " in field.data:
+		raise ValidationError("Username cannot contain spaces")
+	if SPECIAL_CHARS.search(field.data):
+		raise ValidationError("Username cannot contain special characters")
 	if len(str(field.data)) < 4:
 		raise ValidationError("Username must be at least 4 characters long")
 	if len(str(field.data)) > 16:
