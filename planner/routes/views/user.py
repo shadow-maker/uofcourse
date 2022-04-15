@@ -6,7 +6,6 @@ from planner.forms import formChangePassw
 from planner.constants import *
 
 from planner.routes.views import view
-from planner.routes.views.utils import *
 from planner.routes.api import *
 
 from flask import render_template, flash, redirect, request
