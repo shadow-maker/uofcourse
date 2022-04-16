@@ -69,4 +69,5 @@ def logout():
 	if not current_user.is_authenticated:
 		return redirect(url_for("view.login"))
 	logout_user()
+	flash("Logout successful!", "success")
 	return redirect(url_for("view.home"))
