@@ -39,7 +39,7 @@ class User(db.Model, UserMixin):
 	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	
 	faculty_id = db.Column(db.Integer, db.ForeignKey("faculty.id"), nullable=False)
-	neededUnits = db.Column(db.Numeric(5, 2))
+	neededUnits = db.Column(db.Numeric(precision=5, scale=2)) # 3 integer places, 2 decimal places
 
 	collections = db.relationship("CourseCollection", backref="user")
 	tags = db.relationship("UserTag", backref="user")

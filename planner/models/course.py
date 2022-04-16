@@ -10,7 +10,7 @@ class Course(db.Model):
 	number = db.Column(db.Integer, nullable=False, unique=False)
 	name = db.Column(db.String(256))
 	aka = db.Column(db.Text)
-	units = db.Column(db.Numeric(4, 2))
+	units = db.Column(db.Numeric(precision=4, scale=2)) # 2 integer places, 2 decimal places
 	desc = db.Column(db.Text)
 	prereqs = db.Column(db.Text)
 	coreqs = db.Column(db.Text)
