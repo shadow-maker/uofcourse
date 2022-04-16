@@ -24,7 +24,8 @@ constants = {
 	"DISQUS_EMBED": DISQUS_EMBED,
 	"COLORS" : COLORS_DARK,
 	"DEFAULT_EMOJI" : DEFAULT_EMOJI,
-	"ROLE_ADMIN": Role.admin
+	"ROLE_ADMIN": Role.admin,
+	"ROLE_MOD": Role.moderator
 }
 
 @view.context_processor
@@ -40,3 +41,5 @@ from planner.routes.views.auth import *
 from planner.routes.views.user import *
 from planner.routes.views.course import *
 from planner.routes.views.error import *
+
+from planner.routes.views.admin import admin
