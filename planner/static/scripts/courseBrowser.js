@@ -20,7 +20,7 @@ function uncheckAll(container) {
 // REQUEST FUNCTIONS
 //
 
-function requestResults(suc, ignorePrev=false) {
+function requestResults(callback) {
 	var selectedLevel = []
 	$("input[name='selectedLevel']:checked").each(function () {
 		selectedLevel.push(parseInt($(this).val()))
@@ -48,7 +48,7 @@ function requestResults(suc, ignorePrev=false) {
 		page: page.current
 	}
 
-	if (!ignorePrev && JSON.stringify(data) == JSON.stringify(prevData))
+	if (JSON.stringify(data) == JSON.stringify(prevData))
 		return
 
 	prevData = data
@@ -61,7 +61,7 @@ function requestResults(suc, ignorePrev=false) {
 		method: "GET",
 		data: data,
 		traditional: true,
-		success: (response) => {suc(response)},
+		success: (response) => {callback(response)},
 		error: (response) => {
 			$(".loading").hide()
 			displayError(response)
@@ -70,17 +70,18 @@ function requestResults(suc, ignorePrev=false) {
 }
 
 
-function requestCourseTags(id, suc) {
+function requestCourseTags(id, callback) {
 	if (isAuth)
 		$.ajax({
 			url: "/api/tags/course/" + id,
 			method: "GET",
-			success: (response) => {suc(response)},
+			success: (response) => {callback(response)},
 			error: (response) => {
 				displayError(response)
 			}
 		})
 }
+
 
 function toggleTag(courseId, tagId) {
 	$.ajax({
@@ -164,7 +165,7 @@ function updateResults(data) {
 
 	$("#coursesContainer").empty()
 	for (let course of data.results) {
-		var courseItem = $("#templates .course-item").clone()
+		let courseItem = $("#templates .course-item").clone()
 
 		courseItem.attr("id", "course-" + course.id)
 		courseItem.attr("db-id", course.id)
