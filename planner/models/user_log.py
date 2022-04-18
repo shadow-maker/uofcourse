@@ -21,8 +21,8 @@ class UserLog(db.Model):
 	user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 	event = db.Column(db.Enum(UserLogEvent), nullable=False)
 
-	ip = db.Column(db.String(32))
 	datetime = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+	ip = db.Column(db.String(32))
 
 	@property
 	def type(self):
