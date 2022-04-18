@@ -65,7 +65,7 @@ class UserModelView(BaseModelView):
 		"id", "username", "role", "name", "email", "created", "neededUnits", "faculty"
 	]
 	column_filters = ["role", "faculty_id", "faculty"]
-	form_excluded_columns = ["created", "tags", "collections"]
+	form_excluded_columns = ["created", "logs", "tags", "collections"]
 
 	# Default form args
 	form_args = {
@@ -152,6 +152,10 @@ class UserModelView(BaseModelView):
 class UserLogModelView(BaseModelView):
 	def is_accessible(self):
 		return current_user.is_authenticated and current_user.role >= Role.admin
+	
+	can_create = False
+	can_edit = False
+	can_delete = False
 
 	column_filters = ["user_id", "event"]
 	column_default_sort = ("datetime", True)
