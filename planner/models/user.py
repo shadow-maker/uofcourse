@@ -1,5 +1,6 @@
 from planner import db, bcrypt
 from planner.constants import STARRED_COLOR, STARRED_EMOJI
+from planner.models.user_log import UserLog, UserLogEvent
 from planner.models.user_tag import UserTag
 from planner.models.course_collection import CourseCollection
 
@@ -44,6 +45,8 @@ class User(db.Model, UserMixin):
 	collections = db.relationship("CourseCollection", backref="user")
 	tags = db.relationship("UserTag", backref="user")
 
+	logs = db.relationship("UserLog", backref="user")
+
 	def __init__(self, uname, name, email, passw, faculty_id):
 		self.username = uname
 		self.name = name
@@ -58,17 +61,31 @@ class User(db.Model, UserMixin):
 		starred.deletable = False
 		self.tags.append(starred)
 
+	def log(self, event, ip=None):
+		log = UserLog(self.id, event, ip)
+		db.session.add(log)
+		db.session.commit()
+	
+	def addTag(self, name, color, emoji=None, deletable=True):
+		tag = UserTag(self.id, name, color, emoji, deletable)
+		self.tags.append(tag)
+		db.session.commit()
+		return tag
+
 	def checkPassw(self, passw):
 		return bcrypt.check_password_hash(self.password, passw)
 
 	def updatePassw(self, new):
 		self.password = bcrypt.generate_password_hash(new).decode("utf-8")
+		self.log(UserLogEvent.AUTH_PASSW_CHANGE)
 	
 	def delete(self):
 		for tag in self.tags:
 			tag.delete()
 		for collection in self.collections:
 			collection.delete()
+		for log in self.logs:
+			log.delete()
 		db.session.delete(self)
 
 	def __repr__(self):

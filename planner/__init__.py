@@ -60,6 +60,7 @@ utcoffset = timedelta(hours=round(((datetime.now() - datetime.utcnow()).seconds 
 # Import routes
 #
 
+from planner.models import *
 from planner.routes.api import *
 from planner.routes.views import *
 

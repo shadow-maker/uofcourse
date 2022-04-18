@@ -1,5 +1,5 @@
 from planner import db, loginManager
-from planner.models import User
+from planner.models import UserLogEvent, User
 from planner.auth import login_user, logout_user, current_user
 from planner.forms import formLogin, formSignup
 from planner.constants import ALLOW_ACCOUNT_CREATION
@@ -51,6 +51,7 @@ def login():
 		if user:
 			if user.checkPassw(form.passw.data):
 				login_user(user, remember=form.remember.data)
+				user.log(UserLogEvent.AUTH_LOGIN)
 				flash(f"Log in successful!", "success")
 				nextPage = request.args.get("next")
 				return redirect(nextPage if nextPage else url_for("view.home"))
@@ -68,6 +69,7 @@ def login():
 def logout():
 	if not current_user.is_authenticated:
 		return redirect(url_for("view.login"))
+	current_user.log(UserLogEvent.AUTH_LOGOUT)
 	logout_user()
 	flash("Logout successful!", "success")
 	return redirect(url_for("view.home"))

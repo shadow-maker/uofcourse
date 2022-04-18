@@ -19,6 +19,7 @@ from planner.models.grade import Grade
 #
 
 from planner.models.user import Role, User
+from planner.models.user_log import UserLogEvent, UserLog
 from planner.models.course_tag import CourseTag
 from planner.models.user_tag import UserTag
 from planner.models.user_course import UserCourse

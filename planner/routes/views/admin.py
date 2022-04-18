@@ -1,5 +1,5 @@
 from planner import app, db
-from planner.models import Role, User, Grade, Course, Subject, Faculty, Term
+from planner.models import Role, User, UserLog, UserTag, CourseCollection, Grade, Course, Subject, Faculty, Term
 from planner.auth import current_user
 from planner.forms import unameCheck, unameValidation, unameExists, unameNew, nameValidation, passwValidation
 from planner.constants import SITE_NAME
@@ -12,6 +12,8 @@ from flask_admin.form import rules
 from flask_admin.babel import gettext
 
 from wtforms import validators
+
+from planner.models.course_collection import CourseCollection
 
 
 class IndexView(AdminIndexView):
@@ -146,6 +148,21 @@ class UserModelView(BaseModelView):
 		return True
 
 
+class UserLogModelView(BaseModelView):
+	def __init__(self, *args, **kwargs):
+		super().__init__(UserLog, *args, **kwargs)
+
+
+class TagModelView(BaseModelView):
+	def __init__(self, *args, **kwargs):
+		super().__init__(UserTag, *args, **kwargs)
+
+
+class CollectionModelView(BaseModelView):
+	def __init__(self, *args, **kwargs):
+		super().__init__(CourseCollection, *args, **kwargs)
+
+
 class GradeModelView(BaseModelView):
 	form_excluded_columns = ["userCourses"]
 
@@ -162,7 +179,7 @@ class FacultyModelView(BaseModelView):
 
 
 class SubjectModelView(BaseModelView):
-	column_list = ["id", "code", "name", "emoji", "faculty_id", "site", "courses"]
+	column_list = ["id", "code", "name", "emoji", "faculty_id", "site"]
 	column_details_list =["id", "code", "name", "emoji", "faculty", "site", "url", "url_uni"]
 	form_excluded_columns = ["courses"]
 
@@ -195,6 +212,9 @@ admin = Admin(app, name=f"{SITE_NAME} Admin", template_mode="bootstrap4", base_t
 
 admin.add_views(
 	UserModelView(),
+	UserLogModelView(),
+	TagModelView(),
+	CollectionModelView(),
 	GradeModelView(),
 	FacultyModelView(),
 	SubjectModelView(),
