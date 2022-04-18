@@ -25,6 +25,14 @@ class UserLog(db.Model):
 	datetime = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 	@property
+	def type(self):
+		return self.event.name.split("_")[0]
+
+	@property
+	def name(self):
+		return self.event.name.split("_")[1:]
+
+	@property
 	def location(self):
 		r = requests.get("http://ip-api.com/json/" + self.ip)
 		return r.json() if r.status_code == 200 else None
@@ -34,9 +42,17 @@ class UserLog(db.Model):
 		self.event = event
 		self.ip = ip if ip != None else request.remote_addr
 
-	def __repr__(self):
-		return f"UserLog(user_id={self.user_id}, event={self.event}, ip={self.ip}, datetime={self.datetime})"
-
 	def delete(self):
 		db.session.delete(self)
 		db.session.commit()
+	
+	def __repr__(self):
+		return f"UserLog(user_id={self.user_id}, event={self.event}, ip={self.ip}, datetime={self.datetime})"
+
+	def __iter__(self):
+		yield "id", self.id
+		yield "user_id", self.user_id
+		yield "datetime", self.datetime.isoformat()
+		yield "event_type", self.type
+		yield "event_name", self.name
+		yield "ip", self.ip
