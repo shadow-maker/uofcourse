@@ -3,7 +3,7 @@
 # TODO: Add try statements to db.session.commit()
 
 from planner import db
-from planner.models import Grade, Course, UserCourse, CourseCollection
+from planner.models import Grade, Course, UserLog, UserCourse, CourseCollection
 from planner.auth import current_user, login_required
 from planner.constants import *
 from planner.routes.api.utils import *
@@ -17,6 +17,61 @@ user = Blueprint("users", __name__, url_prefix="/users")
 #
 # GET
 #
+
+# UserLog
+
+@user.route("/logs")
+@login_required
+def getUserLogs():
+	# Get data from url arguments
+	asc = request.args.get("asc", default="false", type=str).lower()
+	limit = request.args.get("limit", default=30, type=int)
+	page = request.args.get("page", default=1, type=int)
+
+	# Validate data
+	if asc not in ["true", "1", "false", "0"]:
+		return {"error": f"'{asc}' is not a valid value for asc (boolean)"}, 400
+	if limit < 1:
+		return {"error": f"limit of items per page cannot be lower than 1 (got {limit})"}, 400
+	if limit > MAX_ITEMS_PER_PAGE:
+		return {"error": f"limit of items per page cannot be greater than {MAX_ITEMS_PER_PAGE}"}, 400
+	if page < 1:
+		return {"error": f"page cannot be lower than 1 (got {page})"}, 400
+	
+	sortBy = [UserLog.datetime]
+
+	# Add .desc() to sorting columns if asc is false
+	if asc in ["false", "0"]:
+		sortBy = [i.desc() for i in sortBy]
+
+	query = UserLog.query.filter_by(user_id=current_user.id).order_by(*sortBy)
+	results = query.paginate(per_page=limit, page=page)
+
+	return {
+		"results": [dict(log) for log in results.items],
+		"page": results.page,
+		"pages": results.pages,
+		"total": results.total
+	}, 200
+
+
+@user.route("/logs/<id>")
+@login_required
+def getUserLog(id):
+	log = UserLog.query.filter_by(id=id, user_id=current_user.id).first()
+	if not log:
+		return {"error": "log not found"}, 404
+	return dict(log), 200
+
+
+@user.route("/logs/<id>/location")
+@login_required
+def getUserLogLocation(id):
+	log = UserLog.query.filter_by(id=id, user_id=current_user.id).first()
+	if not log:
+		return {"error": "log not found"}, 404
+	return log.location, 200
+
 
 # CourseCollection
 
