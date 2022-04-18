@@ -44,7 +44,7 @@ def api():
 	html = parts[0] + parts[1] + parts[2].replace("h2", "h2 class='mt-5'")
 	html = html.replace("<h3", "<h3 class='mt-4'")
 	html = html.replace("h4", "h4 class='mt-3'")
-	html = html.replace("<table", "<table class='table'")
+	html = html.replace("<table", "<table class='table table-sm'")
 	html = html.replace("<blockquote", "<blockquote title='Copy endpoint' class='alert alert-secondary p-2 d-flex justify-content-between fs-5'")
 
 	return render_template("api.html",
