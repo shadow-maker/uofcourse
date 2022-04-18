@@ -155,6 +155,7 @@ class UserLogModelView(BaseModelView):
 
 	column_filters = ["user_id", "event"]
 	column_default_sort = ("datetime", True)
+	column_details_list = ["id", "user_id", "event", "datetime", "ip", "location"]
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(UserLog, *args, **kwargs)
