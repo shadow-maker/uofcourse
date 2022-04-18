@@ -8,6 +8,7 @@ from flask import redirect, flash
 from flask.helpers import url_for
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView, form
+from flask_admin.contrib.sqla.filters import BaseSQLAFilter
 from flask_admin.form import rules
 from flask_admin.babel import gettext
 
@@ -47,7 +48,7 @@ class BaseModelView(ModelView):
 		#self.column_labels = dict([(c.name, c.name) for c in model.__table__.columns])
 		if self.column_sortable_list is None:
 			self.column_sortable_list = self.column_list
-		if "id" in self.column_list:
+		if self.column_default_sort is None and "id" in self.column_list:
 			self.column_default_sort = "id"
 		self.can_view_details = True
 		if self.column_details_list is None:
@@ -60,10 +61,10 @@ class UserModelView(BaseModelView):
 		return current_user.is_authenticated and current_user.role >= Role.admin
 	
 	column_list = ["id", "username", "role", "name", "email", "created", "neededUnits", "faculty_id"]
-	column_sortable_list = ["id", "username", "role", "name", "email", "created", "neededUnits"]
 	column_details_list = [
 		"id", "username", "role", "name", "email", "created", "neededUnits", "faculty"
 	]
+	column_filters = ["role", "faculty_id", "faculty"]
 	form_excluded_columns = ["created", "tags", "collections"]
 
 	# Default form args
@@ -149,28 +150,27 @@ class UserModelView(BaseModelView):
 
 
 class UserLogModelView(BaseModelView):
+	def is_accessible(self):
+		return current_user.is_authenticated and current_user.role >= Role.admin
+
+	column_filters = ["user_id", "event"]
+	column_default_sort = ("datetime", True)
+
 	def __init__(self, *args, **kwargs):
 		super().__init__(UserLog, *args, **kwargs)
 
 
-class TagModelView(BaseModelView):
-	def __init__(self, *args, **kwargs):
-		super().__init__(UserTag, *args, **kwargs)
-
-
-class CollectionModelView(BaseModelView):
-	def __init__(self, *args, **kwargs):
-		super().__init__(CourseCollection, *args, **kwargs)
-
-
 class GradeModelView(BaseModelView):
 	form_excluded_columns = ["userCourses"]
+
+	column_filters = ["gpv", "passed"]
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(Grade, *args, **kwargs)
 
 
 class FacultyModelView(BaseModelView):
+	column_filters = ["name"]
 	form_excluded_columns = ["subjects", "users"]
 
 	def __init__(self, *args, **kwargs):
@@ -181,6 +181,7 @@ class FacultyModelView(BaseModelView):
 class SubjectModelView(BaseModelView):
 	column_list = ["id", "code", "name", "emoji", "faculty_id", "site"]
 	column_details_list =["id", "code", "name", "emoji", "faculty", "site", "url", "url_uni"]
+	column_filters = ["name", "emoji", "faculty_id", "faculty"]
 	form_excluded_columns = ["courses"]
 
 	#column_formatters = dict(emoji=lambda v, c, m, p: f"&#{m.emoji}")
@@ -195,6 +196,7 @@ class CourseModelView(BaseModelView):
 	column_details_list = [
 		"id", "code", "number", "subject", "name", "units", "repeat", "nogpa", "desc", "notes", "prereqs", "coreqs", "antireqs", "url", "url_uni"
 	]
+	column_filters = ["number", "name", "units", "subject_id", "subject"]
 	form_excluded_columns = ["userCourses", "userTags"]
 
 	def __init__(self, *args, **kwargs):
@@ -202,6 +204,8 @@ class CourseModelView(BaseModelView):
 
 
 class TermModelView(BaseModelView):
+	column_filters = ["season", "year", "start", "end"]
+	column_default_sort = ("year", True)
 	form_excluded_columns = ["courseCollections"]
 
 	def __init__(self, *args, **kwargs):
@@ -213,8 +217,6 @@ admin = Admin(app, name=f"{SITE_NAME} Admin", template_mode="bootstrap4", base_t
 admin.add_views(
 	UserModelView(),
 	UserLogModelView(),
-	TagModelView(),
-	CollectionModelView(),
 	GradeModelView(),
 	FacultyModelView(),
 	SubjectModelView(),
