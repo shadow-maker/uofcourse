@@ -17,11 +17,12 @@ class UserTag(db.Model):
 	def color_hex(self):
 		return f"{self.color:06x}"
 
-	def __init__(self, user_id, name, color, emoji=None):
+	def __init__(self, user_id, name, color, emoji=None, deletable=True):
 		self.user_id = user_id
 		self.name = name
 		self.color = color
 		self.emoji = emoji
+		self.deletable = deletable
 
 	def delete(self):
 		db.session.delete(self)
