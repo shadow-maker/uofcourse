@@ -172,8 +172,8 @@ function updateResults(data) {
 
 		courseItem.find(".course-link").attr("href", course.url)
 		courseItem.find(".course-emoji").html("&#" + (course.emoji ? course.emoji : DEFAULT_EMOJI))
-		courseItem.find(".course-code").html(course.code)
-		courseItem.find(".course-name").html(course.name)
+		courseItem.find(".course-code").text(course.code)
+		courseItem.find(".course-name").text(course.name)
 
 		// Add content only available if user is authenticated
 		if (isAuth) {
