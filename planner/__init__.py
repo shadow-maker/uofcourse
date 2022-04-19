@@ -63,6 +63,7 @@ utcoffset = timedelta(hours=round(((datetime.now() - datetime.utcnow()).seconds 
 from planner.models import *
 from planner.routes.api import *
 from planner.routes.views import *
+from planner.routes.admin import *
 
 app.register_blueprint(api)
 app.register_blueprint(view)
