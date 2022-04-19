@@ -39,6 +39,3 @@ a.text-body:hover {
 .dragging {
 	opacity: 0.5;
 }
-.collapsing {
-	transition: 0.2s;
-}
