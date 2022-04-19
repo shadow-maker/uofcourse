@@ -43,56 +43,80 @@
 
 <body>
 	{% block page_body %}
-	<div class="bg-dark mb-4 px-md-5">
-		<nav class="navbar navbar-expand-lg navbar-dark px-xl-5" role="navigation">
-			<a class="badge badge-secondary mr-md-3" href="{{ url_for('view.home') }}">
-				<span class="fa fa-chevron-left glyphicon glyphicon-chevron-left"></span>
-				BACK
-			</a>
+	<div class="d-flex flex-column flex-md-row m-0">
+		<div id="navbar" class="d-flex flex-column sticky-top">
+			<nav class="navbar navbar-expand-md navbar-dark bg-dark d-flex flex-md-column w-100 px-3 px-xl-4 py-4 sticky-top h-100"  role="navigation">
+				{% block brand %}
+				<a class="navbar-brand mr-0" href="{{ admin_view.admin.url }}">
+					<span>{{ admin_view.admin.name }}</span>
+					<span class="badge badge-info">ADMIN</span>
+				</a>
+				{% endblock %}
+	
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#admin-navbar-content" aria-controls="admin-navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+	
+				<div class="collapse navbar-collapse w-100 align-items-stretch" id="admin-navbar-content">
+					<div class="d-flex flex-column justify-content-between w-100">
+						<div>
+							{% block main_menu %}
+							<hr class="border-secondary">
+							<ul class="navbar-nav d-flex flex-md-column w-100 text-center text-md-left">
+								{{ layout.menu() }}
+							</ul>
+							{% endblock %}
+						</div>
+			
+						{% block menu_links %}
+						<ul class="nav navbar-nav w-100 d-flex flex-md-column">
+							{{ layout.menu_links() }}
+						</ul>
+						{% endblock %}
 
-			{% block brand %}
-			<a class="navbar-brand" href="{{ admin_view.admin.url }}">{{ admin_view.admin.name }}</a>
+						<div>
+							{% block access_control %}
+							<hr class="border-secondary">
+							<ul class="nav navbar-nav w-100 d-flex flex-md-column">
+								<li class="py-1">
+									<a class="btn btn-outline-info d-block" href="{{url_for('view.home')}}">
+										<small><span class="fa fa-chevron-left glyphicon glyphicon-chevron-left"></span></small>
+										Back
+									</a>
+								</li>
+								<li class="py-1">
+									<a class="btn btn-outline-danger d-block" href="{{url_for('view.logout')}}">
+										Log Out
+									</a>
+								</li>
+							</ul>
+							{% endblock %}
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+		
+		<div class="flex-grow-1 container{% if config.get('FLASK_ADMIN_FLUID_LAYOUT', False) %}-fluid{% endif %} py-4">
+			{% if admin_view.name != "Home" %}
+			<h2 class="mb-4">
+				<span class="font-weight-bold">{{ admin_view.name }}</span>
+				model view
+			</h2>
+			{% endif %}
+
+			{% block messages %}
+			{{ layout.messages() }}
 			{% endblock %}
-
-			<!-- Brand and toggle get grouped for better mobile display -->
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#admin-navbar-collapse"
-				aria-controls="admin-navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<!-- navbar content -->
-			<div class="collapse navbar-collapse" id="admin-navbar-collapse">
-				{% block main_menu %}
-				<ul class="navbar-nav mr-auto text-center">
-					{{ layout.menu() }}
-				</ul>
-				{% endblock %}
-
-				{% block menu_links %}
-				<ul class="nav navbar-nav navbar-right">
-					{{ layout.menu_links() }}
-				</ul>
-				{% endblock %}
-				{% block access_control %}
-				<ul class="nav navbar-nav">
-					<li class="py-1 py-md-0 px-1">
-						<a class="btn btn-outline-primary d-block" href="{{url_for('view.logout')}}">
-							Log Out
-						</a>
-					</li>
-				</ul>
-				{% endblock %}
+	
+			{# store the jinja2 context for form_rules rendering logic #}
+			{% set render_ctx = h.resolve_ctx() %}
+	
+			<div class="py-2">
+				{% block body %}{% endblock %}
 			</div>
-		</nav>
-	</div>
-	<div class="container{% if config.get('FLASK_ADMIN_FLUID_LAYOUT', False) %}-fluid{% endif %}">
-		{% block messages %}
-		{{ layout.messages() }}
-		{% endblock %}
-
-		{# store the jinja2 context for form_rules rendering logic #}
-		{% set render_ctx = h.resolve_ctx() %}
-
-		{% block body %}{% endblock %}
+		</div>
 	</div>
 	{% endblock %}
 
@@ -123,5 +147,13 @@
 	{% block tail %}
 	{% endblock %}
 </body>
+
+<style>
+@media (min-width: 768px){
+	#navbar {
+		height: 100vh;
+	}
+}
+</style>
 
 </html>

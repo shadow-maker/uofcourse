@@ -51,7 +51,7 @@ class BaseModelView(ModelView):
 admin = Admin(
 	app,
 	url = "/admin",
-	name=f"{SITE_NAME} Admin",
+	name=SITE_NAME,
 	template_mode="bootstrap4",
 	base_template="admin/master.html",
 	index_view=IndexView()
