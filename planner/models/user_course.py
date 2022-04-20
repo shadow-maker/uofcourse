@@ -10,6 +10,12 @@ class UserCourse(db.Model):
 	passed = db.Column(db.Boolean)
 
 	@property
+	def weightedGPV(self):
+		if self.grade and self.grade.gpv:
+			return round(float(self.grade.gpv * self.course.units), 3)
+		return None
+
+	@property
 	def tags(self):
 		return [tag for tag in self.course.userTags if tag.user_id == self.collection.user_id]
 
