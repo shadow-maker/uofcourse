@@ -3,44 +3,135 @@
 {% block content %}
 
 <div class="row">
-	<div class="col-12 col-md-8 container fs-5 mb-5">
-		A website created to aid UofC students in their program course planning.
+	<div class="col-12 col-md-7 col-lg-8 col-xl-9 container px-lg-5">
+		<div class="fs-5">
+			A website created to aid UofC students in their program course planning.
 
-		<br><br>
+			<br><br>
+	
+			Main features:
+	
+			<ul class="fs-6">
+				<li>An intuitive course browser that allows users to quickly browse through the university's full course catalog, with filter and sorting options</li>
+				<li>Per-course pages with all the essential information for students</li>
+				<li>Save courses with custom tags</li>
+				<li>Arrange courses in terms in the virtual Course Planner</li>
+				<li>Public Web API to easily retrieve Grade, Term, Faculty, Subject and Course data within your own application</li>
+			</ul>
+	
+			More information in the <a href="{{url_for('view.about')}}">about</a> page
 
-		Main features:
+			<br><br>
+		</div>
+		
+		<div class="d-none d-lg-block">
+			<h5>Quick links:</h5>
 
-		<ul>
-			<li>An intuitive course browser that allows users to quickly browse through the university's full course catalog, with filter and sorting options</li>
-			<li>Per-course pages with all the essential information for students</li>
-			<li>Save courses with custom tags</li>
-			<li>Arrange courses in terms in the virtual Course Planner</li>
-		</ul>
+			<div class="d-flex justify-content-between flex-wrap">
+				<a type="button" class="btn btn-outline-primary my-1" href="{{url_for('view.courseBrowser')}}">
+					<i class="bi-binoculars-fill"></i>
+					Course Browser
+				</a>
+		
+				<a type="button" class="btn btn-outline-primary my-1" href="{{url_for('view.courseRandom')}}">
+					<i class="bi-shuffle"></i>
+					Random Course
+				</a>
+	
+				<a type="button" class="btn btn-outline-primary my-1" href="" data-bs-toggle="modal" data-bs-target="#modalGoToCourse">
+					<i class="bi-box-arrow-up-right"></i>
+					Go To Course
+				</a>
+		
+				<a type="button" class="btn btn-outline-primary my-1" href="{{url_for('view.planner')}}">
+					<i class="bi-calendar-range"></i>
+					My Planner
+				</a>
 
-		More information in the <a href="{{url_for('view.about')}}">about</a> page
-	</div>
-
-	<div class="col-12 col-md-4 container">
-		<h3>Go to...</h3>
-
-		<div class="d-flex flex-column">
-			<a type="button" class="btn btn-lg btn-primary my-1" href="{{url_for('view.courseBrowser')}}">
-				Course Browser
-			</a>
-
-			<a type="button" class="btn btn-lg btn-primary my-1" href="{{url_for('view.courseRandom')}}">
-				Random Course
-			</a>
-
-			<a type="button" class="btn btn-lg btn-primary my-1" href="{{url_for('view.planner')}}">
-				My Planner
-			</a>
-
-			<a type="button" class="btn btn-lg btn-primary my-1" href="" data-bs-toggle="modal" data-bs-target="#modalGoToCourse">
-				Go To Course
-			</a>
+				<a type="button" class="btn btn-outline-primary my-1" href="{{url_for('view.account')}}">
+					<i class="bi-person-circle"></i>
+					My Account
+				</a>
+			</div>
 		</div>
 	</div>
+
+	<div class="col-12 col-md-5 col-lg-4 col-xl-3 m-0 px-md-0 container">
+		{% if term %}
+		<div class="card">
+			<div class="card-header text-center">
+				<div class="h6 mb-0">
+					{% if term.isCurrent() %}Current{% elif term.isNext() %}Next{% endif %}
+					Term
+				</div>
+
+				<div class="h4 my-1">{{term.name | capitalize}}</div>
+		
+				{% if term.isCurrent() %}
+					{{(term.end - today).days}} days remaining
+				{% elif term.isNext() %}
+					Begins in {{(term.start - today).days}} days
+				{% endif %}
+			</div>
+			<div class="card-body px-2 py-2 text-center">
+				{% if current_user.is_authenticated %}
+				Courses taken this term:
+				<div class="mb-2">
+					{% if userCourses %}
+						{% for uCourse in userCourses %}
+						<a class="collection-course-item m-1 btn bg-light card" href="{{uCourse.course.url}}" target="_blank" rel="noopener noreferrer">
+							<div class="row">
+								<span class="col-3 h5 p-0 m-0">
+									&#{{uCourse.course.emoji}}
+								</span>
+								<span id="code" class="col-6 font-monospace">
+									{{uCourse.course.code}}
+								</span>
+								<span class="col-3 font-monospace text-start" title="{% if uCourse.grade %}{{uCourse.grade.gpv}} GPV{% else %}Grade not set{% endif %}">
+									{% if uCourse.grade %}
+									{{uCourse.grade.symbol}}
+									{% else %}
+									-
+									{% endif %}
+								</span>
+							</div>
+							<div class="open position-absolute end-0 pe-2">
+								<i class="bi-box-arrow-up-right"></i>
+							</div>
+						</a>
+						{% endfor %}
+					{% else %}
+						<span class="fst-italic">None</span>
+					{% endif %}
+				</div>
+				<a class="btn btn-sm btn-outline-primary" href="{{url_for('view.planner')}}">
+					Edit in Course Planner
+				</a>
+				{% else %}
+				<div class="px-1">
+					<a class="fst-italic text-body" href="{{url_for('view.login')}}">
+						Log in to view courses taken this term
+					</a>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+		{% endif %}
+	</div>
 </div>
+
+<style>
+	.collection-course-item:hover, #btnAddTerm:hover {
+		background-color: var(--bs-gray-200) !important;
+	}
+	
+	.collection-course-item .open {
+		display: none;
+	}
+	
+	.collection-course-item:hover .open {
+		display: block;
+	}	
+	</style>
 
 {% endblock %}

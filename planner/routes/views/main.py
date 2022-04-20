@@ -3,10 +3,12 @@ from planner import changelog as change
 from planner.auth import current_user
 from planner.forms import formContact
 from planner.routes.views import view
+from planner.models import utils
 
 from flask import render_template, flash, redirect
 from flask.helpers import url_for
 
+from datetime import date
 from markdown import markdown
 import os
 
@@ -14,8 +16,21 @@ import os
 @view.route("/home")
 @view.route("/")
 def home():
+	term = utils.getCurrentTerm()
+	if not term:
+		term = utils.getNextTerm()
+	courses = []
+	if term and current_user.is_authenticated:
+		for collection in current_user.collections:
+			if collection.term_id == term.id:
+				courses = sorted(collection.userCourses, key=lambda c: c.course.code)
+				break
+
 	return render_template("index.html",
-		header = "UofC Course Planner"
+		header = "UofC Course Planner",
+		term = term,
+		userCourses = courses,
+		today = date.today()
 	)
 
 
