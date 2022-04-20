@@ -49,23 +49,70 @@ courseContainers.forEach(container => {
 
 // AJAX for dragging course items
 
-function updateCollectionGPA(container) {
-	$.ajax({
-		url: "/api/users/collection/" + container.getAttribute("db-id") + "/gpa",
-		method: "GET",
-		success: (response) => {
-			const gpaElem = $(container.parentElement).children(".card-footer").children(".row").children(".collection-gpa")
+function updateCollectionsGPA() {
+	$("#collectionsContainer").children(".collection-item").each(function () {
+		$.ajax({
+			url: "/api/users/collection/" + $(this).attr("db-id") + "/gpa",
+			method: "GET",
+			success: (response) => {
+				const gpaElem = $(this).find(".collection-gpa")
+	
+				if (response.gpa) {
+					$(this).attr("db-gpa", response.gpa)
+					gpaElem.find(".gpa").text(response.gpa)
+					gpaElem.find(".nogpa").addClass("d-none")
+					$(this).find(".countInGPA").prop("checked", true)
+					$(this).find(".countInGPA").prop("disabled", false)
+				} else {
+					gpaElem.find(".gpa").text("")
+					gpaElem.find(".nogpa").removeClass("d-none")
+					$(this).find(".countInGPA").prop("checked", false)
+					$(this).find(".countInGPA").prop("disabled", true)
+				}
 
-			if (response.gpa) {
-				gpaElem.find(".gpa").text(response.gpa)
-				gpaElem.find(".nogpa").addClass("d-none")
-			} else {
-				gpaElem.find(".gpa").text("")
-				gpaElem.find(".nogpa").removeClass("d-none")
+				updateOverallGPA()
+			},
+			error: (response) => {
+				displayError(response)
 			}
-		},
-		error: (response) => {
-			displayError(response)
+		})
+	})
+}
+
+function updateOverallGPA() {
+	let sum = 0
+	let count = 0
+	const overall = $("#overallGPA")
+	overall.find("#overallCollectionContainer").empty()
+
+	$("#collectionsContainer").children(".collection-item").each(function () {
+		if ($(this).find(".countInGPA").prop("checked")) {
+			sum += parseFloat($(this).attr("db-gpa"))
+			count++
+
+			let overallCollection = `
+			<div class="row overall-collection-item">
+				<span class="col-5 text-end ps-2">` + $(this).attr("db-term") +`</span>
+				<span class="col-3 col-lg-2 font-monospace pe-0 gpa">` + $(this).attr("db-gpa") +`</span>
+				<span class="col-4"><i class="disable bi-x" title="Hide in overall GPA" onclick="disableOverallGPA('` + $(this).attr("db-id") +`')"></i></span>
+			</div>
+			`
+			overall.find("#overallCollectionContainer").append(overallCollection)
+		}
+	})
+
+	let gpa = sum / count
+
+	overall.find(".sum").text(Number((sum).toFixed(3)))
+	overall.find(".count").text(Number((count).toFixed(3)))
+	overall.find(".final-gpa").text(Number((gpa).toFixed(3)))
+}
+
+function disableOverallGPA(collectionId) {
+	$("#collectionsContainer").children(".collection-item").each(function () {
+		if ($(this).attr("db-id") == collectionId) {
+			$(this).find(".countInGPA").prop("checked", false)
+			updateOverallGPA()
 		}
 	})
 }
@@ -76,9 +123,7 @@ function editCollection(data, containers) {
 		method: "PUT",
 		data: data,
 		success: () => {
-			containers.forEach((container) => {
-				updateCollectionGPA(container)
-			})
+			updateCollectionsGPA()
 		},
 		error: (response) => {
 			displayError(response)
@@ -231,6 +276,7 @@ function updateSelectPassed() {
 
 $(document).ready(() => {
 	tagsInit()
+	updateCollectionsGPA()
 
 	$("#formEditUserCourse #selectGrade").change(function() {
 		$("#formEditUserCourse #selectPassed").prop("checked",
@@ -240,4 +286,5 @@ $(document).ready(() => {
 	})
 
 	$("#formEditUserCourse #selectPassed").change(updateSelectPassed)
+	$(".collection-item .countInGPA").change(updateOverallGPA)
 })

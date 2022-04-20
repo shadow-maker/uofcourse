@@ -53,7 +53,7 @@
 </div>
 
 <!--Courses per term-->
-<div class="container-fluid">
+<div class="container-fluid mb-5">
 	<div class="d-flex justify-content-between">
 		<h2 class="m-0">Courses per term</h2>
 
@@ -63,9 +63,9 @@
 		</button>
 	</div>
 
-	<div class="row flex-nowrap overflow-scroll pt-3">
+	<div id="collectionsContainer" class="row flex-nowrap overflow-scroll pt-3">
 		{% for collection in userData["collections"] %}
-		<div class="col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0">
+		<div class="collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0" db-id="{{collection.id}}" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
 				<form action="/my/del/collection" method="POST">
@@ -127,8 +127,13 @@
 				</div>
 				<div class="card-footer">
 					<div class="row">
-						<span class="col-9 text-center">Term GPA</span>
-						<span class="col-3 font-monospace text-start collection-gpa">
+						<span class="col-3">
+							<div class="form-check form-switch" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Show in overall GPA">
+								<input class="countInGPA form-check-input" type="checkbox" role="switch">
+							</div>
+						</span>
+						<span class="col-6 text-center">Term GPA:</span>
+						<span class="col-3 font-monospace text-start collection-gpa pe-0">
 							<span class="gpa">
 								{% if collection.gpa %}{{collection.gpa}}{% endif %}
 							</span>
@@ -146,6 +151,33 @@
 				<div class="h-100 d-flex flex-column align-content-center text-muted">
 					<div class="mt-auto"><i class="bi-plus-lg display-4"></i></div>
 					<div class="h5 mb-auto">Add term</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div id="overallGPA" class="row ms-0">
+		<div class="col-12 col-sm-5 col-md-6 col-lg-4 col-xxl-3 h2 ps-0">
+			<span class="">Overall GPA:</span>
+			<span class="final-gpa ms-4 font-monospace">3.2</span>
+		</div>
+		<div class="col-12 col-sm-7 col-md-6 col-lg-5 col-xl-4 pe-0 card ms-xxl-4">
+			<div class="card-body px-2 px-sm-2 px-xxl-4">
+				<div id="overallCollectionContainer"></div>
+				<div class="row">
+					<span class="col-8 col-lg-7 ps-3 ps-sm-1 ps-md-3 ps-lg-2 ps-xxl-0 pe-0"><hr class="my-2"></span>
+				</div>
+				<div class="row">
+					<span class="col-5 text-end ps-2"></span>
+					<span class="col-7 pe-0 font-monospace">
+						<span class="sum">-</span>
+						/
+						<span class="count">-</span>
+						=
+						<span class="final-gpa fw-bold">-</span>
+					</span>
 				</div>
 			</div>
 		</div>
@@ -386,6 +418,15 @@
 .collection-course-item:hover .edit {
 	display: block;
 }
+
+.overall-collection-item .disable {
+	display: none;
+}
+
+.overall-collection-item:hover .disable {
+	display: block;
+}
+
 </style>
 
 <script src="/static/scripts/planner.js"></script>
