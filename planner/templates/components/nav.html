@@ -19,24 +19,24 @@
 
 		<div class="collapse navbar-collapse d-md-flex justify-content-between" id="toggleMobileMenu">
 			<ul class="navbar-nav text-center">
+				<li>
+					<a class="nav-link {% if request.path == url_for('view.courseBrowser') %}active{% endif %}" href="{{url_for('view.courseBrowser')}}">
+						Course Browser
+					</a>
+				</li>
 				<li title="Press G to activate">
 					<a class="nav-link" href="" data-bs-toggle="modal" data-bs-target="#modalGoToCourse">
 						Go To
 					</a>
 				</li>
 				<li>
-					<a class="nav-link {% if request.path == url_for('view.courseBrowser') %}active{% endif %}" href="{{url_for('view.courseBrowser')}}">
-						Course Browser
+					<a class="nav-link {% if request.path == url_for('view.api') %}active{% endif %}" href="{{url_for('view.api')}}">
+						API
 					</a>
 				</li>
 				<li>
 					<a class="nav-link {% if request.path == url_for('view.about') %}active{% endif %}" href="{{url_for('view.about')}}">
 						About
-					</a>
-				</li>
-				<li>
-					<a class="nav-link {% if request.path == url_for('view.api') %}active{% endif %}" href="{{url_for('view.api')}}">
-						API
 					</a>
 				</li>
 			</ul>
