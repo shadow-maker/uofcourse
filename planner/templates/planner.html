@@ -8,14 +8,14 @@
 
 <!--Tags-->
 <div class="container mb-5">
-	<div class="d-flex justify-content-between mb-3">
+	<div class="d-flex justify-content-between">
 		<h2 class="m-0">Tags</h2>
 		<button type="button" class="btn btn-secondary m-0 py-1" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
 			<i class="bi-pencil-fill"></i>
 			Edit Tags
 		</button>
 	</div>
-	<div class="row">
+	<div class="row pt-3">
 		{% for tag in userData["tags"] %}
 		<div class="col-12 col-sm-6 col-lg-4 col-xl-3 p-0 px-2 mb-3">
 			<div class="card h-100">
@@ -54,7 +54,7 @@
 
 <!--Courses per term-->
 <div class="container-fluid">
-	<div class="d-flex justify-content-between mb-3">
+	<div class="d-flex justify-content-between">
 		<h2 class="m-0">Courses per term</h2>
 
 		<button type="button" class="btn btn-secondary m-0 py-1" data-bs-toggle="modal" data-bs-target="#modalAddCollection">
@@ -63,15 +63,14 @@
 		</button>
 	</div>
 
-	<div class="row flex-nowrap overflow-scroll">
+	<div class="row flex-nowrap overflow-scroll pt-3">
 		{% for collection in userData["collections"] %}
 		<div class="col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
 				<form action="/my/del/collection" method="POST">
 					<input type="hidden" name="id" value="{{collection.id}}">
-					<button
-						class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light border border-secondary">
+					<button class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light border border-secondary" title="Remove term">
 						<i class="bi-x-lg text-secondary"></i>
 						<span class="visually-hidden">Remove term</span>
 					</button>
