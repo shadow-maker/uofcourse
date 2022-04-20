@@ -79,7 +79,7 @@
 				<div class="mb-2">
 					{% if userCourses %}
 						{% for uCourse in userCourses %}
-						<a class="collection-course-item m-1 btn bg-light card" href="{{uCourse.course.url}}" target="_blank" rel="noopener noreferrer">
+						<a class="collection-course-item m-1 btn bg-light card" href="{{uCourse.course.url}}" target="_blank" rel="noopener noreferrer" title="Click to open course in a new tab">
 							<div class="row">
 								<span class="col-3 h5 p-0 m-0">
 									&#{{uCourse.course.emoji}}
