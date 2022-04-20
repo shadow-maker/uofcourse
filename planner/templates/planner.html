@@ -65,7 +65,7 @@
 
 	<div id="collectionsContainer" class="row flex-nowrap overflow-scroll pt-3">
 		{% for collection in userData["collections"] %}
-		<div class="collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0" db-id="{{collection.id}}" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
+		<div id="{{collection.id}}" class="collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0" db-id="{{collection.id}}" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
 				<form action="/my/del/collection" method="POST">
