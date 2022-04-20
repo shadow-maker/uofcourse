@@ -232,6 +232,7 @@ $(document).on("click", ".collection-course-item", function() {
 
 		modalInfo.find(".term").text(this.getAttribute("db-term"))
 		modalInfo.find(".link").prop("href", this.getAttribute("db-url"))
+		modalInfo.find(".emoji").text($(this).find(".emoji").text())
 		modalInfo.find(".code").text(this.getAttribute("db-code"))
 		modalInfo.find(".name").text(this.getAttribute("db-name"))
 		modalInfo.find(".units").text(this.getAttribute("db-units"))
