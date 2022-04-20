@@ -22,6 +22,6 @@ class Grade(db.Model):
 	def __iter__(self):
 		yield "id", self.id
 		yield "symbol", self.symbol
-		yield "gpv", float(self.gpv) if self.gpv else None
+		yield "gpv", float(self.gpv) if self.gpv != None else None
 		yield "passed", self.passed
 		yield "desc", self.desc
