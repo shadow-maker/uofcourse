@@ -145,8 +145,6 @@ def modUserCourse():
 		flash("ERROR: No method provided", "danger")
 		return redirect(url_for("view.planner"))
 	
-	print(request.form.to_dict())
-	
 	if data["method"] == "PUT":
 		response, _ = putUserCourse(request.form.to_dict())
 	elif data["method"] == "DELETE":
