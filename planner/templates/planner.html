@@ -97,9 +97,8 @@
 				</div>
 				<div class="collection-course-container card-body p-1" db-id="{{collection.id}}">
 					{% for uCourse in collection.userCourses | sort(attribute="course.subject.code") %}
-					<div class="collection-course-item m-1 btn bg-light card" db-id="{{uCourse.id}}"
-						db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{{uCourse.course.code}}" draggable="true"
-						data-bs-toggle="modal" data-bs-target="#modalEditUserCourse">
+					<div class="collection-course-item m-1 btn bg-light card" db-id="{{uCourse.id}}" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}" db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{{uCourse.course.code}}" db-name="{{uCourse.course.name}}" db-url="{{uCourse.course.url}}" db-nogpa="{{uCourse.course.nogpa}}" draggable="true"
+						data-bs-toggle="modal" data-bs-target="#modalInfoUserCourse" title="Click to edit or drag to change term">
 						<div class="row">
 							<span class="col-3 h5 p-0 m-0">
 								&#{{uCourse.course.emoji}}
@@ -107,13 +106,16 @@
 							<span id="code" class="col-6 font-monospace">
 								{{uCourse.course.code}}
 							</span>
-							<span class="col-3 font-monospace text-start" title="{{uCourse.grade.gpv}} GPV">
+							<span class="col-3 font-monospace text-start" title="{% if uCourse.grade %}{{uCourse.grade.gpv}} GPV{% else %}Grade not set{% endif %}">
 								{% if uCourse.grade %}
 								{{uCourse.grade.symbol}}
 								{% else %}
 								-
 								{% endif %}
 							</span>
+						</div>
+						<div class="edit position-absolute end-0 pe-2">
+							<i class="bi-pencil-fill"></i>
 						</div>
 					</div>
 					{% endfor %}
@@ -127,11 +129,12 @@
 					<div class="row">
 						<span class="col-9 text-center">Term GPA</span>
 						<span class="col-3 font-monospace text-start collection-gpa">
-							{% if collection.gpa %}
-							{{collection.gpa}}
-							{% else %}
-							-
-							{% endif %}
+							<span class="gpa">
+								{% if collection.gpa %}{{collection.gpa}}{% endif %}
+							</span>
+							<span class="nogpa pe-2 {% if collection.gpa %}d-none{% endif %}" style="cursor: default;" data-bs-toggle="tooltip" data-bs-placement="right" title="One or more courses don't have a grade or they don't count towards the GPA">
+								-
+							</span>
 						</span>
 					</div>
 				</div>
@@ -149,7 +152,80 @@
 	</div>
 </div>
 
-<!--Form modal-->
+<!--Info modals-->
+<div class="modal fade" id="modalInfoUserCourse" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Course info</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body px-4">
+				<!--Term-->
+				<div class="row">
+					<div class="col-3">
+						<span class="h5">Term</span>
+					</div>
+					<div class="col">
+						<span class="term fs-5"></span>
+					</div>
+				</div>
+				<hr>
+				<!--Course-->
+				<div class="row">
+					<div class="col-3">
+						<span class="h5">Course</span>
+					</div>
+					<div class="col">
+						<div class="fs-5">
+							<a href="" target="_blank" rel="noopener noreferrer" class="link text-body">
+								<span class="code font-monospace" title="Course code"></span>
+							</a>
+							<i class="bi-box-arrow-up-right"></i>
+						</div>
+						<div>
+							<span class="name" title="Course name"></span>
+						</div>
+						<div>
+							<span class="fw-bold">Included in GPA:</span>
+							<span class="countgpa"></span>
+						</div>
+					</div>
+				</div>
+				<hr>
+				<!--Grade-->
+				<div class="row">
+					<div class="col-3">
+						<span class="h5">Grade</span>
+					</div>
+					<div class="col">
+						<span class="grade-symbol fs-5" title="Grade symbol">-</span>
+						<div>
+							<span class="fw-bold">Description:</span>
+							<span class="grade-desc"></span>
+						</div>
+						<div>
+							<span class="fw-bold">GPV:</span>
+							<span class="grade-gpv"></span>
+						</div>
+						<div>
+							<span class="fw-bold">Passed:</span>
+							<span class="grade-passed"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer d-flex justify-content-around">
+				<button class="btn btn-primary" data-bs-dismiss="modal" onclick="$('#modalEditUserCourse').modal('show')">
+					<i class="bi-pencil-fill"></i>
+					Edit
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--Form modals-->
 
 <!--Form add CourseCollection-->
 <form id="formAddCollection" name="formAddCollection" action="/my/add/collection" method="POST">
@@ -299,9 +375,17 @@
 </form>
 
 <style>
-	.collection-course-item:hover, #btnAddTerm:hover {
-		background-color: var(--bs-gray-200) !important;
-	}
+.collection-course-item:hover, #btnAddTerm:hover {
+	background-color: var(--bs-gray-200) !important;
+}
+
+.collection-course-item .edit {
+	display: none;
+}
+
+.collection-course-item:hover .edit {
+	display: block;
+}
 </style>
 
 <script src="/static/scripts/planner.js"></script>

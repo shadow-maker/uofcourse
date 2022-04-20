@@ -56,10 +56,13 @@ function updateCollectionGPA(container) {
 		success: (response) => {
 			const gpaElem = $(container.parentElement).children(".card-footer").children(".row").children(".collection-gpa")
 
-			if (response.gpa)
-				gpaElem.text(response.gpa)
-			else
-				gpaElem.text("-")
+			if (response.gpa) {
+				gpaElem.find(".gpa").text(response.gpa)
+				gpaElem.find(".nogpa").addClass("d-none")
+			} else {
+				gpaElem.find(".gpa").text("")
+				gpaElem.find(".nogpa").removeClass("d-none")
+			}
 		},
 		error: (response) => {
 			displayError(response)
@@ -142,35 +145,71 @@ $(document).on("click", ".add-course", function() {
 
 // UserCourse-edit form logic
 
+function getGrade(id, callback) {
+	$.ajax({
+		url: "/api/grades/" + id,
+		method: "GET",
+		success: (response) => {
+			callback(response)
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
 $(document).on("click", ".collection-course-item", function() {
 	if (!this.classList.contains("dragging")) {
-		let form = $("#formEditUserCourse")
+		let modalInfo = $("#modalInfoUserCourse")
+		let formEdit = $("#formEditUserCourse")
 
 		let courseId = this.getAttribute("db-id")
-		let courseCode = this.querySelector("#code").innerText
-		var courseGrade = this.getAttribute("db-grade")
-		if (courseGrade == "")
+		let term = this.getAttribute("db-term")
+		let courseCode = this.getAttribute("db-code")
+		let courseName = this.getAttribute("db-name")
+		let courseNogpa = this.getAttribute("db-nogpa")
+		let courseURL = this.getAttribute("db-url")
+		let courseGrade = this.getAttribute("db-grade")
+		if (courseGrade) {
+			getGrade(courseGrade, (data) => {
+				modalInfo.find(".grade-symbol").text(data.symbol)
+				modalInfo.find(".grade-desc").text(data.desc)
+				modalInfo.find(".grade-gpv").text(data.gpv)
+				modalInfo.find(".grade-passed").text(data.passed ? "Yes" : "No")
+			})
+		} else {
+			modalInfo.find(".grade-symbol").text("-")
+			modalInfo.find(".grade-desc").text("")
+			modalInfo.find(".grade-gpv").text("")
+			modalInfo.find(".grade-passed").text("")
 			courseGrade = "0"
+		}
 		let coursePassed = this.getAttribute("db-passed")
 		let collectionId = this.parentElement.getAttribute("db-id")
 
-		form.find("#selectCourse").val(courseId)
-		form.find("#selectCoursePlaceholder").val(courseCode)
-		form.find("#selectCollection").val(collectionId)
-		form.find("#selectGrade").val(courseGrade)
+		modalInfo.find(".term").text(term)
+		modalInfo.find(".link").prop("href", courseURL)
+		modalInfo.find(".code").text(courseCode)
+		modalInfo.find(".name").text(courseName)
+		modalInfo.find(".countgpa").text(courseNogpa == "True" ? "No" : "Yes")
+
+		formEdit.find("#selectCourse").val(courseId)
+		formEdit.find("#selectCoursePlaceholder").val(courseCode)
+		formEdit.find("#selectCollection").val(collectionId)
+		formEdit.find("#selectGrade").val(courseGrade)
 
 		if (coursePassed == "true") {
-			form.find("#selectPassed").prop("checked", true)
-			form.find("#selectPassedTrue").prop("checked", true)
-			form.find("#selectPassedFalse").prop("checked", false)
+			formEdit.find("#selectPassed").prop("checked", true)
+			formEdit.find("#selectPassedTrue").prop("checked", true)
+			formEdit.find("#selectPassedFalse").prop("checked", false)
 		} else if (coursePassed == "true") {
-			form.find("#selectPassed").prop("checked", false)
-			form.find("#selectPassedTrue").prop("checked", false)
-			form.find("#selectPassedFalse").prop("checked", true)
+			formEdit.find("#selectPassed").prop("checked", false)
+			formEdit.find("#selectPassedTrue").prop("checked", false)
+			formEdit.find("#selectPassedFalse").prop("checked", true)
 		} else {
-			form.find("#selectPassed").prop("checked", false)
-			form.find("#selectPassedTrue").prop("checked", false)
-			form.find("#selectPassedFalse").prop("checked", false)
+			formEdit.find("#selectPassed").prop("checked", false)
+			formEdit.find("#selectPassedTrue").prop("checked", false)
+			formEdit.find("#selectPassedFalse").prop("checked", false)
 		}
 	}
 })
