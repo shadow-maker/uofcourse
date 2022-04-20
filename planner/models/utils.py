@@ -1,5 +1,8 @@
+from operator import imod
 from planner import utcoffset
 from planner.models import Term, Faculty, Subject, Course, User
+
+from datetime import date
 
 def getAllTerms(asc=True):
 	results = Term.query.order_by(Term.year.asc, Term.season.asc).all()
@@ -18,6 +21,20 @@ def getAllYears(asc=True):
 def getCurrentTerm():
 	for term in Term.query.order_by(Term.end.desc()).all():
 		if term.isCurrent():
+			return term
+	return None
+
+def getPrevTerm():
+	today = date.today()
+	for term in Term.query.order_by(Term.end.desc()).all():
+		if term.end and term.end < today:
+			return term
+	return None
+
+def getNextTerm():
+	today = date.today()
+	for term in Term.query.order_by(Term.start.asc()).all():
+		if term.start and term.start > today:
 			return term
 	return None
 
