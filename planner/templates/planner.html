@@ -30,7 +30,7 @@
 				<div class="tag-course-container card-body p-1" db-id="{{tag.id}}">
 					{% for course in tag.courses | sort(attribute="subject.code") %}
 						<a class="tag-course-item m-1 btn bg-light card" db-id="{{course.id}}"
-							db-code="{{course.code}}" draggable="true" href="{{course.url}}">
+							db-code="{{course.code}}" draggable="true" href="{{course.url}}" target="_blank" rel="noopener noreferrer">
 							<div class="row">
 								<span class="col-3 h5 p-0 m-0">
 									&#{{course.emoji}}
