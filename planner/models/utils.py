@@ -18,23 +18,21 @@ def getAllYears(asc=True):
 		results.reverse()
 	return results
 
+def getPrevTerm():
+	for term in Term.query.order_by(Term.end.desc()).all():
+		if term.isPrev():
+			return term
+	return None
+
 def getCurrentTerm():
 	for term in Term.query.order_by(Term.end.desc()).all():
 		if term.isCurrent():
 			return term
 	return None
 
-def getPrevTerm():
-	today = date.today()
-	for term in Term.query.order_by(Term.end.desc()).all():
-		if term.end and term.end < today:
-			return term
-	return None
-
 def getNextTerm():
-	today = date.today()
 	for term in Term.query.order_by(Term.start.asc()).all():
-		if term.start and term.start > today:
+		if term.isNext():
 			return term
 	return None
 

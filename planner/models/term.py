@@ -25,8 +25,14 @@ class Term(db.Model):
 	def name(self):
 		return f"{self.season.name} {self.year}"
 
+	def isPrev(self):
+		return self.end and self.end < date.today()
+
 	def isCurrent(self):
 		return self.start and self.end and self.start <= date.today() <= self.end
+	
+	def isNext(self):
+		return self.start and self.start > date.today()
 
 	def hasEnded(self):
 		if not self.end:
