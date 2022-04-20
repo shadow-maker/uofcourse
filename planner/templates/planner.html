@@ -10,7 +10,7 @@
 <div class="container mb-5">
 	<div class="d-flex justify-content-between mb-3">
 		<h2 class="m-0">Tags</h2>
-		<button type="button" class="m-0 btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+		<button type="button" class="btn btn-secondary m-0 py-1" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
 			<i class="bi-pencil-fill"></i>
 			Edit Tags
 		</button>
@@ -54,20 +54,18 @@
 
 <!--Courses per term-->
 <div class="container-fluid">
-	<h2 class="mb-3">Courses per term</h2>
+	<div class="d-flex justify-content-between mb-3">
+		<h2 class="m-0">Courses per term</h2>
 
-	<div class="row flex-nowrap overflow-scroll pt-3">
+		<button type="button" class="btn btn-secondary m-0 py-1" data-bs-toggle="modal" data-bs-target="#modalAddCollection">
+			<i class="bi-plus-lg"></i>
+			Add term
+		</button>
+	</div>
+
+	<div class="row flex-nowrap overflow-scroll">
 		{% for collection in userData["collections"] %}
-		<div class="col-10 col-sm-6 col-lg-4 col-xl-3 mx-2 p-0">
-			<div class="text-center">
-				<!-- {% if not collection.transfer %}
-					<small class="m-0 text-muted fst-italic">
-						{{collection.term.start}}
-						<i class="bi-arrow-right-short"></i>
-						{{collection.term.end}}
-					</small>
-				{% endif %} -->
-			</div>
+		<div class="col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
 				<form action="/my/del/collection" method="POST">
@@ -80,7 +78,7 @@
 				</form>
 				{% endif %}
 				<div class="card-header text-center">
-					<span class="h5">
+					<span class="h5" title="Term season and year">
 						{% if collection.transfer %}
 							Transferred
 						{% else %}
@@ -92,20 +90,24 @@
 					</span>
 					<div class="m-0 text-muted fst-italic lh-1" style="height: 1rem;">
 						{% if not collection.transfer %}
-						<small>{{collection.term.start}}</small>
-						<i class="bi-arrow-right-short"></i><small>{{collection.term.end}}</small>
+						<small title="Start date">{{collection.term.start}}</small>
+						<i class="bi-arrow-right-short"></i>
+						<small title="End date">{{collection.term.end}}</small>
 						{% endif %}
 					</div>
 				</div>
 				<div class="collection-course-container card-body p-1" db-id="{{collection.id}}">
 					{% for uCourse in collection.userCourses | sort(attribute="course.subject.code") %}
 					<div class="collection-course-item m-1 btn bg-light card" db-id="{{uCourse.id}}"
-						db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{uCourse.course.code}}" draggable="true"
+						db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{{uCourse.course.code}}" draggable="true"
 						data-bs-toggle="modal" data-bs-target="#modalEditUserCourse">
 						<div class="row">
-							<span class="col-3 h5 p-0 m-0">&#{{uCourse.course.emoji}}</span>
-							<span id="code"
-								class="col-6 font-monospace">{{uCourse.course.code}}</span>
+							<span class="col-3 h5 p-0 m-0">
+								&#{{uCourse.course.emoji}}
+							</span>
+							<span id="code" class="col-6 font-monospace">
+								{{uCourse.course.code}}
+							</span>
 							<span class="col-3 font-monospace text-start" title="{{uCourse.grade.gpv}} GPV">
 								{% if uCourse.grade %}
 								{{uCourse.grade.symbol}}
@@ -137,8 +139,8 @@
 			</div>
 		</div>
 		{% endfor %}
-		<div class="col-6 col-sm-4 col-lg-3 col-xl-2 card mx-2 p-0" data-bs-toggle="modal" data-bs-target="#modalAddCollection">
-			<div class="card-body btn btn-light">
+		<div class="col-6 col-sm-3 col-lg-2 card mx-2 p-0">
+			<div class="card-body btn btn-light" id="btnAddTerm" data-bs-toggle="modal" data-bs-target="#modalAddCollection">
 				<div class="h-100 d-flex flex-column align-content-center text-muted">
 					<div class="mt-auto"><i class="bi-plus-lg display-4"></i></div>
 					<div class="h5 mb-auto">Add term</div>
@@ -296,6 +298,12 @@
 		</div>
 	</div>
 </form>
+
+<style>
+	.collection-course-item:hover, #btnAddTerm:hover {
+		background-color: var(--bs-gray-200) !important;
+	}
+</style>
 
 <script src="/static/scripts/planner.js"></script>
 

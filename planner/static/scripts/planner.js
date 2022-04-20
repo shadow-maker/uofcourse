@@ -1,9 +1,24 @@
+var oldContainer = null
+
+function sortCourses(container) {
+	$(container).children(".collection-course-item").sort(function (a, b) {
+		if (($(a).attr("db-code").toLowerCase() > $(b).attr("db-code").toLowerCase()) )
+			return 1
+		else if (($(a).attr("db-code").toLowerCase() == $(b).attr("db-code").toLowerCase()))
+			return 0
+		else
+			return -1
+	}).each(function () {
+		var elem = $(this)
+		elem.remove()
+		$(elem).appendTo(container)
+	})
+}
+
 // Dragging
 
 const courseContainers = document.querySelectorAll(".collection-course-container")
 const courseItems = document.querySelectorAll(".collection-course-item")
-
-var oldContainer = null
 
 courseItems.forEach(item => {
 	item.addEventListener("dragstart", () => {
@@ -65,21 +80,6 @@ function editCollection(data, containers) {
 		error: (response) => {
 			displayError(response)
 		}
-	})
-}
-
-function sortCourses(container) {
-	$(container).children(".collection-course-item").sort(function (a, b) {
-		if ( ($(a).attr("db-code").toLowerCase() > $(b).attr("db-code").toLowerCase()) )
-			return 1
-		else if (($(a).attr("db-code").toLowerCase() == $(b).attr("db-code").toLowerCase()))
-			return 0
-		else
-			return -1
-	}).each(function () {
-		var elem = $(this)
-		elem.remove()
-		$(elem).appendTo(container)
 	})
 }
 
