@@ -76,6 +76,7 @@ function updateTags() {
 	dropdown.append(`
 		<li><hr class="dropdown-divider my-1"></li>
 		<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+			<i class="bi-pencil-square"></i>
 			<small>Edit tags</small>
 		</a></li>
 	`)
