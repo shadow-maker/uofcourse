@@ -48,7 +48,7 @@ def planner():
 			"tags": current_user.tags,
 			"collections": sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0)
 		},
-		grades = Grade.query.all(),
+		grades = {grade.id : dict(grade) for grade in Grade.query.all()},
 		seasons = list(Season),
 		years = getAllYears(False)
 	)
@@ -144,6 +144,8 @@ def modUserCourse():
 	if not "method" in data:
 		flash("ERROR: No method provided", "danger")
 		return redirect(url_for("view.planner"))
+	
+	print(request.form.to_dict())
 	
 	if data["method"] == "PUT":
 		response, _ = putUserCourse(request.form.to_dict())

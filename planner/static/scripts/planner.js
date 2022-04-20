@@ -160,17 +160,31 @@ $(document).on("click", ".collection-course-item", function() {
 		form.find("#selectGrade").val(courseGrade)
 
 		if (coursePassed == "true") {
+			form.find("#selectPassed").prop("checked", true)
 			form.find("#selectPassedTrue").prop("checked", true)
 			form.find("#selectPassedFalse").prop("checked", false)
-		} else if (coursePassed == "false") {
+		} else if (coursePassed == "true") {
+			form.find("#selectPassed").prop("checked", false)
 			form.find("#selectPassedTrue").prop("checked", false)
 			form.find("#selectPassedFalse").prop("checked", true)
 		} else {
+			form.find("#selectPassed").prop("checked", false)
 			form.find("#selectPassedTrue").prop("checked", false)
 			form.find("#selectPassedFalse").prop("checked", false)
 		}
 	}
 })
+
+function updateSelectPassed() {
+	let form = $("#formEditUserCourse")
+	if (form.find("#selectPassed").prop("checked")) {
+		form.find("#selectPassedTrue").prop("checked", true)
+		form.find("#selectPassedFalse").prop("checked", false)
+	} else {
+		form.find("#selectPassedTrue").prop("checked", false)
+		form.find("#selectPassedFalse").prop("checked", true)
+	}
+}
 
 //
 // DOCUMENT READY
@@ -178,4 +192,13 @@ $(document).on("click", ".collection-course-item", function() {
 
 $(document).ready(() => {
 	tagsInit()
+
+	$("#formEditUserCourse #selectGrade").change(function() {
+		$("#formEditUserCourse #selectPassed").prop("checked",
+			grades[$(this).val()] ? grades[$(this).val()].passed : false
+		)
+		updateSelectPassed()
+	})
+
+	$("#formEditUserCourse #selectPassed").change(updateSelectPassed)
 })

@@ -2,6 +2,10 @@
 
 {% block content %}
 
+<script>
+	var grades = JSON.parse('{{ grades | tojson | safe }}')
+</script>
+
 <!--Tags-->
 <div class="container mb-5">
 	<div class="d-flex justify-content-between mb-3">
@@ -51,9 +55,19 @@
 <!--Courses per term-->
 <div class="container-fluid">
 	<h2 class="mb-3">Courses per term</h2>
+
 	<div class="row flex-nowrap overflow-scroll pt-3">
 		{% for collection in userData["collections"] %}
 		<div class="col-10 col-sm-6 col-lg-4 col-xl-3 mx-2 p-0">
+			<div class="text-center">
+				<!-- {% if not collection.transfer %}
+					<small class="m-0 text-muted fst-italic">
+						{{collection.term.start}}
+						<i class="bi-arrow-right-short"></i>
+						{{collection.term.end}}
+					</small>
+				{% endif %} -->
+			</div>
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
 				<form action="/my/del/collection" method="POST">
@@ -66,13 +80,22 @@
 				</form>
 				{% endif %}
 				<div class="card-header text-center">
-					{% if collection.transfer %}
-					<span class="h5">Transferred</span>
-					{% else %}
-					<span class="h5">{{collection.term.name | capitalize}}</span>
-					<br>
-					<small class="m-0 text-muted"><i>{{collection.term.start}} > {{collection.term.end}}</i></small>
-					{% endif %}
+					<span class="h5">
+						{% if collection.transfer %}
+							Transferred
+						{% else %}
+							{{collection.term.name | capitalize}}
+							{% if collection.term.isCurrent() %}
+							<i class="fs-6 bi-circle-fill text-success" data-bs-toggle="tooltip" data-bs-placement="right" title="Current"></i>
+							{% endif %}
+						{% endif %}
+					</span>
+					<div class="m-0 text-muted fst-italic lh-1" style="height: 1rem;">
+						{% if not collection.transfer %}
+						<small>{{collection.term.start}}</small>
+						<i class="bi-arrow-right-short"></i><small>{{collection.term.end}}</small>
+						{% endif %}
+					</div>
 				</div>
 				<div class="collection-course-container card-body p-1" db-id="{{collection.id}}">
 					{% for uCourse in collection.userCourses | sort(attribute="course.subject.code") %}
@@ -94,9 +117,11 @@
 					</div>
 					{% endfor %}
 				</div>
-				<button class="btn btn-outline-secondary m-2 add-course" data-bs-toggle="modal" data-bs-target="#modalAddCourse" db-id="{{collection.id}}">
-					Add course
-				</button>
+				<div class="pb-2 text-center">
+					<a class="add-course text-body" href="" data-bs-toggle="modal" data-bs-target="#modalAddCourse" db-id="{{collection.id}}">
+						Add course
+					</a>
+				</div>
 				<div class="card-footer">
 					<div class="row">
 						<span class="col-9 text-center">Term GPA</span>
@@ -213,6 +238,7 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body px-5">
+					<!--Course-->
 					<div class="row mb-2">
 						<label for="selectCoursePlaceholder" class="col-3 col-form-label">Course</label>
 						<div class="col-9">
@@ -221,7 +247,8 @@
 								readonly>
 						</div>
 					</div>
-					<div class="row">
+					<!--Term-->
+					<div class="row mb-2">
 						<label class="col-3 col-form-label" for="selectCollection">Term</label>
 						<div class="col-9">
 							<select class="form-select" aria-label="Select term" name="collection_id"
@@ -238,32 +265,26 @@
 							</select>
 						</div>
 					</div>
-					<div class="row">
-						<label class="col-3 col-form-label">Passed</label>
-						<div class="col-9 py-2">
-							<div class="form-check form-check-inline">
-								<input class="form-check-input" type="radio" name="passed" id="selectPassedTrue"
-									value="true">
-								<label class="form-check-label" for="selectPassedTrue">Yes</label>
-							</div>
-							<div class="form-check form-check-inline">
-								<input class="form-check-input" type="radio" name="passed" id="selectPassedFalse"
-									value="false">
-								<label class="form-check-label" for="selectPassedFalse">No</label>
-							</div>
-						</div>
-					</div>
+					<!--Grade-->
 					<div class="row">
 						<label class="col-3 col-form-label" for="selectGrade">Grade</label>
-						<div class="col-9">
+						<div class="col-4">
 							<select class="form-select" aria-label="Select grade" name="grade" id="selectGrade">
 								<option value="0">-</option>
-								{% for grade in grades %}
-								<option value="{{grade.id}}">
-									{{grade.symbol}}
+								{% for id, grade in grades.items() %}
+								<option value="{{id}}">
+									{{grade["symbol"]}}
 								</option>
 								{% endfor %}
 							</select>
+						</div>
+						<label class="col-3 col-form-label">Passed</label>
+						<div class="col-2 py-2">
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="passedCheck" id="selectPassed">
+							</div>
+							<input class="form-check-input" type="radio" name="passed" id="selectPassedTrue" value="true" hidden>
+							<input class="form-check-input" type="radio" name="passed" id="selectPassedFalse" value="false" hidden>
 						</div>
 					</div>
 				</div>
