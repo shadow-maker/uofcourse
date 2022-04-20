@@ -158,6 +158,7 @@
 	</div>
 </div>
 
+<!--Overall GPA-->
 <div class="container">
 	<div id="overallGPA" class="row ms-0">
 		<div class="col-12 col-sm-5 col-md-6 col-lg-4 col-xxl-3 h2 ps-0">
@@ -325,24 +326,30 @@
 					<input type="number" name="collection_id" id="selectCollectionId" value="" readonly hidden>
 					<input type="number" name="course_id" id="selectCourseId" value="" readonly hidden>
 					<div class="d-flex flex-row justify-content-center">
-						<input type="text" class="form-control form-control-lg selectCourse font-monospace text-end" id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;">
-						<span class="h-100 p-2 m-0 h4">–</span>
-						<input type="text" class="form-control form-control-lg selectCourse font-monospace text-begin" id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;">
-						<span class="h-100 p-2 m-0 ms-1 h4" id="selectCourseStatus" style="width: 1em;">
-							<span class="error" style="display: none;">
-								<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Course does not exist" title="Course does not exist"></i>
-							</span>
-							<span class="success" style="display: none;">
-								<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Course exists" title="Course exists"></i>
-							</span>
-							<span class="spinner-border loading" role="status" style="display: none;">
-								<span class="visually-hidden">Loading...</span>
-							</span>
-						</span>
+						<!--Subject code-->
+						<input type="text" class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle" id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;">
+
+						<!--Separator-->
+						<span class="h-100 p-2 m-0 fs-2 align-middle">–</span>
+
+						<!--Course number-->
+						<input type="text" class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3" id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;">
+
+						<!--Course exists status-->
+						<div class="position-relative">
+							<div class="status fs-4 h-100 position-absolute start-100 p-2 ps-3 d-flex flex-column justify-content-center" id="selectCourseStatus">
+								<span class="error">
+									<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Course does not exist" title="Course does not exist"></i>
+								</span>
+								<span class="success">
+									<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Course exists" title="Course exists"></i>
+								</span>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-around">
-					<button id="selectCourseSubmit" type="submit" class="btn btn-primary" disabled>Add</button>
+					<button id="selectCourseSubmit" type="submit" class="submit btn btn-primary" disabled>Add</button>
 				</div>
 			</div>
 		</div>

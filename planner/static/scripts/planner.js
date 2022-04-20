@@ -141,8 +141,6 @@ function selectCourseStatus(status) {
 }
 
 function checkCourse() {
-	//selectCourseStatus("loading")
-
 	$.ajax({
 		url: "/api/courses/code/" + $("#selectCourseSubject").val() + "/" + $("#selectCourseNumber").val(),
 		method: "GET",
@@ -159,32 +157,78 @@ function checkCourse() {
 	})
 }
 
-$("#selectCourseSubject").keyup(function() {
+const selectCourse = $("#formAddCourse")
+
+$(document).on("click", ".add-course", function() {
+	selectCourse.find("#selectCollectionId").val(this.getAttribute("db-id"))
+})
+
+// On modal starts to show
+$("#modalAddCourse").on("show.bs.modal", () => {
+	// Clear form inputs
+	selectCourse.find(".selectSubject").val("")
+	selectCourse.find(".selectNumber").val("")
+	
+	// Hide status and feedback
+	selectCourse.find("#selectCourseStatus").children("span").hide()
+	selectCourse.find(".feedback").addClass("invisible")
+
+	// Disable submit button
+	selectCourse.find(".submit").prop("disabled", true)
+})
+
+// On modal is shown
+$("#modalAddCourse").on("shown.bs.modal", () => {
+	// Move focus to subject selection when modal is shown
+	selectCourse.find(".selectSubject").focus()
+})
+
+// On key up inside subject selection
+$("#selectCourseSubject").on("keyup", function(e) {
+	// Convert subject into uppercase
+	$(this).val($(this).val().toUpperCase())
+
+	// Remove numeric characters
+	$(this).val($(this).val().replace(/[0-9]/g, ""))
+
 	if ($(this).val().length < $(this).attr("minLength")) {
-		$("#selectCourseNumber").prop("disabled", true)
-		$("#selectCourseSubmit").prop("disabled", true)
+		selectCourse.find(".selectNumber").prop("disabled", true)
+		selectCourse.find(".submit").prop("disabled", true)
+		selectCourse.find(".feedback").addClass("invisible")
 		selectCourseStatus("")
 	} else {
-		$("#selectCourseNumber").prop("disabled", false)
-		if ($("#selectCourseNumber").val().length == $("#selectCourseNumber").attr("maxLength"))
+		selectCourse.find(".selectNumber").prop("disabled", false)
+		if (selectCourse.find(".selectNumber").val().length == selectCourse.find(".selectNumber").attr("maxLength"))
 			checkCourse()
 	}
 
+	// Move focus to number selection if max length is reached
 	if ($(this).val().length == $(this).attr("maxLength"))
-		$("#selectCourseNumber").focus()
+		selectCourse.find(".selectNumber").focus()
 })
 
-$("#selectCourseNumber").keyup(function() {
-	if ($(this).val().length == $(this).attr("maxLength"))
+// On key up inside number selection
+$("#selectCourseNumber").on("keydown", function(e) {
+	// If pressing backspace and the value is empty, move focus to subject selection
+	if ($(this).val().length == 0 && e.keyCode == 8)
+		selectCourse.find(".selectSubject").focus()
+	else if (e.keyCode == 13)
+		selectCourse.submit()
+})
+
+// On key down inside number selection
+$("#selectCourseNumber").on("keyup", function(e) {
+	// Remove non-numeric characters
+	$(this).val($(this).val().replace(/\D/g, ""))
+
+	// Check course if length is complete
+	if ($(this).val().length == $(this).attr("maxLength")) {
 		checkCourse()
-	else
-		$("#selectCourseSubmit").prop("disabled", true)
-	selectCourseStatus("")
-})
-
-$(document).on("click", ".add-course", function() {
-	$("#selectCollectionId").val(this.getAttribute("db-id"))
-	$("#selectCourseSubject").focus()
+	} else {
+		selectCourse.find(".submit").prop("disabled", true)
+		selectCourse.find(".feedback").addClass("invisible")
+		selectCourseStatus("")
+	}
 })
 
 
