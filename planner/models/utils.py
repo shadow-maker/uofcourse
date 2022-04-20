@@ -1,8 +1,4 @@
-from operator import imod
-from planner import utcoffset
-from planner.models import Term, Faculty, Subject, Course, User
-
-from datetime import date
+from planner.models import Term, Subject, Course
 
 def getAllTerms(asc=True):
 	results = Term.query.order_by(Term.year.asc, Term.season.asc).all()
