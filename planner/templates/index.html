@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="row">
-	<div class="col-12 col-md-7 col-lg-8 col-xl-9 container px-lg-5">
+	<div class="col-12 col-md-7 col-lg-8 col-xl-9 container ps-lg-4 pe-lg-5">
 		<div class="fs-5">
 			A website created to aid UofC students in their program course planning.
 
@@ -12,7 +12,7 @@
 			Main features:
 	
 			<ul class="fs-6">
-				<li>An intuitive course browser that allows users to quickly browse through the university's full course catalog, with filter and sorting options</li>
+				<li>An intuitive course browser that allows to quickly browse through the university's full course catalog, with filter and sorting options</li>
 				<li>Per-course pages with all the essential information for students</li>
 				<li>Save courses with custom tags</li>
 				<li>Arrange courses in terms in the virtual Course Planner</li>
@@ -104,8 +104,8 @@
 						<span class="fst-italic">None</span>
 					{% endif %}
 				</div>
-				<a class="btn btn-sm btn-outline-primary" href="{{url_for('view.planner')}}">
-					Edit in Course Planner
+				<a class="btn btn-sm btn-outline-secondary" href="{{url_for('view.planner')}}">
+					Edit in My Planner
 				</a>
 				{% else %}
 				<div class="px-1">
