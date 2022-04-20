@@ -9,9 +9,6 @@ class UserCourse(db.Model):
 	grade_id = db.Column(db.Integer, db.ForeignKey("grade.id"))
 	passed = db.Column(db.Boolean)
 
-	def ownedBy(self, user_id):
-		return self.collection.user_id == user_id
-
 	@property
 	def tags(self):
 		return [tag for tag in self.course.userTags if tag.user_id == self.collection.user_id]
