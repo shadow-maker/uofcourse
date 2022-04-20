@@ -146,7 +146,7 @@ def putUserCourse(data={}):
 
 	if not userCourse:
 		return {"error": "UserCourse not found"}, 404
-	if not userCourse.user_id == current_user.id:
+	if not userCourse.collection.user_id == current_user.id:
 		return {"error": "User does not have access to this UserCourse"}, 403
 	
 	if "collection_id" in data:
