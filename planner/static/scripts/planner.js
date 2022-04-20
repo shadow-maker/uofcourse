@@ -208,46 +208,46 @@ $(document).on("click", ".collection-course-item", function() {
 		let modalInfo = $("#modalInfoUserCourse")
 		let formEdit = $("#formEditUserCourse")
 
-		let courseId = this.getAttribute("db-id")
-		let term = this.getAttribute("db-term")
-		let courseCode = this.getAttribute("db-code")
-		let courseName = this.getAttribute("db-name")
-		let courseNogpa = this.getAttribute("db-nogpa")
-		let courseURL = this.getAttribute("db-url")
-		let courseGrade = this.getAttribute("db-grade")
-		if (courseGrade) {
-			getGrade(courseGrade, (data) => {
+		let grade = this.getAttribute("db-grade")
+		if (grade) {
+			getGrade(grade, (data) => {
 				modalInfo.find(".grade-symbol").text(data.symbol)
 				modalInfo.find(".grade-desc").text(data.desc)
 				modalInfo.find(".grade-gpv").text(data.gpv)
 				modalInfo.find(".grade-passed").text(data.passed ? "Yes" : "No")
+				modalInfo.find(".grade-weighted").text(
+					Number((data.gpv * parseFloat(this.getAttribute("db-units"))).toFixed(3))
+				)
 			})
 		} else {
 			modalInfo.find(".grade-symbol").text("-")
 			modalInfo.find(".grade-desc").text("")
 			modalInfo.find(".grade-gpv").text("")
 			modalInfo.find(".grade-passed").text("")
-			courseGrade = "0"
+			modalInfo.find(".grade-weighted").text("")
+			grade = "0"
 		}
-		let coursePassed = this.getAttribute("db-passed")
+		let passed = this.getAttribute("db-passed")
 		let collectionId = this.parentElement.getAttribute("db-id")
 
-		modalInfo.find(".term").text(term)
-		modalInfo.find(".link").prop("href", courseURL)
-		modalInfo.find(".code").text(courseCode)
-		modalInfo.find(".name").text(courseName)
-		modalInfo.find(".countgpa").text(courseNogpa == "True" ? "No" : "Yes")
+		modalInfo.find(".term").text(this.getAttribute("db-term"))
+		modalInfo.find(".link").prop("href", this.getAttribute("db-url"))
+		modalInfo.find(".code").text(this.getAttribute("db-code"))
+		modalInfo.find(".name").text(this.getAttribute("db-name"))
+		modalInfo.find(".units").text(this.getAttribute("db-units"))
+		modalInfo.find(".repeat").text(this.getAttribute("db-repeat") == "true" ? "Yes" : "No")
+		modalInfo.find(".countgpa").text(this.getAttribute("db-nogpa") == "true" ? "No" : "Yes")
 
-		formEdit.find("#selectCourse").val(courseId)
-		formEdit.find("#selectCoursePlaceholder").val(courseCode)
+		formEdit.find("#selectCourse").val(this.getAttribute("db-id"))
+		formEdit.find("#selectCoursePlaceholder").val(this.getAttribute("db-code"))
 		formEdit.find("#selectCollection").val(collectionId)
-		formEdit.find("#selectGrade").val(courseGrade)
+		formEdit.find("#selectGrade").val(grade)
 
-		if (coursePassed == "true") {
+		if (passed == "true") {
 			formEdit.find("#selectPassed").prop("checked", true)
 			formEdit.find("#selectPassedTrue").prop("checked", true)
 			formEdit.find("#selectPassedFalse").prop("checked", false)
-		} else if (coursePassed == "true") {
+		} else if (passed == "false") {
 			formEdit.find("#selectPassed").prop("checked", false)
 			formEdit.find("#selectPassedTrue").prop("checked", false)
 			formEdit.find("#selectPassedFalse").prop("checked", true)
