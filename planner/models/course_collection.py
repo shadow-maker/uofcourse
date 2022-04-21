@@ -24,11 +24,11 @@ class CourseCollection(db.Model):
 		return round(points, precision)
 
 	def getGPA(self, precision=3):
-		weigthed = self.getPoints(6)
+		points = self.getPoints(6)
 		accUnits = self.units
-		if weigthed is None or accUnits == 0:
+		if points is None or accUnits == 0:
 			return None
-		return round(weigthed / accUnits, precision)
+		return round(points / accUnits, precision)
 
 	@property
 	def points(self):
