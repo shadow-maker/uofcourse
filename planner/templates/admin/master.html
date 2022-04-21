@@ -62,7 +62,7 @@
 					<div class="d-flex flex-column justify-content-between w-100">
 						<div>
 							{% block main_menu %}
-							<hr class="border-secondary">
+							<hr class="border-secondary my-2 my-md-3">
 							<ul class="navbar-nav d-flex flex-md-column w-100 text-center text-md-left">
 								{{ layout.menu() }}
 							</ul>
@@ -77,20 +77,20 @@
 
 						<div>
 							{% block access_control %}
-							<hr class="border-secondary">
-							<ul class="nav navbar-nav w-100 d-flex flex-md-column">
-								<li class="py-1">
+							<hr class="border-secondary d-none d-md-block">
+							<div class="nav navbar-nav w-100 d-flex flex-row">
+								<div class="px-2 px-md-0 py-1 col-6 col-md-12">
 									<a class="btn btn-outline-info d-block" href="{{url_for('view.home')}}">
 										<small><span class="fa fa-chevron-left glyphicon glyphicon-chevron-left"></span></small>
 										Back
 									</a>
-								</li>
-								<li class="py-1">
+								</div>
+								<div class="px-2 px-md-0 py-1 col-6 col-md-12">
 									<a class="btn btn-outline-danger d-block" href="{{url_for('view.logout')}}">
 										Log Out
 									</a>
-								</li>
-							</ul>
+								</div>
+							</div>
 							{% endblock %}
 						</div>
 					</div>
