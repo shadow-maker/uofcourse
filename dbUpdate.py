@@ -1,5 +1,5 @@
 from sys import argv
-from planner.db_update import updateFuncs, update
+from app.db_update import updateFuncs, update
 
 if __name__ == "__main__":
 	def findTable(name):
