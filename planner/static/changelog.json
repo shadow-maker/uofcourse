@@ -1,4 +1,12 @@
 {
+	"0.4.2": {
+		"beta": true,
+		"date": "2022-04-21",
+		"changes": [],
+		"fixes": [
+			"GPA calculator would calculate the overall GPA incorrectly (gave the same weight to every term), it is now calculated by suming the points and dividing by the accumulated units"
+		]
+	},
 	"0.4.1": {
 		"beta": true,
 		"date": "2022-04-20",
