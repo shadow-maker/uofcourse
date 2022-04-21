@@ -1,12 +1,18 @@
 {
 	"0.4": {
 		"beta": true,
-		"date": "",
+		"date": "2022-04-20",
 		"changes": [
 			"Added Disqus integration to course pages - You can now participate in discussions regarding a particular course with a Disqus account.",
-			"Removed the Season table and its API endpoints"
+			"Various improvements to the course planner, with new course info modal and improved GPA calculator",
+			"Added logs and logging for user actions",
+			"Redesigned home page with term view and better quick links",
+			"Redesigned admin console",
+			"Removed the Season table and its API endpoints",
+			"Reorganized links in course view"
 		],
 		"fixes": [
+			"Courses in My Planner wouldn't be sorted properly",
 			"Small fixes on the course page styling"
 		]
 	},
