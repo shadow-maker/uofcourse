@@ -98,7 +98,7 @@ function updateOverallGPA() {
 
 			let overallCollection = `
 			<div class="row overall-collection-item">
-				<span class="col-12 col-sm-3 text-sm-end ps-2 fw-bold">
+				<span class="col-12 col-sm-3 text-sm-end ps-sm-2 fw-bold">
 					` + $(this).attr("db-term") +`
 				</span>
 				<span class="col-6 col-sm-4 font-monospace pe-0">
