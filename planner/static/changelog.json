@@ -1,4 +1,15 @@
 {
+	"0.4.1": {
+		"beta": true,
+		"date": "2022-04-20",
+		"changes": [
+			"Turn off browser autocomplete in Go-To courses modal"
+		],
+		"fixes": [
+			"Overall GPA would show as NaN when no term was selected in My Planner",
+			"Styling fixes in admin console"
+		]
+	},
 	"0.4": {
 		"beta": true,
 		"date": "2022-04-20",
