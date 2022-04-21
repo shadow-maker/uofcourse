@@ -48,13 +48,12 @@ class BaseModelView(ModelView):
 		super().__init__(model, db.session, *args, **kwargs)
 
 
-admin = Admin(
-	app,
+admin = Admin(app,
 	url = "/admin",
-	name=SITE_NAME,
-	template_mode="bootstrap4",
-	base_template="admin/master.html",
-	index_view=IndexView()
+	name = SITE_NAME,
+	template_mode = "bootstrap4",
+	base_template = "admin/master.html",
+	index_view = IndexView()
 )
 
 from app.routes.admin.user import UserModelView

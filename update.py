@@ -1,5 +1,6 @@
-from sys import argv
 from app.db_update import updateFuncs, update
+
+from sys import argv
 
 if __name__ == "__main__":
 	def findTable(name):
