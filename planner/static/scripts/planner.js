@@ -101,11 +101,9 @@ function updateOverallGPA() {
 		}
 	})
 
-	let gpa = sum / count
-
 	overall.find(".sum").text(Number((sum).toFixed(3)))
-	overall.find(".count").text(Number((count).toFixed(3)))
-	overall.find(".final-gpa").text(Number((gpa).toFixed(3)))
+	overall.find(".count").text(count)
+	overall.find(".final-gpa").text(count ? Number((sum / count).toFixed(3)) : "-")
 }
 
 function disableOverallGPA(collectionId) {
@@ -117,7 +115,7 @@ function disableOverallGPA(collectionId) {
 	})
 }
 
-function editCollection(data, containers) {
+function editCollection(data) {
 	$.ajax({
 		url: "/api/users/course",
 		method: "PUT",

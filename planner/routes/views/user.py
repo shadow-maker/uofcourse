@@ -80,7 +80,6 @@ def addCourseCollection():
 		except:
 			return ret("ERROR: Season not found", "danger")
 		term = Term.query.filter_by(season=season, year=data["year"]).first()
-		pass
 
 	if not term:
 		return ret("ERROR: Term does not exist", "danger")

@@ -99,7 +99,7 @@
 					{% for uCourse in collection.userCourses | sort(attribute="course.code") %}
 					{% set course = uCourse.course %}
 					<div class="collection-course-item m-1 btn bg-light card" db-id="{{uCourse.id}}" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}" db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{{course.code}}" db-name="{{course.name}}" db-url="{{course.url}}" db-units="{{course.units}}" db-repeat="{{course.repeat | tojson | safe}}" db-nogpa="{{course.nogpa | tojson | safe}}" draggable="true"
-						data-bs-toggle="modal" data-bs-target="#modalInfoUserCourse" title="Click to edit or drag to change term">
+						data-bs-toggle="modal" data-bs-target="#modalInfoUserCourse" title="Click to view or drag to change term">
 						<div class="row">
 							<span class="emoji col-3 h5 p-0 m-0">
 								&#{{uCourse.course.emoji}}
@@ -327,13 +327,13 @@
 					<input type="number" name="course_id" id="selectCourseId" value="" readonly hidden>
 					<div class="d-flex flex-row justify-content-center">
 						<!--Subject code-->
-						<input type="text" class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle" id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;">
+						<input type="text" class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle" id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;" autocomplete="off">
 
 						<!--Separator-->
 						<span class="h-100 p-2 m-0 fs-2 align-middle">–</span>
 
 						<!--Course number-->
-						<input type="text" class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3" id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;">
+						<input type="text" class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3" id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;" autocomplete="off">
 
 						<!--Course exists status-->
 						<div class="position-relative">
