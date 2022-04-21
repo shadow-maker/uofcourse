@@ -1,7 +1,7 @@
-from flask_login import current_user
 from planner import db
 from planner.models import Faculty, Subject, Course
 from planner.models.utils import getSubjectByCode
+from planner.auth import current_user
 from planner.constants import COURSE_LEVELS, REDDIT_URL
 from planner.routes.views import view
 
@@ -127,7 +127,7 @@ def courseBrowser():
 
 	faculties = {
 		str(f[0]) : {"name": f[1], "sel": not selFaculty}
-	for f in list(db.session.query(Faculty).values(Faculty.id, Faculty.name))}
+	for f in Faculty.query.with_entities(Faculty.id, Faculty.name)}
 
 	if selFaculty:
 		faculties[selFaculty]["sel"] = True

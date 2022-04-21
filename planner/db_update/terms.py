@@ -1,4 +1,5 @@
-from planner.models import db, Season, Term
+from planner import db
+from planner.models import Season, Term
 import json
 import os
 
@@ -17,8 +18,9 @@ def update():
 			print(f"ERROR: term '{term}' is not formatted correctly")
 			continue
 
-		s = Season.query.filter_by(name=season.lower()).first()
-		if not s:
+		try:
+			s = getattr(Season, season)
+		except:
 			print(f"ERROR: Season '{season}' not found")
 			continue
 
@@ -28,18 +30,18 @@ def update():
 			print(f"ERROR: Year '{year}' cannot be casted to int")
 			continue
 
-		t = Term.query.filter_by(id=tId).first()
+		t = Term.query.get(tId)
 		if t:
 			print(f"TERM {tId} ALREADY EXISTS")
-			if t.season_id != s.id:
-				print(f"  - seasonId does not match: (db) {t.season_id} != {s.id}, updating...")
-				t.season_id = s.id
+			if t.season != s:
+				print(f"  - season does not match: (db) {t.season} != {s}, updating...")
+				t.season = s
 			if t.year != year:
 				print(f"  - year does not match: (db) {t.year} != {year}, updating...")
 				t.year = year
 			db.session.commit()
 		else:
 			print(f"CREATING TERM {tId}")
-			t = Term(id=tId, season_id=s.id, year=year)
+			t = Term(id=tId, season=season, year=year)
 			db.session.add(t)
 			db.session.commit()

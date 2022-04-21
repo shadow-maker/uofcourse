@@ -40,7 +40,7 @@ class Page {
 		if (_page > 0 && _page <= this.total) {
 			this.current = _page
 			this.callback()
-			updateNav()
+			this.updateNav()
 		}
 	}
 	

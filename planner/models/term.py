@@ -1,11 +1,20 @@
 from planner import db
 
+from enum import Enum
 from datetime import date
+
+
+class Season(Enum):
+	winter = 1
+	spring = 2
+	summer = 3
+	fall = 4
+
 
 class Term(db.Model):
 	__tablename__ = "term"
 	id = db.Column(db.Integer, primary_key=True)
-	season_id = db.Column(db.Integer, db.ForeignKey("season.id"), nullable=False)
+	season = db.Column(db.Enum(Season), nullable=False)
 	year = db.Column(db.Integer, nullable=False)
 	start = db.Column(db.Date)
 	end = db.Column(db.Date)
@@ -16,8 +25,14 @@ class Term(db.Model):
 	def name(self):
 		return f"{self.season.name} {self.year}"
 
+	def isPrev(self):
+		return self.end and self.end < date.today()
+
 	def isCurrent(self):
 		return self.start and self.end and self.start <= date.today() <= self.end
+	
+	def isNext(self):
+		return self.start and self.start > date.today()
 
 	def hasEnded(self):
 		if not self.end:
@@ -29,7 +44,6 @@ class Term(db.Model):
 	
 	def __iter__(self):
 		yield "id", self.id
-		yield "season_id", self.season_id
 		yield "season", self.season.name
 		yield "year", self.year
 		yield "start", self.start.isoformat() if self.start else None

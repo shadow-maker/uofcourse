@@ -20,7 +20,7 @@ function uncheckAll(container) {
 // REQUEST FUNCTIONS
 //
 
-function requestResults(suc, ignorePrev=false) {
+function requestResults(callback) {
 	var selectedLevel = []
 	$("input[name='selectedLevel']:checked").each(function () {
 		selectedLevel.push(parseInt($(this).val()))
@@ -48,7 +48,7 @@ function requestResults(suc, ignorePrev=false) {
 		page: page.current
 	}
 
-	if (!ignorePrev && JSON.stringify(data) == JSON.stringify(prevData))
+	if (JSON.stringify(data) == JSON.stringify(prevData))
 		return
 
 	prevData = data
@@ -61,7 +61,7 @@ function requestResults(suc, ignorePrev=false) {
 		method: "GET",
 		data: data,
 		traditional: true,
-		success: (response) => {suc(response)},
+		success: (response) => {callback(response)},
 		error: (response) => {
 			$(".loading").hide()
 			displayError(response)
@@ -70,17 +70,18 @@ function requestResults(suc, ignorePrev=false) {
 }
 
 
-function requestCourseTags(id, suc) {
+function requestCourseTags(id, callback) {
 	if (isAuth)
 		$.ajax({
 			url: "/api/tags/course/" + id,
 			method: "GET",
-			success: (response) => {suc(response)},
+			success: (response) => {callback(response)},
 			error: (response) => {
 				displayError(response)
 			}
 		})
 }
+
 
 function toggleTag(courseId, tagId) {
 	$.ajax({
@@ -164,15 +165,15 @@ function updateResults(data) {
 
 	$("#coursesContainer").empty()
 	for (let course of data.results) {
-		var courseItem = $("#templates .course-item").clone()
+		let courseItem = $("#templates .course-item").clone()
 
 		courseItem.attr("id", "course-" + course.id)
 		courseItem.attr("db-id", course.id)
 
 		courseItem.find(".course-link").attr("href", course.url)
 		courseItem.find(".course-emoji").html("&#" + (course.emoji ? course.emoji : DEFAULT_EMOJI))
-		courseItem.find(".course-code").html(course.code)
-		courseItem.find(".course-name").html(course.name)
+		courseItem.find(".course-code").text(course.code)
+		courseItem.find(".course-name").text(course.name)
 
 		// Add content only available if user is authenticated
 		if (isAuth) {
@@ -248,6 +249,7 @@ function updateResults(data) {
 			courseItem.find(".tags-dropdown").append(`
 				<li><hr class="dropdown-divider my-1"></li>
 				<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+					<i class="bi-pencil-square"></i>
 					<small>Edit tags</small>
 				</a></li>
 			`)

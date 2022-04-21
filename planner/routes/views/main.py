@@ -1,12 +1,14 @@
 from planner import app, jinja, ifttt
 from planner import changelog as change
+from planner.auth import current_user
 from planner.forms import formContact
 from planner.routes.views import view
+from planner.models import utils
 
 from flask import render_template, flash, redirect
-from flask_login import current_user
 from flask.helpers import url_for
 
+from datetime import date
 from markdown import markdown
 import os
 
@@ -14,8 +16,21 @@ import os
 @view.route("/home")
 @view.route("/")
 def home():
+	term = utils.getCurrentTerm()
+	if not term:
+		term = utils.getNextTerm()
+	courses = []
+	if term and current_user.is_authenticated:
+		for collection in current_user.collections:
+			if collection.term_id == term.id:
+				courses = sorted(collection.userCourses, key=lambda c: c.course.code)
+				break
+
 	return render_template("index.html",
-		header = "UofC Course Planner"
+		header = "UofC Course Planner",
+		term = term,
+		userCourses = courses,
+		today = date.today()
 	)
 
 
@@ -44,7 +59,7 @@ def api():
 	html = parts[0] + parts[1] + parts[2].replace("h2", "h2 class='mt-5'")
 	html = html.replace("<h3", "<h3 class='mt-4'")
 	html = html.replace("h4", "h4 class='mt-3'")
-	html = html.replace("<table", "<table class='table'")
+	html = html.replace("<table", "<table class='table table-sm'")
 	html = html.replace("<blockquote", "<blockquote title='Copy endpoint' class='alert alert-secondary p-2 d-flex justify-content-between fs-5'")
 
 	return render_template("api.html",

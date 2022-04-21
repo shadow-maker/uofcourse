@@ -1,29 +1,26 @@
 from planner import db
 from planner.models import Role, Season, Term, Grade, CourseCollection
 from planner.models.utils import getAllYears
+from planner.auth import current_user, login_required
 from planner.forms import formChangePassw
 from planner.constants import *
 
 from planner.routes.views import view
-from planner.routes.views.utils import *
 from planner.routes.api import *
 
 from flask import render_template, flash, redirect, request
 from flask.helpers import url_for
-from flask_login import current_user
 
 
 @view.route("/account", methods=["GET", "POST"])
+@login_required
 def account():
-	if not current_user.is_authenticated:
-		return redirectLogin()
-	
 	formPassw = formChangePassw()
 
 	if formPassw.validate_on_submit():
 		if current_user.checkPassw(formPassw.oldPassw.data):
 			try:
-				current_user.updatePassw(formPassw.oldPassw.data, formPassw.newPassw.data)
+				current_user.updatePassw(formPassw.newPassw.data)
 				db.session.commit()
 			except:
 				flash(f"Error updating password!", "danger")
@@ -42,10 +39,8 @@ def account():
 
 
 @view.route("/my")
+@login_required
 def planner():
-	if not current_user.is_authenticated:
-		return redirectLogin()
-	
 	return render_template("planner.html",
 		title = "My Plan",
 		header = "My Course Plan",
@@ -53,8 +48,8 @@ def planner():
 			"tags": current_user.tags,
 			"collections": sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0)
 		},
-		grades = Grade.query.all(),
-		seasons = Season.query.all(),
+		grades = {grade.id : dict(grade) for grade in Grade.query.all()},
+		seasons = list(Season),
 		years = getAllYears(False)
 	)
 
@@ -77,12 +72,15 @@ def addCourseCollection():
 	elif not (("season" in data) and ("year" in data)):
 		return ret("ERROR: Term not specified", "danger")
 	else:
-		season = Season.query.filter_by(id=data["season"]).first()
-		if not season:
-			season = Season.query.filter_by(name=data["season"].lower()).first()
-		if not season:
+		try:
+			if data["season"].isdigit():
+				season = Season(int(data["season"]))
+			else:
+				season = getattr(Season, data["season"])
+		except:
 			return ret("ERROR: Season not found", "danger")
-		term = Term.query.filter_by(season_id=season.id, year=data["year"]).first()
+		term = Term.query.filter_by(season=season, year=data["year"]).first()
+		pass
 
 	if not term:
 		return ret("ERROR: Term does not exist", "danger")

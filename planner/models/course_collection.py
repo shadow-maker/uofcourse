@@ -13,6 +13,8 @@ class CourseCollection(db.Model):
 		points = 0
 		accUnits = 0
 		for uCouse in self.userCourses:
+			if uCouse.course.nogpa:
+				continue
 			grade = uCouse.grade
 			if not grade:
 				return None

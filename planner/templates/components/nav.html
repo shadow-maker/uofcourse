@@ -19,19 +19,14 @@
 
 		<div class="collapse navbar-collapse d-md-flex justify-content-between" id="toggleMobileMenu">
 			<ul class="navbar-nav text-center">
-				<li title="Press G to activate">
-					<a class="nav-link" href="" data-bs-toggle="modal" data-bs-target="#modalGoToCourse">
-						Go To
-					</a>
-				</li>
 				<li>
 					<a class="nav-link {% if request.path == url_for('view.courseBrowser') %}active{% endif %}" href="{{url_for('view.courseBrowser')}}">
 						Course Browser
 					</a>
 				</li>
-				<li>
-					<a class="nav-link {% if request.path == url_for('view.about') %}active{% endif %}" href="{{url_for('view.about')}}">
-						About
+				<li title="Press G to activate">
+					<a class="nav-link" href="" data-bs-toggle="modal" data-bs-target="#modalGoToCourse">
+						Go To
 					</a>
 				</li>
 				<li>
@@ -39,11 +34,16 @@
 						API
 					</a>
 				</li>
+				<li>
+					<a class="nav-link {% if request.path == url_for('view.about') %}active{% endif %}" href="{{url_for('view.about')}}">
+						About
+					</a>
+				</li>
 			</ul>
 
 			<ul class="navbar-nav text-center">
 				{% if current_user.is_authenticated %}
-					{% if current_user.role == ROLE_ADMIN %}
+					{% if current_user.role >= ROLE_MOD %}
 					<li>
 						<a class="nav-link {% if request.path == url_for('admin.index') %}active{% endif %}" href="{{url_for('admin.index')}}">
 							Admin

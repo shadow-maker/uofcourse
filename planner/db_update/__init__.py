@@ -5,9 +5,9 @@
 BACKUPS_FOLDER = "backups"
 TIMEOUT = (5, 30) # Connection timeout, Read timeout
 
-from planner.models import Course, Grade, Role, Season, Term
+from planner.models import Course, Grade, Term
 
-from planner.db_update import courses, grades, seasons, terms
+from planner.db_update import courses, grades, terms
 from planner.db_update.backup import backup
 from planner.db_update.load import load
 
@@ -15,7 +15,6 @@ from planner.db_update.load import load
 updateFuncs = {
 	Course : courses.update,
 	Grade : grades.update,
-	Season : seasons.update,
 	Term : terms.update
 }
 

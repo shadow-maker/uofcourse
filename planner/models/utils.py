@@ -1,8 +1,7 @@
-from planner import utcoffset
-from planner.models import Term, Faculty, Subject, Course, User
+from planner.models import Term, Subject, Course
 
 def getAllTerms(asc=True):
-	results = Term.query.order_by(Term.year.asc, Term.season_id.asc).all()
+	results = Term.query.order_by(Term.year.asc, Term.season.asc).all()
 	if not asc:
 		results.reverse()
 	return results
@@ -15,9 +14,21 @@ def getAllYears(asc=True):
 		results.reverse()
 	return results
 
+def getPrevTerm():
+	for term in Term.query.order_by(Term.end.desc()).all():
+		if term.isPrev():
+			return term
+	return None
+
 def getCurrentTerm():
 	for term in Term.query.order_by(Term.end.desc()).all():
 		if term.isCurrent():
+			return term
+	return None
+
+def getNextTerm():
+	for term in Term.query.order_by(Term.start.asc()).all():
+		if term.isNext():
 			return term
 	return None
 

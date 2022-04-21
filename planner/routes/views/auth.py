@@ -1,20 +1,13 @@
 from planner import db, loginManager
-from planner.models import User
+from planner.models import UserLogEvent, User
+from planner.auth import login_user, logout_user, current_user
 from planner.forms import formLogin, formSignup
 from planner.constants import ALLOW_ACCOUNT_CREATION
 
 from planner.routes.views import view
 
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, request
 from flask.helpers import url_for
-from flask_login import login_user, logout_user, current_user
-
-
-# Login utils
-
-@loginManager.user_loader
-def loadUser(uId):
-	return User.query.get(int(uId))
 
 
 # Routes
@@ -58,8 +51,10 @@ def login():
 		if user:
 			if user.checkPassw(form.passw.data):
 				login_user(user, remember=form.remember.data)
+				user.log(UserLogEvent.AUTH_LOGIN)
 				flash(f"Log in successful!", "success")
-				return redirect(url_for("view.home"))
+				nextPage = request.args.get("next")
+				return redirect(nextPage if nextPage else url_for("view.home"))
 			else:
 				flash(f"Incorrect password!", "danger")
 		else:
@@ -73,6 +68,8 @@ def login():
 @view.route("/logout")
 def logout():
 	if not current_user.is_authenticated:
-		return redirect(url_for("view.logout"))
+		return redirect(url_for("view.login"))
+	current_user.log(UserLogEvent.AUTH_LOGOUT)
 	logout_user()
+	flash("Logout successful!", "success")
 	return redirect(url_for("view.home"))

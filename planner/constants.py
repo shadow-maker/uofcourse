@@ -4,7 +4,7 @@
 
 SITE_NAME = "UofCourse"
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
-CURRENT_VERSION = "0.3.1"
+CURRENT_VERSION = "0.4"
 
 #
 # URLS
@@ -27,6 +27,8 @@ COURSE_LEVELS = [1, 2, 3, 4, 5, 6, 7]
 IFTTT_EVENTS = {
 	"message": "uofcourse_message"
 }
+
+DISQUS_EMBED = "https://uofcourse.disqus.com/embed.js"
 
 DEFAULT_EMOJI = 128218
 

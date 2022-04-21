@@ -1,5 +1,6 @@
 from planner import db, bcrypt
 from planner.constants import STARRED_COLOR, STARRED_EMOJI
+from planner.models.user_log import UserLog, UserLogEvent
 from planner.models.user_tag import UserTag
 from planner.models.course_collection import CourseCollection
 
@@ -8,10 +9,24 @@ from datetime import datetime
 
 from enum import Enum
 
+
 class Role(Enum):
 	user = 1
 	moderator = 2
 	admin = 3
+
+	def __lt__(self, other):
+		return self.value < other.value
+	
+	def __le__(self, other):
+		return self.value <= other.value
+
+	def __gt__(self, other):
+		return self.value > other.value
+	
+	def __ge__(self, other):
+		return self.value >= other.value
+
 
 class User(db.Model, UserMixin):
 	__tablename__ = "user"
@@ -20,15 +35,17 @@ class User(db.Model, UserMixin):
 	email = db.Column(db.String(64), nullable=False)
 	username = db.Column(db.String(16), unique=True)
 	password = db.Column(db.String(64), nullable=False)
-	role = db.Column(db.Enum(Role), default=Role.user)
+	role = db.Column(db.Enum(Role), nullable=False, default=Role.user)
 
 	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	
 	faculty_id = db.Column(db.Integer, db.ForeignKey("faculty.id"), nullable=False)
-	neededUnits = db.Column(db.Numeric(3, 2))
+	neededUnits = db.Column(db.Numeric(precision=5, scale=2)) # 3 integer places, 2 decimal places
 
 	collections = db.relationship("CourseCollection", backref="user")
 	tags = db.relationship("UserTag", backref="user")
+
+	logs = db.relationship("UserLog", backref="user")
 
 	def __init__(self, uname, name, email, passw, faculty_id):
 		self.username = uname
@@ -44,22 +61,32 @@ class User(db.Model, UserMixin):
 		starred.deletable = False
 		self.tags.append(starred)
 
+	def log(self, event, ip=None):
+		log = UserLog(self.id, event, ip)
+		db.session.add(log)
+		db.session.commit()
+	
+	def addTag(self, name, color, emoji=None, deletable=True):
+		tag = UserTag(self.id, name, color, emoji, deletable)
+		self.tags.append(tag)
+		db.session.commit()
+		return tag
+
 	def checkPassw(self, passw):
 		return bcrypt.check_password_hash(self.password, passw)
 
-	def updatePassw(self, passw, new):
-		if self.checkPassw(passw):
-			self.password = bcrypt.generate_password_hash(new).decode("utf-8")
-			db.session.commit()
+	def updatePassw(self, new):
+		self.password = bcrypt.generate_password_hash(new).decode("utf-8")
+		self.log(UserLogEvent.AUTH_PASSW_CHANGE)
 	
-	def delete(self, passw):
-		if self.checkPassw(passw):
-			for tag in self.tags:
-				tag.delete()
-			for collection in self.collections:
-				collection.delete()
-			db.session.delete(self)
-			db.session.commit()
+	def delete(self):
+		for tag in self.tags:
+			tag.delete()
+		for collection in self.collections:
+			collection.delete()
+		for log in self.logs:
+			log.delete()
+		db.session.delete(self)
 
 	def __repr__(self):
 		return f"USER {self.name} (#{self.id})"
