@@ -65,7 +65,7 @@
 
 	<div id="collectionsContainer" class="row flex-nowrap overflow-scroll pt-3">
 		{% for collection in userData["collections"] %}
-		<div id="{{collection.id}}" class="collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0" db-id="{{collection.id}}" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
+		<div id="{{collection.id}}" class="collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0" db-id="{{collection.id}}" db-units="" db-points="" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
 				<form action="/my/del/collection" method="POST">
@@ -135,10 +135,10 @@
 						</span>
 						<span class="col-6 text-center">Term GPA:</span>
 						<span class="col-3 font-monospace text-start collection-gpa pe-0">
-							<span class="gpa">
+							<span class="gpa" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">
 								{% if collection.gpa %}{{collection.gpa}}{% endif %}
 							</span>
-							<span class="nogpa pe-2 {% if collection.gpa %}d-none{% endif %}" style="cursor: default;" data-bs-toggle="tooltip" data-bs-placement="right" title="One or more courses don't have a grade or they don't count towards the GPA">
+							<span class="nogpa pe-2 {% if collection.gpa %}d-none{% endif %}" style="cursor: default;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="One or more courses don't have a grade or they don't count towards the GPA">
 								-
 							</span>
 						</span>
@@ -174,11 +174,11 @@
 				<div class="row">
 					<span class="col-5 text-end ps-2"></span>
 					<span class="col-7 pe-0 font-monospace">
-						<span class="sum">-</span>
+						<span class="sum-points" title="Sum of points">-</span>
 						/
-						<span class="count">-</span>
+						<span class="sum-units" title="Sum of units">-</span>
 						=
-						<span class="final-gpa fw-bold">-</span>
+						<span class="final-gpa fw-bold" title="Overall GPA">-</span>
 					</span>
 				</div>
 			</div>
