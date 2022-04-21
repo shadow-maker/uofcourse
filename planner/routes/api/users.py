@@ -77,7 +77,7 @@ def getUserLogLocation(id):
 
 @user.route("/collection/<id>/gpa")
 @login_required
-def getCourseCollectionGpa(id):
+def getCourseCollectionGpa(id, precision=3):
 	collection = CourseCollection.query.filter_by(id=id).first()
 
 	if not collection:
@@ -86,7 +86,11 @@ def getCourseCollectionGpa(id):
 	if collection.user_id != current_user.id:
 		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
 	
-	return {"gpa": collection.getGPA()}, 200
+	return {
+		"points": collection.getPoints(precision),
+		"units": collection.units,
+		"gpa": collection.getGPA(precision)
+	}, 200
 
 #
 # POST

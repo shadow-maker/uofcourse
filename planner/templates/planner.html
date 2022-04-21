@@ -65,7 +65,7 @@
 
 	<div id="collectionsContainer" class="row flex-nowrap overflow-scroll pt-3">
 		{% for collection in userData["collections"] %}
-		<div id="{{collection.id}}" class="collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0" db-id="{{collection.id}}" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
+		<div id="{{collection.id}}" class="collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0" db-id="{{collection.id}}" db-units="" db-points="" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
 				<form action="/my/del/collection" method="POST">
@@ -135,10 +135,10 @@
 						</span>
 						<span class="col-6 text-center">Term GPA:</span>
 						<span class="col-3 font-monospace text-start collection-gpa pe-0">
-							<span class="gpa">
+							<span class="gpa" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">
 								{% if collection.gpa %}{{collection.gpa}}{% endif %}
 							</span>
-							<span class="nogpa pe-2 {% if collection.gpa %}d-none{% endif %}" style="cursor: default;" data-bs-toggle="tooltip" data-bs-placement="right" title="One or more courses don't have a grade or they don't count towards the GPA">
+							<span class="nogpa pe-2 {% if collection.gpa %}d-none{% endif %}" style="cursor: default;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="One or more courses don't have a grade or they don't count towards the GPA">
 								-
 							</span>
 						</span>
@@ -161,24 +161,24 @@
 <!--Overall GPA-->
 <div class="container">
 	<div id="overallGPA" class="row ms-0">
-		<div class="col-12 col-sm-5 col-md-6 col-lg-4 col-xxl-3 h2 ps-0">
+		<div class="col-12 col-lg-5 col-xl-6 col-xxl-3 h2 ps-0">
 			<span class="">Overall GPA:</span>
 			<span class="final-gpa ms-4 font-monospace">3.2</span>
 		</div>
-		<div class="col-12 col-sm-7 col-md-6 col-lg-5 col-xl-4 pe-0 card ms-xxl-4">
-			<div class="card-body px-2 px-sm-2 px-xxl-4">
+		<div class="col-12 col-md-9 col-lg-7 col-xl-6 col-xxl-5 px-1 card ms-xxl-4">
+			<div class="card-body px-2">
 				<div id="overallCollectionContainer"></div>
 				<div class="row">
-					<span class="col-8 col-lg-7 ps-3 ps-sm-1 ps-md-3 ps-lg-2 ps-xxl-0 pe-0"><hr class="my-2"></span>
+					<span class="col-8 col-sm-9 ps-2 ps-lg-3 pe-4"><hr class="my-2"></span>
 				</div>
 				<div class="row">
-					<span class="col-5 text-end ps-2"></span>
-					<span class="col-7 pe-0 font-monospace">
-						<span class="sum">-</span>
+					<span class="col-6 col-sm-7 text-end ps-2"></span>
+					<span class="col-6 col-sm-5 px-0 font-monospace">
+						<span class="sum-points" title="Sum of points">-</span>
 						/
-						<span class="count">-</span>
+						<span class="sum-units" title="Sum of units">-</span>
 						=
-						<span class="final-gpa fw-bold">-</span>
+						<span class="final-gpa fw-bold" title="Overall GPA">-</span>
 					</span>
 				</div>
 			</div>

@@ -58,8 +58,14 @@ function updateCollectionsGPA() {
 				const gpaElem = $(this).find(".collection-gpa")
 	
 				if (response.gpa) {
+					$(this).attr("db-units", response.units)
+					$(this).attr("db-points", response.points)
 					$(this).attr("db-gpa", response.gpa)
 					gpaElem.find(".gpa").text(response.gpa)
+					gpaElem.find(".gpa").attr(
+						"data-bs-original-title",
+						response.gpa + " x " + response.units + " = " + response.points + " points"
+					)
 					gpaElem.find(".nogpa").addClass("d-none")
 					$(this).find(".countInGPA").prop("checked", true)
 					$(this).find(".countInGPA").prop("disabled", false)
@@ -80,30 +86,43 @@ function updateCollectionsGPA() {
 }
 
 function updateOverallGPA() {
-	let sum = 0
-	let count = 0
+	let sumUnits = 0
+	let sumPoints = 0
 	const overall = $("#overallGPA")
 	overall.find("#overallCollectionContainer").empty()
 
 	$("#collectionsContainer").children(".collection-item").each(function () {
 		if ($(this).find(".countInGPA").prop("checked")) {
-			sum += parseFloat($(this).attr("db-gpa"))
-			count++
+			sumUnits += parseFloat($(this).attr("db-units"))
+			sumPoints += parseFloat($(this).attr("db-points"))
 
 			let overallCollection = `
 			<div class="row overall-collection-item">
-				<span class="col-5 text-end ps-2">` + $(this).attr("db-term") +`</span>
-				<span class="col-3 col-lg-2 font-monospace pe-0 gpa">` + $(this).attr("db-gpa") +`</span>
-				<span class="col-4"><i class="disable bi-x" title="Hide in overall GPA" onclick="disableOverallGPA('` + $(this).attr("db-id") +`')"></i></span>
-			</div>
-			`
+				<span class="col-12 col-sm-3 text-sm-end ps-sm-2 fw-bold">
+					` + $(this).attr("db-term") +`
+				</span>
+				<span class="col-6 col-sm-4 font-monospace pe-0">
+					<span class="d-inline-block" style="width: 3.1em;" title="Term GPA">
+						` + $(this).attr("db-gpa") +`
+					</span>
+					x
+					<span class="d-inline-block" style="width: 2.9em;" title="Term accumulated units">
+						` + $(this).attr("db-units") +`
+					</span>
+					=
+				</span>
+				<span class="col-2 font-monospace px-0 d-flex justify-content-between" title="Term accumulated points">
+					<span>` + $(this).attr("db-points") +`</span>
+					<i class="disable bi-x pe-sm-2" title="Hide in overall GPA" onclick="disableOverallGPA('` + $(this).attr("db-id") +`')"></i>
+				</span>
+			</div>`
 			overall.find("#overallCollectionContainer").append(overallCollection)
 		}
 	})
 
-	overall.find(".sum").text(Number((sum).toFixed(3)))
-	overall.find(".count").text(count)
-	overall.find(".final-gpa").text(count ? Number((sum / count).toFixed(3)) : "-")
+	overall.find(".sum-points").text(Number((sumPoints).toFixed(3)))
+	overall.find(".sum-units").text(sumUnits)
+	overall.find(".final-gpa").text(sumUnits ? Number((sumPoints / sumUnits).toFixed(3)) : "-")
 }
 
 function disableOverallGPA(collectionId) {
