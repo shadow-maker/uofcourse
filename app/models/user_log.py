@@ -40,7 +40,10 @@ class UserLog(db.Model):
 	def __init__(self, user_id, event, ip=None):
 		self.user_id = user_id
 		self.event = event
-		self.ip = ip if ip != None else request.remote_addr
+		if ip is None:
+			self.ip = request.headers["X-Real-IP"] if "X-Real-IP" in request.headers else request.remote_addr
+		else:
+			self.ip = ip
 
 	def delete(self):
 		db.session.delete(self)
