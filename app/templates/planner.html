@@ -107,7 +107,9 @@
 							<span class="code col-6 font-monospace">
 								{{uCourse.course.code}}
 							</span>
-							<span class="grade col-3 font-monospace text-start" title="{% if uCourse.grade %}{{uCourse.grade.gpv}} GPV | {{uCourse.weightedGPV}} Weighted{% else %}Grade not set{% endif %}">
+							{% set gpv = uCourse.grade.gpv if uCourse.grade.gpv else "-" %}
+							{% set weightedGPV = uCourse.weightedGPV if uCourse.weightedGPV else "-" %}
+							<span class="grade col-3 font-monospace text-start" title="{% if uCourse.grade%}{{gpv}} GPV | {{weightedGPV}} Weighted{% else %}Grade not set{% endif %}">
 								{% if uCourse.grade %}
 								{{uCourse.grade.symbol}}
 								{% else %}
@@ -254,8 +256,8 @@
 							<span class="grade-passed"></span>
 						</div>
 						<div class="mt-2">
-							<span class="fw-bold">Weighted GPV</span>
-							<span class="grade-weighted" title="(GPV x Units)" data-bs-toggle="tooltip" data-bs-placement="right"></span>
+							<span class="fw-bold">Weighted GPV:</span>
+							<span class="grade-weighted" title="GPV x Units" data-bs-toggle="tooltip" data-bs-placement="right"></span>
 						</div>
 					</div>
 				</div>

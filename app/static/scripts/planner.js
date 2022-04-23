@@ -274,11 +274,16 @@ $(document).on("click", ".collection-course-item", function() {
 			getGrade(grade, (data) => {
 				modalInfo.find(".grade-symbol").text(data.symbol)
 				modalInfo.find(".grade-desc").text(data.desc)
-				modalInfo.find(".grade-gpv").text(data.gpv)
 				modalInfo.find(".grade-passed").text(data.passed ? "Yes" : "No")
-				modalInfo.find(".grade-weighted").text(
-					Number((data.gpv * parseFloat(this.getAttribute("db-units"))).toFixed(3))
-				)
+				if (data.gpv) {
+					modalInfo.find(".grade-gpv").text(data.gpv)
+					modalInfo.find(".grade-weighted").text(
+						Number((data.gpv * parseFloat(this.getAttribute("db-units"))).toFixed(3))
+					)
+				} else {
+					modalInfo.find(".grade-gpv").text("N/A")
+					modalInfo.find(".grade-weighted").text("N/A")
+				}
 			})
 		} else {
 			modalInfo.find(".grade-symbol").text("-")

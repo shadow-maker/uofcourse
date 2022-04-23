@@ -11,7 +11,7 @@ class CourseCollection(db.Model):
 
 	@property
 	def units(self):
-		return sum([float(uc.course.units) for uc in self.userCourses])
+		return sum([float(uc.course.units) for uc in self.userCourses if uc.grade and uc.grade.gpv])
 	
 	def getPoints(self, precision=3):
 		points = 0
