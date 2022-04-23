@@ -30,7 +30,7 @@ class UserLog(db.Model):
 
 	@property
 	def name(self):
-		return self.event.name.split("_")[1:]
+		return " ".join(self.event.name.split("_")[1:])
 
 	@property
 	def location(self):
