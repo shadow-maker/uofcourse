@@ -1,4 +1,14 @@
 {
+	"0.4.3": {
+		"beta": true,
+		"date": "2022-04-22",
+		"changes": [],
+		"fixes": [
+			"Logs wouldn't collect the user's IP address properly",
+			"GPA wouldn't be calculated properly with courses with grade GPV as null",
+			"Changing password would always throw an error"
+		]
+	},
 	"0.4.2": {
 		"beta": true,
 		"date": "2022-04-21",
