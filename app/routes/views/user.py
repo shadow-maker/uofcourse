@@ -23,6 +23,7 @@ def account():
 				current_user.updatePassw(formPassw.newPassw.data)
 				db.session.commit()
 			except:
+				db.session.rollback()
 				flash(f"Error updating password!", "danger")
 			else:
 				flash(f"Password changed!", "success")

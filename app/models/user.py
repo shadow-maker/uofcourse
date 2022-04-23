@@ -77,7 +77,7 @@ class User(db.Model, UserMixin):
 
 	def updatePassw(self, new):
 		self.password = bcrypt.generate_password_hash(new).decode("utf-8")
-		self.log(UserLogEvent.AUTH_PASSW_CHANGE)
+		self.log(UserLogEvent.AUTH_CHANGE_PASSW)
 	
 	def delete(self):
 		for tag in self.tags:
