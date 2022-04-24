@@ -22,7 +22,7 @@
 		<div id="{{collection.id}}" class="collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0" db-id="{{collection.id}}" db-units="" db-points="" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
-				<form action="/my/del/collection" method="POST">
+				<form action="{{url_for('view.delCourseCollection')}}" method="POST">
 					<input type="hidden" name="id" value="{{collection.id}}">
 					<button class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light border border-secondary" title="Remove term">
 						<i class="bi-x-lg text-secondary"></i>
@@ -229,7 +229,7 @@
 <!--Form modals-->
 
 <!--Form add CourseCollection-->
-<form id="formAddCollection" name="formAddCollection" action="/my/add/collection" method="POST">
+<form id="formAddCollection" name="formAddCollection" action="{{url_for('view.addCourseCollection')}}" method="POST">
 	<div class="modal fade" id="modalAddCollection" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -270,7 +270,7 @@
 </form>
 
 <!--Form add UserCourse-->
-<form id="formAddCourse" name="formAddCourse" action="/my/add/course" method="POST">
+<form id="formAddCourse" name="formAddCourse" action="{{url_for('view.addUserCourse')}}" method="POST">
 	<div class="modal fade" id="modalAddCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -313,7 +313,7 @@
 </form>
 
 <!--Form edit UserCourse-->
-<form id="formEditUserCourse" name="formEditUserCourse" action="/my/course" method="POST">
+<form id="formEditUserCourse" name="formEditUserCourse" action="{{url_for('view.modUserCourse')}}" method="POST">
 	<div class="modal fade" id="modalEditUserCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
