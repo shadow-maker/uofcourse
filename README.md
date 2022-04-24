@@ -1,2 +1,1 @@
-# uofc-plan
-uofc-plan
+# UofCourse - UofC Course Planner
