@@ -5,8 +5,8 @@ var page = new Page(0, () => {
 })
 
 function requestLogs(callback) {
-	$(".loading").show()
-	$(".loaded").hide()
+	$("#logs .loading").show()
+	$("#logs .loaded").hide()
 
 	$.ajax({
 		url: "/api/users/logs",
@@ -24,9 +24,22 @@ function requestLogs(callback) {
 	})
 }
 
+function requestLocation(id, callback) {
+	$.ajax({
+		url: "/api/users/logs/" + id + "/location",
+		method: "GET",
+		success: (response) => {
+			callback(response)
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
 function updateLogs(data) {
-	$(".loading").hide()
-	$(".loaded").show()
+	$("#logs .loading").hide()
+	$("#logs .loaded").show()
 
 	const logsContainer = $("#logsTable tbody")
 	logsContainer.empty()
@@ -38,7 +51,8 @@ function updateLogs(data) {
 		logItem.find(".datetime").text(log.datetime.replace("T", " "))
 		logItem.find(".event_type").text(log.event_type)
 		logItem.find(".event_name").text(log.event_name)
-		logItem.find(".ip").text(log.ip)
+		logItem.find(".ip-link").attr("db-id", log.id)
+		logItem.find(".ip-link .ip").html(log.ip)
 
 		logItem.appendTo("#logsTable tbody")
 	}
@@ -48,6 +62,33 @@ function updateLogs(data) {
 
 	page.updateNav()
 }
+
+$(document).on("click", ".ip-link", function (event) {
+	event.preventDefault()
+
+	const modal = $("#modalShowLocation")
+
+	modal.find(".loading").show()
+	modal.find(".success").hide()
+	modal.find(".error").hide()
+
+	modal.find(".ip").val($(this).find(".ip").text())
+
+	requestLocation($(this).attr("db-id"), (data) => {
+		modal.find(".loading").hide()
+		if (data.status == "success") {
+			modal.find(".success").show()
+			for (property in data)
+				modal.find(".success ." + property).text(data[property])
+			modal.find(".success .gmaps-link").attr("href", data.gmaps)
+		} else {
+			modal.find(".error").show()
+			modal.find(".error .message").text(data.message)
+		}
+	})
+
+	modal.modal("show")
+})
 
 //
 // DOCUMENT READY
