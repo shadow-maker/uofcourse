@@ -48,7 +48,7 @@ def tags():
 		tags = current_user.tags
 	)
 
-@view.route("/my")
+@view.route("/planner")
 @login_required
 def planner():
 	return render_template("planner.html",
@@ -61,7 +61,7 @@ def planner():
 	)
 
 
-@view.route("/my/add/collection", methods=["POST"])
+@view.route("/planner/add/collection", methods=["POST"])
 def addCourseCollection():
 	def ret(message, category, id=""):
 		flash(message, category)
@@ -100,7 +100,7 @@ def addCourseCollection():
 	return ret("Term added!", "success", collection.id)
 
 
-@view.route("/my/del/collection", methods=["DELETE", "POST"])
+@view.route("/planner/del/collection", methods=["DELETE", "POST"])
 def delCourseCollection():
 	def ret(message, category):
 		flash(message, category)
@@ -132,7 +132,7 @@ def delCourseCollection():
 	return ret(f"Term removed!", "success")
 
 
-@view.route("/my/add/course", methods=["POST"])
+@view.route("/planner/add/course", methods=["POST"])
 def addUserCourse():
 	data = request.form.to_dict()
 	response, _ = postUserCourse(data)
@@ -143,7 +143,7 @@ def addUserCourse():
 	return redirect(url_for("view.planner") + "#" + data["collection_id"])
 
 
-@view.route("my/course", methods=["POST"])
+@view.route("planner/course", methods=["POST"])
 def modUserCourse():
 	data = request.form.to_dict()
 	if not data:
