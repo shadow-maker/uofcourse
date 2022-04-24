@@ -39,16 +39,22 @@ def account():
 	)
 
 
+@view.route("/tags")
+@login_required
+def tags():
+	return render_template("tags.html",
+		title = "My Tags",
+		header = "My Tags",
+		tags = current_user.tags
+	)
+
 @view.route("/my")
 @login_required
 def planner():
 	return render_template("planner.html",
 		title = "My Plan",
 		header = "My Course Plan",
-		userData = {
-			"tags": current_user.tags,
-			"collections": sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0)
-		},
+		collections = sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0),
 		grades = {grade.id : dict(grade) for grade in Grade.query.all()},
 		seasons = list(Season),
 		years = getAllYears(False)

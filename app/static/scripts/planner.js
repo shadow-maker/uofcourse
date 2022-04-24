@@ -342,7 +342,6 @@ function updateSelectPassed() {
 //
 
 $(document).ready(() => {
-	tagsInit()
 	updateCollectionsGPA()
 
 	$("#formEditUserCourse #selectGrade").change(function() {
