@@ -57,9 +57,9 @@ def planner():
 
 @view.route("/my/add/collection", methods=["POST"])
 def addCourseCollection():
-	def ret(message, category):
+	def ret(message, category, id=""):
 		flash(message, category)
-		return redirect(url_for("view.planner"))
+		return redirect(url_for("view.planner") + f"#{id}")
 
 	if not current_user.is_authenticated:
 		return ret("ERROR: User not logged in", "danger")
@@ -88,9 +88,10 @@ def addCourseCollection():
 	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=term.id).first():
 		return ret(f"ERROR: User (#{current_user.id}) already has a collection for term {term.id}", "warning")
 
-	db.session.add(CourseCollection(current_user.id, term.id))
+	collection = CourseCollection(current_user.id, term.id)
+	db.session.add(collection)
 	db.session.commit()
-	return ret("Term added!", "success")
+	return ret("Term added!", "success", collection.id)
 
 
 @view.route("/my/del/collection", methods=["DELETE", "POST"])
@@ -127,12 +128,13 @@ def delCourseCollection():
 
 @view.route("/my/add/course", methods=["POST"])
 def addUserCourse():
-	response, _ = postUserCourse(request.form.to_dict())
+	data = request.form.to_dict()
+	response, _ = postUserCourse(data)
 
 	if "error" in response:
 		flash(f"ERROR: {response['error']}", "danger")
 
-	return redirect(url_for("view.planner"))
+	return redirect(url_for("view.planner") + "#" + data["collection_id"])
 
 
 @view.route("my/course", methods=["POST"])
