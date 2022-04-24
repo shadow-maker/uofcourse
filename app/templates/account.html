@@ -2,7 +2,9 @@
 
 {% block content %}
 
-<script src="/static/scripts/pagination.js"></script>
+{% from "components/pagination.html" import paginationNav, paginationCode with context %}
+
+{{ paginationCode() }}
 <script src="static/scripts/userlogs.js"></script>
 
 <!--TEMPLATES-->
@@ -100,7 +102,7 @@
 	</table>
 
 	<!--Page navigation-->
-	{% include "components/pagination.html" %}
+	{{paginationNav()}}
 </div>
 
 <!--Modal show location-->

@@ -2,6 +2,8 @@
 
 {% block content %}
 
+{% from "components/pagination.html" import paginationNav, paginationCode with context %}
+
 <script>
 	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
 	let sortOptions = JSON.parse('{{ sortOptions | tojson | safe }}')
@@ -12,7 +14,7 @@
 	}
 </script>
 
-<script src="/static/scripts/pagination.js"></script>
+{{ paginationCode() }}
 <script src="/static/scripts/subjectSearch.js"></script>
 <script src="/static/scripts/courseBrowser.js"></script>
 
@@ -255,7 +257,7 @@
 		<div id="coursesContainer" class="loaded"></div>
 
 		<!--Page navigation-->
-		{% include "components/pagination.html" %}
+		{{paginationNav()}}
 	</div>
 </div>
 
