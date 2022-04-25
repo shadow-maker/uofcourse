@@ -14,11 +14,17 @@ course = Blueprint("courses", __name__, url_prefix="/courses")
 #
 
 @course.route("", methods=["GET"])
-def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, countgpa=None):
+def getCourses(name="", number=None, levels=[], subjects=[], faculties=[], repeat=None, countgpa=None):
 	# Parse name search query
 	if not name:
 		name = request.args.get("name", default="", type=str)
 	name = name.strip().lower()
+
+	# Parse number
+	if not number:
+		number = request.args.get("number", default=None, type=int)
+	if number != None and (number < min(COURSE_LEVELS) * 100 or number >= (max(COURSE_LEVELS) + 1) * 100):
+		return {"error": f"Invalid course number {number}"}, 400
 
 	# Parse levels
 	try:
@@ -98,12 +104,14 @@ def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, count
 		if Subject.query.filter(Subject.id == s, Subject.faculty_id.in_(faculties)).first():
 			subjectsFilter.append(s)
 	
-	# Filters tuple
+	# Filters
 	filters = [
 		or_(and_(Course.number >= l[0] * 100, Course.number < l[1] * 100) for l in levelsFilter),
 		Course.subject_id.in_(subjectsFilter),
 		Course.name.ilike(f"%{name}%")
 	]
+	if number != None:
+		filters.append(Course.number == number)
 	if repeat != None:
 		filters.append(Course.repeat == repeat)
 	if countgpa != None:

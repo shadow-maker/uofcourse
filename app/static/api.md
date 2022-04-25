@@ -314,6 +314,7 @@ This endpoint supports other URL parameters to assist in filtering the results:
 | Parameter {: .col-2} | Parameter type {: .col-2} | Parameter contents                                           |
 | -------------------- | ------------------------- | ------------------------------------------------------------ |
 | `name`               | string                    | A search query to find courses by a specific name. The search query must be included in the course's  to be returned in the results (not an exact match). |
+| `number`             | int                       | Exact course number. The returned courses must have this course number. |
 | `levels`             | array of ints             | Array of levels (integers ranging from 1 to 7). The returned courses must be of either of these levels. |
 | `subjects`           | array of ints or strings  | Array of subject IDs or codes. The returned courses must have either of these subjects. |
 | `faculties`          | array of ints             | Array of faculty IDs. The returned courses must have either of these faculties. |
