@@ -23,12 +23,22 @@ tag = Blueprint("tags", __name__, url_prefix="/tags")
 def getUserTags():
 	return {"tags": [dict(tag) for tag in current_user.tags]}, 200
 
+# UserTag courses
+
+@tag.route("/<id>/courses", methods=["GET"])
+@login_required
+def getTagCourses(id):
+	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
+	if not tag:
+		return {"error": f"Tag with id {id} does not exist"}, 404
+	return {"courses": [dict(course) for course in tag.courses]}, 200
+
 # Course UserTags
 
 @tag.route("/course/<id>", methods=["GET"])
 @login_required
 def getCourseTags(id):
-	course = Course.query.filter_by(id=id).first()
+	course = Course.query.get(id)
 	if not course:
 		return {"error": f"Course with id {id} does not exist"}, 404
 	return {"tags": [dict(tag) for tag in course.userTags if tag.user_id == current_user.id]}, 200
@@ -78,22 +88,17 @@ def addUserTag(data={}):
 # PUT
 #
 
-@tag.route("", methods=["PUT"])
+@tag.route("/<id>", methods=["PUT"])
 @login_required
-def editUserTag(data={}):
+def editUserTag(id, data={}):
 	if not data:
 		data = request.form.to_dict()
 		if not data:
 			return {"error": "no data provided"}, 400
-
-	if not "tag_id" in data:
-		return {"error": "no Tag id provided in data"}, 400
 	
-	tag = UserTag.query.filter_by(id=data["tag_id"]).first()
+	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
 		return {"error": f"Tag with id {data['tag_id']} does not exist"}, 404
-	if tag.user_id != current_user.id:
-		return {"error": f"User does not have access to this Tag"}, 403
 	if not tag.deletable:
 		return {"error": "Tag is not editable"}, 403
 	
@@ -122,28 +127,16 @@ def editUserTag(data={}):
 
 
 
-@tag.route("/course", methods=["PUT"])
+@tag.route("/<tag_id>/course/<course_id>", methods=["PUT"])
 @login_required
-def putCourseTag(data={}):
-	if not data:
-		data = request.form.to_dict()
-		if not data:
-			return {"error": "no data provided"}, 400
-
-	if not "course_id" in data:
-		return {"error": "no Course id provided in data"}, 400
-	if not "tag_id" in data:
-		return {"error": "no Tag id provided in data"}, 400
-
-	course = Course.query.filter_by(id=data["course_id"]).first()
+def putCourseTag(tag_id, course_id):
+	course = Course.query.get(course_id)
 	if not course:
-		return {"error": f"Course with id {data['course_id']} does not exist"}, 404
+		return {"error": f"Course with id {course_id} does not exist"}, 404
 
-	tag = UserTag.query.filter_by(id=data["tag_id"]).first()
+	tag = UserTag.query.filter_by(id=tag_id, user_id=current_user.id).first()
 	if not tag:
-		return {"error": f"Tag with id {data['tag_id']} does not exist"}, 404
-	if tag.user_id != current_user.id:
-		return {"error": f"User does not have access to this Tag"}, 403
+		return {"error": f"Tag with id {tag_id} does not exist"}, 404
 
 	if course in tag.courses:
 		tag.courses.remove(course)
