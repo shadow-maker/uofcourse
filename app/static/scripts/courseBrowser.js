@@ -14,6 +14,14 @@ function uncheckAll(container) {
 	$("#" + container + " .form-check").each(function () {
 		$(this).find("input").prop("checked", false)
 	})
+	$("#formFilterCourses").submit()
+}
+
+function checkAll(container) {
+	$("#" + container + " .form-check").each(function () {
+		$(this).find("input").prop("checked", true)
+	})
+	$("#formFilterCourses").submit()
 }
 
 //
@@ -25,11 +33,25 @@ function requestResults(callback) {
 	$("input[name='selectedLevel']:checked").each(function () {
 		selectedLevel.push(parseInt($(this).val()))
 	})
+	if (selectedLevel.length) {
+		$("#levelSelector .check-all-btn").hide()
+		$("#levelSelector .uncheck-all-btn").show()
+	} else {
+		$("#levelSelector .check-all-btn").show()
+		$("#levelSelector .uncheck-all-btn").hide()
+	}
 
 	var selectedFaculty = []
 	$("input[name='selectedFaculty']:checked").each(function () {
 		selectedFaculty.push(parseInt($(this).val()))
 	})
+	if (selectedFaculty.length) {
+		$("#facSelector .check-all-btn").hide()
+		$("#facSelector .uncheck-all-btn").show()
+	} else {
+		$("#facSelector .check-all-btn").show()
+		$("#facSelector .uncheck-all-btn").hide()
+	}
 
 	var selectedSubject = []
 	for (let s in subjects)
