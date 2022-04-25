@@ -29,7 +29,7 @@ function checkAll(container) {
 //
 
 function requestResults(callback) {
-	var selectedLevel = []
+	let selectedLevel = []
 	$("input[name='selectedLevel']:checked").each(function () {
 		selectedLevel.push(parseInt($(this).val()))
 	})
@@ -41,7 +41,7 @@ function requestResults(callback) {
 		$("#levelSelector .uncheck-all-btn").hide()
 	}
 
-	var selectedFaculty = []
+	let selectedFaculty = []
 	$("input[name='selectedFaculty']:checked").each(function () {
 		selectedFaculty.push(parseInt($(this).val()))
 	})
@@ -53,10 +53,13 @@ function requestResults(callback) {
 		$("#facSelector .uncheck-all-btn").hide()
 	}
 
-	var selectedSubject = []
+	let selectedSubject = []
 	for (let s in subjects)
 		if (subjects[s].sel)
 			selectedSubject.push(parseInt(subjects[s].id))
+	
+	let repeat = JSON.parse($('input[name=repeat]:checked', '#formFilterCourses').val())
+	let countgpa = JSON.parse($('input[name=countgpa]:checked', '#formFilterCourses').val())
 	
 	var data = {
 		sort: sortOptions[$("#sortBy").val()].value,
@@ -65,10 +68,13 @@ function requestResults(callback) {
 		levels: selectedLevel,
 		faculties: selectedFaculty,
 		subjects: selectedSubject,
-		repeat: $("#repeat").is(":checked"),
-		countgpa: $("#countgpa").is(":checked"),
 		page: page.current
 	}
+
+	if (repeat != null)
+		data.repeat = repeat
+	if (countgpa != null)
+		data.countgpa = countgpa
 
 	if (JSON.stringify(data) == JSON.stringify(prevData))
 		return
