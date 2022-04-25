@@ -252,7 +252,7 @@ function updateResults(data) {
 					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex + ";'></i> "
 
 				courseItem.find(".tags-selected").append(`
-					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id+ `)">
+					<span class="course-tag btn badge btn-secondary px-1" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id+ `)" title="Click to remove tag">
 						` + icon + tag.name + `
 					</span>
 				`)
