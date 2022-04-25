@@ -5,7 +5,7 @@ from app.forms import formContact
 from app.routes.views import view
 from app.models import utils
 
-from flask import render_template, flash, redirect, session
+from flask import render_template, flash, redirect, request, session
 from flask.helpers import url_for
 
 from datetime import date
@@ -86,6 +86,8 @@ def contact():
 		else:
 			body = "A (GUEST) USER HAS SENT A MESSAGE\n\n"
 			body += f"EMAIL: {form.email.data}\n"
+		ip = request.headers["X-Real-IP"] if "X-Real-IP" in request.headers else request.remote_addr
+		body += f"IP ADDRESS: {ip}\n"
 		body += f"\n--- MESSAGE ---\n{form.message.data}\n---\n"
 
 		# Send message to IFTTT webhook
