@@ -93,8 +93,6 @@ def addUserTag(data={}):
 def editUserTag(id, data={}):
 	if not data:
 		data = request.form.to_dict()
-		if not data:
-			return {"error": "no data provided"}, 400
 	
 	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
@@ -110,7 +108,7 @@ def editUserTag(id, data={}):
 		for t in current_user.tags:
 			if t != tag and t.name == data["name"]:
 				return {"error": "Tag name already exists"}, 400
-		tag.name = data["name"]
+		tag.name = data["name"].strip()
 
 	if "color" in data:
 		try:
@@ -154,27 +152,16 @@ def putCourseTag(tag_id, course_id):
 # DELETE
 #
 
-@tag.route("", methods=["DELETE"])
+@tag.route("/<id>", methods=["DELETE"])
 @login_required
-def deleteUserTag(data={}):
-	if not data:
-		data = request.form.to_dict()
-		if not data:
-			return {"error": "no data provided"}, 400
-
-	if not "tag_id" in data:
-		return {"error": "no Tag id provided in data"}, 400
-	
-	tag = UserTag.query.filter_by(id=data["tag_id"]).first()
+def deleteUserTag(id):
+	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
-		return {"error": f"Tag with id {data['tag_id']} does not exist"}, 404
-	if tag.user_id != current_user.id:
-		return {"error": f"User does not have access to this Tag"}, 403
+		return {"error": f"Tag with id {id} does not exist"}, 404
 	if not tag.deletable:
 		return {"error": "Tag is not deletable"}, 403
 
 	db.session.delete(tag)
-	
 	db.session.commit()
 
 	return {"success": "Tag deleted"}, 200
