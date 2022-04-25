@@ -15,8 +15,6 @@ $("#welcome").on("click", (e) => {
 		success: (response) => {
 			if (response.success)
 				$("#welcome").remove()
-			else
-				displayError(error)
 		},
 		error: (response) => {
 			displayError(response)
