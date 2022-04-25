@@ -14,7 +14,7 @@ course = Blueprint("courses", __name__, url_prefix="/courses")
 #
 
 @course.route("", methods=["GET"])
-def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, nogpa=None):
+def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, countgpa=None):
 	# Parse name search query
 	if not name:
 		name = request.args.get("name", default="", type=str)
@@ -71,12 +71,12 @@ def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, nogpa
 		return {"error": f"'{repeat}' is not a valid value for repeat (boolean)"}, 400
 	repeat = repeat in [True, "true", "1"]
 
-	# Parse nogpa
-	if nogpa == None:
-		nogpa = request.args.get("nogpa", default="false", type=str).lower()
-	if type(nogpa) != bool and nogpa not in ["true", "1", "false", "0"]:
-		return {"error": f"'{nogpa}' is not a valid value for nogpa (boolean)"}, 400
-	nogpa = nogpa in [True, "true", "1"]
+	# Parse countgpa
+	if countgpa == None:
+		countgpa = request.args.get("countgpa", default="false", type=str).lower()
+	if type(countgpa) != bool and countgpa not in ["true", "1", "false", "0"]:
+		return {"error": f"'{countgpa}' is not a valid value for countgpa (boolean)"}, 400
+	countgpa = countgpa in [True, "true", "1"]
 
 	# Convert levels list into a list of tuples where each tuple is a range of levels
 	levelsFilter = []
@@ -97,7 +97,7 @@ def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, nogpa
 		or_(and_(Course.number >= l[0] * 100, Course.number < l[1] * 100) for l in levelsFilter),
 		Course.subject_id.in_(subjectsFilter),
 		Course.repeat == repeat,
-		Course.nogpa == nogpa,
+		Course.countgpa == countgpa,
 		Course.name.ilike(f"%{name}%")
 	)
 

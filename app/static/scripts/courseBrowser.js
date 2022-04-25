@@ -66,7 +66,7 @@ function requestResults(callback) {
 		faculties: selectedFaculty,
 		subjects: selectedSubject,
 		repeat: $("#repeat").is(":checked"),
-		nogpa: $("#nogpa").is(":checked"),
+		countgpa: $("#countgpa").is(":checked"),
 		page: page.current
 	}
 

@@ -296,7 +296,7 @@ The following data columns (key-value pairs) are available for the Course table:
 | `antireqs`     | string                | Yes                    | Anti-requisites of the course                                |
 | `notes`        | string                | Yes                    | Notes of the course                                          |
 | `repeat`       | boolean               | No                     | Whether the course can be repeated for credit or not         |
-| `nogpa`        | boolean               | No                     | Whether the course counts towards the overall GPA or not (true for not counts) |
+| `countgpa`     | boolean               | No                     | Whether the course counts towards the overall GPA or not     |
 | `url`          | string                | No                     | URL path for the course page in UofCourse                    |
 | `url_uni`      | string                | Yes                    | Full URL for the course page in the official uni calendar site |
 
@@ -318,7 +318,7 @@ This endpoint supports other URL parameters to assist in filtering the results:
 | `subjects`           | array of ints or strings  | Array of subject IDs or codes. The returned courses must have either of these subjects. |
 | `faculties`          | array of ints             | Array of faculty IDs. The returned courses must have either of these faculties. |
 | `repeat`             | boolean                   | Whether the course can be repeated for credit or not         |
-| `nogpa`              | boolean                   | Whether the course counts towards the overall GPA or not (true for not counts) |
+| `countgpa`           | boolean                   | Whether the course counts towards the overall GPA or not     |
 
 The following columns are available to be used with the `sort` URL parameter:
 {: .mb-0}
@@ -335,7 +335,7 @@ The following columns are available to be used with the `sort` URL parameter:
 * `antireqs`
 * `notes`
 * `repeat`
-* `nogpa`
+* `countgpa`
 
 A `400` error code will be returned if any other column name is used with the `sort` parameter.
 

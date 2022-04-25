@@ -303,7 +303,7 @@ $(document).on("click", ".collection-course-item", function() {
 		modalInfo.find(".name").text(this.getAttribute("db-name"))
 		modalInfo.find(".units").text(this.getAttribute("db-units"))
 		modalInfo.find(".repeat").text(this.getAttribute("db-repeat") == "true" ? "Yes" : "No")
-		modalInfo.find(".countgpa").text(this.getAttribute("db-nogpa") == "true" ? "No" : "Yes")
+		modalInfo.find(".countgpa").text(this.getAttribute("db-countgpa") == "true" ? "Yes" : "No")
 
 		formEdit.find("#selectCourse").val(this.getAttribute("db-id"))
 		formEdit.find("#selectCoursePlaceholder").val(this.getAttribute("db-code"))
