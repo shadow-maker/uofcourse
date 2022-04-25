@@ -6,7 +6,7 @@ from app.constants import ALLOW_ACCOUNT_CREATION
 
 from app.routes.views import view
 
-from flask import render_template, flash, redirect, request
+from flask import render_template, flash, redirect, request, session
 from flask.helpers import url_for
 
 
@@ -52,6 +52,7 @@ def login():
 			if user.checkPassw(form.passw.data):
 				login_user(user, remember=form.remember.data)
 				user.log(UserLogEvent.AUTH_LOGIN)
+				session["welcome"] = True
 				flash(f"Log in successful!", "success")
 				nextPage = request.args.get("next")
 				return redirect(nextPage if nextPage else url_for("view.home"))

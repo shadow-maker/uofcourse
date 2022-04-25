@@ -5,7 +5,7 @@ from app.forms import formContact
 from app.routes.views import view
 from app.models import utils
 
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, session
 from flask.helpers import url_for
 
 from datetime import date
@@ -16,6 +16,8 @@ import os
 @view.route("/home")
 @view.route("/")
 def home():
+	if "welcome" in session:
+		print(session["welcome"])
 	term = utils.getCurrentTerm()
 	if not term:
 		term = utils.getNextTerm()
@@ -28,6 +30,7 @@ def home():
 
 	return render_template("index.html",
 		header = "UofC Course Planner",
+		welcome = "welcome" in session and session["welcome"],
 		term = term,
 		userCourses = courses,
 		today = date.today()

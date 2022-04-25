@@ -8,7 +8,7 @@ from app.auth import current_user, login_required
 from app.constants import *
 from app.routes.api.utils import *
 
-from flask import Blueprint, request
+from flask import Blueprint, request, session
 
 import json
 
@@ -133,6 +133,15 @@ def postUserCourse(data={}):
 #
 # PUT
 #
+
+@user.route("/welcome", methods=["PUT"])
+@login_required
+def putDismissWelcome():
+	if "welcome" in session and session["welcome"] == False:
+		session["welcome"] = True
+	else:
+		session["welcome"] = False
+	return {"success": True}, 200
 
 # User Course
 
