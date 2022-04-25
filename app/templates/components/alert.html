@@ -1,4 +1,4 @@
-<div id="alerts" class="fixed-bottom mb-2 mb-md-3 mx-0 mx-sm-2 mx-md-5 px-2 px-sm-4 px-lg-5" style="z-index: 1030;"></div>
+<div id="alerts" class="fixed-bottom mb-2 mb-md-3 mx-0 mx-sm-2 mx-md-5 px-2 px-sm-4 px-lg-5" style="z-index: 1030; pointer-events: none;"></div>
 
 <script>
 const ALERT_CATEGORIES = ["success", "info", "warning", "danger", "primary", "secondary"]
@@ -8,7 +8,7 @@ function alert(category, message, pre="") {
 		category = "warning"
 	
 	let newAlert = $(`
-		<div class="alert alert-` + category + ` alert-dismissible fade show me-4" role="alert" data-bs-dismiss="alert">
+		<div class="alert alert-` + category + ` alert-dismissible fade show me-4" role="alert" data-bs-dismiss="alert" style="pointer-events: visible;">
 			<b>` + pre +`</b>
 			` + message + `
 			<button type="button" class="btn-close" aria-label="Close"></button>
