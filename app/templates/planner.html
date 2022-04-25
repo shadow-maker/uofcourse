@@ -4,6 +4,7 @@
 
 <script>
 	var grades = JSON.parse('{{ grades | tojson | safe }}')
+	var showTransferred = JSON.parse('{{ transferred | tojson | safe }}')
 </script>
 
 <!--Courses per term-->
@@ -18,17 +19,32 @@
 	</div>
 
 	<div id="collectionsContainer" class="row flex-nowrap overflow-scroll pt-3">
+		<div class="transfer-collapsed col-2 col-md-1 px-2">
+			<div class="card h-100 text-body text-decoration-none" onclick="transferredShow()" title="Show transferred courses" style="cursor: pointer;">
+				<div class="bg-light text-center h-100 d-flex justify-content-center">
+					<span class="h5 lh-1" style="writing-mode: sideways-lr;">
+						<span class="align-top">Transferred</span>
+						<i class="bi-caret-down-fill fs-4"></i>
+					</span>
+				</div>
+			</div>
+		</div>
 		{% for collection in collections %}
-		<div id="{{collection.id}}" class="collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0" db-id="{{collection.id}}" db-units="" db-points="" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
+		<div id="{{collection.id}}" class="{% if collection.transfer %}transfer{% endif %} collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2" db-id="{{collection.id}}" db-units="" db-points="" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
 				<form action="{{url_for('view.delCourseCollection')}}" method="POST">
 					<input type="hidden" name="id" value="{{collection.id}}">
-					<button class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light border border-secondary" title="Remove term">
+					<button class="position-absolute top-0 start-100 translate-middle badge rounded-pill btn btn-light border-secondary" title="Remove term">
 						<i class="bi-x-lg text-secondary"></i>
 						<span class="visually-hidden">Remove term</span>
 					</button>
 				</form>
+				{% elif collection.transfer %}
+				<button class="position-absolute top-0 start-100 translate-middle badge rounded-pill btn btn-light border-secondary" title="Hide transferred" onclick="transferredHide()">
+					<i class="bi-x-lg text-secondary"></i>
+					<span class="visually-hidden">Hide</span>
+				</button>
 				{% endif %}
 				<div class="card-header text-center">
 					<span class="h5" title="Term season and year">
@@ -42,7 +58,9 @@
 						{% endif %}
 					</span>
 					<div class="m-0 text-muted fst-italic lh-1" style="height: 1rem;">
-						{% if not collection.transfer %}
+						{% if collection.transfer %}
+						<small></small>
+						{% else %}
 						<small title="Start date">{{collection.term.start}}</small>
 						<i class="bi-arrow-right-short"></i>
 						<small title="End date">{{collection.term.end}}</small>

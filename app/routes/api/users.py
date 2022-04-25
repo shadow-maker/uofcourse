@@ -136,11 +136,28 @@ def postUserCourse(data={}):
 
 @user.route("/session/welcome", methods=["PUT"])
 @login_required
-def putDismissWelcome():
-	if "welcome" in session and session["welcome"] == False:
-		session["welcome"] = True
+def putSessionWelcome():
+	data = request.form.to_dict()
+	if not "set" in data:
+		if "welcome" in session and session["welcome"] == False:
+			session["welcome"] = True
+		else:
+			session["welcome"] = False
 	else:
-		session["welcome"] = False
+		session["welcome"] = bool(json.loads(data["set"]))
+	return {"success": True}, 200
+
+@user.route("/session/transferred", methods=["PUT"])
+@login_required
+def putSessionTransferred():
+	data = request.form.to_dict()
+	if not "set" in data:
+		if "transferred" in session and session["transferred"] == False:
+			session["transferred"] = True
+		else:
+			session["transferred"] = False
+	else:
+		session["transferred"] = bool(json.loads(data["set"]))
 	return {"success": True}, 200
 
 # User Course

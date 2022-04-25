@@ -55,6 +55,7 @@ def planner():
 		title = "My Plan",
 		header = "My Course Plan",
 		collections = sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0),
+		transferred = "transferred" in session and session["transferred"],
 		grades = {grade.id : dict(grade) for grade in Grade.query.all()},
 		seasons = list(Season),
 		years = getAllYears(False)

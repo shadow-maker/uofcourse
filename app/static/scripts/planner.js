@@ -1,5 +1,45 @@
 var oldContainer = null
 
+function transferredShow() {
+	$.ajax({
+		url: "/api/users/session/transferred",
+		method: "PUT",
+		data: {
+			set: true
+		},
+		success: (response) => {
+			if (response.success) {
+				$(".transfer").show()
+				$(".transfer-collapsed").hide()
+			}
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
+function transferredHide() {
+	$.ajax({
+		url: "/api/users/session/transferred",
+		method: "PUT",
+		data: {
+			set: false
+		},
+		success: (response) => {
+			if (response.success) {
+				$(".transfer").hide()
+				$(".transfer-collapsed").show()
+				$(".transfer").find(".countInGPA").prop("checked", false)
+				updateOverallGPA()
+			}
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
 function sortCourses(container) {
 	$(container).children(".collection-course-item").sort(function (a, b) {
 		if (($(a).attr("db-code").toLowerCase() > $(b).attr("db-code").toLowerCase()) )
@@ -342,6 +382,11 @@ function updateSelectPassed() {
 //
 
 $(document).ready(() => {
+	if (showTransferred)
+		transferredShow()
+	else
+		transferredHide()
+
 	updateCollectionsGPA()
 
 	$("#formEditUserCourse #selectGrade").change(function() {
