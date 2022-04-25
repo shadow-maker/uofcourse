@@ -1,0 +1,44 @@
+<div id="quicknav" class="fixed-bottom mb-5 mb-sm-0" style="pointer-events: none">
+	<div class="d-flex justify-content-end p-4 p-xl-5">
+		<div class="d-flex flex-column" style="pointer-events: visible">
+			<!-- <a class="btn btn-primary m-1 rounded-circle shadow text-center lh-1 d-flex justify-content-center align-items-center" title="Tags">
+				<i class="bi-tags lh-1"></i>
+			</a> -->
+			<a class="btn btn-primary m-1 rounded-circle shadow text-center lh-1 d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#modalGoToCourse" title="Go-To course">
+				<i class="bi-search lh-1"></i>
+			</a>
+		</div>
+	</div>
+</div>
+
+<style>
+
+#quicknav a {
+	width: 3.8em;
+	height: 3.8em;
+	transition: 0.2s;
+}
+
+@media (min-width: 768px){
+	#quicknav a {
+		width: 4em;
+		height: 4em;
+	}
+}
+
+#quicknav i {
+	font-size: 2em;
+}
+
+@media (min-width: 768px){
+	#quicknav i {
+		font-size: 2.2em;
+	}
+}
+
+#quicknav a:hover {
+	transform: scale(0.9, 0.9);
+	box-shadow: 0 0.2rem 0.3rem rgba(0,0,0,.15) !important;
+}
+
+</style>
