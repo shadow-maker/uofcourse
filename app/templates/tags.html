@@ -4,7 +4,7 @@
 
 <div class="d-flex justify-content-between">
 	<h2 class="m-0">Tags</h2>
-	<button type="button" class="btn btn-secondary m-0 py-0" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+	<button type="button" class="btn btn-secondary m-0 py-0" data-bs-toggle="modal" data-bs-target="#modalEditTags">
 		<i class="bi-pencil-fill"></i>
 		Edit Tags
 	</button>
@@ -45,8 +45,6 @@
 	</div>
 	{% endfor %}
 </div>
-
-{% include "components/editTags.html" %}
 
 <script>
 $(document).ready(() => {

@@ -22,6 +22,26 @@
 	</div>
 </div>
 
+<!--Tags drawer offcanvas-->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="tagsDrawer" aria-labelledby="Tags Drawer">
+	<div class="offcanvas-header">
+		<h3>Tags drawer</h3>
+		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+	</div>
+	<div class="offcanvas-body"></div>
+	<div class="offcanvas-footer py-3 d-flex justify-content-center">
+		<button class="btn btn-secondary mx-2 d-sm-none" data-bs-dismiss="offcanvas" aria-label="Close">
+			<i class="bi-x-lg"></i>
+			Close
+		</button>
+		<button class="btn btn-secondary mx-2" data-bs-toggle="modal" data-bs-target="#modalEditTags">
+			<i class="bi-pencil"></i>
+			Edit tags
+		</button>
+	</div>
+</div>
+
+<!--Tags scripts-->
 <script>
 var tagsCallback = () => {}
 
@@ -33,19 +53,45 @@ function colorToHex(color) {
 
 // REQUEST FUNCS
 
-function requestTag(method, data, suc) {
+function requestTag(subpath, method, data, callback) {
 	$.ajax({
-		url: "/api/tags",
+		url: "/api/tags" + subpath,
 		method: method,
 		data: data,
-		success: (response) => {suc(response)},
+		success: (response) => {
+			callback(response)
+		},
 		error: (response) => {
 			displayError(response)
 		}
 	})
 }
 
-// ONCLICK FUNCS
+function requestEditTag(id, data, callback) {
+	requestTag("/" + id, "PUT", data, callback)
+}
+
+function requestDeleteTag(id, callback) {
+	requestTag("/" + id, "DELETE", {}, callback)
+}
+
+function requestTagCourses(id, callback) {
+	requestTag("/" + id + "/courses", "GET", {}, callback)
+}
+
+function requestCourseTags(id, callback) {
+	requestTag("/course/" + id, "GET", {}, callback)
+}
+
+function requestToggleTag(tagId, courseId) {
+	requestTag("/" + tagId + "/course/" + courseId, "PUT", {}, (response) => {
+		alert("success", response.success)
+		loadTagsDrawer()
+		tagsCallback()
+	})
+}
+
+// TAG EDIT FUNCS
 
 function addTag() {
 	const color = Object.keys(COLORS)[Math.floor(Math.random() * Object.keys(COLORS).length)]
@@ -109,38 +155,39 @@ function tagExecuteChanges() {
 			callback = (data) => {
 				if (data.success)
 					alert("success", data.success)
-				requestTag("GET", {}, (response) => {
+				requestTag("", "GET", {}, (response) => {
 					userTags = response.tags
-					tagsCallback()	
+					loadTagsDrawer()
+					tagsCallback()
 				})
 			}
 		}
 
 		data = {}
-		data.tag_id = $(this).attr("db-id")
+		tag_id = $(this).attr("db-id")
 
 		var existing = null
 	
 		for (let tag of userTags)
-			if (tag.id == data.tag_id) {
-				existing =  tag
+			if (tag.id == tag_id) {
+				existing = tag
 				break
 			}
 
 		if (existing) { // Existing tag
 			if ($(this).attr("db-delete") == "true") { // Delete tag
-				requestTag("DELETE", data, callback)
+				requestDeleteTag(tag_id, callback)
 			} else if (existing.deletable) { // Update tag
 				data.name = $(this).find(".tag-name").val()
 				data.color = parseInt($(this).find(".tag-color").val())
 				if (data.name.length > 0 && (data.name != existing.name || data.color != existing.color))
-					requestTag("PUT", data, callback)
+					requestEditTag(tag_id, data, callback)
 			}
 		} else { // New tag
 			data.name = $(this).find(".tag-name").val()
 			data.color = parseInt($(this).find(".tag-color").val())
 			if (data.name.length > 0)
-				requestTag("POST", data, callback)
+				requestTag("", "POST", data, callback)
 		}
 	})
 }
@@ -219,7 +266,88 @@ function loadEditTagsModal() {
 	}
 }
 
-// DOCUMENT READY
+function loadTagsDrawer() {
+	const container = $("#tagsDrawer .offcanvas-body")
+	container.empty()
+	tagIndex = 0
+	for (let tag of userTags) {
+		let tagItem = $("<div class='list-group mb-3'></div>")
+		let emoji = ""
+		if (tag.emoji) {
+			emoji = `
+				<span class="tag-emoji">
+					&#` + tag.emoji + `;
+				</span>
+			`
+		} else {
+			emoji = `
+				<span class="tag-color-indicator" style="color: #` + colorToHex(tag.color) + `;">
+					<i class="bi-circle-fill"></i>
+				</span>
+			`
+		}
+		tagItem.append(`
+			<div class="list-group-item fs-5 bg-light d-flex justify-content-between align-items-center">
+				<span class="name">` + emoji +` ` + tag.name +`</span>
+				<span class="count badge bg-primary rounded-pill" title="Courses count"></span>
+			</div>
+		`)
+		tagItem.append(`
+			<div class="loading list-group-item fst-italic">Loading...</div>
+		`)
+		container.append(tagItem)
+
+		requestTagCourses(tag.id, (data) => {
+			tagItem.find(".loading").remove()
+			tagItem.find(".count").text(data.courses.length)
+			for (let course of data.courses) {
+				tagItem.append(`
+					<div class="list-group-item list-group-item-action p-0 d-flex justify-content-between">
+						<a class="flex-grow-1 px-3 py-2 text-body text-decoration-none" href="` + course.url +`">
+							<span class="emoji">&#` + (course.emoji ? course.emoji : DEFAULT_EMOJI) +`</span>
+							<span class="code font-monospace">` + course.code +`</span>	
+						</a>
+						<span class="remove px-4 py-2 text-body" href="" onclick="requestToggleTag(` + tag.id + `,` + course.id + `)" style="cursor: pointer;" title="Remove course from tag">
+							<i class="bi-x-lg"></i>
+						</span>
+					</div>
+				`)
+			}
+		})
+	}
+}
+
+// EVENTS
+
+// On tags modal starts to show
+$("#modalEditTags").on("show.bs.modal", loadEditTagsModal)
+
+// On tags drawer starts to show
+$("#tagsDrawer").on("show.bs.offcanvas", (e) => {
+	if (isAuth) {
+		loadTagsDrawer()
+	} else {
+		e.preventDefault()
+		alert("warning", "You must be logged in to view yout tagged courses")
+	}
+})
+
+$("#tagsDrawer .list-group-item .remove").on("click", (e) => {
+	e.preventDefault()
+})
+
+// INIT
+
+$(document).ready(() => {
+	if (!isAuth) {
+		userTags = []
+	}
+	else {
+		requestTag("", "GET", {}, (data) => {
+			userTags = data.tags
+		})
+	}
+})
 
 function tagsInit(callback = () => {}) {
 	tagsCallback = callback
@@ -228,16 +356,10 @@ function tagsInit(callback = () => {}) {
 		userTags = []
 	}
 	else {
-		if (typeof userTags === "undefined") { // If userTags was not passed on template load
-			requestTag("GET", {}, (data) => {
-				userTags = data.tags
-				tagsCallback()
-				loadEditTagsModal()
-			})
-		} else {
+		requestTag("", "GET", {}, (data) => {
+			userTags = data.tags
 			tagsCallback()
-			loadEditTagsModal()
-		}
+		})
 	}
 }
 </script>

@@ -70,27 +70,10 @@ function requestResults(callback) {
 }
 
 
-function requestCourseTags(id, callback) {
-	if (isAuth)
-		$.ajax({
-			url: "/api/tags/course/" + id,
-			method: "GET",
-			success: (response) => {callback(response)},
-			error: (response) => {
-				displayError(response)
-			}
-		})
-}
-
-
-function toggleTag(courseId, tagId) {
+function toggleCourseTag(courseId, tagId) {
 	$.ajax({
-		url: "/api/tags/course",
+		url: "/api/tags/" + tagId +"/course/" + courseId,
 		method: "PUT",
-		data: {
-			course_id: courseId,
-			tag_id: tagId
-		},
 		success: (data) => {
 			alert("success", data.success)
 			updateCourseTags(courseId)
@@ -145,7 +128,7 @@ function updateCourseTags(courseId) {
 					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex +";'></i> "
 
 				container.append(`
-					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
+					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleCourseTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
 						` + icon + tag.name + `
 					</span>
 				`)
@@ -228,7 +211,7 @@ function updateResults(data) {
 					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex + ";'></i> "
 
 				courseItem.find(".tags-selected").append(`
-					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + course.id + `, ` +  tag.id+ `)">
+					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id+ `)">
 						` + icon + tag.name + `
 					</span>
 				`)
@@ -238,7 +221,7 @@ function updateResults(data) {
 			for (let tag of userTags) {
 				courseItem.find(".tags-dropdown").append(`
 					<li class="tags-dropdown-item" db-id="` + tag.id +`">
-						<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + course.id + `, ` +  tag.id + `)" style="cursor: pointer;">
+						<a class="dropdown-item px-2 py-1" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id + `)" style="cursor: pointer;">
 							<i class="bi-check ` + (course.tags.includes(tag.id) ? `` : `invisible`) + `"></i>
 							<small>` + tag.name +`</small>
 						</a>
@@ -248,7 +231,7 @@ function updateResults(data) {
 
 			courseItem.find(".tags-dropdown").append(`
 				<li><hr class="dropdown-divider my-1"></li>
-				<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+				<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags">
 					<i class="bi-pencil-square"></i>
 					<small>Edit tags</small>
 				</a></li>
@@ -310,7 +293,9 @@ $(document).ready(() => {
 	})
 })
 
-$(document).on("click", ".tags-dropdown-btn", function() {
-	if (!isAuth)
+$(document).on("click", ".tags-dropdown-btn", function(e) {
+	if (!isAuth) {
+		e.preventDefault()
 		alert("warning", "You must be logged in to add tags")
+	}
 })
