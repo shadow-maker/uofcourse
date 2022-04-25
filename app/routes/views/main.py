@@ -16,8 +16,6 @@ import os
 @view.route("/home")
 @view.route("/")
 def home():
-	if "welcome" in session:
-		print(session["welcome"])
 	term = utils.getCurrentTerm()
 	if not term:
 		term = utils.getNextTerm()
