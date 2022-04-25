@@ -29,6 +29,17 @@ function checkAll(container) {
 //
 
 function requestResults(callback) {
+	let name = ""
+	let number = null
+
+	let words = $("#searchCourses").val().split(" ")
+	for (let word of words) {
+		if (!isNaN(word) && parseInt(word) >= 100 && parseInt(word) < 800)
+			number = parseInt(word)
+		else
+			name += word + " "
+	}
+
 	let selectedLevel = []
 	$("input[name='selectedLevel']:checked").each(function () {
 		selectedLevel.push(parseInt($(this).val()))
@@ -64,13 +75,15 @@ function requestResults(callback) {
 	var data = {
 		sort: sortOptions[$("#sortBy").val()].value,
 		asc: $("#orderBy").val(),
-		name: $("#searchCourses").val(),
+		name: name,
 		levels: selectedLevel,
 		faculties: selectedFaculty,
 		subjects: selectedSubject,
 		page: page.current
 	}
 
+	if (number != null)
+		data.number = number
 	if (repeat != null)
 		data.repeat = repeat
 	if (countgpa != null)
