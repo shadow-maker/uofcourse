@@ -12,6 +12,8 @@ function requestLogs(callback) {
 		url: "/api/users/logs",
 		method: "GET",
 		data: {
+			sort: ["datetime"],
+			asc: false,
 			limit: 10,
 			page: page.current
 		},
