@@ -10,7 +10,7 @@
 <script>
 $("#welcome").on("click", (e) => {
 	$.ajax({
-		url: "/api/users/welcome",
+		url: "/api/users/session/welcome",
 		method: "PUT",
 		success: (response) => {
 			if (response.success)

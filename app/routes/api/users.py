@@ -134,7 +134,7 @@ def postUserCourse(data={}):
 # PUT
 #
 
-@user.route("/welcome", methods=["PUT"])
+@user.route("/session/welcome", methods=["PUT"])
 @login_required
 def putDismissWelcome():
 	if "welcome" in session and session["welcome"] == False:
