@@ -25,13 +25,17 @@
 		<div class="">
 			<h5 title="Faculty">
 				<i class="bi bi-building"></i>
-				<a href="{{faculty.url}}" class="text-body">{{faculty.name}}</a>
-				<i class="h6 bi bi-box-arrow-up-right"></i>
+				<a href="{{faculty.url}}" class="text-body text-decoration-none">
+					<span class="text-decoration-underline">{{faculty.name}}</span>
+					<i class="h6 bi bi-box-arrow-up-right"></i>
+				</a>
 			</h5>
 			<h5 title="Subject">
 				<i class="bi bi-journals"></i></i>
-				<a href="{{subject.url}}" class="text-body">{{subject.name}}</a>
-				<i class="h6 bi bi-box-arrow-up-right"></i>
+				<a href="{{subject.url}}" class="text-body text-decoration-none">
+					<span class="text-decoration-underline">{{subject.name}}</span>
+					<i class="h6 bi bi-box-arrow-up-right"></i>
+				</a>
 			</h5>
 		</div>
 	</div>
@@ -67,14 +71,14 @@
 		<!--Links-->
 		<div class="card border-0 col-12 col-sm-6 col-md-12 ps-2 pe-2 pe-sm-0 pe-md-2 pb-1">
 			<div class="card-body p-0">
-				<div>
-					<a href="{{course.url_uni}}" target="_blank" rel="noopener noreferrer" class="text-body">View in official Uni calendar</a>
+				<a href="{{course.url_uni}}" target="_blank" rel="noopener noreferrer" class="d-inline-block text-body text-decoration-none">
+					<span class="text-decoration-underline">View in official Uni calendar</span>
 					<i class="bi-box-arrow-up-right"></i>
-				</div>
-				<div>
-					<a href="{{redditSearch}}" target="_blank" rel="noopener noreferrer" class="text-body">Search on r/UCalgary</a>
+				</a>
+				<a href="{{redditSearch}}" target="_blank" rel="noopener noreferrer" class="d-inline-block text-body text-decoration-none">
+					<span class="text-decoration-underline">Search on r/UCalgary</span>
 					<i class="bi-box-arrow-up-right"></i>
-				</div>
+				</a>
 			</div>
 		</div>
 	</div>
