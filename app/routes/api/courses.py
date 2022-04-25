@@ -66,17 +66,23 @@ def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, count
 	
 	# Parse repeat
 	if repeat == None:
-		repeat = request.args.get("repeat", default="false", type=str).lower()
-	if type(repeat) != bool and repeat not in ["true", "1", "false", "0"]:
-		return {"error": f"'{repeat}' is not a valid value for repeat (boolean)"}, 400
-	repeat = repeat in [True, "true", "1"]
+		repeat = request.args.get("repeat", type=str)
+	if repeat != None:
+		if type(repeat) == str:
+			repeat = repeat.lower()
+		if type(repeat) != bool and repeat not in ["true", "1", "false", "0"]:
+			return {"error": f"'{repeat}' is not a valid value for repeat (boolean)"}, 400
+		repeat = repeat in [True, "true", "1"]
 
 	# Parse countgpa
 	if countgpa == None:
-		countgpa = request.args.get("countgpa", default="false", type=str).lower()
-	if type(countgpa) != bool and countgpa not in ["true", "1", "false", "0"]:
-		return {"error": f"'{countgpa}' is not a valid value for countgpa (boolean)"}, 400
-	countgpa = countgpa in [True, "true", "1"]
+		countgpa = request.args.get("countgpa", type=str)
+	if countgpa != None:
+		if type(countgpa) == str:
+			countgpa = countgpa.lower()
+		if type(countgpa) != bool and countgpa not in ["true", "1", "false", "0"]:
+			return {"error": f"'{countgpa}' is not a valid value for countgpa (boolean)"}, 400
+		countgpa = countgpa in [True, "true", "1"]
 
 	# Convert levels list into a list of tuples where each tuple is a range of levels
 	levelsFilter = []
@@ -93,13 +99,15 @@ def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, count
 			subjectsFilter.append(s)
 	
 	# Filters tuple
-	filters = (
+	filters = [
 		or_(and_(Course.number >= l[0] * 100, Course.number < l[1] * 100) for l in levelsFilter),
 		Course.subject_id.in_(subjectsFilter),
-		Course.repeat == repeat,
-		Course.countgpa == countgpa,
 		Course.name.ilike(f"%{name}%")
-	)
+	]
+	if repeat != None:
+		filters.append(Course.repeat == repeat)
+	if countgpa != None:
+		filters.append(Course.countgpa == countgpa)
 
 	# Serializer function to convert a Course object into a JSON-serializable dictionary
 	def serializer(course):
@@ -110,7 +118,7 @@ def getCourses(name="", levels=[], subjects=[], faculties=[], repeat=None, count
 		return data
 	
 	# Get results
-	return getAll(Course, filters, serializer)
+	return getAll(Course, tuple(filters), serializer)
 
 
 @course.route("/<id>", methods=["GET"])
