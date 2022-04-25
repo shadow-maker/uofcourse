@@ -41,6 +41,15 @@
 	</div>
 </div>
 
+<style>
+#tagsDrawer .list-group-item .remove {
+	opacity: 0;
+}
+#tagsDrawer .list-group-item:hover .remove {
+	opacity: 1;
+}
+</style>
+
 <!--Tags scripts-->
 <script>
 var tagsCallback = () => {}
@@ -288,7 +297,9 @@ function loadTagsDrawer() {
 		}
 		tagItem.append(`
 			<div class="list-group-item fs-5 bg-light d-flex justify-content-between align-items-center">
-				<span class="name">` + emoji +` ` + tag.name +`</span>
+				<span class="name">
+					` + emoji +` ` + tag.name.charAt(0).toUpperCase() + tag.name.slice(1) + `
+				</span>
 				<span class="count badge bg-primary rounded-pill" title="Courses count"></span>
 			</div>
 		`)
