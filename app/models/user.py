@@ -32,8 +32,8 @@ class User(db.Model, UserMixin):
 	__tablename__ = "user"
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(32))
-	email = db.Column(db.String(64), nullable=False)
-	username = db.Column(db.String(16), unique=True)
+	email = db.Column(db.String(64), nullable=False, unique=True)
+	username = db.Column(db.String(16), nullable=False, unique=True)
 	password = db.Column(db.String(64), nullable=False)
 	role = db.Column(db.Enum(Role), nullable=False, default=Role.user)
 

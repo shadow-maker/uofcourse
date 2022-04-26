@@ -66,7 +66,7 @@ def passwValidation(form, field):
 class formLogin(FlaskForm):
 	uname = StringField("Username", validators=[DataRequired(), unameValidation, unameExists])
 	passw = PasswordField("Password", validators=[DataRequired()])
-	remember = BooleanField("Remember password")
+	remember = BooleanField("Remember me")
 	submit = SubmitField("Log In")
 
 

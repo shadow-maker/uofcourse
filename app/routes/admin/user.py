@@ -29,7 +29,7 @@ class UserModelView(BaseModelView):
 			"validators": [nameValidation]
 		},
 		"email": {
-			"validators": [validators.DataRequired(), validators.Email(), emailNew]
+			"validators": [validators.DataRequired(), validators.Email()]
 		},
 		"password": {
 			"validators": [validators.DataRequired(), passwValidation]
