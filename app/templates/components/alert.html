@@ -1,4 +1,20 @@
-<div id="alerts" class="fixed-bottom mb-2 mb-md-3 mx-0 mx-sm-2 mx-md-5 px-2 px-sm-4 px-lg-5" style="z-index: 1030; pointer-events: none;"></div>
+<div id="alerts" class="fixed-bottom" style="z-index: 1030; pointer-events: none;">
+	<div class="container px-sm-0 pb-3 pb-md-4 pb-xl-5"></div>
+</div>
+
+<style>
+@media (min-width: 768px){
+	#alerts .container {
+		width: 75%;
+	}
+}
+
+@media (min-width: 1200px){
+	#alerts .container {
+		width: 50%;
+	}
+}
+</style>
 
 <script>
 const ALERT_CATEGORIES = ["success", "info", "warning", "danger", "primary", "secondary"]
@@ -7,15 +23,27 @@ function alert(category, message, pre="") {
 	if (!ALERT_CATEGORIES.includes(category))
 		category = "warning"
 	
+	let count = 1
+	const lastAlert = $("#alerts .container .alert").last()
+	if (lastAlert.find(".message").text().trim() == message)
+		count = parseInt(lastAlert.find(".count").text()) + 1
+	
+	if (count > 1)
+		lastAlert.remove()
+	
 	let newAlert = $(`
-		<div class="alert alert-` + category + ` alert-dismissible fade show me-4" role="alert" data-bs-dismiss="alert" style="pointer-events: visible;">
-			<b>` + pre +`</b>
-			` + message + `
+		<div class="alert alert-` + category + ` alert-dismissible fade show shadow-sm mb-2 mt-3 d-flex justify-content-between" role="alert" data-bs-dismiss="alert" style="pointer-events: visible;">
+			<div class="message">
+				<b>` + pre +`</b>` + message + `
+			</div>
+			<div class="` + (count <= 1 ? `invisible` : ``) +`">
+				<span class="count badge rounded-pill bg-dark bg-opacity-50">` + count + `</span>
+			</div>
 			<button type="button" class="btn-close" aria-label="Close"></button>
 		</div>
 	`)
 
-	$(newAlert).appendTo("#alerts")
+	$(newAlert).appendTo("#alerts .container")
 
 	if (category != "danger") {
 		setTimeout(() => {
