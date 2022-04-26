@@ -23,7 +23,19 @@
 
 	<!--Google Analytics tracking code-->
 	{% if not DEBUG %}
-	{% include "components/analytics.html" %}
+	<script async src="https://www.googletagmanager.com/gtag/js?id={{GANALYTICS_ID}}"></script>
+	<script>
+		window.dataLayer = window.dataLayer || []
+
+		function gtag() {dataLayer.push(arguments)}
+		gtag("js", new Date())
+		gtag("config", "{{GANALYTICS_ID}}")
+	</script>
+	{% endif %}
+
+	<!--Google Adsense code-->
+	{% if not DEBUG %}
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{GADSENSE_ID}}" crossorigin="anonymous"></script>
 	{% endif %}
 
 	<!--jQuery-->

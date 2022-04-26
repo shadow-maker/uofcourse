@@ -37,6 +37,7 @@ class Config:
 	SQLALCHEMY_POOL_TIMEOUT = 20
 
 	GANALYTICS_ID = getenv("GANALYTICS_ID")
+	GADSENSE_ID = getenv("GADSENSE_ID")
 
 	def __init__(self, dbConfig=DatabaseConfig()):
 		self.dbConfig = dbConfig
