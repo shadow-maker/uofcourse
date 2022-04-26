@@ -5,12 +5,17 @@ from app.forms import formContact
 from app.routes.views import view
 from app.models import utils
 
-from flask import render_template, flash, redirect, request, session
+from flask import render_template, send_from_directory, flash, redirect, request, session
 from flask.helpers import url_for
 
 from datetime import date
 from markdown import markdown
 import os
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, "static"), "favicon.ico")
 
 
 @view.route("/home")
