@@ -2,7 +2,9 @@
 
 {% block content %}
 
-<script src="/static/scripts/pagination.js"></script>
+{% from "components/pagination.html" import paginationNav, paginationCode with context %}
+
+{{ paginationCode() }}
 <script src="static/scripts/userlogs.js"></script>
 
 <!--TEMPLATES-->
@@ -13,7 +15,12 @@
 			<td class="datetime"></td>
 			<td class="event_type"></td>
 			<td class="event_name"></td>
-			<td class="ip"></td>
+			<td class="ip-container">
+				<a href="" class="ip-link text-body text-decoration-none" title="View IP location" db-id="">
+					<span class="ip font-monospace"></span>
+					<i class="bi-pin-map-fill"></i>
+				</a>
+			</td>
 		</tr>
 	</table>
 </div>
@@ -69,7 +76,7 @@
 </div>
 
 <!--Logs-->
-<div class="">
+<div id="logs">
 	<hr>
 	<h3>User Logs</h3>
 
@@ -81,7 +88,7 @@
 	</div>
 
 	<!--Logs table-->
-	<table id="logsTable" class="table">
+	<table id="logsTable" class="table table-sm loaded">
 		<thead>
 			<tr>
 				<th scope="col">ID</th>
@@ -95,7 +102,97 @@
 	</table>
 
 	<!--Page navigation-->
-	{% include "components/pagination.html" %}
+	{{paginationNav()}}
+</div>
+
+<!--Modal show location-->
+<div class="modal fade" id="modalShowLocation" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">IP Approximate Location</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="row mb-3">
+					<div class="col-5 col-sm-4 fs-5 d-flex align-items-center">
+						IP Address
+					</div>
+					<div class="col">
+						<input class="ip form-control font-monospace" type="text" value="" readonly>
+					</div>
+				</div>
+
+				<div class="loading text-center my-4" title="Loading...">
+					<div class="spinner-border" role="status" style="width: 3rem; height: 3rem;">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+				</div>
+				<div class="success">
+					<div class="row">
+						<div class="col-5 col-sm-4 ps-5 fw-bold">ISP</div>
+						<div class="isp col"></div>
+					</div>
+					<div class="row">
+						<div class="col-5 col-sm-4 ps-5 fw-bold">Country</div>
+						<div class="col">
+							<span class="country">-</span>
+							(<span class="countryCode"></span>)
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-5 col-sm-4 ps-5 fw-bold">Region</div>
+						<div class="col">
+							<span class="regionName">-</span>
+							(<span class="region"></span>)
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-5 col-sm-4 ps-5 fw-bold">City</div>
+						<div class="city col">-</div>
+					</div>
+					<div class="row">
+						<div class="col-5 col-sm-4 ps-5 fw-bold">ZIP Code</div>
+						<div class="zip col">-</div>
+					</div>
+					<div class="row">
+						<div class="col-5 col-sm-4 ps-5 fw-bold">Coords</div>
+						<div class="col">
+							<span class="lat">-</span>,
+							<span class="lon">-</span>
+						</div>
+					</div>
+					<div class="row mt-2">
+						<div class="col ps-5">
+							<a href="" class="gmaps-link text-body text-decoration-none" target="_blank" rel="noopener noreferrer">
+								<span class="text-decoration-underline">Open in Google Maps</span>
+								<i class="bi-box-arrow-up-right"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="error alert alert-danger">
+					<div class="fw-bold">
+						Error requesting location from this IP address
+					</div>
+					<div>
+						<span class="">Message:</span>
+						<span class="message"></span>
+					</div>
+				</div>
+
+				<div class="text-muted mt-3">
+					<small>
+						<i class="bi-info-circle-fill"></i>
+						IP address location provided by <a href="https://ip-api.com" target="_blank" rel="noopener noreferrer">ip-api.com</a>
+					</small>
+				</div>
+			</div>
+			<div class="modal-footer d-flex justify-content-around">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!--Form change password-->

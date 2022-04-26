@@ -13,9 +13,11 @@
 		<h1 class="mt-2">&#{{subject.getEmoji()}} {{subject.name}}</h1>
 
 		<h5 title="Faculty">
-			<i class="bi bi-building"></i>
-			<a href="{{faculty.url}}" class="h5 text-body">{{faculty.name}}</a>
-			<i class="h6 bi bi-box-arrow-up-right"></i>
+			<i class="bi-building"></i>
+			<a href="{{faculty.url}}" class="text-decoration-none text-body">
+				<span class="text-decoration-underline">{{faculty.name}}</span>
+				<i class="h6 bi bi-box-arrow-up-right"></i>
+			</a>
 		</h5>
 	</div>
 
@@ -26,14 +28,14 @@
 				<div class="h5">{{lenCourses}} Courses in this subject</div>
 
 				<div class="container">
-					<div>
-						<a href="{{url_for('view.courseBrowser', subject=subject.code)}}" class="h6 text-body">View courses in Course Browser</a>
-						<i class="h6 bi bi-box-arrow-up-right"></i>
-					</div>
-					<div>
-						<a href="{{subject.url_uni}}" target="_blank" rel="noopener noreferrer" class="h6 text-body">View courses in official Uni calendar</a>
-						<i class="h6 bi bi-box-arrow-up-right"></i>
-					</div>
+					<a class="d-inline-block text-body text-decoration-none" href="{{url_for('view.courseBrowser', subject=subject.code)}}">
+						<span class="text-decoration-underline">View courses in Course Browser</span>
+						<i class="bi-box-arrow-up-right"></i>
+					</a>
+					<a class="d-inline-block text-body text-decoration-none" href="{{subject.url_uni}}" target="_blank" rel="noopener noreferrer">
+						<span class="text-decoration-underline">View courses in official Uni calendar</span>
+						<i class="bi-box-arrow-up-right"></i>
+					</a>
 				</div>
 			</div>
 		</div>

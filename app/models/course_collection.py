@@ -19,7 +19,7 @@ class CourseCollection(db.Model):
 			grade = uCouse.grade
 			if grade is None:
 				return None
-			if grade.gpv and not uCouse.course.nogpa:
+			if grade.gpv and uCouse.course.countgpa:
 				points += float(grade.gpv) * float(uCouse.course.units)
 		return round(points, precision)
 

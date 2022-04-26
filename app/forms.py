@@ -24,6 +24,9 @@ def ucidValidation(form, field):
 def unameCheck(uname):
 	return bool(User.query.filter_by(username=uname).first())
 
+def emailCheck(email):
+	return bool(User.query.filter_by(email=email).first())
+
 def unameValidation(form, field):
 	if " " in field.data:
 		raise ValidationError("Username cannot contain spaces")
@@ -41,6 +44,10 @@ def unameExists(form, field):
 def unameNew(form, field):
 	if unameCheck(field.data):
 		raise ValidationError("Username already exists, please choose a new one")
+
+def emailNew(form, field):
+	if emailCheck(field.data):
+		raise ValidationError("A user with this email already exists")
 
 def nameValidation(form, field):
 	if len(str(field.data)) > 32:
@@ -66,7 +73,7 @@ class formLogin(FlaskForm):
 class formSignup(FlaskForm):
 	uname = StringField("Username", validators=[DataRequired(), unameValidation, unameNew])
 	name = StringField("Name", validators=[nameValidation])
-	email = StringField("Email", validators=[DataRequired(), Email()])
+	email = StringField("Email", validators=[DataRequired(), Email(), emailNew])
 	passw = PasswordField("Password", validators=[DataRequired(), passwValidation])
 	fac = SelectField("Faculty", choices=[(f.id, f.name) for f in Faculty.query.all()], validators=[DataRequired()])
 	submit = SubmitField("Create account")

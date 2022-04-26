@@ -1,15 +1,11 @@
 #
-# SCRIPTS TO UPDATE DATABASE BASED ON CONSTANT OR UNI DATA
+# SCRIPTS TO UPDATE DATABASE BASED ON UNI DATA
 #
 
-BACKUPS_FOLDER = "backups"
 TIMEOUT = (5, 30) # Connection timeout, Read timeout
 
 from app.models import Course, Grade, Term
-
 from app.db_update import courses, grades, terms
-from app.db_update.backup import backup
-from app.db_update.load import load
 
 
 updateFuncs = {

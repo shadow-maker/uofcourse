@@ -19,17 +19,23 @@ function updateSubjects() {
 }
 
 $(document).ready(() => {
-	$("#subjectSearch").keyup(function () {
+	$("#subjectSearch").keyup((e) => {
 		$("#subjectSearchSuggestions").empty()
-		var subjSearch = $("#subjectSearch").val().toUpperCase()
-		if (subjSearch.length > 0) {
-			for (s in subjects) {
-				if (s.startsWith(subjSearch)) {
-					$("#subjectSearchSuggestions").append(`
-						<li><a class="subjSuggestion dropdown-item form-control-sm px-2 py-1" href="#" code="` + s +`"><span class="font-monospace">` +
-						s + `</span> - ` + subjects[s].name +
-						`</a></li>
-					`)
+		if (e.keyCode == 13) {
+			$("#subjectSearch").dropdown("hide")
+			$("#formFilterCourses").submit()
+			$("#subjectSearch").dropdown("show")
+		} else {
+			var subjSearch = $("#subjectSearch").val().toUpperCase()
+			if (subjSearch.length > 0) {
+				for (s in subjects) {
+					if (s.startsWith(subjSearch)) {
+						$("#subjectSearchSuggestions").append(`
+							<li><a class="subjSuggestion dropdown-item form-control-sm px-2 py-1" href="#" code="` + s +`"><span class="font-monospace">` +
+							s + `</span> - ` + subjects[s].name +
+							`</a></li>
+						`)
+					}
 				}
 			}
 		}

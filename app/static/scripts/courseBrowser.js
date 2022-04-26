@@ -14,6 +14,14 @@ function uncheckAll(container) {
 	$("#" + container + " .form-check").each(function () {
 		$(this).find("input").prop("checked", false)
 	})
+	$("#formFilterCourses").submit()
+}
+
+function checkAll(container) {
+	$("#" + container + " .form-check").each(function () {
+		$(this).find("input").prop("checked", true)
+	})
+	$("#formFilterCourses").submit()
 }
 
 //
@@ -21,32 +29,65 @@ function uncheckAll(container) {
 //
 
 function requestResults(callback) {
-	var selectedLevel = []
+	let name = ""
+	let number = null
+
+	let words = $("#searchCourses").val().split(" ")
+	for (let word of words) {
+		if (!isNaN(word) && parseInt(word) >= 100 && parseInt(word) < 800)
+			number = parseInt(word)
+		else
+			name += word + " "
+	}
+
+	let selectedLevel = []
 	$("input[name='selectedLevel']:checked").each(function () {
 		selectedLevel.push(parseInt($(this).val()))
 	})
+	if (selectedLevel.length) {
+		$("#levelSelector .check-all-btn").hide()
+		$("#levelSelector .uncheck-all-btn").show()
+	} else {
+		$("#levelSelector .check-all-btn").show()
+		$("#levelSelector .uncheck-all-btn").hide()
+	}
 
-	var selectedFaculty = []
+	let selectedFaculty = []
 	$("input[name='selectedFaculty']:checked").each(function () {
 		selectedFaculty.push(parseInt($(this).val()))
 	})
+	if (selectedFaculty.length) {
+		$("#facSelector .check-all-btn").hide()
+		$("#facSelector .uncheck-all-btn").show()
+	} else {
+		$("#facSelector .check-all-btn").show()
+		$("#facSelector .uncheck-all-btn").hide()
+	}
 
-	var selectedSubject = []
+	let selectedSubject = []
 	for (let s in subjects)
 		if (subjects[s].sel)
 			selectedSubject.push(parseInt(subjects[s].id))
 	
+	let repeat = JSON.parse($('input[name=repeat]:checked', '#formFilterCourses').val())
+	let countgpa = JSON.parse($('input[name=countgpa]:checked', '#formFilterCourses').val())
+	
 	var data = {
 		sort: sortOptions[$("#sortBy").val()].value,
 		asc: $("#orderBy").val(),
-		name: $("#searchCourses").val(),
+		name: name,
 		levels: selectedLevel,
 		faculties: selectedFaculty,
 		subjects: selectedSubject,
-		repeat: $("#repeat").is(":checked"),
-		nogpa: $("#nogpa").is(":checked"),
 		page: page.current
 	}
+
+	if (number != null)
+		data.number = number
+	if (repeat != null)
+		data.repeat = repeat
+	if (countgpa != null)
+		data.countgpa = countgpa
 
 	if (JSON.stringify(data) == JSON.stringify(prevData))
 		return
@@ -70,27 +111,10 @@ function requestResults(callback) {
 }
 
 
-function requestCourseTags(id, callback) {
-	if (isAuth)
-		$.ajax({
-			url: "/api/tags/course/" + id,
-			method: "GET",
-			success: (response) => {callback(response)},
-			error: (response) => {
-				displayError(response)
-			}
-		})
-}
-
-
-function toggleTag(courseId, tagId) {
+function toggleCourseTag(courseId, tagId) {
 	$.ajax({
-		url: "/api/tags/course",
+		url: "/api/tags/" + tagId +"/course/" + courseId,
 		method: "PUT",
-		data: {
-			course_id: courseId,
-			tag_id: tagId
-		},
 		success: (data) => {
 			alert("success", data.success)
 			updateCourseTags(courseId)
@@ -145,7 +169,7 @@ function updateCourseTags(courseId) {
 					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex +";'></i> "
 
 				container.append(`
-					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
+					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleCourseTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
 						` + icon + tag.name + `
 					</span>
 				`)
@@ -228,7 +252,7 @@ function updateResults(data) {
 					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex + ";'></i> "
 
 				courseItem.find(".tags-selected").append(`
-					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + course.id + `, ` +  tag.id+ `)">
+					<span class="course-tag btn badge btn-secondary px-1" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id+ `)" title="Click to remove tag">
 						` + icon + tag.name + `
 					</span>
 				`)
@@ -238,7 +262,7 @@ function updateResults(data) {
 			for (let tag of userTags) {
 				courseItem.find(".tags-dropdown").append(`
 					<li class="tags-dropdown-item" db-id="` + tag.id +`">
-						<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + course.id + `, ` +  tag.id + `)" style="cursor: pointer;">
+						<a class="dropdown-item px-2 py-1" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id + `)" style="cursor: pointer;">
 							<i class="bi-check ` + (course.tags.includes(tag.id) ? `` : `invisible`) + `"></i>
 							<small>` + tag.name +`</small>
 						</a>
@@ -248,7 +272,7 @@ function updateResults(data) {
 
 			courseItem.find(".tags-dropdown").append(`
 				<li><hr class="dropdown-divider my-1"></li>
-				<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+				<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags">
 					<i class="bi-pencil-square"></i>
 					<small>Edit tags</small>
 				</a></li>
@@ -310,7 +334,9 @@ $(document).ready(() => {
 	})
 })
 
-$(document).on("click", ".tags-dropdown-btn", function() {
-	if (!isAuth)
+$(document).on("click", ".tags-dropdown-btn", function(e) {
+	if (!isAuth) {
+		e.preventDefault()
 		alert("warning", "You must be logged in to add tags")
+	}
 })

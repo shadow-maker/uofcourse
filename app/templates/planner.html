@@ -4,53 +4,8 @@
 
 <script>
 	var grades = JSON.parse('{{ grades | tojson | safe }}')
+	var showTransferred = JSON.parse('{{ transferred | tojson | safe }}')
 </script>
-
-<!--Tags-->
-<div class="container mb-5">
-	<div class="d-flex justify-content-between">
-		<h2 class="m-0">Tags</h2>
-		<button type="button" class="btn btn-secondary m-0 py-0" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
-			<i class="bi-pencil-fill"></i>
-			Edit Tags
-		</button>
-	</div>
-	<div class="row pt-3">
-		{% for tag in userData["tags"] %}
-		<div class="col-12 col-sm-6 col-lg-4 col-xl-3 p-0 px-2 mb-3">
-			<div class="card h-100">
-				<div class="card-header text-center">
-					{% if tag.emoji %}
-						&#{{tag.emoji}}
-					{% else %}
-						<i class="bi-circle-fill" style="color: #{{tag.color_hex}};"></i>
-					{% endif %}
-					{{tag.name}}
-				</div>
-				<div class="tag-course-container card-body p-1" db-id="{{tag.id}}">
-					{% for course in tag.courses | sort(attribute="subject.code") %}
-						<a class="tag-course-item m-1 btn bg-light card" db-id="{{course.id}}"
-							db-code="{{course.code}}" draggable="true" href="{{course.url}}" target="_blank" rel="noopener noreferrer" title="Click to open course in a new tab">
-							<div class="row">
-								<span class="col-3 h5 p-0 m-0">
-									&#{{course.emoji}}
-								</span>
-								<span id="code" class="col-6 font-monospace">
-									{{course.code}}
-								</span>
-								<span class="col-3">
-									<i class="bi-box-arrow-up-right"></i>
-								</span>
-							</div>
-						</a>
-					{% endfor %}
-				</div>
-				<div class="card-footer"></div>
-			</div>
-		</div>
-		{% endfor %}
-	</div>
-</div>
 
 <!--Courses per term-->
 <div class="container-fluid mb-5">
@@ -64,17 +19,32 @@
 	</div>
 
 	<div id="collectionsContainer" class="row flex-nowrap overflow-scroll pt-3">
-		{% for collection in userData["collections"] %}
-		<div id="{{collection.id}}" class="collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2 p-0" db-id="{{collection.id}}" db-units="" db-points="" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
+		<div class="transfer-collapsed col-2 col-md-1 px-2">
+			<div class="card h-100 text-body text-decoration-none" onclick="transferredShow()" title="Show transferred courses" style="cursor: pointer;">
+				<div class="bg-light text-center h-100 d-flex justify-content-center">
+					<span class="h5 lh-1" style="writing-mode: sideways-lr;">
+						<span class="align-top">Transferred</span>
+						<i class="bi-caret-down-fill fs-4"></i>
+					</span>
+				</div>
+			</div>
+		</div>
+		{% for collection in collections %}
+		<div id="{{collection.id}}" class="{% if collection.transfer %}transfer{% endif %} collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2" db-id="{{collection.id}}" db-units="" db-points="" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
-				<form action="/my/del/collection" method="POST">
+				<form action="{{url_for('view.delCourseCollection')}}" method="POST">
 					<input type="hidden" name="id" value="{{collection.id}}">
-					<button class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light border border-secondary" title="Remove term">
+					<button class="position-absolute top-0 start-100 translate-middle badge rounded-pill btn btn-light border-secondary" title="Remove term">
 						<i class="bi-x-lg text-secondary"></i>
 						<span class="visually-hidden">Remove term</span>
 					</button>
 				</form>
+				{% elif collection.transfer %}
+				<button class="position-absolute top-0 start-100 translate-middle badge rounded-pill btn btn-light border-secondary" title="Hide transferred" onclick="transferredHide()">
+					<i class="bi-x-lg text-secondary"></i>
+					<span class="visually-hidden">Hide</span>
+				</button>
 				{% endif %}
 				<div class="card-header text-center">
 					<span class="h5" title="Term season and year">
@@ -88,7 +58,9 @@
 						{% endif %}
 					</span>
 					<div class="m-0 text-muted fst-italic lh-1" style="height: 1rem;">
-						{% if not collection.transfer %}
+						{% if collection.transfer %}
+						<small></small>
+						{% else %}
 						<small title="Start date">{{collection.term.start}}</small>
 						<i class="bi-arrow-right-short"></i>
 						<small title="End date">{{collection.term.end}}</small>
@@ -98,7 +70,7 @@
 				<div class="collection-course-container card-body p-1" db-id="{{collection.id}}">
 					{% for uCourse in collection.userCourses | sort(attribute="course.code") %}
 					{% set course = uCourse.course %}
-					<div class="collection-course-item m-1 btn bg-light card" db-id="{{uCourse.id}}" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}" db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{{course.code}}" db-name="{{course.name}}" db-url="{{course.url}}" db-units="{{course.units}}" db-repeat="{{course.repeat | tojson | safe}}" db-nogpa="{{course.nogpa | tojson | safe}}" draggable="true"
+					<div class="collection-course-item m-1 btn bg-light card" db-id="{{uCourse.id}}" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}" db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{{course.code}}" db-name="{{course.name}}" db-url="{{course.url}}" db-units="{{course.units}}" db-repeat="{{course.repeat | tojson | safe}}" db-countgpa="{{course.countgpa | tojson | safe}}" draggable="true"
 						data-bs-toggle="modal" data-bs-target="#modalInfoUserCourse" title="Click to view or drag to change term">
 						<div class="row">
 							<span class="emoji col-3 h5 p-0 m-0">
@@ -215,8 +187,10 @@
 					<div class="col">
 						<div class="fs-5">
 							<span class="emoji" title="Course emoji"></span>
-							<a href="" target="_blank" rel="noopener noreferrer" class="link text-body"><span class="code font-monospace" title="Course code"></span></a>
-							<i class="bi-box-arrow-up-right"></i>
+							<a class="link text-decoration-none text-body" href="" target="_blank" rel="noopener noreferrer">
+								<span class="code text-decoration-underline font-monospace" title="Course code"></span>
+								<i class="bi-box-arrow-up-right"></i>
+							</a>
 						</div>
 						<div>
 							<span class="name" title="Course name"></span>
@@ -275,7 +249,7 @@
 <!--Form modals-->
 
 <!--Form add CourseCollection-->
-<form id="formAddCollection" name="formAddCollection" action="/my/add/collection" method="POST">
+<form id="formAddCollection" name="formAddCollection" action="{{url_for('view.addCourseCollection')}}" method="POST">
 	<div class="modal fade" id="modalAddCollection" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -316,7 +290,7 @@
 </form>
 
 <!--Form add UserCourse-->
-<form id="formAddCourse" name="formAddCourse" action="/my/add/course" method="POST">
+<form id="formAddCourse" name="formAddCourse" action="{{url_for('view.addUserCourse')}}" method="POST">
 	<div class="modal fade" id="modalAddCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -359,7 +333,7 @@
 </form>
 
 <!--Form edit UserCourse-->
-<form id="formEditUserCourse" name="formEditUserCourse" action="/my/course" method="POST">
+<form id="formEditUserCourse" name="formEditUserCourse" action="{{url_for('view.modUserCourse')}}" method="POST">
 	<div class="modal fade" id="modalEditUserCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -383,7 +357,7 @@
 						<div class="col-9">
 							<select class="form-select" aria-label="Select term" name="collection_id"
 								id="selectCollection">
-								{% for collection in userData["collections"] %}
+								{% for collection in collections %}
 								<option value="{{collection.id}}">
 									{% if collection.transfer %}
 									Transferred
@@ -451,7 +425,5 @@
 </style>
 
 <script src="/static/scripts/planner.js"></script>
-
-{% include "components/editTags.html" %}
 
 {% endblock %}

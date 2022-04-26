@@ -2,33 +2,15 @@
 // REQUEST FUNCTIONS
 //
 
-function requestCourseTags(callback = (response) => {}) {
+function requestCourseTagsCustom(callback) {
 	if (isAuth)
-		$.ajax({
-			url: "/api/tags/course/" + course_id,
-			method: "GET",
-			success: (response) => {callback(response)},
-			error: (response) => {
-				displayError(response)
-			}
-		})
+		requestCourseTags(course_id, callback)
 }
 
 function toggleTag(tagId) {
-	$.ajax({
-		url: "/api/tags/course",
-		method: "PUT",
-		data: {
-			course_id: course_id,
-			tag_id: tagId
-		},
-		success: (data) => {
-			alert("success", data.success)
-			updateTags()
-		},
-		error: (data) => {
-			displayError(data)
-		}
+	requestTag("/" + tagId + "/course/" + course_id, "PUT", {}, (data) => {
+		alert("success", data.success)
+		updateTags()
 	})
 }
 
@@ -75,7 +57,7 @@ function updateTags() {
 
 	dropdown.append(`
 		<li><hr class="dropdown-divider my-1"></li>
-		<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags" onclick="loadEditTagsModal()">
+		<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags">
 			<i class="bi-pencil-square"></i>
 			<small>Edit tags</small>
 		</a></li>
@@ -84,7 +66,7 @@ function updateTags() {
 	// Request course tags and add selected tags
 
 	let icon = ""
-	requestCourseTags((response) => {
+	requestCourseTagsCustom((response) => {
 		item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
 			$(this).find(".bi-check").addClass("invisible")
 		})

@@ -1,4 +1,29 @@
 {
+	"0.5": {
+		"beta": true,
+		"date": "2022-04-26",
+		"changes": [
+			"New tags drawer with a cleaner way to view tagged courses",
+			"New quick nav buttons for a faster way to open the Go-To course modal and the tags drawer",
+			"Transferred courses can now be hidden (collapsed) in Planner",
+			"Added welcome message to the homepage",
+			"Added option to view approximate IP location in user logs",
+			"Send the user's IP address when they send a contact message",
+			"Support for filtering courses by exact number in API",
+			"Replaced nogpa column with countgpa for the Course table and its API endpoints",
+			"Support for searching courses by exact number in Course Browser",
+			"Better repeat and countgpa filters in the Course Browser with support for selecting 'any'",
+			"Added timeout when sending messages",
+			"When adding a new course or term to the course planner redirect back with reference to the collection",
+			"Alerts will now show a counter when the same alert is repeated more than once",
+			"Added favicon to site",
+			"Added Google Adsense code"
+		],
+		"fixes": [
+			"Small improvements to searching for subjects in Course Browser",
+			"User accounts could be created with a repeated email"
+		]
+	},
 	"0.4.3": {
 		"beta": true,
 		"date": "2022-04-22",
@@ -161,7 +186,7 @@
 		"date": "2022-03-25",
 		"title": "",
 		"intro": [
-			
+
 		],
 		"changes": [],
 		"fixes": [

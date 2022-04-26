@@ -8,7 +8,7 @@ from app.auth import current_user, login_required
 from app.constants import *
 from app.routes.api.utils import *
 
-from flask import Blueprint, request
+from flask import Blueprint, request, session
 
 import json
 
@@ -23,36 +23,10 @@ user = Blueprint("users", __name__, url_prefix="/users")
 @user.route("/logs")
 @login_required
 def getUserLogs():
-	# Get data from url arguments
-	asc = request.args.get("asc", default="false", type=str).lower()
-	limit = request.args.get("limit", default=30, type=int)
-	page = request.args.get("page", default=1, type=int)
-
-	# Validate data
-	if asc not in ["true", "1", "false", "0"]:
-		return {"error": f"'{asc}' is not a valid value for asc (boolean)"}, 400
-	if limit < 1:
-		return {"error": f"limit of items per page cannot be lower than 1 (got {limit})"}, 400
-	if limit > MAX_ITEMS_PER_PAGE:
-		return {"error": f"limit of items per page cannot be greater than {MAX_ITEMS_PER_PAGE}"}, 400
-	if page < 1:
-		return {"error": f"page cannot be lower than 1 (got {page})"}, 400
-	
-	sortBy = [UserLog.datetime]
-
-	# Add .desc() to sorting columns if asc is false
-	if asc in ["false", "0"]:
-		sortBy = [i.desc() for i in sortBy]
-
-	query = UserLog.query.filter_by(user_id=current_user.id).order_by(*sortBy)
-	results = query.paginate(per_page=limit, page=page)
-
-	return {
-		"results": [dict(log) for log in results.items],
-		"page": results.page,
-		"pages": results.pages,
-		"total": results.total
-	}, 200
+	filters = (
+		UserLog.user_id == current_user.id,
+	)
+	return getAll(UserLog, filters)
 
 
 @user.route("/logs/<id>")
@@ -133,6 +107,32 @@ def postUserCourse(data={}):
 #
 # PUT
 #
+
+@user.route("/session/welcome", methods=["PUT"])
+@login_required
+def putSessionWelcome():
+	data = request.form.to_dict()
+	if not "set" in data:
+		if "welcome" in session and session["welcome"] == False:
+			session["welcome"] = True
+		else:
+			session["welcome"] = False
+	else:
+		session["welcome"] = bool(json.loads(data["set"]))
+	return {"success": True}, 200
+
+@user.route("/session/transferred", methods=["PUT"])
+@login_required
+def putSessionTransferred():
+	data = request.form.to_dict()
+	if not "set" in data:
+		if "transferred" in session and session["transferred"] == False:
+			session["transferred"] = True
+		else:
+			session["transferred"] = False
+	else:
+		session["transferred"] = bool(json.loads(data["set"]))
+	return {"success": True}, 200
 
 # User Course
 

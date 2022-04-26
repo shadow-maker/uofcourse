@@ -1,5 +1,45 @@
 var oldContainer = null
 
+function transferredShow() {
+	$.ajax({
+		url: "/api/users/session/transferred",
+		method: "PUT",
+		data: {
+			set: true
+		},
+		success: (response) => {
+			if (response.success) {
+				$(".transfer").show()
+				$(".transfer-collapsed").hide()
+			}
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
+function transferredHide() {
+	$.ajax({
+		url: "/api/users/session/transferred",
+		method: "PUT",
+		data: {
+			set: false
+		},
+		success: (response) => {
+			if (response.success) {
+				$(".transfer").hide()
+				$(".transfer-collapsed").show()
+				$(".transfer").find(".countInGPA").prop("checked", false)
+				updateOverallGPA()
+			}
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
 function sortCourses(container) {
 	$(container).children(".collection-course-item").sort(function (a, b) {
 		if (($(a).attr("db-code").toLowerCase() > $(b).attr("db-code").toLowerCase()) )
@@ -303,7 +343,7 @@ $(document).on("click", ".collection-course-item", function() {
 		modalInfo.find(".name").text(this.getAttribute("db-name"))
 		modalInfo.find(".units").text(this.getAttribute("db-units"))
 		modalInfo.find(".repeat").text(this.getAttribute("db-repeat") == "true" ? "Yes" : "No")
-		modalInfo.find(".countgpa").text(this.getAttribute("db-nogpa") == "true" ? "No" : "Yes")
+		modalInfo.find(".countgpa").text(this.getAttribute("db-countgpa") == "true" ? "Yes" : "No")
 
 		formEdit.find("#selectCourse").val(this.getAttribute("db-id"))
 		formEdit.find("#selectCoursePlaceholder").val(this.getAttribute("db-code"))
@@ -342,8 +382,11 @@ function updateSelectPassed() {
 //
 
 $(document).ready(() => {
-	tagsInit()
 	updateCollectionsGPA()
+	if (showTransferred)
+		transferredShow()
+	else
+		transferredHide()
 
 	$("#formEditUserCourse #selectGrade").change(function() {
 		$("#formEditUserCourse #selectPassed").prop("checked",

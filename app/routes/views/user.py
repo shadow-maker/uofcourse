@@ -39,27 +39,34 @@ def account():
 	)
 
 
-@view.route("/my")
+@view.route("/tags")
+@login_required
+def tags():
+	return render_template("tags.html",
+		title = "My Tags",
+		header = "My Tags",
+		tags = current_user.tags
+	)
+
+@view.route("/planner")
 @login_required
 def planner():
 	return render_template("planner.html",
 		title = "My Plan",
 		header = "My Course Plan",
-		userData = {
-			"tags": current_user.tags,
-			"collections": sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0)
-		},
+		collections = sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0),
+		transferred = "transferred" in session and session["transferred"],
 		grades = {grade.id : dict(grade) for grade in Grade.query.all()},
 		seasons = list(Season),
 		years = getAllYears(False)
 	)
 
 
-@view.route("/my/add/collection", methods=["POST"])
+@view.route("/planner/add/collection", methods=["POST"])
 def addCourseCollection():
-	def ret(message, category):
+	def ret(message, category, id=""):
 		flash(message, category)
-		return redirect(url_for("view.planner"))
+		return redirect(url_for("view.planner") + f"#{id}")
 
 	if not current_user.is_authenticated:
 		return ret("ERROR: User not logged in", "danger")
@@ -88,12 +95,13 @@ def addCourseCollection():
 	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=term.id).first():
 		return ret(f"ERROR: User (#{current_user.id}) already has a collection for term {term.id}", "warning")
 
-	db.session.add(CourseCollection(current_user.id, term.id))
+	collection = CourseCollection(current_user.id, term.id)
+	db.session.add(collection)
 	db.session.commit()
-	return ret("Term added!", "success")
+	return ret("Term added!", "success", collection.id)
 
 
-@view.route("/my/del/collection", methods=["DELETE", "POST"])
+@view.route("/planner/del/collection", methods=["DELETE", "POST"])
 def delCourseCollection():
 	def ret(message, category):
 		flash(message, category)
@@ -125,17 +133,18 @@ def delCourseCollection():
 	return ret(f"Term removed!", "success")
 
 
-@view.route("/my/add/course", methods=["POST"])
+@view.route("/planner/add/course", methods=["POST"])
 def addUserCourse():
-	response, _ = postUserCourse(request.form.to_dict())
+	data = request.form.to_dict()
+	response, _ = postUserCourse(data)
 
 	if "error" in response:
 		flash(f"ERROR: {response['error']}", "danger")
 
-	return redirect(url_for("view.planner"))
+	return redirect(url_for("view.planner") + "#" + data["collection_id"])
 
 
-@view.route("my/course", methods=["POST"])
+@view.route("planner/course", methods=["POST"])
 def modUserCourse():
 	data = request.form.to_dict()
 	if not data:

@@ -160,14 +160,14 @@ def update():
 						notes += repeatText
 				repeat = bool(repeatText)
 				
-				# Get nogpa data
+				# Get countgpa data
 				nogpaText = c.find(class_="course-nogpa")
 				if nogpaText:
 					nogpaText = nogpaText.text.strip()
 					if nogpaText:
 						notes += "\n" if notes else ""
 						notes += nogpaText
-				nogpa = bool(nogpaText)
+				countgpa = not bool(nogpaText)
 
 				# Get subsite data
 				subsite = None
@@ -206,9 +206,9 @@ def update():
 					if course.repeat != repeat:
 						print(f"    - repeat does not match: (db) {course.repeat} != {repeat}, updating...")
 						course.repeat = repeat
-					if course.nogpa != nogpa:
-						print(f"    - nogpa does not match: (db) {course.nogpa} != {nogpa}, updating...")
-						course.nogpa = nogpa
+					if course.countgpa != countgpa:
+						print(f"    - countgpa does not match: (db) {course.countgpa} != {countgpa}, updating...")
+						course.countgpa = countgpa
 					if course.subsite != subsite:
 						print(f"    - subsite does not match: (db) {course.subsite} != {subsite}, updating...")
 						course.subsite = subsite
@@ -222,7 +222,7 @@ def update():
 					course.notes = notes
 					course.aka = aka
 					course.repeat = repeat
-					course.nogpa = nogpa
+					course.countgpa = countgpa
 					course.subsite = subsite
 					db.session.add(course)
 				db.session.commit()

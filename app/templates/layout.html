@@ -23,7 +23,19 @@
 
 	<!--Google Analytics tracking code-->
 	{% if not DEBUG %}
-	{% include "components/analytics.html" %}
+	<script async src="https://www.googletagmanager.com/gtag/js?id={{GANALYTICS_ID}}"></script>
+	<script>
+		window.dataLayer = window.dataLayer || []
+
+		function gtag() {dataLayer.push(arguments)}
+		gtag("js", new Date())
+		gtag("config", "{{GANALYTICS_ID}}")
+	</script>
+	{% endif %}
+
+	<!--Google Adsense code-->
+	{% if not DEBUG and not noads %}
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{GADSENSE_ID}}" crossorigin="anonymous"></script>
 	{% endif %}
 
 	<!--jQuery-->
@@ -54,6 +66,9 @@
 	<!--Nav bar-->
 	{% include "components/nav.html" %}
 
+	<!--Tags-->
+	{% include "components/tags.html" %}
+
 	<!--Back buttons-->
 	{% include "components/back.html" %}
 
@@ -68,6 +83,9 @@
 	<div class="container">
 		{% block content%}{% endblock %}
 	</div>
+
+	<!--Quick nav buttons-->
+	{% include "components/quicknav.html" %}
 
 	<!--Page footer-->
 	{% include "components/foot.html" %}

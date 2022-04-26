@@ -17,7 +17,7 @@ class Course(db.Model):
 	antireqs = db.Column(db.Text)
 	notes = db.Column(db.Text)
 	repeat = db.Column(db.Boolean, nullable=False, default=False)
-	nogpa = db.Column(db.Boolean, nullable=False, default=False)
+	countgpa = db.Column(db.Boolean, nullable=False, default=True)
 	subsite = db.Column(db.String(32))
 
 	userCourses = db.relationship("UserCourse", backref="course")
@@ -80,6 +80,6 @@ class Course(db.Model):
 		yield "antireqs", self.antireqs
 		yield "notes", self.notes
 		yield "repeat", self.repeat
-		yield "nogpa", self.nogpa
+		yield "countgpa", self.countgpa
 		yield "url", self.url
 		yield "url_uni", self.url_uni
