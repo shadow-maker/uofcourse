@@ -1,6 +1,6 @@
 from app.models import User, Role
 from app.auth import current_user
-from app.forms import unameValidation, nameValidation, passwValidation
+from app.forms import unameValidation, emailNew, nameValidation, passwValidation
 from app.routes.admin import BaseModelView
 
 from flask import flash
@@ -29,7 +29,7 @@ class UserModelView(BaseModelView):
 			"validators": [nameValidation]
 		},
 		"email": {
-			"validators": [validators.DataRequired(), validators.Email()]
+			"validators": [validators.DataRequired(), validators.Email(), emailNew]
 		},
 		"password": {
 			"validators": [validators.DataRequired(), passwValidation]
