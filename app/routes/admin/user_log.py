@@ -12,7 +12,17 @@ class UserLogModelView(BaseModelView):
 
 	column_filters = ["user_id", "event"]
 	column_default_sort = ("datetime", True)
-	column_details_list = ["id", "user_id", "event", "datetime", "ip", "location"]
+	column_details_list = ["id", "user", "event", "datetime", "ip", "location"]
+
+	def locationFormat(v, c, m, p):
+		l = m.location
+		if l["status"] == "success":
+			return f"{l['isp']} - {l['city']}, {l['region']}, {l['countryCode']} ({l['lat']}, {l['lon']})"
+		else:
+			return f"ERROR: {l['message']}"
+
+
+	column_formatters = dict(location=locationFormat)
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(UserLog, *args, **kwargs)
