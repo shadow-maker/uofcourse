@@ -382,12 +382,11 @@ function updateSelectPassed() {
 //
 
 $(document).ready(() => {
+	updateCollectionsGPA()
 	if (showTransferred)
 		transferredShow()
 	else
 		transferredHide()
-
-	updateCollectionsGPA()
 
 	$("#formEditUserCourse #selectGrade").change(function() {
 		$("#formEditUserCourse #selectPassed").prop("checked",
