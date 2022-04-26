@@ -4,11 +4,12 @@ from app.auth import current_user
 from app.forms import formContact
 from app.routes.views import view
 from app.models import utils
+from app.constants import MESSAGES_TIMEOUT
 
 from flask import render_template, send_from_directory, flash, redirect, request, session
 from flask.helpers import url_for
 
-from datetime import date
+from datetime import date, datetime
 from markdown import markdown
 import os
 
@@ -80,6 +81,12 @@ def api():
 def contact():
 	form = formContact()
 	if form.validate_on_submit():
+		# Check if another message was sent recently
+		last = session["last_message"].replace(tzinfo=None) if "last_message" in session else None
+		if last and (datetime.utcnow() - last).seconds < MESSAGES_TIMEOUT:
+			flash(f"You already sent a message! Please wait {MESSAGES_TIMEOUT - (datetime.utcnow() - last).seconds} seconds to send another message.", "warning")
+			return redirect(url_for("view.contact"))
+
 		# Format message body
 		if current_user.is_authenticated:
 			body = "A USER HAS SENT A MESSAGE\n\n"
@@ -101,6 +108,7 @@ def contact():
 		except Exception:
 			flash("An error occured while sending the message.", "danger")
 		else:
+			session["last_message"] = datetime.utcnow()
 			flash("Message received!", "success")
 		return redirect(url_for("view.contact"))
 
