@@ -382,7 +382,10 @@ function updateSelectPassed() {
 //
 
 $(document).ready(() => {
+	transferredShow()
+
 	updateCollectionsGPA()
+
 	if (showTransferred)
 		transferredShow()
 	else
