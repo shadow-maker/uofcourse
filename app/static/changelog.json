@@ -1,4 +1,14 @@
 {
+	"0.5.1": {
+		"beta": true,
+		"date": "2022-04-26",
+		"changes": [],
+		"fixes": [
+			"Fixed spacing of quick nav buttons on mobile",
+			"Styling fixes on Planner",
+			"Internal admin console fixes"
+		]
+	},
 	"0.5": {
 		"beta": true,
 		"date": "2022-04-26",

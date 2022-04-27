@@ -92,15 +92,19 @@
 			<div class="col-12 col-md-6 col-lg-12 px-0 ps-md-2 ps-lg-0">
 				<div class="card bg-light mt-0 mb-2">
 					<div class="card-body">
-						<a class="d-inline-block text-decoration-none text-body" href="{{url_for('view.courseBrowser', faculty=faculty.id)}}">
-							<span class="text-decoration-underline">View courses in Course Browser</span>
-							<i class="bi bi-box-arrow-up-right"></i>
-						</a>
+						<div>
+							<a class="text-decoration-none text-body" href="{{url_for('view.courseBrowser', faculty=faculty.id)}}">
+								<span class="text-decoration-underline">View courses in Course Browser</span>
+								<i class="bi bi-box-arrow-up-right"></i>
+							</a>
+						</div>
 						{% if faculty.url_uni %}
-						<a class="d-inline-block text-decoration-none text-body" href="{{faculty.url_uni}}" target="_blank" rel="noopener noreferrer">
-							<span class="text-decoration-underline">Go to official faculty site</span>
-							<i class="bi bi-box-arrow-up-right"></i>
-						</a>
+						<div>
+							<a class="text-decoration-none text-body" href="{{faculty.url_uni}}" target="_blank" rel="noopener noreferrer">
+								<span class="text-decoration-underline">Go to official faculty site</span>
+								<i class="bi bi-box-arrow-up-right"></i>
+							</a>
+						</div>
 						{% endif %}
 					</div>
 				</div>

@@ -22,7 +22,7 @@
 		<div class="transfer-collapsed col-2 col-md-1 px-2">
 			<div class="card h-100 text-body text-decoration-none" onclick="transferredShow()" title="Show transferred courses" style="cursor: pointer;">
 				<div class="bg-light text-center h-100 d-flex justify-content-center">
-					<span class="h5 lh-1" style="writing-mode: sideways-lr;">
+					<span class="h5 lh-1" style="writing-mode: vertical-lr; text-orientation: sideways; transform: rotate(180deg);">
 						<span class="align-top">Transferred</span>
 						<i class="bi-caret-down-fill fs-4"></i>
 					</span>
@@ -30,7 +30,7 @@
 			</div>
 		</div>
 		{% for collection in collections %}
-		<div id="{{collection.id}}" class="{% if collection.transfer %}transfer{% endif %} collection-item col-10 col-sm-6 col-lg-4 col-xl-3 px-2" db-id="{{collection.id}}" db-units="" db-points="" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
+		<div id="{{collection.id}}" class="{% if collection.transfer %}transfer{% endif %} collection-item col-10 col-sm-7 col-md-5 col-lg-4 col-xl-3 px-2" db-id="{{collection.id}}" db-units="" db-points="" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
 			<div class="card h-100">
 				{% if not (collection.transfer or collection.userCourses) %}
 				<form action="{{url_for('view.delCourseCollection')}}" method="POST">
