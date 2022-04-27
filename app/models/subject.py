@@ -20,18 +20,29 @@ class Subject(db.Model):
 	
 	@property
 	def url_uni(self):
-		return UNI_CAL_URL + self.site
+		return UNI_CAL_URL + self.site if self.site else None
 
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
 			return self.emoji
 		return default
 	
-	def __init__(self, faculty_id, code, name, site=""):
+	def setEmoji(self, emoji):
+		if type(emoji) == int:
+			self.emoji = emoji
+		elif type(emoji) == str and emoji.isdigit():
+			self.emoji = int(emoji)
+		elif type(emoji) == str and len(emoji) == 1:
+			self.emoji = ord(emoji)
+		else:
+			self.emoji = None
+	
+	def __init__(self, faculty_id, code, name, site="", emoji=None):
 		self.faculty_id = faculty_id
-		self.code = code
+		self.code = code.upper()
 		self.name = name
 		self.site = site
+		self.setEmoji(emoji)
 
 	def __repr__(self):
 		return f"SUBJECT {self.name} (#{self.id}) - {self.code}"
