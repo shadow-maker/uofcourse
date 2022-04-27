@@ -1,7 +1,7 @@
 {
 	"0.5.1": {
 		"beta": true,
-		"date": "",
+		"date": "2022-04-26",
 		"changes": [],
 		"fixes": [
 			"Fixed spacing of quick nav buttons on mobile",
