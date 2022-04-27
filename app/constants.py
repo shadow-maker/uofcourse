@@ -34,6 +34,12 @@ DISQUS_EMBED = "https://uofcourse.disqus.com/embed.js"
 
 DEFAULT_EMOJI = 128218
 
+ERROR_MESSAGES = {
+	403: "You don't have permission to perform that action",
+	404: "Page not found",
+	500: "Server error"
+}
+
 COLORS_DARK = {
 	"red": 0xff0000,
 	"orange": 0xffa500,
