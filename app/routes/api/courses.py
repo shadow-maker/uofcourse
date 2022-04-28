@@ -4,7 +4,7 @@ from app.auth import current_user
 from app.routes.api.utils import *
 
 from flask import Blueprint, request
-from sqlalchemy import and_, or_
+
 
 course = Blueprint("courses", __name__, url_prefix="/courses")
 
@@ -38,6 +38,15 @@ def getCourses(name="", number=None, levels=[], subjects=[], faculties=[], repea
 					return {"error": f"Invalid level {l}"}, 400
 	except:
 		return {"error": "Could not parse levels, invalid format"}, 400
+
+	# OLD IMPLEMENTATION: Convert levels list into a list of tuples where each tuple is a range of levels
+	# levelsFilter = []
+	# for l in levels:
+	# 	if levelsFilter and levelsFilter[-1][1] == l:
+	# 		levelsFilter[-1][1] = l + 1
+	# 	else:
+	# 		levelsFilter.append([l, l + 1])
+	# In filters: or_(and_(Course.number >= l[0] * 100, Course.number < l[1] * 100) for l in levelsFilter)
 
 	# Parse subjects
 	try:
@@ -90,14 +99,6 @@ def getCourses(name="", number=None, levels=[], subjects=[], faculties=[], repea
 			return {"error": f"'{countgpa}' is not a valid value for countgpa (boolean)"}, 400
 		countgpa = countgpa in [True, "true", "1"]
 
-	# Convert levels list into a list of tuples where each tuple is a range of levels
-	levelsFilter = []
-	for l in levels:
-		if levelsFilter and levelsFilter[-1][1] == l:
-			levelsFilter[-1][1] = l + 1
-		else:
-			levelsFilter.append([l, l + 1])
-	
 	# Remove subjects that are not in the selected faculties
 	subjectsFilter = []
 	for s in subjects:
@@ -106,7 +107,7 @@ def getCourses(name="", number=None, levels=[], subjects=[], faculties=[], repea
 	
 	# Filters
 	filters = [
-		or_(and_(Course.number >= l[0] * 100, Course.number < l[1] * 100) for l in levelsFilter),
+		Course.level.in_(levels),
 		Course.subject_id.in_(subjectsFilter),
 		Course.name.ilike(f"%{name}%")
 	]
