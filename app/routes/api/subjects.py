@@ -25,20 +25,18 @@ def getSubjects(name="", faculties=[]):
 	try:
 		if not faculties: # faculties not passed as function argument
 			faculties = request.args.getlist("faculty", type=int)
-		if not faculties: # faculties not passed as url argument
-			faculties = [f[0] for f in list(db.session.query(Faculty).with_entities(Faculty.id))]
-		else: # check if faculties are valid
-			for f in faculties:
-				if not Faculty.query.get(f):
-					return {"error": f"Invalid faculty {f}"}, 400
+		for f in faculties: # check if faculties are valid
+			if not Faculty.query.get(f):
+				return {"error": f"Invalid faculty {f}"}, 400
 	except:
 		return {"error": "Could not parse faculties, invalid format"}, 400
 	
-	# Filters tuple to check that the subject is in the selected faculties and name query is included in their name
-	filters = (
-		Subject.faculty_id.in_(faculties),
+	# Filters
+	filters = [
 		Subject.name.ilike(f"%{name}%")
-	)
+	]
+	if faculties:
+		filters.append(Subject.faculty_id.in_(faculties))
 	
 	# Get results
 	return getAll(Subject, filters)
