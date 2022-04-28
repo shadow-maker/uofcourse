@@ -6,8 +6,6 @@ from app.routes.api.courses import getCourses
 
 from flask import Blueprint, request
 
-import json
-
 subject = Blueprint("subjects", __name__, url_prefix="/subjects")
 
 
