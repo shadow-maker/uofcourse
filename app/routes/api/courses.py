@@ -64,20 +64,21 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 
 	# Parse subjects
 	try:
-		subjectsNew = []
 		if not subjects: # subjects not passed as function argument
 			subjects = list(dict.fromkeys(request.args.getlist("subject", type=str)))
 		if not subjects: # subjects not passed as url argument
 			subjects = [s[0] for s in list(db.session.query(Subject).with_entities(Subject.id))]
-		for i, s in enumerate(subjects): # check if subjects are valid
-			subject = Subject.query.get(s) if type(s) == int or s.isdigit() else utils.getSubjectByCode(s)
-			if subject:
-				# Only select subjects that belong to one of the passed faculties
-				if not faculties or subject.faculty_id in faculties:
-					subjectsNew.append(subject.id)
-			else:
-				return {"error": f"Invalid subject {s}"}, 400
-		subjects = subjectsNew
+		else:
+			for s in subjects[:]: # check if subjects are valid
+				subject = Subject.query.get(s) if s.isdigit() else utils.getSubjectByCode(s)
+				if subject:
+					# Only select subjects that belong to one of the passed faculties
+					if faculties and not subject.faculty_id in faculties:
+						subjects.remove(s)
+					else:
+						subjects[subjects.index(s)] = subject.id
+				else:
+					return {"error": f"Invalid subject {s}"}, 400
 	except:
 		return {"error": "Could not parse subjects, invalid format"}, 400
 
