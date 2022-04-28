@@ -27,7 +27,7 @@ def getSubjects(name="", faculties=[]):
 	# Parse faculties
 	try:
 		if not faculties: # faculties not passed as function argument
-			faculties = request.args.getlist("faculty", type=int)
+			faculties = list(dict.fromkeys(request.args.getlist("faculty", type=int)))
 		for f in faculties: # check if faculties are valid
 			if not Faculty.query.get(f):
 				return {"error": f"Invalid faculty {f}"}, 400

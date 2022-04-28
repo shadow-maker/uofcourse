@@ -22,7 +22,7 @@ def getAll(table, filters=(), serializer=None):
 		return {"error": "serializer must be a function"}, 400
 
 	# Get data from url arguments
-	sort = request.args.getlist("sort", type=str)
+	sort = list(dict.fromkeys(request.args.getlist("sort", type=str)))
 	asc = request.args.get("asc", default="true", type=str).lower()
 	limit = request.args.get("limit", default=30, type=int)
 	page = request.args.get("page", default=1, type=int)

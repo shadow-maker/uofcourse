@@ -26,7 +26,7 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 	# Parse numbers
 	try:
 		if not numbers:
-			numbers = request.args.getlist("number", type=int)
+			numbers = list(dict.fromkeys(request.args.getlist("number", type=int)))
 		for n in numbers: # check if numbers are valid
 			if n < min(COURSE_LEVELS) * 100 or n >= (max(COURSE_LEVELS) + 1) * 100:
 				return {"error": f"Invalid course number {n}"}, 400
@@ -36,7 +36,7 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 	# Parse levels
 	try:
 		if not levels: # levels not passed as function argument
-			levels = request.args.getlist("level", type=int)
+			levels = list(dict.fromkeys(request.args.getlist("level", type=int)))
 		for l in levels: # check if levels are valid
 			if l not in COURSE_LEVELS:
 				return {"error": f"Invalid level {l}"}, 400
@@ -55,7 +55,7 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 	# Parse faculties
 	try:
 		if not faculties: # faculties not passed as function argument
-			faculties = request.args.getlist("faculty", type=int)
+			faculties = list(dict.fromkeys(request.args.getlist("faculty", type=int)))
 		for f in faculties: # check if faculties are valid
 			if not Faculty.query.get(f):
 				return {"error": f"Invalid faculty {f}"}, 400
@@ -66,7 +66,7 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 	try:
 		subjectsNew = []
 		if not subjects: # subjects not passed as function argument
-			subjects = request.args.getlist("subject", type=str)
+			subjects = list(dict.fromkeys(request.args.getlist("subject", type=str)))
 		if not subjects: # subjects not passed as url argument
 			subjects = [s[0] for s in list(db.session.query(Subject).with_entities(Subject.id))]
 		for i, s in enumerate(subjects): # check if subjects are valid
