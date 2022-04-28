@@ -39,7 +39,7 @@ def getSubjects(name="", faculties=[]):
 		filters.append(Subject.faculty_id.in_(faculties))
 	
 	# Get results
-	return getAll(Subject, filters)
+	return getAll(Subject, tuple(filters))
 
 
 @subject.route("/<id>", methods=["GET"])
