@@ -29,7 +29,7 @@ def getCourses(name="", number=None, levels=[], subjects=[], faculties=[], repea
 	# Parse levels
 	try:
 		if not levels: # levels not passed as function argument
-			levels = request.args.getlist("levels", type=int)
+			levels = request.args.getlist("level", type=int)
 		if not levels: # levels not passed as url argument
 			levels = COURSE_LEVELS
 		else: # check if levels are valid
@@ -51,7 +51,7 @@ def getCourses(name="", number=None, levels=[], subjects=[], faculties=[], repea
 	# Parse subjects
 	try:
 		if not subjects: # subjects not passed as function argument
-			subjects = request.args.getlist("subjects", type=str)
+			subjects = request.args.getlist("subject", type=str)
 		if not subjects: # subjects not passed as url argument
 			subjects = [s[0] for s in list(db.session.query(Subject).with_entities(Subject.id))]
 		else: # check if subjects are valid
@@ -69,7 +69,7 @@ def getCourses(name="", number=None, levels=[], subjects=[], faculties=[], repea
 	# Parse faculties
 	try:
 		if not faculties: # faculties not passed as function argument
-			faculties = request.args.getlist("faculties", type=int)
+			faculties = request.args.getlist("faculty", type=int)
 		if not faculties: # faculties not passed as url argument
 			faculties = [f[0] for f in list(db.session.query(Faculty).with_entities(Faculty.id))]
 		else: # check if faculties are valid

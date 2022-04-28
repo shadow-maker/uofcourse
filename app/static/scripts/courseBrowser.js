@@ -76,9 +76,9 @@ function requestResults(callback) {
 		sort: sortOptions[$("#sortBy").val()].value,
 		asc: $("#orderBy").val(),
 		name: name,
-		levels: selectedLevel,
-		faculties: selectedFaculty,
-		subjects: selectedSubject,
+		level: selectedLevel,
+		faculty: selectedFaculty,
+		subject: selectedSubject,
 		page: page.current
 	}
 
