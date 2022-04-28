@@ -30,12 +30,12 @@ function checkAll(container) {
 
 function requestResults(callback) {
 	let name = ""
-	let number = null
+	let number = []
 
 	let words = $("#searchCourses").val().split(" ")
 	for (let word of words) {
 		if (!isNaN(word) && parseInt(word) >= 100 && parseInt(word) < 800)
-			number = parseInt(word)
+			number.push(parseInt(word))
 		else
 			name += word + " "
 	}
