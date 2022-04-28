@@ -326,7 +326,10 @@ The following columns are available to be used with the `sort` URL parameter:
 
 * `id`
 * `subject_id`
+* `subject_code`
 * `number`
+* `level`
+* `code`
 * `name`
 * `aka`
 * `units`
