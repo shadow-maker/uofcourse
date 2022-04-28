@@ -1,7 +1,8 @@
 from app.constants import *
-from sqlalchemy.orm.attributes import InstrumentedAttribute
+from sqlalchemy.orm.attributes import QueryableAttribute
 
 from flask import request
+
 
 def getById(table, id):
 	obj = table.query.get(id)
@@ -41,7 +42,7 @@ def getAll(table, filters=(), serializer=None):
 	for column in sort:
 		try:
 			col = getattr(table, column)
-			if type(col) != InstrumentedAttribute:
+			if not issubclass(type(col), QueryableAttribute):
 				raise AttributeError
 		except AttributeError:
 			return {"error": f"'{column}' is not a valid column for {table.__tablename__}"}, 400
