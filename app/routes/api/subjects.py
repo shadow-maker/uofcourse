@@ -17,9 +17,12 @@ subject = Blueprint("subjects", __name__, url_prefix="/subjects")
 @subject.route("", methods=["GET"])
 def getSubjects(name="", faculties=[]):
 	# Parse name search query
-	if not name:
-		name = request.args.get("name", default="", type=str)
-	name = name.strip().lower()
+	try:
+		if not name:
+			name = request.args.get("name", default="", type=str)
+		name = name.strip().lower()
+	except:
+		return {"error": "Could not parse name, invalid format"}, 400
 
 	# Parse faculties
 	try:
