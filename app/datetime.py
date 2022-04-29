@@ -6,7 +6,7 @@ import pytz
 
 class LocalDatetime:
 	def __init__(self, zone):
-		self.timezone = pytz.timezone(zone)
+		self.timezone = zone if issubclass(type(zone), pytz.tzinfo.BaseTzInfo) else pytz.timezone(zone)
 
 	def now(self): # Gets the current datetime in the local timezone
 		return dt.now(self.timezone)
@@ -27,5 +27,5 @@ class LocalDatetime:
 		return f"LocalDatetime(timezone={self.timezone})"
 
 
-utc = LocalDatetime("UTC")
+utc = LocalDatetime(pytz.utc)
 local = LocalDatetime(TIMEZONE)
