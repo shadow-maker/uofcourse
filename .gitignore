@@ -148,3 +148,4 @@ cython_debug/
 migrations/
 alchemydumps-backup/
 backups/
+icon?
