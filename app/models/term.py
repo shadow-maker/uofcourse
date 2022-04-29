@@ -25,13 +25,13 @@ class Term(db.Model):
 	def name(self):
 		return f"{self.season.name} {self.year}"
 
-	def isPrev(self, today=local.today()):
+	def isPrev(self, today=local.date()):
 		return self.end and self.end < today
 
-	def isCurrent(self, today=local.today()):
+	def isCurrent(self, today=local.date()):
 		return self.start and self.end and self.start <= today <= self.end
 	
-	def isNext(self, today=local.today()):
+	def isNext(self, today=local.date()):
 		return self.start and self.start > today
 
 	def __repr__(self):

@@ -16,21 +16,21 @@ def getAllYears(asc=True):
 	return results
 
 def getPrevTerm():
-	today = local.today()
+	today = local.date()
 	for term in Term.query.order_by(Term.end.desc()).all():
 		if term.isPrev(today):
 			return term
 	return None
 
 def getCurrentTerm():
-	today = local.today()
+	today = local.date()
 	for term in Term.query.order_by(Term.end.desc()).all():
 		if term.isCurrent(today):
 			return term
 	return None
 
 def getNextTerm():
-	today = local.today()
+	today = local.date()
 	for term in Term.query.order_by(Term.start.asc()).all():
 		if term.isNext(today):
 			return term

@@ -3,7 +3,7 @@ from app.constants import STARRED_COLOR, STARRED_EMOJI
 from app.models.user_log import UserLog, UserLogEvent
 from app.models.user_tag import UserTag
 from app.models.course_collection import CourseCollection
-from app.datetime import datetime
+from app.datetime import utc
 
 from flask_login import UserMixin
 
@@ -37,7 +37,7 @@ class User(db.Model, UserMixin):
 	password = db.Column(db.String(64), nullable=False)
 	role = db.Column(db.Enum(Role), nullable=False, default=Role.user)
 
-	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+	created = db.Column(db.DateTime, nullable=False, default=utc.now)
 	
 	faculty_id = db.Column(db.Integer, db.ForeignKey("faculty.id"), nullable=False)
 	neededUnits = db.Column(db.Numeric(precision=5, scale=2)) # 3 integer places, 2 decimal places
