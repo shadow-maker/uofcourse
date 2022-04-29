@@ -1,7 +1,7 @@
 from app import db
+from app.datetime import datetime
 
 from flask import request
-from datetime import datetime
 
 from enum import Enum
 

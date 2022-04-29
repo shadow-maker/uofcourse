@@ -1,4 +1,5 @@
 from app.models import Term, Subject, Course
+from app.datetime import local
 
 def getAllTerms(asc=True):
 	results = Term.query.order_by(Term.year.asc, Term.season.asc).all()
@@ -15,20 +16,23 @@ def getAllYears(asc=True):
 	return results
 
 def getPrevTerm():
+	today = local.today()
 	for term in Term.query.order_by(Term.end.desc()).all():
-		if term.isPrev():
+		if term.isPrev(today):
 			return term
 	return None
 
 def getCurrentTerm():
+	today = local.today()
 	for term in Term.query.order_by(Term.end.desc()).all():
-		if term.isCurrent():
+		if term.isCurrent(today):
 			return term
 	return None
 
 def getNextTerm():
+	today = local.today()
 	for term in Term.query.order_by(Term.start.asc()).all():
-		if term.isNext():
+		if term.isNext(today):
 			return term
 	return None
 

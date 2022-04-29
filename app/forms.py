@@ -7,8 +7,6 @@ from wtforms import StringField, TextAreaField, IntegerField, BooleanField, Pass
 #from wtforms.widgets.html5 import NumberInput
 from wtforms.validators import ValidationError, DataRequired, Email, NumberRange, Length
 
-from datetime import date
-
 import re
 
 SPECIAL_CHARS = re.compile("[@!#$%^&*()<>?/\|}{~:]")
