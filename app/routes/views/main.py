@@ -37,7 +37,7 @@ def home():
 		welcome = "welcome" in session and session["welcome"],
 		term = term,
 		userCourses = courses,
-		today = local.today()
+		today = local.date()
 	)
 
 
