@@ -69,11 +69,17 @@
 
 				<div class="h4 my-1">{{term.name | capitalize}}</div>
 		
+				<div class="fst-italic">
 				{% if term.isCurrent() %}
-					{{(term.end - today).days}} days remaining
+					{% if (term.end - today).days > 0 %}
+						{{(term.end - today).days}} days remaining
+					{% else %}
+						Last day
+					{% endif %}
 				{% elif term.isNext() %}
 					Begins in {{(term.start - today).days}} days
 				{% endif %}
+				</div>
 			</div>
 			<div class="card-body px-2 py-2 text-center">
 				{% if current_user.is_authenticated %}
