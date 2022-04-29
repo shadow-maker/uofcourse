@@ -4,7 +4,9 @@
 
 SITE_NAME = "UofCourse"
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
-CURRENT_VERSION = "0.5.1"
+CURRENT_VERSION = "0.5.2"
+
+TIMEZONE = "Canada/Mountain"
 
 #
 # URLS
@@ -33,6 +35,12 @@ IFTTT_EVENTS = {
 DISQUS_EMBED = "https://uofcourse.disqus.com/embed.js"
 
 DEFAULT_EMOJI = 128218
+
+ERROR_MESSAGES = {
+	403: "You don't have permission to perform that action",
+	404: "Page not found",
+	500: "Server error"
+}
 
 COLORS_DARK = {
 	"red": 0xff0000,

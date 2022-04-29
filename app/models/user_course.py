@@ -9,11 +9,14 @@ class UserCourse(db.Model):
 	grade_id = db.Column(db.Integer, db.ForeignKey("grade.id"))
 	passed = db.Column(db.Boolean)
 
+	def getWeightedGPV(self, precision=3):
+		if self.grade and self.grade.gpv:
+			return round(float(self.grade.gpv * self.course.units), precision)
+		return None
+
 	@property
 	def weightedGPV(self):
-		if self.grade and self.grade.gpv:
-			return round(float(self.grade.gpv * self.course.units), 3)
-		return None
+		return self.getWeightedGPV()
 
 	@property
 	def tags(self):

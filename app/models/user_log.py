@@ -1,7 +1,7 @@
 from app import db
+from app.localdt import utc
 
 from flask import request
-from datetime import datetime
 
 from enum import Enum
 
@@ -21,7 +21,7 @@ class UserLog(db.Model):
 	user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 	event = db.Column(db.Enum(UserLogEvent), nullable=False)
 
-	datetime = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+	datetime = db.Column(db.DateTime, nullable=False, default=utc.now)
 	ip = db.Column(db.String(32))
 
 	@property

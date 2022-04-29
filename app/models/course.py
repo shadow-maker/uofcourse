@@ -1,9 +1,10 @@
 from app import db
+from app.models import Subject
 from app.constants import DEFAULT_EMOJI
 
 from flask.helpers import url_for
-
-# TODO: Use hybrid property
+from sqlalchemy import select, cast, func
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class Course(db.Model):
 	__tablename__ = "course"
@@ -24,14 +25,30 @@ class Course(db.Model):
 
 	userCourses = db.relationship("UserCourse", backref="course")
 
-	@property
-	def code(self):
-		return f"{self.subject.code}-{self.number}"
+	@hybrid_property
+	def subject_code(self):
+		return self.subject.code
 	
-	@property
+	@subject_code.expression
+	def subject_code(cls):
+		return select(Subject.code).where(Subject.id == cls.subject_id)
+
+	@hybrid_property
+	def code(self):
+		return f"{self.subject_code}-{self.number}"
+	
+	@code.expression
+	def code(cls):
+		return func.concat(cls.subject_code.scalar_subquery(), "-", cast(cls.number, db.String))
+
+	@hybrid_property
 	def level(self):
 		return self.number // 100
 	
+	@level.expression
+	def level(cls):
+		return func.floor(cls.number / 100) # This might only work in MySQL and PostgreSQL
+
 	@property
 	def url(self):
 		return url_for("view.course", subjectCode=self.subject.code, courseNumber=self.number)

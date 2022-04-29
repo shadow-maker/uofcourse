@@ -1,7 +1,7 @@
 from app import db
 
 from enum import Enum
-from datetime import date
+from app.localdt import local
 
 
 class Season(Enum):
@@ -25,19 +25,14 @@ class Term(db.Model):
 	def name(self):
 		return f"{self.season.name} {self.year}"
 
-	def isPrev(self):
-		return self.end and self.end < date.today()
+	def isPrev(self, today=local.date()):
+		return self.end and self.end < today
 
-	def isCurrent(self):
-		return self.start and self.end and self.start <= date.today() <= self.end
+	def isCurrent(self, today=local.date()):
+		return self.start and self.end and self.start <= today <= self.end
 	
-	def isNext(self):
-		return self.start and self.start > date.today()
-
-	def hasEnded(self):
-		if not self.end:
-			return None
-		return self.end < date.today()
+	def isNext(self, today=local.date()):
+		return self.start and self.start > today
 
 	def __repr__(self):
 		return f"TERM {self.season.name} {self.year} (#{self.id})"

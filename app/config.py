@@ -32,9 +32,12 @@ class DatabaseConfig:
   
 class Config:
 	SECRET_KEY = getenv("SECRET_KEY")
+
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
-	SQLALCHEMY_POOL_RECYCLE = 299
-	SQLALCHEMY_POOL_TIMEOUT = 20
+	SQLALCHEMY_ENGINE_OPTIONS = {
+		"pool_recycle": 280,
+		"pool_timeout": 20
+	}
 
 	GANALYTICS_ID = getenv("GANALYTICS_ID")
 	GADSENSE_ID = getenv("GADSENSE_ID")

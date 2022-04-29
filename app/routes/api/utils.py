@@ -1,7 +1,8 @@
 from app.constants import *
-from sqlalchemy.orm.attributes import InstrumentedAttribute
+from sqlalchemy.orm.attributes import QueryableAttribute
 
 from flask import request
+
 
 def getById(table, id):
 	obj = table.query.get(id)
@@ -21,7 +22,7 @@ def getAll(table, filters=(), serializer=None):
 		return {"error": "serializer must be a function"}, 400
 
 	# Get data from url arguments
-	sort = request.args.getlist("sort", type=str)
+	sort = list(dict.fromkeys(request.args.getlist("sort", type=str)))
 	asc = request.args.get("asc", default="true", type=str).lower()
 	limit = request.args.get("limit", default=30, type=int)
 	page = request.args.get("page", default=1, type=int)
@@ -41,7 +42,7 @@ def getAll(table, filters=(), serializer=None):
 	for column in sort:
 		try:
 			col = getattr(table, column)
-			if type(col) != InstrumentedAttribute:
+			if not issubclass(type(col), QueryableAttribute):
 				raise AttributeError
 		except AttributeError:
 			return {"error": f"'{column}' is not a valid column for {table.__tablename__}"}, 400

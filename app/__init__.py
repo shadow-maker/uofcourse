@@ -52,10 +52,6 @@ try:
 except:
 	changelog = []
 
-
-from datetime import datetime, timedelta
-utcoffset = timedelta(hours=round(((datetime.now() - datetime.utcnow()).seconds / 3600) - 24))
-
 #
 # Import models and routes
 #

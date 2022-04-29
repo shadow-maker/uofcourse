@@ -1,4 +1,20 @@
 {
+	"0.5.2": {
+		"beta": true,
+		"date": "2022-04-29",
+		"changes": [
+			"Many backend improvements",
+			"All array query parameters for API endpoints are now in singular form",
+			"Optimized /api/courses , /api/subjects , /api/faculties endpoints",
+			"Support for filtering by an array of course numbers in /api/courses",
+			"Support for searching courses by many course numbers in the Course Browser",
+			"/api/courses results can now be sorted by subject_code, level, code",
+			"Results in the course browser will now be sorted using subject_code instead of subject_id"
+		],
+		"fixes": [
+			"Mobile optimizations/fixes for the Tags Drawer"
+		]
+	},
 	"0.5.1": {
 		"beta": true,
 		"date": "2022-04-26",
