@@ -31,7 +31,9 @@ def getTagCourses(id):
 	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
 		return {"error": f"Tag with id {id} does not exist"}, 404
-	return {"courses": [dict(course) for course in tag.courses]}, 200
+	return {
+		"courses": [dict(course) for course in sorted(tag.courses, key=lambda course: course.code)]
+	}, 200
 
 # Course UserTags
 
