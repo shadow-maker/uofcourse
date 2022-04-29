@@ -1,5 +1,5 @@
 from app import db
-from app.datetime import utc
+from app.localdt import utc
 
 from flask import request
 

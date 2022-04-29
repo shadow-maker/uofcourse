@@ -5,7 +5,7 @@ from app.forms import formContact
 from app.routes.views import view
 from app.models import utils
 from app.constants import MESSAGES_TIMEOUT
-from app.datetime import utc, local
+from app.localdt import utc, local
 
 from flask import render_template, send_from_directory, flash, redirect, request, session
 from flask.helpers import url_for

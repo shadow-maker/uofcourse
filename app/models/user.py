@@ -3,7 +3,7 @@ from app.constants import STARRED_COLOR, STARRED_EMOJI
 from app.models.user_log import UserLog, UserLogEvent
 from app.models.user_tag import UserTag
 from app.models.course_collection import CourseCollection
-from app.datetime import utc
+from app.localdt import utc
 
 from flask_login import UserMixin
 

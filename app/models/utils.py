@@ -1,5 +1,5 @@
 from app.models import Term, Subject, Course
-from app.datetime import local
+from app.localdt import local
 
 def getAllTerms(asc=True):
 	results = Term.query.order_by(Term.year.asc, Term.season.asc).all()

@@ -1,7 +1,7 @@
 from app import db
 
 from enum import Enum
-from app.datetime import local
+from app.localdt import local
 
 
 class Season(Enum):
