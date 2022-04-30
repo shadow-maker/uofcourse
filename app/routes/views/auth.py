@@ -30,6 +30,7 @@ def signup():
 			user = User(form.uname.data, form.name.data, form.email.data, form.passw.data, form.fac.data)
 			db.session.add(user)
 			db.session.commit()
+			user.log(UserLogEvent.AUTH_CREATE_ACCOUNT)
 			flash(f"Account created!", "success")
 			return redirect(url_for("view.login"))
 		return redirect(url_for("view.home"))

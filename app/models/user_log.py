@@ -10,9 +10,10 @@ import requests
 
 class UserLogEvent(Enum):
 	# 1X: Auth log events
-	AUTH_LOGIN = 10
-	AUTH_LOGOUT = 11
-	AUTH_CHANGE_PASSW = 12
+	AUTH_CREATE_ACCOUNT = 10
+	AUTH_LOGIN = 11
+	AUTH_LOGOUT = 12
+	AUTH_CHANGE_PASSW = 13
 
 
 class UserLog(db.Model):
