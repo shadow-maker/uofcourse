@@ -22,7 +22,7 @@
 	{% endif %}
 
 	<!--Google Analytics tracking code-->
-	{% if not DEBUG %}
+	{% if not DEBUG and current_user.role != ROLE_ADMIN %}
 	<script async src="https://www.googletagmanager.com/gtag/js?id={{GANALYTICS_ID}}"></script>
 	<script>
 		window.dataLayer = window.dataLayer || []
