@@ -1,4 +1,12 @@
 {
+	"1.0": {
+		"beta": false,
+		"date": "2022-04-29",
+		"title": "Initial release!",
+		"changes": [
+			"Account creation is now enabled"
+		]
+	},
 	"0.5.2": {
 		"beta": true,
 		"date": "2022-04-29",

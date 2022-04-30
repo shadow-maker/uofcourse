@@ -4,7 +4,7 @@
 
 SITE_NAME = "UofCourse"
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
-CURRENT_VERSION = "0.5.2"
+CURRENT_VERSION = "1.0"
 
 TIMEZONE = "Canada/Mountain"
 
@@ -20,7 +20,7 @@ REDDIT_URL = "https://www.reddit.com/r/UCalgary/"
 # OTHER
 #
 
-ALLOW_ACCOUNT_CREATION = False
+ALLOW_ACCOUNT_CREATION = True
 
 MAX_ITEMS_PER_PAGE = 50
 
