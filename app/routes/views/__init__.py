@@ -16,6 +16,7 @@ view = Blueprint("view", __name__, url_prefix="/")
 
 constants = {
 	"SITE_NAME" : SITE_NAME,
+	"SITE_LANG": SITE_LANG,
 	"DEF_DESCRIPTION" : DEF_DESCRIPTION,
 	"CURRENT_VERSION" : CURRENT_VERSION,
 	"CURRENT_VERSION_BETA" : CURRENT_VERSION in change and change[CURRENT_VERSION]["beta"],
