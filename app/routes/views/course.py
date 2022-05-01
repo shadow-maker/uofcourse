@@ -1,4 +1,3 @@
-from app import db
 from app.models import Faculty, Subject, Course
 from app.models.utils import getSubjectByCode
 from app.auth import current_user
@@ -11,15 +10,7 @@ from flask.helpers import url_for
 from sqlalchemy.sql import func
 
 
-@view.route("/c/<subjectCode>")
-def courseBrowserSubject(subjectCode):
-	subject = getSubjectByCode(subjectCode)
-	if not subject:
-		flash(f"Subject with code {subjectCode} does not exist!", "danger")
-		return redirect(url_for("view.home"))
-	return redirect(url_for("view.courseBrowser", subject=subjectCode))
-
-
+@view.route("/c/<subjectCode>-<courseNumber>")
 @view.route("/c/<subjectCode>/<courseNumber>")
 def course(subjectCode, courseNumber):
 	subject = getSubjectByCode(subjectCode)
@@ -57,9 +48,7 @@ def courseById(courseId):
 
 @view.route("/c/random")
 def courseRandom():
-	course = None
-	while not course:
-		course = Course.query.order_by(func.random()).first()
+	course = Course.query.order_by(func.random()).first()
 	return redirect(url_for("view.courseById", courseId=course.id))
 
 
@@ -108,3 +97,12 @@ def courseBrowser():
 			"subjects": subjects
 		}
 	)
+
+
+@view.route("/c/<subjectCode>")
+def courseBrowserSubject(subjectCode):
+	subject = getSubjectByCode(subjectCode)
+	if not subject:
+		flash(f"Subject with code {subjectCode} does not exist!", "danger")
+		return redirect(url_for("view.home"))
+	return redirect(url_for("view.courseBrowser", subject=subjectCode))
