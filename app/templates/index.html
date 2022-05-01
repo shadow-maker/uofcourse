@@ -1,5 +1,21 @@
 {% extends "layout.html" %}
 
+{% block styles %}
+<style>
+	.collection-course-item:hover, #btnAddTerm:hover {
+		background-color: var(--bs-gray-200) !important;
+	}
+	
+	.collection-course-item .open {
+		display: none;
+	}
+	
+	.collection-course-item:hover .open {
+		display: block;
+	}	
+</style>
+{% endblock %}
+
 {% block content %}
 
 <div class="row">
@@ -128,19 +144,5 @@
 		{% endif %}
 	</div>
 </div>
-
-<style>
-	.collection-course-item:hover, #btnAddTerm:hover {
-		background-color: var(--bs-gray-200) !important;
-	}
-	
-	.collection-course-item .open {
-		display: none;
-	}
-	
-	.collection-course-item:hover .open {
-		display: block;
-	}	
-	</style>
 
 {% endblock %}

@@ -1,5 +1,13 @@
 {% extends "layout.html" %}
 
+{% block styles %}
+<style>
+	#scrollspy-nav .collapsing {
+		transition: 0.2s;
+	}
+</style>
+{% endblock %}
+
 {% block headscripts %}
 <script>
 	$(document).ready(function () {
@@ -139,11 +147,5 @@
 		</div>
 	</div>
 </div>
-
-<style>
-.collapsing {
-	transition: 0.2s;
-}
-</style>
 
 {% endblock %}

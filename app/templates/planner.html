@@ -1,5 +1,29 @@
 {% extends "layout.html" %}
 
+{% block styles %}
+<style>
+	.collection-course-item:hover, .tag-course-item:hover, #btnAddTerm:hover {
+		background-color: var(--bs-gray-200) !important;
+	}
+	
+	.collection-course-item .edit {
+		display: none;
+	}
+	
+	.collection-course-item:hover .edit {
+		display: block;
+	}
+	
+	.overall-collection-item .disable {
+		display: none;
+	}
+	
+	.overall-collection-item:hover .disable {
+		display: block;
+	}
+</style>
+{% endblock %}
+
 {% block headscripts %}
 <script>
 	var grades = JSON.parse('{{ grades | tojson | safe }}')
@@ -402,29 +426,6 @@
 		</div>
 	</div>
 </form>
-
-<style>
-.collection-course-item:hover, .tag-course-item:hover, #btnAddTerm:hover {
-	background-color: var(--bs-gray-200) !important;
-}
-
-.collection-course-item .edit {
-	display: none;
-}
-
-.collection-course-item:hover .edit {
-	display: block;
-}
-
-.overall-collection-item .disable {
-	display: none;
-}
-
-.overall-collection-item:hover .disable {
-	display: block;
-}
-
-</style>
 
 {% endblock %}
 
