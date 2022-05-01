@@ -246,13 +246,16 @@
 			</div>
 		</div>
 	</div>
-	{% if formPassw.errors %}
-	<script>
-		$(document).ready(() => {
-			$("#modalChangePassword").modal("show")
-		})
-	</script>
-	{% endif %}
 </form>
 
+{% endblock %}
+
+{% block tailscripts %}
+{% if formPassw.errors %}
+<script>
+	$(document).ready(() => {
+		$("#modalChangePassword").modal("show")
+	})
+</script>
+{% endif %}
 {% endblock %}
