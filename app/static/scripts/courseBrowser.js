@@ -115,7 +115,6 @@ function requestResults(callback) {
 	})
 }
 
-
 function toggleCourseTag(courseId, tagId) {
 	$.ajax({
 		url: "/api/tags/" + tagId +"/course/" + courseId,
@@ -153,6 +152,26 @@ function addCollection(courseId, collectionId) {
 //
 // UPDATE FUNCS
 //
+
+function updateSubjects() {
+	var subjSearch = $("#subjectSearch").val().toUpperCase()
+	$("#subjectSearch").val("")
+
+	if (subjSearch in subjects)
+		subjects[subjSearch].sel = true
+
+	$("#subjectSelector").empty()
+
+	for (let s in subjects) {
+		if (subjects[s].sel) {
+			$("#subjectSelector").append(`
+				<span class="badge btn btn-secondary border-secondary px-1 py-1 m-1 ms-0 font-monospace text-light fs-6 fw-normal subjItem" code="` + s + `"  title="Click to remove">
+					` + s + `
+				</span>
+			`)
+		}
+	}
+}
 
 function updateCourseTags(courseId) {
 	const item = $("#course-" + courseId)
@@ -299,6 +318,18 @@ function updateResults(data) {
 // EVENTS
 //
 
+$(document).on("click", ".subjItem", function () {
+	subjects[this.getAttribute("code")].sel = false
+	this.remove()
+	$("#formFilterCourses").submit()
+});
+
+$(document).on("click", ".subjSuggestion", function () {
+	$("#subjectSearch").val(this.getAttribute("code"))
+	$("#subjectSearchSuggestions").empty()
+	$("#formFilterCourses").submit()
+});
+
 $(document).on("click", ".tags-dropdown-btn", function(e) {
 	if (!isAuth) {
 		e.preventDefault()
@@ -320,6 +351,28 @@ $(document).ready(() => {
 	}
 
 	updateSubjects()
+
+	$("#subjectSearch").keyup((e) => {
+		$("#subjectSearchSuggestions").empty()
+		if (e.keyCode == 13) {
+			$("#subjectSearch").dropdown("hide")
+			$("#formFilterCourses").submit()
+			$("#subjectSearch").dropdown("show")
+		} else {
+			var subjSearch = $("#subjectSearch").val().toUpperCase()
+			if (subjSearch.length > 0) {
+				for (s in subjects) {
+					if (s.startsWith(subjSearch)) {
+						$("#subjectSearchSuggestions").append(`
+							<li><a class="subjSuggestion dropdown-item form-control-sm px-2 py-1" href="#" code="` + s +`"><span class="font-monospace">` +
+							s + `</span> - ` + subjects[s].name +
+							`</a></li>
+						`)
+					}
+				}
+			}
+		}
+	})
 
 	$("#formFilterCourses input").not("#subjectSearch").change(() => {
 		$("#formFilterCourses").submit()
