@@ -23,7 +23,7 @@ def faculty(fac):
 			flash(f"Faculty with id {fac} does not exist!", "danger")
 			return redirect(url_for("view.home"))
 	return render_template("faculty.html",
-		title = "Faculty",
+		title = faculty.subdomain.capitalize() if faculty.subdomain else faculty.name,
 		description = f"Faculty info for {faculty.name}",
 		faculty = faculty,
 		len = {
@@ -80,7 +80,7 @@ def course(subjectCode, courseNumber):
 	userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else []
 	collections = current_user.collections if current_user.is_authenticated else []
 	return render_template("course.html",
-		title = f"{course.code}",
+		title = f"{course.subject_code} {course.number}",
 		description = f"Course info for {course.code} : {course.name}",
 		course = course,
 		subject = subject,
