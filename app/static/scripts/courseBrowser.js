@@ -1,14 +1,19 @@
+//
 // GLOBAL VARS
+//
 
+var prevData = {}
+
+// Init Page object (defined in pagination.html)
 var page = new Page(0, () => {
 	requestResults((data) => {
 		updateResults(data)
 	})
 })
 
-var prevData = {}
-
-// UTIL FUNCTIONS
+//
+// UTIL FUNCS
+//
 
 function uncheckAll(container) {
 	$("#" + container + " .form-check").each(function () {
@@ -25,7 +30,7 @@ function checkAll(container) {
 }
 
 //
-// REQUEST FUNCTIONS
+// REQUEST FUNCS
 //
 
 function requestResults(callback) {
@@ -146,7 +151,7 @@ function addCollection(courseId, collectionId) {
 }
 
 //
-// UPDATE FUNCTIONS
+// UPDATE FUNCS
 //
 
 function updateCourseTags(courseId) {
@@ -291,21 +296,27 @@ function updateResults(data) {
 }
 
 //
+// EVENTS
+//
+
+$(document).on("click", ".tags-dropdown-btn", function(e) {
+	if (!isAuth) {
+		e.preventDefault()
+		alert("warning", "You must be logged in to add tags")
+	}
+})
+
+//
 // DOCUMENT READY
 //
 
 $(document).ready(() => {
 	if (isAuth) {
 		tagsInit(() => {
-			prevData = {}
-			requestResults((data) => {
-				updateResults(data)
-			})
+			page.callback()
 		})
 	} else {
-		requestResults((data) => {
-			updateResults(data)
-		})
+		page.callback()
 	}
 
 	updateSubjects()
@@ -324,19 +335,10 @@ $(document).ready(() => {
 
 		updateSubjects()
 
+		// Remove query parameters
 		window.history.pushState({}, document.title, window.location.pathname)
 
-		page.current = 1
-
-		requestResults((response) => {
-			updateResults(response)
-		})
+		// Switch page and request and update data
+		page.switch(1)
 	})
-})
-
-$(document).on("click", ".tags-dropdown-btn", function(e) {
-	if (!isAuth) {
-		e.preventDefault()
-		alert("warning", "You must be logged in to add tags")
-	}
 })

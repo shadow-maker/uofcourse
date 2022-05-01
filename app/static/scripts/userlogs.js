@@ -1,10 +1,19 @@
+//
+// GLOBAL VARS
+//
+
+// Init Page object (defined in pagination.html)
 var page = new Page(0, () => {
-	requestLogs((data) => {
+	getLogs((data) => {
 		updateLogs(data)
 	})
 })
 
-function requestLogs(callback) {
+//
+// REQUEST FUNCS
+//
+
+function getLogs(callback) {
 	$("#logs .loading").show()
 	$("#logs .loaded").hide()
 
@@ -26,7 +35,7 @@ function requestLogs(callback) {
 	})
 }
 
-function requestLocation(id, callback) {
+function getLocation(id, callback) {
 	$.ajax({
 		url: "/api/users/logs/" + id + "/location",
 		method: "GET",
@@ -38,6 +47,10 @@ function requestLocation(id, callback) {
 		}
 	})
 }
+
+//
+// UPDATE FUNCS
+//
 
 function updateLogs(data) {
 	$("#logs .loading").hide()
@@ -65,6 +78,10 @@ function updateLogs(data) {
 	page.updateNav()
 }
 
+//
+// Events
+//
+
 $(document).on("click", ".ip-link", function (event) {
 	event.preventDefault()
 
@@ -76,7 +93,7 @@ $(document).on("click", ".ip-link", function (event) {
 
 	modal.find(".ip").val($(this).find(".ip").text())
 
-	requestLocation($(this).attr("db-id"), (data) => {
+	getLocation($(this).attr("db-id"), (data) => {
 		modal.find(".loading").hide()
 		if (data.status == "success") {
 			modal.find(".success").show()
@@ -97,9 +114,5 @@ $(document).on("click", ".ip-link", function (event) {
 //
 
 $(document).ready(() => {
-	page.current = 1
-
-	requestLogs((response) => {
-		updateLogs(response)
-	})
+	page.callback()
 })

@@ -1,44 +1,16 @@
+//
+// GLOBAL VARS
+//
+
 var oldContainer = null
 
-function transferredShow() {
-	$.ajax({
-		url: "/api/users/session/transferred",
-		method: "PUT",
-		data: {
-			set: true
-		},
-		success: (response) => {
-			if (response.success) {
-				$(".transfer").show()
-				$(".transfer-collapsed").hide()
-			}
-		},
-		error: (response) => {
-			displayError(response)
-		}
-	})
-}
+const modalInfo = $("#modalInfoUserCourse")
+const formAdd = $("#formAddUserCourse")
+const formEdit = $("#formEditUserCourse")
 
-function transferredHide() {
-	$.ajax({
-		url: "/api/users/session/transferred",
-		method: "PUT",
-		data: {
-			set: false
-		},
-		success: (response) => {
-			if (response.success) {
-				$(".transfer").hide()
-				$(".transfer-collapsed").show()
-				$(".transfer").find(".countInGPA").prop("checked", false)
-				updateOverallGPA()
-			}
-		},
-		error: (response) => {
-			displayError(response)
-		}
-	})
-}
+//
+// UTIL FUNCS
+//
 
 function sortCourses(container) {
 	$(container).children(".collection-course-item").sort(function (a, b) {
@@ -55,72 +27,141 @@ function sortCourses(container) {
 	})
 }
 
-// Dragging
-
-const courseContainers = document.querySelectorAll(".collection-course-container")
-const courseItems = document.querySelectorAll(".collection-course-item")
-
-courseItems.forEach(item => {
-	item.addEventListener("dragstart", () => {
-		item.classList.add("dragging")
-		oldContainer = item.parentElement
+function transferredShow() {
+	putTransferred(true, () => {
+		$(".transfer").show()
+		$(".transfer-collapsed").hide()	
 	})
+}
 
-	item.addEventListener("dragend", () => {
-		item.classList.remove("dragging")
+function transferredHide() {
+	putTransferred(false, () => {
+		$(".transfer").hide()
+		$(".transfer-collapsed").show()
+		$(".transfer").find(".countInGPA").prop("checked", false)
+		updateOverallGPA()
+	})
+}
 
-		if (oldContainer != item.parentElement) {
-			editCollection({
-				id: item.getAttribute("db-id"),
-				collection_id: item.parentElement.getAttribute("db-id")
-			}, [oldContainer, item.parentElement])
+// Check course funcs for add modal
+
+function selectCourseStatus(status) {
+	$("#selectCourseStatus").children("span").hide()
+	if (status)
+		$("#selectCourseStatus ." + status).show()
+}
+
+function checkCourse() {
+	getCourseExists($("#selectCourseSubject").val(), $("#selectCourseNumber").val(), (exists, id) => {
+		if (exists) {
+			$("#selectCourseId").val(id)
+			$("#selectCourseSubmit").prop("disabled", false)
+			selectCourseStatus("success")
+		} else {
+			$("#selectCourseId").val("")
+			$("#selectCourseSubmit").prop("disabled", true)
+			selectCourseStatus("error")
 		}
 	})
-})
+}
 
-courseContainers.forEach(container => {
-	container.addEventListener("dragover", e => {
-		e.preventDefault()
-		const item = document.querySelector(".dragging")
-		container.appendChild(item)
-		sortCourses(container)
+//
+// REQUEST FUNCS
+//
+
+function getCourseExists(subject, number, callback) {
+	$.ajax({
+		url: "/api/courses/code/" + subject + "/" + number,
+		method: "GET",
+		success: (response) => {
+			callback(true, response.id)
+		},
+		error: (response) => {
+			callback(false, null)
+		}
 	})
-})
+}
 
-// AJAX for dragging course items
+function getCollectionGPA(id, callback) {
+	$.ajax({
+		url: "/api/users/collection/" + id + "/gpa",
+		method: "GET",
+		success: (response) => {
+			callback(response)
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
+function putTransferred(set, callback) {
+	$.ajax({
+		url: "/api/users/session/transferred",
+		method: "PUT",
+		data: {set: set},
+		success: (response) => {
+			callback(response)
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
+function putCollection(data, callback) {
+	$.ajax({
+		url: "/api/users/course",
+		method: "PUT",
+		data: data,
+		success: (response) => {
+			callback(response)
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
+//
+// UPDATE FUNCS
+//
+
+function updateSelectPassed() {
+	if (formEdit.find("#selectPassed").prop("checked")) {
+		formEdit.find("#selectPassedTrue").prop("checked", true)
+		formEdit.find("#selectPassedFalse").prop("checked", false)
+	} else {
+		formEdit.find("#selectPassedTrue").prop("checked", false)
+		formEdit.find("#selectPassedFalse").prop("checked", true)
+	}
+}
 
 function updateCollectionsGPA() {
 	$("#collectionsContainer").children(".collection-item").each(function () {
-		$.ajax({
-			url: "/api/users/collection/" + $(this).attr("db-id") + "/gpa",
-			method: "GET",
-			success: (response) => {
-				const gpaElem = $(this).find(".collection-gpa")
+		getCollectionGPA($(this).attr("db-id"), (data) => {
+			const gpaElem = $(this).find(".collection-gpa")
 	
-				if (response.gpa) {
-					$(this).attr("db-units", response.units)
-					$(this).attr("db-points", response.points)
-					$(this).attr("db-gpa", response.gpa)
-					gpaElem.find(".gpa").text(response.gpa)
-					gpaElem.find(".gpa").attr(
-						"data-bs-original-title",
-						response.gpa + " x " + response.units + " = " + response.points + " points"
-					)
-					gpaElem.find(".nogpa").addClass("d-none")
-					$(this).find(".countInGPA").prop("checked", true)
-					$(this).find(".countInGPA").prop("disabled", false)
-				} else {
-					gpaElem.find(".gpa").text("")
-					gpaElem.find(".nogpa").removeClass("d-none")
-					$(this).find(".countInGPA").prop("checked", false)
-					$(this).find(".countInGPA").prop("disabled", true)
-				}
-
-				updateOverallGPA()
-			},
-			error: (response) => {
-				displayError(response)
+			if (data.gpa) {
+				$(this).attr("db-units", data.units)
+				$(this).attr("db-points", data.points)
+				$(this).attr("db-gpa", data.gpa)
+				gpaElem.find(".gpa").text(data.gpa)
+				gpaElem.find(".gpa").attr(
+					"data-bs-original-title",
+					data.gpa + " x " + data.units + " = " + data.points + " points"
+				)
+				gpaElem.find(".nogpa").addClass("d-none")
+				$(this).find(".countInGPA").prop("checked", true)
+				$(this).find(".countInGPA").prop("disabled", false)
+			} else {
+				gpaElem.find(".gpa").text("")
+				gpaElem.find(".nogpa").removeClass("d-none")
+				$(this).find(".countInGPA").prop("checked", false)
+				$(this).find(".countInGPA").prop("disabled", true)
 			}
+
+			updateOverallGPA()
 		})
 	})
 }
@@ -174,70 +215,67 @@ function disableOverallGPA(collectionId) {
 	})
 }
 
-function editCollection(data) {
-	$.ajax({
-		url: "/api/users/course",
-		method: "PUT",
-		data: data,
-		success: () => {
-			updateCollectionsGPA()
-		},
-		error: (response) => {
-			displayError(response)
+//
+// DRAG EVENT LISTENERS
+//
+
+const courseContainers = document.querySelectorAll(".collection-course-container")
+const courseItems = document.querySelectorAll(".collection-course-item")
+
+courseItems.forEach(item => {
+	item.addEventListener("dragstart", () => {
+		item.classList.add("dragging")
+		oldContainer = item.parentElement
+	})
+
+	item.addEventListener("dragend", () => {
+		item.classList.remove("dragging")
+
+		if (oldContainer != item.parentElement) {
+			putCollection({
+				id: item.getAttribute("db-id"),
+				collection_id: item.parentElement.getAttribute("db-id")
+			}, updateCollectionsGPA)
 		}
 	})
-}
+})
 
-
-// UserCourse-add form logic
-
-function selectCourseStatus(status) {
-	$("#selectCourseStatus").children("span").hide()
-	if (status)
-		$("#selectCourseStatus ." + status).show()
-}
-
-function checkCourse() {
-	$.ajax({
-		url: "/api/courses/code/" + $("#selectCourseSubject").val() + "/" + $("#selectCourseNumber").val(),
-		method: "GET",
-		success: (response) => {
-			$("#selectCourseId").val(response.id)
-			$("#selectCourseSubmit").prop("disabled", false)
-			selectCourseStatus("success")
-		},
-		error: (response) => {
-			$("#selectCourseId").val("")
-			$("#selectCourseSubmit").prop("disabled", true)
-			selectCourseStatus("error")
-		}
+courseContainers.forEach(container => {
+	container.addEventListener("dragover", e => {
+		e.preventDefault()
+		const item = document.querySelector(".dragging")
+		container.appendChild(item)
+		sortCourses(container)
 	})
-}
+})
 
-const selectCourse = $("#formAddCourse")
+//
+// EVENTS
+//
 
+// Set collection.id input in formAdd whenever its opened
 $(document).on("click", ".add-course", function() {
-	selectCourse.find("#selectCollectionId").val(this.getAttribute("db-id"))
+	formAdd.find("#selectCollectionId").val(this.getAttribute("db-id"))
 })
 
 // On modal starts to show
 $("#modalAddCourse").on("show.bs.modal", () => {
 	// Clear form inputs
-	selectCourse.find(".selectSubject").val("")
-	selectCourse.find(".selectNumber").val("")
+	formAdd.find(".selectSubject").val("")
+	formAdd.find(".selectNumber").val("")
 	
 	// Hide status and feedback
-	selectCourse.find("#selectCourseStatus").children("span").hide()
-	selectCourse.find(".feedback").addClass("invisible")
+	formAdd.find("#selectCourseStatus").children("span").hide()
+	formAdd.find(".feedback").addClass("invisible")
 
 	// Disable submit button
-	selectCourse.find(".submit").prop("disabled", true)
+	formAdd.find(".submit").prop("disabled", true)
 })
 
 // On modal is shown
 $("#modalAddCourse").on("shown.bs.modal", () => {
 	// Move focus to subject selection when modal is shown
-	selectCourse.find(".selectSubject").focus()
+	formAdd.find(".selectSubject").focus()
 })
 
 // On key up inside subject selection
@@ -249,28 +287,28 @@ $("#selectCourseSubject").on("keyup", function(e) {
 	$(this).val($(this).val().replace(/[0-9]/g, ""))
 
 	if ($(this).val().length < $(this).attr("minLength")) {
-		selectCourse.find(".selectNumber").prop("disabled", true)
-		selectCourse.find(".submit").prop("disabled", true)
-		selectCourse.find(".feedback").addClass("invisible")
+		formAdd.find(".selectNumber").prop("disabled", true)
+		formAdd.find(".submit").prop("disabled", true)
+		formAdd.find(".feedback").addClass("invisible")
 		selectCourseStatus("")
 	} else {
-		selectCourse.find(".selectNumber").prop("disabled", false)
-		if (selectCourse.find(".selectNumber").val().length == selectCourse.find(".selectNumber").attr("maxLength"))
+		formAdd.find(".selectNumber").prop("disabled", false)
+		if (formAdd.find(".selectNumber").val().length == formAdd.find(".selectNumber").attr("maxLength"))
 			checkCourse()
 	}
 
 	// Move focus to number selection if max length is reached
 	if ($(this).val().length == $(this).attr("maxLength"))
-		selectCourse.find(".selectNumber").focus()
+		formAdd.find(".selectNumber").focus()
 })
 
 // On key up inside number selection
 $("#selectCourseNumber").on("keydown", function(e) {
 	// If pressing backspace and the value is empty, move focus to subject selection
 	if ($(this).val().length == 0 && e.keyCode == 8)
-		selectCourse.find(".selectSubject").focus()
+		formAdd.find(".selectSubject").focus()
 	else if (e.keyCode == 13)
-		selectCourse.submit()
+		formAdd.submit()
 })
 
 // On key down inside number selection
@@ -282,56 +320,37 @@ $("#selectCourseNumber").on("keyup", function(e) {
 	if ($(this).val().length == $(this).attr("maxLength")) {
 		checkCourse()
 	} else {
-		selectCourse.find(".submit").prop("disabled", true)
-		selectCourse.find(".feedback").addClass("invisible")
+		formAdd.find(".submit").prop("disabled", true)
+		formAdd.find(".feedback").addClass("invisible")
 		selectCourseStatus("")
 	}
 })
 
-
-// UserCourse-edit form logic
-
-function getGrade(id, callback) {
-	$.ajax({
-		url: "/api/grades/" + id,
-		method: "GET",
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
-	})
-}
-
+// UserCourse click
 $(document).on("click", ".collection-course-item", function() {
 	if (!this.classList.contains("dragging")) {
-		let modalInfo = $("#modalInfoUserCourse")
-		let formEdit = $("#formEditUserCourse")
-
-		let grade = this.getAttribute("db-grade")
-		if (grade) {
-			getGrade(grade, (data) => {
-				modalInfo.find(".grade-symbol").text(data.symbol)
-				modalInfo.find(".grade-desc").text(data.desc)
-				modalInfo.find(".grade-passed").text(data.passed ? "Yes" : "No")
-				if (data.gpv) {
-					modalInfo.find(".grade-gpv").text(data.gpv)
-					modalInfo.find(".grade-weighted").text(
-						Number((data.gpv * parseFloat(this.getAttribute("db-units"))).toFixed(3))
-					)
-				} else {
-					modalInfo.find(".grade-gpv").text("N/A")
-					modalInfo.find(".grade-weighted").text("N/A")
-				}
-			})
+		let gradeId = this.getAttribute("db-grade")
+		if (gradeId) {
+			const grade = grades[gradeId]
+			modalInfo.find(".grade-symbol").text(grade.symbol)
+			modalInfo.find(".grade-desc").text(grade.desc)
+			modalInfo.find(".grade-passed").text(grade.passed ? "Yes" : "No")
+			if (grade.gpv) {
+				modalInfo.find(".grade-gpv").text(grade.gpv)
+				modalInfo.find(".grade-weighted").text(
+					Number((grade.gpv * parseFloat(this.getAttribute("db-units"))).toFixed(3))
+				)
+			} else {
+				modalInfo.find(".grade-gpv").text("N/A")
+				modalInfo.find(".grade-weighted").text("N/A")
+			}
 		} else {
 			modalInfo.find(".grade-symbol").text("-")
 			modalInfo.find(".grade-desc").text("")
 			modalInfo.find(".grade-gpv").text("")
 			modalInfo.find(".grade-passed").text("")
 			modalInfo.find(".grade-weighted").text("")
-			grade = "0"
+			gradeId = "0"
 		}
 		let passed = this.getAttribute("db-passed")
 		let collectionId = this.parentElement.getAttribute("db-id")
@@ -348,7 +367,7 @@ $(document).on("click", ".collection-course-item", function() {
 		formEdit.find("#selectCourse").val(this.getAttribute("db-id"))
 		formEdit.find("#selectCoursePlaceholder").val(this.getAttribute("db-code"))
 		formEdit.find("#selectCollection").val(collectionId)
-		formEdit.find("#selectGrade").val(grade)
+		formEdit.find("#selectGrade").val(gradeId)
 
 		if (passed == "true") {
 			formEdit.find("#selectPassed").prop("checked", true)
@@ -365,17 +384,6 @@ $(document).on("click", ".collection-course-item", function() {
 		}
 	}
 })
-
-function updateSelectPassed() {
-	let form = $("#formEditUserCourse")
-	if (form.find("#selectPassed").prop("checked")) {
-		form.find("#selectPassedTrue").prop("checked", true)
-		form.find("#selectPassedFalse").prop("checked", false)
-	} else {
-		form.find("#selectPassedTrue").prop("checked", false)
-		form.find("#selectPassedFalse").prop("checked", true)
-	}
-}
 
 //
 // DOCUMENT READY
