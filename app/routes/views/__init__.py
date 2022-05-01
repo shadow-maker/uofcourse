@@ -42,3 +42,5 @@ from app.routes.views.main import *
 from app.routes.views.auth import *
 from app.routes.views.user import *
 from app.routes.views.course import *
+from app.routes.views.subject import *
+from app.routes.views.faculty import *

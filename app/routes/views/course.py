@@ -11,52 +11,6 @@ from flask.helpers import url_for
 from sqlalchemy.sql import func
 
 
-@view.route("/f/<fac>")
-def faculty(fac):
-	faculty = Faculty.query.filter_by(subdomain=fac).first()
-	if not faculty:
-		faculty = Faculty.query.get(fac)
-		if faculty:
-			if faculty.subdomain:
-				return redirect(url_for("view.faculty", fac=faculty.subdomain))
-		else:
-			flash(f"Faculty with id {fac} does not exist!", "danger")
-			return redirect(url_for("view.home"))
-	return render_template("faculty.html",
-		title = faculty.subdomain.capitalize() if faculty.subdomain else faculty.name,
-		description = f"Faculty info for {faculty.name}",
-		faculty = faculty,
-		len = {
-			"subjects": len(faculty.subjects),
-			"courses": sum([len(s.courses) for s in faculty.subjects]),
-			"users": len(faculty.users)
-		},
-		subjects = [{
-			"id": s.id,
-			"emoji": s.getEmoji(),
-			"code": s.code,
-			"name": s.name,
-			"url": s.url
-		} for s in faculty.subjects],
-	)
-
-
-@view.route("/s/<subjectCode>")
-def subject(subjectCode):
-	subject = getSubjectByCode(subjectCode)
-	if not subject:
-		flash(f"Subject with code {subjectCode} does not exist!", "danger")
-		return redirect(url_for("view.home"))
-	faculty = subject.faculty
-	return render_template("subject.html",
-		title = subjectCode.upper(),
-		description = f"Subject info for {subject.code} : {subject.name}",
-		subject = subject,
-		faculty = faculty,
-		lenCourses = len(subject.courses)
-	)
-
-
 @view.route("/c/<subjectCode>")
 def courseBrowserSubject(subjectCode):
 	subject = getSubjectByCode(subjectCode)
