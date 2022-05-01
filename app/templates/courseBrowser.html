@@ -1,9 +1,8 @@
 {% extends "layout.html" %}
 
-{% block content %}
-
 {% from "components/pagination.html" import paginationNav, paginationCode with context %}
 
+{% block scripts %}
 <script>
 	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
 	let sortOptions = JSON.parse('{{ sortOptions | tojson | safe }}')
@@ -13,11 +12,12 @@
 		$(element).find(".toggleOff").toggle()
 	}
 </script>
-
 {{ paginationCode() }}
 <script src="/static/scripts/subjectSearch.js"></script>
 <script src="/static/scripts/courseBrowser.js"></script>
+{% endblock %}
 
+{% block content %}
 
 <!--TEMPLATES-->
 <div id="templates" class="d-none">
@@ -240,7 +240,7 @@
 						<!--Subjects-->
 						<fieldset class="form-group">
 							<hr class="mt-1 mb-2">
-							<span class="toggleOn">
+							<span>
 								<small><i class="bi-chevron-down"></i></small>
 							</span>
 							<label for="subjectSearch" class="ms-1 mb-0 form-label text-uppercase">

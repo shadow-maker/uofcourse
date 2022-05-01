@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
 
-{% block content %}
-
+{% block scripts %}
 <script>
 	var subjects = JSON.parse('{{ subjects | tojson | safe }}')
 </script>
-
 <script src="/static/scripts/faculty.js"></script>
+{% endblock %}
+
+{% block content %}
 
 <div id="templates" class="d-none">
 	<div class="subject-item mb-3 card">
