@@ -23,7 +23,7 @@ function getLogs(callback) {
 		data: {
 			sort: ["datetime"],
 			asc: false,
-			limit: 10,
+			limit: 15,
 			page: page.current
 		},
 		traditional: true,
