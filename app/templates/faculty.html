@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block scripts %}
+{% block headscripts %}
 <script>
 	var subjects = JSON.parse('{{ subjects | tojson | safe }}')
 </script>
@@ -42,7 +42,7 @@
 				</div>
 
 				<!--Sorting options-->
-				<div class="col-12 col-sm-7 col-md-6 col-lg-12 col-xl-6 col-xxl-5">
+				<div id="subjectsSort" class="col-12 col-sm-7 col-md-6 col-lg-12 col-xl-6 col-xxl-5">
 					<div class="input-group input-group-sm mt-2 ps-0 ps-lg-3 ps-xl-0">
 						<span class="input-group-text bg-light" title="Sort by">
 							<i class="bi-sort-down fw-bold"></i>

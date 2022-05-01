@@ -1,10 +1,16 @@
 {% extends "layout.html" %}
 
-{% block scripts %}
+{% block headscripts %}
 <script>
 	$(document).ready(function () {
+		// Make all scrollspy nav links not active
 		$("#scrollspy-nav").find(".nav-link").each(function () {
 			$(this).removeClass("active")
+		})
+
+		// Add clipboard icon to endpoint blocks
+		$("#scrollspy-content blockquote").each(function () {
+			$(this).append("<i class='bi-clipboard'></i>")
 		})
 	})
 	
@@ -14,11 +20,6 @@
 			() => {alert("success", "Copied endpoint to clipboard!")},
 			() => {alert("danger", "Failed to copy endpoint to clipboard")}
 		)
-	})
-	
-	// Add clipboard icon to endpoint
-	$("#scrollspy-content blockquote").each(function () {
-		$(this).append("<i class='bi-clipboard'></i>")
 	})
 </script>
 {% endblock %}

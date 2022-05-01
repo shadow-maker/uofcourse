@@ -1,11 +1,10 @@
 {% extends "layout.html" %}
 
-{% block scripts %}
+{% block headscripts %}
 <script>
 	var grades = JSON.parse('{{ grades | tojson | safe }}')
 	var showTransferred = JSON.parse('{{ transferred | tojson | safe }}')
 </script>
-<script src="/static/scripts/planner.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -427,4 +426,8 @@
 
 </style>
 
+{% endblock %}
+
+{% block tailscripts %}
+<script src="/static/scripts/planner.js"></script>
 {% endblock %}

@@ -2,7 +2,7 @@
 
 {% from "components/pagination.html" import paginationNav, paginationCode with context %}
 
-{% block scripts %}
+{% block headscripts %}
 <script>
 	var subjects = JSON.parse('{{ filterData["subjects"] | tojson | safe }}')
 	let sortOptions = JSON.parse('{{ sortOptions | tojson | safe }}')
