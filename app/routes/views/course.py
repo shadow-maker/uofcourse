@@ -88,7 +88,7 @@ def courseBrowser():
 
 	subjects = {
 		s[0] : {"id": s[1], "name": s[2], "sel": s[0] == selSubject}
-	for s in list(db.session.query(Subject).values(Subject.code, Subject.id, Subject.name))}
+	for s in list(Subject.query.with_entities(Subject.code, Subject.id, Subject.name))}
 
 	subjects = {k : subjects[k] for k in sorted(subjects)}
 
