@@ -1,4 +1,17 @@
 {
+	"1.0.1": {
+		"beta": false,
+		"date": "2022-05-03",
+		"changes": [
+			"Added ability to navigate to course page by going to /c/<code>-<number>",
+			"Redirect course and subject pages when the subject code is in lower case",
+			"Small changes to page titles",
+			"Various JavaScript optimizations",
+			"Improved nav bar border",
+			"Small improvements to the account logs view",
+			"Disable Google Analytics for admins"
+		]
+	},
 	"1.0": {
 		"beta": false,
 		"date": "2022-04-29",
