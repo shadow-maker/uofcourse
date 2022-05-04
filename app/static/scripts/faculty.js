@@ -37,7 +37,7 @@ $(document).ready(( ) => {
 	sortSubjects()
 	updateSubjects()
 
-	$("select").change(() => {
+	$("#subjectsSort select").change(() => {
 		sortSubjects()
 		updateSubjects()
 	})

@@ -16,6 +16,7 @@ view = Blueprint("view", __name__, url_prefix="/")
 
 constants = {
 	"SITE_NAME" : SITE_NAME,
+	"SITE_LANG": SITE_LANG,
 	"DEF_DESCRIPTION" : DEF_DESCRIPTION,
 	"CURRENT_VERSION" : CURRENT_VERSION,
 	"CURRENT_VERSION_BETA" : CURRENT_VERSION in change and change[CURRENT_VERSION]["beta"],
@@ -41,3 +42,5 @@ from app.routes.views.main import *
 from app.routes.views.auth import *
 from app.routes.views.user import *
 from app.routes.views.course import *
+from app.routes.views.subject import *
+from app.routes.views.faculty import *

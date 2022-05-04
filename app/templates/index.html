@@ -1,5 +1,21 @@
 {% extends "layout.html" %}
 
+{% block styles %}
+<style>
+	.collection-course-item:hover, #btnAddTerm:hover {
+		background-color: var(--bs-gray-200) !important;
+	}
+	
+	.collection-course-item .open {
+		display: none;
+	}
+	
+	.collection-course-item:hover .open {
+		display: block;
+	}	
+</style>
+{% endblock %}
+
 {% block content %}
 
 <div class="row">
@@ -69,17 +85,23 @@
 
 				<div class="h4 my-1">{{term.name | capitalize}}</div>
 		
-				<div class="fst-italic">
 				{% if term.isCurrent() %}
+					<div class="fst-italic" title="Ends {{term.end}}">
 					{% if (term.end - today).days > 0 %}
 						{{(term.end - today).days}} days remaining
 					{% else %}
 						Last day
 					{% endif %}
+					</div>
 				{% elif term.isNext() %}
-					Begins in {{(term.start - today).days}} days
+					<div class="fst-italic" title="Begins {{term.start}}">
+					{% if (term.start - today).days > 1 %}
+						Begins in {{(term.start - today).days}} days
+					{% else %}
+						Begins tomorrow
+					{% endif %}
+					</div>
 				{% endif %}
-				</div>
 			</div>
 			<div class="card-body px-2 py-2 text-center">
 				{% if current_user.is_authenticated %}
@@ -128,19 +150,5 @@
 		{% endif %}
 	</div>
 </div>
-
-<style>
-	.collection-course-item:hover, #btnAddTerm:hover {
-		background-color: var(--bs-gray-200) !important;
-	}
-	
-	.collection-course-item .open {
-		display: none;
-	}
-	
-	.collection-course-item:hover .open {
-		display: block;
-	}	
-	</style>
 
 {% endblock %}

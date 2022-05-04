@@ -1,5 +1,37 @@
 {% extends "layout.html" %}
 
+{% block styles %}
+<style>
+	#scrollspy-nav .collapsing {
+		transition: 0.2s;
+	}
+</style>
+{% endblock %}
+
+{% block headscripts %}
+<script>
+	$(document).ready(function () {
+		// Make all scrollspy nav links not active
+		$("#scrollspy-nav").find(".nav-link").each(function () {
+			$(this).removeClass("active")
+		})
+
+		// Add clipboard icon to endpoint blocks
+		$("#scrollspy-content blockquote").each(function () {
+			$(this).append("<i class='bi-clipboard'></i>")
+		})
+	})
+	
+	// Copy endpoint to clipboard when clicked
+	$(document).on("click", "#scrollspy-content blockquote", function () {
+		navigator.clipboard.writeText($(this).find("code").text()).then(
+			() => {alert("success", "Copied endpoint to clipboard!")},
+			() => {alert("danger", "Failed to copy endpoint to clipboard")}
+		)
+	})
+</script>
+{% endblock %}
+
 {% block content %}
 
 <div class="row" style="position: relative;">
@@ -115,33 +147,5 @@
 		</div>
 	</div>
 </div>
-
-<style>
-.collapsing {
-	transition: 0.2s;
-}
-</style>
-
-<script>
-$(document).ready(function () {
-	$("#scrollspy-nav").find(".nav-link").each(function () {
-		$(this).removeClass("active")
-	})
-})
-
-// Copy endpoint to clipboard when clicked
-$(document).on("click", "#scrollspy-content blockquote", function () {
-	navigator.clipboard.writeText($(this).find("code").text()).then(
-		() => {alert("success", "Copied endpoint to clipboard!")},
-		() => {alert("danger", "Failed to copy endpoint to clipboard")}
-	)
-})
-
-// Add clipboard icon to endpoint
-$("#scrollspy-content blockquote").each(function () {
-	$(this).append("<i class='bi-clipboard'></i>")
-})
-
-</script>
 
 {% endblock %}

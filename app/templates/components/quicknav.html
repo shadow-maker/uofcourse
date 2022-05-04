@@ -1,16 +1,17 @@
 <div id="quicknav" class="fixed-bottom d-flex justify-content-end p-3 p-md-4 p-xl-5" style="pointer-events: none; z-index: 1020;">
 	<nav class="d-flex flex-column pb-2" style="pointer-events: visible">
-		<a class="btn btn-primary m-1 rounded-circle shadow text-center lh-1 d-flex justify-content-center align-items-center" data-bs-toggle="offcanvas" data-bs-target="#tagsDrawer" aria-controls="tagsDrawer" title="Tags">
-			<i class="bi-tags lh-1"></i>
+		{% macro quickNavBtn(toggle, target, title, icon) %}
+		<a class="btn btn-primary m-1 rounded-circle shadow text-center lh-1 d-flex justify-content-center align-items-center" data-bs-toggle="{{toggle}}" data-bs-target="#{{target}}" title="{{title}}">
+			<i class="bi-{{icon}} lh-1"></i>
 		</a>
-		<a class="btn btn-primary m-1 rounded-circle shadow text-center lh-1 d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#modalGoToCourse" onclick="loadTagsDrawer()" title="Go-To course">
-			<i class="bi-search lh-1"></i>
-		</a>
+		{% endmacro %}
+
+		{{quickNavBtn("offcanvas", "tagsDrawer", "Tags", "tags")}}
+		{{quickNavBtn("modal", "modalGoToCourse", "Go-To course", "search")}}
 	</nav>
 </div>
 
 <style>
-
 #quicknav a {
 	width: 3.8em;
 	height: 3.8em;
@@ -38,5 +39,17 @@
 	transform: scale(0.9, 0.9);
 	box-shadow: 0 0.2rem 0.3rem rgba(0,0,0,.15) !important;
 }
-
 </style>
+
+<script>
+// On any key pressed (keyup)
+$(document).on("keyup", (e) => {
+	// If not in a form
+	if (!$("input").is(":focus") && !$("textarea").is(":focus")) {
+		if (e.key == "g")
+			$("#modalGoToCourse").modal("show")
+		else if (e.key == "t")
+			$("#tagsDrawer").offcanvas("show")
+	}
+})
+</script>

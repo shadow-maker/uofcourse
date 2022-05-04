@@ -12,12 +12,7 @@ a.text-body:hover {
 
 .requiered-form-label::after {
 	content: " *";
-	color: red;
-}
-
-.requiered-form-label:hover::after {
-	content: " * Required";
-	color: red;
+	color: var(--bs-red);
 }
 
 .sticky-offset {

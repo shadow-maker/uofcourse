@@ -1,4 +1,3 @@
-from app import db
 from app.models import Faculty, Subject, Course
 from app.models.utils import getSubjectByCode
 from app.auth import current_user
@@ -11,63 +10,14 @@ from flask.helpers import url_for
 from sqlalchemy.sql import func
 
 
-@view.route("/f/<fac>")
-def faculty(fac):
-	faculty = Faculty.query.filter_by(subdomain=fac).first()
-	if not faculty:
-		faculty = Faculty.query.get(fac)
-		if faculty:
-			if faculty.subdomain:
-				return redirect(url_for("view.faculty", fac=faculty.subdomain))
-		else:
-			flash(f"Faculty with id {fac} does not exist!", "danger")
-			return redirect(url_for("view.home"))
-	return render_template("faculty.html",
-		title = "Faculty",
-		description = f"Faculty info for {faculty.name}",
-		faculty = faculty,
-		len = {
-			"subjects": len(faculty.subjects),
-			"courses": sum([len(s.courses) for s in faculty.subjects]),
-			"users": len(faculty.users)
-		},
-		subjects = [{
-			"id": s.id,
-			"emoji": s.getEmoji(),
-			"code": s.code,
-			"name": s.name,
-			"url": s.url
-		} for s in faculty.subjects],
-	)
-
-
-@view.route("/s/<subjectCode>")
-def subject(subjectCode):
-	subject = getSubjectByCode(subjectCode)
-	if not subject:
-		flash(f"Subject with code {subjectCode} does not exist!", "danger")
-		return redirect(url_for("view.home"))
-	faculty = subject.faculty
-	return render_template("subject.html",
-		title = subjectCode.upper(),
-		description = f"Subject info for {subject.code} : {subject.name}",
-		subject = subject,
-		faculty = faculty,
-		lenCourses = len(subject.courses)
-	)
-
-
-@view.route("/c/<subjectCode>")
-def courseBrowserSubject(subjectCode):
-	subject = getSubjectByCode(subjectCode)
-	if not subject:
-		flash(f"Subject with code {subjectCode} does not exist!", "danger")
-		return redirect(url_for("view.home"))
-	return redirect(url_for("view.courseBrowser", subject=subjectCode))
-
-
+@view.route("/c/<subjectCode>-<courseNumber>")
 @view.route("/c/<subjectCode>/<courseNumber>")
 def course(subjectCode, courseNumber):
+	if not subjectCode.isupper():
+		return redirect(url_for("view.course",
+			subjectCode=subjectCode.upper(),
+			courseNumber=courseNumber
+		))
 	subject = getSubjectByCode(subjectCode)
 	if not subject:
 		flash(f"Subject with code {subjectCode} does not exist!", "danger")
@@ -80,7 +30,7 @@ def course(subjectCode, courseNumber):
 	userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else []
 	collections = current_user.collections if current_user.is_authenticated else []
 	return render_template("course.html",
-		title = f"{course.code}",
+		title = f"{course.subject_code} {course.number}",
 		description = f"Course info for {course.code} : {course.name}",
 		course = course,
 		subject = subject,
@@ -103,9 +53,7 @@ def courseById(courseId):
 
 @view.route("/c/random")
 def courseRandom():
-	course = None
-	while not course:
-		course = Course.query.order_by(func.random()).first()
+	course = Course.query.order_by(func.random()).first()
 	return redirect(url_for("view.courseById", courseId=course.id))
 
 
@@ -134,7 +82,7 @@ def courseBrowser():
 
 	subjects = {
 		s[0] : {"id": s[1], "name": s[2], "sel": s[0] == selSubject}
-	for s in list(db.session.query(Subject).values(Subject.code, Subject.id, Subject.name))}
+	for s in list(Subject.query.with_entities(Subject.code, Subject.id, Subject.name))}
 
 	subjects = {k : subjects[k] for k in sorted(subjects)}
 
@@ -154,3 +102,12 @@ def courseBrowser():
 			"subjects": subjects
 		}
 	)
+
+
+@view.route("/c/<subjectCode>")
+def courseBrowserSubject(subjectCode):
+	subject = getSubjectByCode(subjectCode)
+	if not subject:
+		flash(f"Subject with code {subjectCode} does not exist!", "danger")
+		return redirect(url_for("view.home"))
+	return redirect(url_for("view.courseBrowser", subject=subjectCode))

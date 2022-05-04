@@ -1,11 +1,37 @@
 {% extends "layout.html" %}
 
-{% block content %}
+{% block styles %}
+<style>
+	.collection-course-item:hover, .tag-course-item:hover, #btnAddTerm:hover {
+		background-color: var(--bs-gray-200) !important;
+	}
+	
+	.collection-course-item .edit {
+		display: none;
+	}
+	
+	.collection-course-item:hover .edit {
+		display: block;
+	}
+	
+	.overall-collection-item .disable {
+		display: none;
+	}
+	
+	.overall-collection-item:hover .disable {
+		display: block;
+	}
+</style>
+{% endblock %}
 
+{% block headscripts %}
 <script>
 	var grades = JSON.parse('{{ grades | tojson | safe }}')
 	var showTransferred = JSON.parse('{{ transferred | tojson | safe }}')
 </script>
+{% endblock %}
+
+{% block content %}
 
 <!--Courses per term-->
 <div class="container-fluid mb-5">
@@ -290,7 +316,7 @@
 </form>
 
 <!--Form add UserCourse-->
-<form id="formAddCourse" name="formAddCourse" action="{{url_for('view.addUserCourse')}}" method="POST">
+<form id="formAddUserCourse" name="formAddUserCourse" action="{{url_for('view.addUserCourse')}}" method="POST">
 	<div class="modal fade" id="modalAddCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -401,29 +427,8 @@
 	</div>
 </form>
 
-<style>
-.collection-course-item:hover, .tag-course-item:hover, #btnAddTerm:hover {
-	background-color: var(--bs-gray-200) !important;
-}
+{% endblock %}
 
-.collection-course-item .edit {
-	display: none;
-}
-
-.collection-course-item:hover .edit {
-	display: block;
-}
-
-.overall-collection-item .disable {
-	display: none;
-}
-
-.overall-collection-item:hover .disable {
-	display: block;
-}
-
-</style>
-
+{% block tailscripts %}
 <script src="/static/scripts/planner.js"></script>
-
 {% endblock %}

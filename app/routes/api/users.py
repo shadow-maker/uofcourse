@@ -118,7 +118,10 @@ def putSessionWelcome():
 		else:
 			session["welcome"] = False
 	else:
-		session["welcome"] = bool(json.loads(data["set"]))
+		try:
+			session["welcome"] = bool(json.loads(data["set"]))
+		except:
+			return {"error": "invalid 'set' value in data"}, 400
 	return {"success": True}, 200
 
 @user.route("/session/transferred", methods=["PUT"])
@@ -131,7 +134,10 @@ def putSessionTransferred():
 		else:
 			session["transferred"] = False
 	else:
-		session["transferred"] = bool(json.loads(data["set"]))
+		try:
+			session["transferred"] = bool(json.loads(data["set"]))
+		except:
+			return {"error": "invalid 'set' value in data"}, 400
 	return {"success": True}, 200
 
 # User Course

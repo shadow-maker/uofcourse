@@ -1,15 +1,15 @@
 {% extends "layout.html" %}
 
-{% block content %}
-
 {% from "components/disqus.html" import disqusThread with context %}
 
+{% block headscripts %}
 <script>
 	var course_id = parseInt("{{course.id}}")
 </script>
-
-<script src="/static/scripts/tags.js"></script>
 <script src="/static/scripts/course.js"></script>
+{% endblock %}
+
+{% block content %}
 
 <div class="mb-3">
 	<span class="h3 font-monospace align-top">c/</span><span class="h3 font-monospace my-0 mx-1"><span class="border border-2 border-secondary bg-light rounded p-1" title="Subject code">{{subject.code}}</span>-<span

@@ -67,7 +67,7 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 		if not subjects: # subjects not passed as function argument
 			subjects = list(dict.fromkeys(request.args.getlist("subject", type=str)))
 		if not subjects: # subjects not passed as url argument
-			subjects = [s[0] for s in list(db.session.query(Subject).with_entities(Subject.id))]
+			subjects = [s[0] for s in list(Subject.query.with_entities(Subject.id))]
 		else:
 			for s in subjects[:]: # check if subjects are valid
 				subject = Subject.query.get(s) if s.isdigit() else utils.getSubjectByCode(s)

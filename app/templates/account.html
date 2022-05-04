@@ -1,11 +1,13 @@
 {% extends "layout.html" %}
 
-{% block content %}
-
 {% from "components/pagination.html" import paginationNav, paginationCode with context %}
 
+{% block headscripts %}
 {{ paginationCode() }}
 <script src="static/scripts/userlogs.js"></script>
+{% endblock %}
+
+{% block content %}
 
 <!--TEMPLATES-->
 <div id="templates" class="d-none">
@@ -13,7 +15,6 @@
 		<tr class="log-item">
 			<th class="id" scope="row"></th>
 			<td class="datetime"></td>
-			<td class="event_type"></td>
 			<td class="event_name"></td>
 			<td class="ip-container">
 				<a href="" class="ip-link text-body text-decoration-none" title="View IP location" db-id="">
@@ -55,8 +56,10 @@
 		</div>
 		<div title="User faculty">
 			<i class="bi-building"></i>
-			<a href="{{user.faculty.url}}" class="text-body">{{user.faculty.name}}</a>
-			<i class="fs-6 bi-box-arrow-up-right"></i>
+			<a href="{{user.faculty.url}}" class="text-body text-decoration-none">
+				<span class="text-decoration-underline">{{user.faculty.name}}</span>
+				<i class="fs-6 bi-box-arrow-up-right"></i>
+			</a>
 		</div>
 	</div>
 
@@ -78,7 +81,7 @@
 <!--Logs-->
 <div id="logs">
 	<hr>
-	<h3>User Logs</h3>
+	<h3>User Auth Logs</h3>
 
 	<!--Loading spinner-->
 	<div class="loading text-center py-4">
@@ -93,7 +96,6 @@
 			<tr>
 				<th scope="col">ID</th>
 				<th scope="col">Date-Time (UTC)</th>
-				<th scope="col">Type</th>
 				<th scope="col">Event</th>
 				<th scope="col">IP</th>
 			</tr>
@@ -113,7 +115,7 @@
 				<h5 class="modal-title">IP Approximate Location</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
-			<div class="modal-body">
+			<div class="modal-body px-4 px-sm-5">
 				<div class="row mb-3">
 					<div class="col-5 col-sm-4 fs-5 d-flex align-items-center">
 						IP Address
@@ -181,7 +183,7 @@
 					</div>
 				</div>
 
-				<div class="text-muted mt-3">
+				<div class="text-muted mt-3 px-1">
 					<small>
 						<i class="bi-info-circle-fill"></i>
 						IP address location provided by <a href="https://ip-api.com" target="_blank" rel="noopener noreferrer">ip-api.com</a>
@@ -244,13 +246,16 @@
 			</div>
 		</div>
 	</div>
-	{% if formPassw.errors %}
-	<script>
-		$(document).ready(() => {
-			$("#modalChangePassword").modal("show")
-		})
-	</script>
-	{% endif %}
 </form>
 
+{% endblock %}
+
+{% block tailscripts %}
+{% if formPassw.errors %}
+<script>
+	$(document).ready(() => {
+		$("#modalChangePassword").modal("show")
+	})
+</script>
+{% endif %}
 {% endblock %}

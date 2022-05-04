@@ -1,5 +1,13 @@
 {% extends "layout.html" %}
 
+{% block headscripts %}
+<script>
+	$(document).ready(() => {
+		tagsInit()
+	})
+</script>
+{% endblock %}
+
 {% block content %}
 
 <div class="d-flex justify-content-between">
@@ -45,11 +53,5 @@
 	</div>
 	{% endfor %}
 </div>
-
-<script>
-$(document).ready(() => {
-	tagsInit()
-})
-</script>
 
 {% endblock %}
