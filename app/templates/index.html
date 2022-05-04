@@ -85,7 +85,6 @@
 
 				<div class="h4 my-1">{{term.name | capitalize}}</div>
 		
-				
 				{% if term.isCurrent() %}
 					<div class="fst-italic" title="Ends {{term.end}}">
 					{% if (term.end - today).days > 0 %}
