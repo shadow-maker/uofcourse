@@ -13,6 +13,11 @@ from sqlalchemy.sql import func
 @view.route("/c/<subjectCode>-<courseNumber>")
 @view.route("/c/<subjectCode>/<courseNumber>")
 def course(subjectCode, courseNumber):
+	if not subjectCode.isupper():
+		return redirect(url_for("view.course",
+			subjectCode=subjectCode.upper(),
+			courseNumber=courseNumber
+		))
 	subject = getSubjectByCode(subjectCode)
 	if not subject:
 		flash(f"Subject with code {subjectCode} does not exist!", "danger")

@@ -6,6 +6,8 @@ from flask.helpers import url_for
 
 @view.route("/s/<subjectCode>")
 def subject(subjectCode):
+	if not subjectCode.isupper():
+		return redirect(url_for("view.subject",	subjectCode=subjectCode.upper()))
 	subject = getSubjectByCode(subjectCode)
 	if not subject:
 		flash(f"Subject with code {subjectCode} does not exist!", "danger")
