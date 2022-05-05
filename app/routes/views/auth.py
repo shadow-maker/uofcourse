@@ -1,4 +1,4 @@
-from app import db, loginManager
+from app import db
 from app.models import UserLogEvent, User
 from app.auth import login_user, logout_user, current_user
 from app.forms import formLogin, formSignup
@@ -48,7 +48,12 @@ def login():
 		return redirect(url_for("view.home"))
 	form = formLogin()
 	if form.validate_on_submit():
-		user = User.query.filter_by(username=form.uname.data).first()
+		if form.useuname.data:
+			user = User.query.filter_by(username=form.uname.data).first()
+			using = "username"
+		else:
+			user = User.query.filter_by(email=form.email.data).first()
+			using = "email"
 		if user:
 			if user.checkPassw(form.passw.data):
 				login_user(user, remember=form.remember.data)
@@ -60,7 +65,7 @@ def login():
 			else:
 				flash(f"Incorrect password!", "danger")
 		else:
-			flash(f"User with Username {form.uname.data} doesn't exist. Please sign up for an account.", "danger")
+			flash(f"User with {using} {form.uname.data} doesn't exist. Please sign up for an account.", "danger")
 	return render_template("login.html",
 		title="Log In",
 		header="Log In",
