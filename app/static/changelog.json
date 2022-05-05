@@ -1,4 +1,16 @@
 {
+	"1.0.2": {
+		"beta": false,
+		"date": "2022-05-05",
+		"changes": [
+			"Better tag color options that match Bootstrap 5's colors",
+			"Enforce lowercase letters in the username when creating new accounts",
+			"Added support for login with email",
+			"Better static file route handling",
+			"Support for getting API docs in Markdown format in /api.md",
+			"Support for ads.txt file for better Disqus configuration"
+		]
+	},
 	"1.0.1": {
 		"beta": false,
 		"date": "2022-05-03",

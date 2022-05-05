@@ -5,7 +5,7 @@
 SITE_NAME = "UofCourse"
 SITE_LANG = "en"
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
-CURRENT_VERSION = "1.0.1"
+CURRENT_VERSION = "1.0.2"
 
 TIMEZONE = "Canada/Mountain"
 
