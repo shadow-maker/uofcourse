@@ -47,7 +47,7 @@ function updateTags() {
 	for (let tag of userTags) {
 		dropdown.append(`
 			<li class="tags-dropdown-item" db-id="` + tag.id +`">
-				<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + tag.id + `)" style="cursor: pointer;">
+				<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + tag.id + `)">
 					<i class="bi-check"></i>
 					<small>` + tag.name +`</small>
 				</a>

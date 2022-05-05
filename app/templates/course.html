@@ -187,7 +187,7 @@
 							<ul class="collections-dropdown dropdown-menu fs-6 py-1">
 								{% for collection in collections %}
 								<li>
-									<a class="dropdown-item px-2 py-1" style="cursor: pointer;" {% if not hasCourse(collection) %}onclick="addCollection('{{collection.id}}')"{% endif %}>
+									<a class="dropdown-item px-2 py-1" {% if not hasCourse(collection) %}onclick="addCollection('{{collection.id}}')"{% endif %}>
 										<i class="bi-check {% if not hasCourse(collection) %}invisible{% endif %}"></i>
 										{% if collection.transfer %}
 										<small>Transferred</small>

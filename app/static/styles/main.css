@@ -2,6 +2,10 @@ html {
 	scroll-padding-top: 70px;
 }
 
+a {
+	cursor: pointer;
+}
+
 a.text-body:hover {
 	color: var(--bs-gray-600) !important;
 }
