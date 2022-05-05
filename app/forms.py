@@ -35,6 +35,10 @@ def unameValidation(form, field):
 	if len(str(field.data)) > 16:
 		raise ValidationError("Username must be at most 16 characters long")
 
+def unameCreation(form, field):
+	if not field.data.islower():
+		raise ValidationError("Username cannot contain uppercase letters")
+
 def unameExists(form, field):
 	if not unameCheck(field.data):
 		raise ValidationError("Username does not exist")
@@ -69,7 +73,7 @@ class formLogin(FlaskForm):
 
 
 class formSignup(FlaskForm):
-	uname = StringField("Username", validators=[DataRequired(), unameValidation, unameNew])
+	uname = StringField("Username", validators=[DataRequired(), unameValidation, unameCreation, unameNew])
 	name = StringField("Name", validators=[nameValidation])
 	email = StringField("Email", validators=[DataRequired(), Email(), emailNew])
 	passw = PasswordField("Password", validators=[DataRequired(), passwValidation])
