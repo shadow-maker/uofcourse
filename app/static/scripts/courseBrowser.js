@@ -33,7 +33,7 @@ function checkAll(container) {
 // REQUEST FUNCS
 //
 
-function requestResults(callback) {
+function requestResults(callback, ignorePrev=false) {
 	let name = ""
 	let number = []
 
@@ -94,7 +94,7 @@ function requestResults(callback) {
 	if (countgpa != null)
 		data.countgpa = countgpa
 
-	if (JSON.stringify(data) == JSON.stringify(prevData))
+	if (!ignorePrev && JSON.stringify(data) == JSON.stringify(prevData))
 		return
 
 	prevData = data
@@ -344,7 +344,9 @@ $(document).on("click", ".tags-dropdown-btn", function(e) {
 $(document).ready(() => {
 	if (isAuth) {
 		tagsInit(() => {
-			page.callback()
+			requestResults((data) => {
+				updateResults(data)
+			}, true)
 		})
 	} else {
 		page.callback()
