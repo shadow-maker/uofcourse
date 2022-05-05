@@ -21,6 +21,11 @@ def favicon():
 	return send_from_directory(app.static_folder, "favicon.ico")
 
 
+@file.route("/ads.txt")
+def ads():
+	return send_from_directory(app.static_folder, "ads.txt")
+
+
 @file.route("/api.md")
 def api():
 	# Create jinja2 template from api docs markdown file
