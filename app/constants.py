@@ -5,7 +5,7 @@
 SITE_NAME = "UofCourse"
 SITE_LANG = "en"
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
-CURRENT_VERSION = "1.0.1"
+CURRENT_VERSION = "1.0.2"
 
 TIMEZONE = "Canada/Mountain"
 
@@ -43,27 +43,59 @@ ERROR_MESSAGES = {
 	500: "Server error"
 }
 
-COLORS_DARK = {
-	"red": 0xff0000,
-	"orange": 0xffa500,
-	"yellow": 0xffff00,
-	"green": 0x00ff00,
-	"cyan": 0x00ffff,
-	"blue": 0x0000ff,
-	"purple": 0x800080,
-	"pink": 0xffc0cb
+# 400 level colors
+COLORS_LIGHT = {
+	"blue": 0x3d8bfd,
+	"indigo": 0x8540f5,
+	"purple": 0x8c68cd,
+	"pink": 0xde5c9d,
+	"red": 0xe35d6a,
+	"orange": 0xfd9843,
+	"yellow": 0xffcd39,
+	"green": 0x479f76,
+	"teal": 0x4dd4ac,
+	"cyan": 0x3dd5f3
 }
 
-COLORS_LIGHT = {
-	"red": 0xff0000,
-	"orange": 0xffa500,
-	"yellow": 0xffff00,
-	"green": 0x00ff00,
-	"cyan": 0x00ffff,
-	"blue": 0x0000ff,
-	"purple": 0x800080,
-	"pink": 0xffc0cb
+# 500 level colors
+COLORS = {
+	"blue": 0x0d6efd,
+	"indigo": 0x6610f2,
+	"purple": 0x6f42c1,
+	"pink": 0xd63384,
+	"red": 0xdc3545,
+	"orange": 0xfd7e14,
+	"yellow": 0xffc107,
+	"green": 0x198754,
+	"teal": 0x20c997,
+	"cyan": 0x0dcaf0
 }
+
+# 600 level colors
+COLORS_DARK = {
+	"blue": 0x0a58ca,
+	"indigo": 0x520dc2,
+	"purple": 0x59359a,
+	"pink": 0xab296a,
+	"red": 0xb02a37,
+	"orange": 0xca6510,
+	"yellow": 0xcc9a06,
+	"green": 0x146c43,
+	"teal": 0x1aa179,
+	"cyan": 0x0aa2c0
+}
+
+# COLORS_LIGHT = {
+# 	"red": 0xff0000,
+# 	"orange": 0xffa500,
+# 	"yellow": 0xffff00,
+# 	"green": 0x479f76,
+# 	"cyan": 0x00ffff,
+# 	"blue": 0x0000ff,
+# 	"purple": 0x800080,
+# 	"pink": 0xffc0cb
+# }
+
 
 STARRED_COLOR = COLORS_DARK["yellow"]
 STARRED_EMOJI = 11088

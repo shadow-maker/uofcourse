@@ -20,8 +20,10 @@
 
 <div class="row">
 	<div class="col-12 col-md-7 col-lg-8 col-xl-9 container ps-lg-4 pe-lg-5">
+		<!--Welcome message-->
 		{% include "components/welcome.html" %}
 		
+		<!--Website description-->
 		<div class="fs-5">
 			A website created to aid UofC students in their program course planning.
 
@@ -42,6 +44,7 @@
 			<br><br>
 		</div>
 		
+		<!--Quick links-->
 		<div class="d-none d-lg-block">
 			<h5>Quick links:</h5>
 
@@ -75,6 +78,7 @@
 	</div>
 
 	<div class="col-12 col-md-5 col-lg-4 col-xl-3 m-0 px-md-0 container">
+		<!--Current or next term-->
 		{% if term %}
 		<div class="card">
 			<div class="card-header text-center">

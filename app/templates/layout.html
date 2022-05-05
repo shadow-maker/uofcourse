@@ -54,7 +54,7 @@
 	<!--Global vars-->
 	<script>
 		var isAuth = JSON.parse("{{ current_user.is_authenticated | tojson | safe }}")
-		const COLORS = JSON.parse('{{ COLORS | tojson | safe }}')
+		const COLORS = JSON.parse('{{ COLORS_LIGHT | tojson | safe }}')
 		const DEFAULT_EMOJI = parseInt('{{ DEFAULT_EMOJI }}')
 	</script>
 

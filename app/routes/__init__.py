@@ -5,6 +5,7 @@ from app import app
 from app.routes.api import api
 from app.routes.views import view, constants
 from app.routes.admin import admin
+from app.routes.files import file
 from app.constants import ERROR_MESSAGES
 
 from flask import request, render_template
@@ -28,3 +29,4 @@ def errorHandler(error):
 
 app.register_blueprint(api)
 app.register_blueprint(view)
+app.register_blueprint(file)

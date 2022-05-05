@@ -30,6 +30,8 @@ def unameValidation(form, field):
 		raise ValidationError("Username cannot contain spaces")
 	if SPECIAL_CHARS.search(field.data):
 		raise ValidationError("Username cannot contain special characters")
+	if not field.data.islower():
+		raise ValidationError("Username cannot contain uppercase letters")
 	if len(str(field.data)) < 4:
 		raise ValidationError("Username must be at least 4 characters long")
 	if len(str(field.data)) > 16:
@@ -62,7 +64,9 @@ def passwValidation(form, field):
 #
 
 class formLogin(FlaskForm):
-	uname = StringField("Username", validators=[DataRequired(), unameValidation, unameExists])
+	useuname = BooleanField()
+	uname = StringField("Username", validators=[DataRequired()])
+	email = StringField("Email", validators=[DataRequired(), Email()])
 	passw = PasswordField("Password", validators=[DataRequired()])
 	remember = BooleanField("Remember me")
 	submit = SubmitField("Log In")

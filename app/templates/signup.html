@@ -9,7 +9,7 @@
 		<fieldset class="form-group">
 			<!--Username-->
 			<div class="form-group mb-2 mb-lg-3">
-				{{form.uname.label(class="form-control-label requiered-form-label")}}
+				{{form.uname.label(class="form-control-label fs-5 requiered-form-label")}}
 
 				{% if form.uname.errors %}
 					{{form.uname(class="form-control is-invalid")}}
@@ -25,7 +25,7 @@
 
 			<!--Name-->
 			<div class="form-group mb-2 mb-lg-3">
-				{{form.name.label(class="form-control-label")}}
+				{{form.name.label(class="form-control-label fs-5")}}
 
 				{% if form.name.errors %}
 					{{form.name(class="form-control is-invalid")}}
@@ -41,7 +41,7 @@
 
 			<!--Email-->
 			<div class="form-group mb-2 mb-lg-3">
-				{{form.email.label(class="form-control-label requiered-form-label")}}
+				{{form.email.label(class="form-control-label fs-5 requiered-form-label")}}
 
 				{% if form.email.errors %}
 					{{form.email(class="form-control is-invalid")}}
@@ -57,7 +57,7 @@
 
 			<!--Password-->
 			<div class="form-group mb-2 mb-lg-3">
-				{{form.passw.label(class="form-control-label requiered-form-label")}}
+				{{form.passw.label(class="form-control-label fs-5 requiered-form-label")}}
 
 				{% if form.passw.errors %}
 					{{form.passw(class="form-control is-invalid")}}
@@ -69,12 +69,12 @@
 				{% else %}
 					{{form.passw(class="form-control")}}
 				{% endif %}
-				<div class="form-text ms-1">Password saved securely in our servers using bcrypt hashing.</div>
+				<div class="form-text ms-1">Password saved securely in our servers using bcrypt hashing</div>
 			</div>
 
 			<!--Faculty-->
 			<div class="form-group mb-2 mb-lg-3">
-				{{form.fac.label(class="form-control-label requiered-form-label")}}
+				{{form.fac.label(class="form-control-label fs-5 requiered-form-label")}}
 
 				{% if form.fac.errors %}
 					{{form.fac(class="form-control is-invalid")}}

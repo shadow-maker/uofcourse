@@ -1,15 +1,44 @@
 {% extends "layout.html" %}
 
+{% block headscripts %}
+<script>
+	function loginWithUsername() {
+		$("#loginForm #uname-field input").val("")
+		$("#loginForm #uname-field").removeClass("d-none")
+		$("#loginForm #email-field input").val("xxxx@xxxx.xxx")
+		$("#loginForm #email-field").addClass("d-none")
+
+		$("#useuname").prop("checked", true)
+		$("#useuname").val("true")
+	}
+
+	function loginWithEmail() {
+		$("#loginForm #uname-field input").val("xxxx")
+		$("#loginForm #uname-field").addClass("d-none")
+		$("#loginForm #email-field input").val("")
+		$("#loginForm #email-field").removeClass("d-none")
+
+		$("#useuname").prop("checked", false)
+		$("#useuname").val("false")
+	}
+</script>
+{% endblock %}
+
 {% block content %}
 
 <div class="row d-flex justify-content-center">
-	<form method="POST" class="col-sm-10 col-md-6 col-lg-4">
+	<form id="loginForm" method="POST" class="col-sm-10 col-md-6 col-lg-4">
 		{{form.hidden_tag()}}
 
 		<fieldset class="form-group">
+			{{form.useuname(class="d-none")}}
+	
 			<!--Username-->
-			<div class="form-group mb-2">
-				{{form.uname.label(class="form-control-label")}}
+			<div id="uname-field" class="form-group mb-2">
+				<div class="d-flex justify-content-between">
+					{{form.uname.label(class="form-control-label fs-5")}}
+					<a onclick="loginWithEmail()" class="text-decoration-underline">Login with email</a>
+				</div>
 
 				{% if form.uname.errors %}
 					{{form.uname(class="form-control is-invalid")}}
@@ -23,9 +52,28 @@
 				{% endif %}
 			</div>
 
+			<!--Email-->
+			<div id="email-field" class="form-group mb-2 d-none">
+				<div class="d-flex justify-content-between">
+					{{form.email.label(class="form-control-label fs-5")}}
+					<a onclick="loginWithUsername()" class="text-decoration-underline">Login with username</a>
+				</div>
+
+				{% if form.email.errors %}
+					{{form.email(class="form-control is-invalid")}}
+					<div class="invalid-feedback">
+						{% for error in form.email.errors %}
+							<span>{{error}}</span><br>
+						{% endfor %}
+					</div>
+				{% else %}
+					{{form.email(class="form-control")}}
+				{% endif %}
+			</div>
+
 			<!--Password-->
 			<div class="form-group mb-2">
-				{{form.passw.label(class="form-control-label")}}
+				{{form.passw.label(class="form-control-label fs-5")}}
 
 				{% if form.passw.errors %}
 					{{form.passw(class="form-control is-invalid")}}
@@ -41,8 +89,8 @@
 
 			<!--Remember me-->
 			<div class="form-checked">
-				{{form.remember(class="form-checked-input")}}
-				{{form.remember.label(class="form-checked-label")}}
+				{{form.remember(class="form-check-input")}}
+				{{form.remember.label(class="form-check-label")}}
 			</div>
 		</fieldset>
 		<br>
@@ -52,4 +100,16 @@
 	</form>
 </div>
 
+{% endblock %}
+
+{% block tailscripts %}
+{% if form.email.errors %}
+<script>
+	$(document).ready(loginWithEmail)
+</script>
+{% else %}
+<script>
+	$(document).ready(loginWithUsername)
+</script>
+{% endif %}
 {% endblock %}

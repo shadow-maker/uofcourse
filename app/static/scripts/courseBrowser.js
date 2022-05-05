@@ -33,7 +33,7 @@ function checkAll(container) {
 // REQUEST FUNCS
 //
 
-function requestResults(callback) {
+function requestResults(callback, ignorePrev=false) {
 	let name = ""
 	let number = []
 
@@ -94,7 +94,7 @@ function requestResults(callback) {
 	if (countgpa != null)
 		data.countgpa = countgpa
 
-	if (JSON.stringify(data) == JSON.stringify(prevData))
+	if (!ignorePrev && JSON.stringify(data) == JSON.stringify(prevData))
 		return
 
 	prevData = data
@@ -286,7 +286,7 @@ function updateResults(data) {
 			for (let tag of userTags) {
 				courseItem.find(".tags-dropdown").append(`
 					<li class="tags-dropdown-item" db-id="` + tag.id +`">
-						<a class="dropdown-item px-2 py-1" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id + `)" style="cursor: pointer;">
+						<a class="dropdown-item px-2 py-1" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id + `)">
 							<i class="bi-check ` + (course.tags.includes(tag.id) ? `` : `invisible`) + `"></i>
 							<small>` + tag.name +`</small>
 						</a>
@@ -344,7 +344,9 @@ $(document).on("click", ".tags-dropdown-btn", function(e) {
 $(document).ready(() => {
 	if (isAuth) {
 		tagsInit(() => {
-			page.callback()
+			requestResults((data) => {
+				updateResults(data)
+			}, true)
 		})
 	} else {
 		page.callback()

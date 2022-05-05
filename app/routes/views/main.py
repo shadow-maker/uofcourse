@@ -7,16 +7,11 @@ from app.models import utils
 from app.constants import MESSAGES_TIMEOUT
 from app.localdt import utc, local
 
-from flask import render_template, send_from_directory, flash, redirect, request, session
+from flask import render_template, flash, redirect, request, session
 from flask.helpers import url_for
 
 from markdown import markdown
 import os
-
-
-@app.route("/favicon.ico")
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, "static"), "favicon.ico")
 
 
 @view.route("/home")
@@ -65,7 +60,7 @@ def api():
 	parts = html.partition("h2")
 	html = parts[0] + parts[1] + parts[2].replace("h2", "h2 class='mt-5'")
 	html = html.replace("<h3", "<h3 class='mt-4'")
-	html = html.replace("h4", "h4 class='mt-3'")
+	html = html.replace("<h4", "<h4 class='mt-3'")
 	html = html.replace("<table", "<table class='table table-sm'")
 	html = html.replace("<blockquote", "<blockquote title='Copy endpoint' class='alert alert-secondary p-2 d-flex justify-content-between fs-5'")
 
