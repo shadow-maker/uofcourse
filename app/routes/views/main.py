@@ -7,16 +7,11 @@ from app.models import utils
 from app.constants import MESSAGES_TIMEOUT
 from app.localdt import utc, local
 
-from flask import render_template, send_from_directory, flash, redirect, request, session
+from flask import render_template, flash, redirect, request, session
 from flask.helpers import url_for
 
 from markdown import markdown
 import os
-
-
-@app.route("/favicon.ico")
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, "static"), "favicon.ico")
 
 
 @view.route("/home")
