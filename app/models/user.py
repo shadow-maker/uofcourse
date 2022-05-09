@@ -7,6 +7,7 @@ from app.models.course_collection import CourseCollection
 from app.localdt import utc
 
 from flask_login import UserMixin
+from sqlalchemy import not_
 
 from enum import Enum
 
@@ -81,7 +82,7 @@ class User(db.Model, UserMixin):
 	
 	@property
 	def unread_announcements(self):
-		return Announcement.query.filter(Announcement.read_by.contains(self)).all()
+		return Announcement.query.filter(not_(Announcement.read_by.contains(self))).all()
 
 	def checkPassw(self, passw):
 		return bcrypt.check_password_hash(self.password, passw)
