@@ -27,7 +27,13 @@ def signup():
 		if User.query.filter_by(username=form.uname.data).first():
 			flash(f"User with Username {form.uname.data} already exist. Please sign in.", "danger")
 		else:
-			user = User(form.uname.data, form.name.data, form.email.data, form.passw.data, form.fac.data)
+			user = User(
+				form.uname.data,
+				form.name.data.strip(),
+				form.email.dataform.name.data.strip(),
+				form.passw.data,
+				form.fac.data
+			)
 			db.session.add(user)
 			db.session.commit()
 			user.log(UserLogEvent.AUTH_CREATE_ACCOUNT)
