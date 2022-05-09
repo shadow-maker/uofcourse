@@ -58,6 +58,7 @@ admin = Admin(app,
 
 from app.routes.admin.user import UserModelView
 from app.routes.admin.user_log import UserLogModelView
+from app.routes.admin.announcement import AnnouncementModelView
 from app.routes.admin.grade import GradeModelView
 from app.routes.admin.faculty import FacultyModelView
 from app.routes.admin.subject import SubjectModelView
@@ -67,6 +68,7 @@ from app.routes.admin.term import TermModelView
 admin.add_views(
 	UserModelView(),
 	UserLogModelView(),
+	AnnouncementModelView(),
 	GradeModelView(),
 	FacultyModelView(),
 	SubjectModelView(),
