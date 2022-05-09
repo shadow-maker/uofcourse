@@ -6,8 +6,8 @@
 		</a>
 		{% endmacro %}
 
-		{{quickNavBtn("offcanvas", "tagsDrawer", "Tags", "tags")}}
-		{{quickNavBtn("modal", "modalGoToCourse", "Go-To course", "search")}}
+		{{quickNavBtn("offcanvas", "tagsDrawer", "(T) Tags", "tags")}}
+		{{quickNavBtn("modal", "modalGoTo", "(G) Go-To", "search")}}
 	</nav>
 </div>
 
@@ -47,7 +47,7 @@ $(document).on("keyup", (e) => {
 	// If not in a form
 	if (!$("input").is(":focus") && !$("textarea").is(":focus")) {
 		if (e.key == "g")
-			$("#modalGoToCourse").modal("show")
+			$("#modalGoTo").modal("show")
 		else if (e.key == "t")
 			$("#tagsDrawer").offcanvas("show")
 	}

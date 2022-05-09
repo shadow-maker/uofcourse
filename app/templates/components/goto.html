@@ -1,9 +1,9 @@
-<form id="formGoToCourse" name="formGoToCourse" method="GET" autocomplete="off">
-	<div class="modal fade" id="modalGoToCourse" tabindex="-1" aria-hidden="true">
+<form id="formGoTo" name="formGoTo" method="GET" autocomplete="off">
+	<div class="modal fade" id="modalGoTo" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
 				<div class="modal-header py-2">
-					<h5 class="modal-title">Go to course</h5>
+					<h5 class="modal-title">Go-To</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body px-3 px-md-0 pb-1">
@@ -47,8 +47,8 @@
 </form>
 
 <script>
-const gotoCourse = $("#formGoToCourse")
-const modalGoToCourse = $("#modalGoToCourse")
+const gotoCourse = $("#formGoTo")
+const modalGoTo = $("#modalGoTo")
 
 let gotoCourseData = {}
 
@@ -87,7 +87,7 @@ function gotoCourseCheck() {
 //
 
 // On modal starts to show
-$("#modalGoToCourse").on("show.bs.modal", () => {
+$("#modalGoTo").on("show.bs.modal", () => {
 	// Clear form inputs
 	gotoCourse.find(".selectSubject").val("")
 	gotoCourse.find(".selectNumber").val("")
@@ -101,7 +101,7 @@ $("#modalGoToCourse").on("show.bs.modal", () => {
 })
 
 // On modal is shown
-$("#modalGoToCourse").on("shown.bs.modal", () => {
+$("#modalGoTo").on("shown.bs.modal", () => {
 	// Move focus to subject selection when modal is shown
 	gotoCourse.find(".selectSubject").focus()
 })
@@ -155,7 +155,7 @@ $("#gotoCourseNumber").on("keyup", function(e) {
 })
 
 // Go to course url on submit
-$("#formGoToCourse").on("submit", (e) => {
+$("#formGoTo").on("submit", (e) => {
 	e.preventDefault()
 	e.stopImmediatePropagation()
 
