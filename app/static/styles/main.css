@@ -10,6 +10,10 @@ a.text-body:hover {
 	color: var(--bs-gray-600) !important;
 }
 
+a.text-muted:hover {
+	color: var(--bs-gray-700) !important;
+}
+
 .alert {
 	cursor: pointer;
 }
