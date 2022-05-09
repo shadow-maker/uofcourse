@@ -17,6 +17,7 @@ Flask-Admin==1.6.0
 flask-alchemydumps==0.0.13
 Flask-BabelEx==0.9.4
 Flask-Bcrypt==1.0.1
+Flask-Caching==1.10.1
 Flask-Login==0.6.0
 Flask-Migrate==3.1.0
 Flask-Principal==0.4.0
