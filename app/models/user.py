@@ -2,6 +2,7 @@ from app import db, bcrypt
 from app.constants import STARRED_COLOR, STARRED_EMOJI
 from app.models.user_log import UserLog, UserLogEvent
 from app.models.user_tag import UserTag
+from app.models.announcement import Announcement
 from app.models.course_collection import CourseCollection
 from app.localdt import utc
 
@@ -44,6 +45,7 @@ class User(db.Model, UserMixin):
 
 	collections = db.relationship("CourseCollection", backref="user")
 	tags = db.relationship("UserTag", backref="user")
+	announcements = db.relationship("Announcement", backref="author")
 
 	logs = db.relationship("UserLog", backref="user")
 
@@ -71,6 +73,15 @@ class User(db.Model, UserMixin):
 		self.tags.append(tag)
 		db.session.commit()
 		return tag
+	
+	def announce(self, title, body):
+		announcement = Announcement(self.id, title, body)
+		db.session.add(announcement)
+		db.session.commit()
+	
+	@property
+	def unread_announcements(self):
+		return Announcement.query.filter(Announcement.read_by.contains(self)).all()
 
 	def checkPassw(self, passw):
 		return bcrypt.check_password_hash(self.password, passw)
