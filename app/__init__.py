@@ -4,10 +4,11 @@ from app.ifttt import IFTTT
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
-from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_alchemydumps import AlchemyDumps
+from flask_caching import Cache
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 
 from jinja2 import Environment as JinjaEnvironment
 
@@ -34,6 +35,8 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 alchemydumps = AlchemyDumps(app, db)
+
+ipcache = Cache(app, config={"CACHE_DEFAULT_TIMEOUT": 600})
 
 bcrypt = Bcrypt(app)
 loginManager = LoginManager(app)

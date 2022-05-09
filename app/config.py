@@ -39,6 +39,8 @@ class Config:
 		"pool_timeout": 20
 	}
 
+	CACHE_TYPE = "SimpleCache"
+
 	GANALYTICS_ID = getenv("GANALYTICS_ID")
 	GADSENSE_ID = getenv("GADSENSE_ID")
 
