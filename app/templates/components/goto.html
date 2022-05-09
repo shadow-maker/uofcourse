@@ -8,23 +8,27 @@
 				</div>
 				<div class="modal-body px-3 px-md-0 pb-1">
 					<div class="d-flex flex-row justify-content-center">
-						<!--Subject code-->
-						<input type="text" class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle" id="gotoCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;" autocomplete="off">
+						<div class="w-50 d-flex justify-content-end">
+							<!--Subject code-->
+							<input type="text" class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle" id="gotoCourseSubject" minlength="2" maxlength="4" value="" autocomplete="off">
+						</div>
 
-						<!--Separator-->
-						<span class="h-100 p-2 m-0 fs-2 align-middle">–</span>
+						<div class="flex-shrink-1">
+							<!--Separator-->
+							<span class="h-100 p-2 m-0 fs-2 align-middle">-</span>
+						</div>
 
-						<!--Course number-->
-						<input type="text" class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3" id="gotoCourseNumber" maxlength="3" value="" disabled style="width: 4em;" autocomplete="off">
+						<div class="w-50 d-flex justify-content-start">
+							<!--Course number-->
+							<input type="text" class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3" id="gotoCourseNumber" maxlength="3" value="" disabled autocomplete="off">
 
-						<!--Course exists status-->
-						<div class="position-relative">
-							<div class="status fs-5 h-100 position-absolute start-100 p-2 d-flex flex-column justify-content-center" id="gotoCourseStatus">
+							<!--Course exists status-->
+							<div class="status p-2 d-flex flex-column justify-content-center" id="gotoStatus">
 								<span class="error">
-									<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Course does not exist" title="Course does not exist"></i>
+									<i class="bi-exclamation-circle-fill text-danger fs-5" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Course does not exist" title="Course does not exist"></i>
 								</span>
 								<span class="success">
-									<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Course exists" title="Course exists"></i>
+									<i class="bi-check-circle-fill text-success fs-5" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Course exists" title="Course exists"></i>
 								</span>
 								<span class="loading spinner-border" role="status">
 									<span class="visually-hidden">Loading...</span>
@@ -46,6 +50,24 @@
 	</div>
 </form>
 
+<style>
+	#modalGoTo .selectSubject, #modalGoTo .selectNumber {
+		width: 4.1em;
+	}
+
+	@media (min-width: 576px) {
+		#modalGoTo .selectSubject, #modalGoTo .selectNumber {
+			width: 4em;
+		}
+	}
+
+	@media (min-width: 992px) {
+		#modalGoTo .selectSubject, #modalGoTo .selectNumber {
+			width: 3.9em;
+		}
+	}
+</style>
+
 <script>
 const gotoCourse = $("#formGoTo")
 const modalGoTo = $("#modalGoTo")
@@ -53,8 +75,8 @@ const modalGoTo = $("#modalGoTo")
 let gotoCourseData = {}
 
 // Change status of form
-function gotoCourseStatus(status) {
-	const statusContainer = gotoCourse.find("#gotoCourseStatus")
+function gotoStatus(status) {
+	const statusContainer = gotoCourse.find("#gotoStatus")
 	statusContainer.children("span").hide()
 	if (status)
 		statusContainer.find("." + status).show()
@@ -68,7 +90,7 @@ function gotoCourseCheck() {
 		success: (response) => {
 			gotoCourseData = response
 			gotoCourse.find(".submit").prop("disabled", false)
-			gotoCourseStatus("success")
+			gotoStatus("success")
 			setTimeout(() => {
 				gotoCourse.find(".feedback").removeClass("invisible")
 			}, 1500)
@@ -76,7 +98,7 @@ function gotoCourseCheck() {
 		error: (response) => {
 			gotoCourseData = {}
 			gotoCourse.find(".submit").prop("disabled", true)
-			gotoCourseStatus("error")
+			gotoStatus("error")
 			gotoCourse.find(".feedback").addClass("invisible")
 		}
 	})
@@ -93,7 +115,7 @@ $("#modalGoTo").on("show.bs.modal", () => {
 	gotoCourse.find(".selectNumber").val("")
 	
 	// Hide status and feedback
-	gotoCourse.find("#gotoCourseStatus").children("span").hide()
+	gotoCourse.find("#gotoStatus").children("span").hide()
 	gotoCourse.find(".feedback").addClass("invisible")
 
 	// Disable submit button
@@ -118,7 +140,7 @@ $("#gotoCourseSubject").on("keyup", function(e) {
 		gotoCourse.find(".selectNumber").prop("disabled", true)
 		gotoCourse.find(".submit").prop("disabled", true)
 		gotoCourse.find(".feedback").addClass("invisible")
-		gotoCourseStatus("")
+		gotoStatus("")
 	} else {
 		gotoCourse.find(".selectNumber").prop("disabled", false)
 		if (gotoCourse.find(".selectNumber").val().length == gotoCourse.find(".selectNumber").attr("maxLength"))
@@ -150,7 +172,7 @@ $("#gotoCourseNumber").on("keyup", function(e) {
 	} else {
 		gotoCourse.find(".submit").prop("disabled", true)
 		gotoCourse.find(".feedback").addClass("invisible")
-		gotoCourseStatus("")
+		gotoStatus("")
 	}
 })
 
