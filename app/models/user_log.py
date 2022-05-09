@@ -36,7 +36,6 @@ class UserLog(db.Model):
 	@property
 	def location(self):
 		data = ipcache.get(self.ip)
-		print(data)
 		if data == None:
 			r = requests.get("http://ip-api.com/json/" + self.ip)
 			if r.status_code == 200:
