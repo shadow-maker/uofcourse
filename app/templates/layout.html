@@ -79,9 +79,14 @@
 	{% include "components/back.html" %}
 
 	<!--Page header-->
-	{% if header %}
+	{% if header or headerIcon %}
 	<div class="container mb-4 border-bottom">
-		<h1>{{header}}</h1>
+		<h1>
+			{% if headerIcon %}
+			<i class="bi-{{headerIcon}}"></i>
+			{% endif %}
+			{{header}}
+		</h1>
 	</div>
 	{% endif %}
 
