@@ -46,6 +46,8 @@ def unameNew(form, field):
 		raise ValidationError("Username already exists, please choose a new one")
 
 def emailNew(form, field):
+	if " " in field.data:
+		raise ValidationError("Email cannot contain spaces")
 	if emailCheck(field.data):
 		raise ValidationError("A user with this email already exists")
 
@@ -54,6 +56,8 @@ def nameValidation(form, field):
 		raise ValidationError("Name must be less at most 32 characters long")
 
 def passwValidation(form, field):
+	if " " in field.data:
+		raise ValidationError("Password cannot contain spaces")
 	if len(str(field.data)) < 6:
 		raise ValidationError("Password must be at least 8 characters long")
 	if len(str(field.data)) > 64:
