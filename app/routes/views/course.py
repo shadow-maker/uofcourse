@@ -88,7 +88,8 @@ def courseBrowser():
 
 	return render_template("courseBrowser.html",
 		title = "Courses",
-		header = f"Course browser",
+		header = "Course browser",
+		headerIcon = "binoculars-fill",
 		description = "Course browser : Filter and sort through UofC's full catalogue of courses",
 		sortOpt = 0,
 		sortOptions = [

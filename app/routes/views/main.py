@@ -40,7 +40,8 @@ def home():
 def about():
 	return render_template("about.html",
 		title = "About",
-		header = "About UofCourse"
+		header = "About UofCourse",
+		headerIcon = "info-square"
 	)
 
 
@@ -67,6 +68,7 @@ def api():
 	return render_template("api.html",
 		title = "API",
 		header = "API Documentation",
+		headerIcon = "braces-asterisk",
 		description = "UofCourse API Documentation - Easily get course specific data within your program.",
 		html = html
 	)
@@ -110,6 +112,7 @@ def contact():
 	return render_template("contact.html",
 		title = "Contact",
 		header = "Contact admins",
+		headerIcon = "chat-text-fill",
 		form = form
 	)
 
@@ -119,5 +122,6 @@ def changelog():
 	return render_template("changelog.html",
 		title = "Changelog",
 		header = "Changelog",
+		headerIcon = "bug-fill",
 		changelog = change
 	)

@@ -33,6 +33,7 @@ def account():
 	return render_template("account.html",
 		title = "Account",
 		header = "My Acccount",
+		headerIcon = "person-circle",
 		user = current_user,
 		Role = Role,
 		formPassw = formPassw
@@ -54,6 +55,7 @@ def planner():
 	return render_template("planner.html",
 		title = "My Plan",
 		header = "My Course Plan",
+		headerIcon = "calendar-range",
 		collections = sorted(current_user.collections, key=lambda c: c.term_id if c.term_id else 0),
 		transferred = "transferred" in session and session["transferred"],
 		grades = {grade.id : dict(grade) for grade in Grade.query.all()},
