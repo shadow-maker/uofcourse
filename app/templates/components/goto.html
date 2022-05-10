@@ -10,17 +10,17 @@
 					<div class="d-flex flex-row justify-content-center">
 						<div class="w-50 d-flex justify-content-end">
 							<!--Subject code-->
-							<input type="text" class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle" id="gotoCourseSubject" minlength="2" maxlength="4" value="" autocomplete="off">
+							<input type="text" class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle" id="gotoCourseSubject" minlength="2" maxlength="4" value="" placeholder="CODE" title="Subject code" autocomplete="off">
 						</div>
 
-						<div class="flex-shrink-1">
+						<div class="flex-shrink-1 d-flex flex-column justify-content-center">
 							<!--Separator-->
-							<span class="h-100 p-2 m-0 fs-2 align-middle">-</span>
+							<span class="p-1 m-0 fs-2 lh-1 font-monospace">-</span>
 						</div>
 
 						<div class="w-50 d-flex justify-content-start">
 							<!--Course number-->
-							<input type="text" class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3" id="gotoCourseNumber" maxlength="3" value="" disabled autocomplete="off">
+							<input type="text" class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3" id="gotoCourseNumber" maxlength="3" value="" placeholder="NUM" title="Course number" disabled autocomplete="off">
 
 							<!--Course exists status-->
 							<div class="status p-2 d-flex flex-column justify-content-center" id="gotoStatus">
