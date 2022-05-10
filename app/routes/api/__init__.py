@@ -4,7 +4,7 @@ from flask import Blueprint
 # Create API route blueprint with /api url prefix
 #
 
-api = Blueprint("api", __name__, url_prefix="/api")
+api: Blueprint = Blueprint("api", __name__, url_prefix="/api")
 
 #
 # Import all API routes (endpoints)

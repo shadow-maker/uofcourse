@@ -8,7 +8,7 @@ from flask import Blueprint
 # Create view route blueprint with no url prefix
 #
 
-view = Blueprint("view", __name__, url_prefix="/")
+view: Blueprint = Blueprint("view", __name__, url_prefix="/")
 
 #
 # Define constants - to be passed to all HTML templates and can be accessed via Jinja2
