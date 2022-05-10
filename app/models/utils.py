@@ -1,45 +1,45 @@
 from app.models import Term, Subject, Course
 from app.localdt import local
 
-def getAllTerms(asc=True):
-	results = Term.query.order_by(Term.year.asc, Term.season.asc).all()
-	if not asc:
-		results.reverse()
-	return results
+from typing import Union
 
-def getAllYears(asc=True):
-	results = []
-	[results.append(t[0]) for t in Term.query.with_entities(Term.year) if t[0] not in results]
-	results.sort()
+def getAllTerms(asc: bool = True) -> list[Term]:
+	order = [Term.year, Term.season]
 	if not asc:
-		results.reverse()
-	return results
+		order = [i.desc() for i in order]
+	return Term.query.order_by(*order).all()
 
-def getPrevTerm():
+def getAllYears(asc: bool =True) -> list[int]:
+	order = [Term.year]
+	if not asc:
+		order = [i.desc() for i in order]
+	return list(set([t[0] for t in Term.query.with_entities(Term.year).order_by(*order)]))
+
+def getPrevTerm() -> Union[Term, None]:
 	today = local.date()
 	for term in Term.query.order_by(Term.end.desc()).all():
 		if term.isPrev(today):
 			return term
 	return None
 
-def getCurrentTerm():
+def getCurrentTerm() -> Union[Term, None]:
 	today = local.date()
 	for term in Term.query.order_by(Term.end.desc()).all():
 		if term.isCurrent(today):
 			return term
 	return None
 
-def getNextTerm():
+def getNextTerm() -> Union[Term, None]:
 	today = local.date()
 	for term in Term.query.order_by(Term.start.asc()).all():
 		if term.isNext(today):
 			return term
 	return None
 
-def getSubjectByCode(subjectCode):
+def getSubjectByCode(subjectCode: str) -> Union[Subject, None]:
 	return Subject.query.filter_by(code=subjectCode.upper()).first()
 
-def getCourseByCode(subjectCode, courseNumber):
+def getCourseByCode(subjectCode: str, courseNumber: Union[str, int]) -> Union[Course, None]:
 	subject = getSubjectByCode(subjectCode)
 	if not subject:
 		return None
