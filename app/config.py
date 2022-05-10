@@ -3,36 +3,10 @@ from os import getenv
 
 load_dotenv()
 
-class DatabaseConfig:
-	def __init__(self, type="mysql", address="localhost", name="main", user="root", pssw=""):
-		self.TYPE = getenv("DB_TYPE")
-		if not self.TYPE:
-			self.TYPE = type
+def dbURI(type, address, name, user, password):
+	return f"{type}://{user}:{password}@{address}/{name}"
 
-		self.ADDR = getenv("DB_ADDR")
-		if not self.ADDR:
-			self.ADDR = address
-
-		self.NAME = getenv("DB_NAME")
-		if not self.NAME:
-			self.NAME = name
-
-		self.USER = getenv("DB_USER")
-		if not self.USER:
-			self.USER = user
-
-		self.PSSW = getenv("DB_PSSW")
-		if not self.PSSW:
-			self.PSSW = pssw
-	
-	@property
-	def URI(self):
-		return f"{self.TYPE}://{self.USER}:{self.PSSW}@{self.ADDR}/{self.NAME}"
-
-  
 class Config:
-	SECRET_KEY = getenv("SECRET_KEY")
-
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	SQLALCHEMY_ENGINE_OPTIONS = {
 		"pool_recycle": 280,
@@ -41,12 +15,16 @@ class Config:
 
 	CACHE_TYPE = "SimpleCache"
 
-	GANALYTICS_ID = getenv("GANALYTICS_ID")
-	GADSENSE_ID = getenv("GADSENSE_ID")
+	def __init__(self):
+		for var in ["SECRET_KEY", "GANALYTICS_ID", "GADSENSE_ID", "IFTTT_KEY"]:
+			setattr(self, var, getenv(var))
 
-	def __init__(self, dbConfig=DatabaseConfig()):
-		self.dbConfig = dbConfig
-	
-	@property
-	def SQLALCHEMY_DATABASE_URI(self):
-		return self.dbConfig.URI
+		self.SQLALCHEMY_DATABASE_URI = getenv("DB_URI")
+		if not self.SQLALCHEMY_DATABASE_URI:
+			self.SQLALCHEMY_DATABASE_URI = dbURI(
+				getenv("DB_TYPE", "mysql"),
+				getenv("DB_ADDR", "localhost"),
+				getenv("DB_NAME", "main"),
+				getenv("DB_USER", "root"),
+				getenv("DB_PSSW", "")
+			)

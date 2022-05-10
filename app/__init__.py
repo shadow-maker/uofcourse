@@ -1,4 +1,4 @@
-from app.config import DatabaseConfig, Config
+from app.config import Config
 from app.constants import IFTTT_EVENTS
 from app.ifttt import IFTTT
 
@@ -23,10 +23,9 @@ import json
 
 app = Flask(__name__)
 
-dbConfig = DatabaseConfig()
-config = Config(dbConfig)
+cfg = Config()
 
-app.config.from_object(config)
+app.config.from_object(cfg)
 
 #
 # Init extra objects
@@ -46,7 +45,7 @@ loginManager = LoginManager(app)
 
 jinja = JinjaEnvironment()
 
-ifttt = IFTTT(IFTTT_EVENTS)
+ifttt = IFTTT(app.config["IFTTT_KEY"], IFTTT_EVENTS)
 
 #
 # Init extra utils
