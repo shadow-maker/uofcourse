@@ -21,6 +21,13 @@ uofcourse
 
 ## Configuration
 
+### Flask environment variables
+
+A `.flaskenv` file in the root project directory is used for variables related to the Flask app initialization. The following environment variables are needed:
+
+* `FLASK_ENV`: Set to `development` to enable debug mode, or `production` to disable debug mode
+* `FLASK_APP`: (Optional) Set to the name of the Flask app to use. Defaults to `app` in the root project directory
+
 ### Environment variables
 
 A `.env` file in the root project directory is used to store secure variables. The following environment variables are needed:
