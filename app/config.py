@@ -3,8 +3,8 @@ from os import getenv
 
 load_dotenv()
 
-def dbURI(type, address, name, user, password):
-	return f"{type}://{user}:{password}@{address}/{name}"
+def dbURI(type, host, port, name, user, password):
+	return f"{type}://{user}:{password}@{host}:{port}/{name}"
 
 class Config:
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -23,7 +23,8 @@ class Config:
 		if not self.SQLALCHEMY_DATABASE_URI:
 			self.SQLALCHEMY_DATABASE_URI = dbURI(
 				getenv("DB_TYPE", "mysql"),
-				getenv("DB_ADDR", "localhost"),
+				getenv("DB_HOST", "localhost"),
+				getenv("DB_PORT", "3306"),
 				getenv("DB_NAME", "main"),
 				getenv("DB_USER", "root"),
 				getenv("DB_PSSW", "")
