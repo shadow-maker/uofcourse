@@ -200,36 +200,36 @@ def putUserCourse(data={}):
 
 # CourseCollection
 
-@user.route("/collection", defaults={"id":None}, methods=["DELETE"])
-@user.route("/collection/<id>", methods=["DELETE"])
-@login_required
-def delCourseCollection(data={}, id=None):
-	if not id:
-		if not data:
-			data = request.get_json()
-		if not data:
-			data = request.form.to_dict()
-		if not data:
-			return {"error": "no data provided"}, 400
-		if not "id" in data:
-			return {"error": "no CourseCollection id provided"}, 400
-		id = data["id"]
+# @user.route("/collection", defaults={"id":None}, methods=["DELETE"])
+# @user.route("/collection/<id>", methods=["DELETE"])
+# @login_required
+# def delCourseCollection(data={}, id=None):
+# 	if not id:
+# 		if not data:
+# 			data = request.get_json()
+# 		if not data:
+# 			data = request.form.to_dict()
+# 		if not data:
+# 			return {"error": "no data provided"}, 400
+# 		if not "id" in data:
+# 			return {"error": "no CourseCollection id provided"}, 400
+# 		id = data["id"]
 
-	collection = CourseCollection.query.filter_by(id=id).first()
+# 	collection = CourseCollection.query.filter_by(id=id).first()
 
-	if not collection:
-		return {"error": f"CourseCollection does not exist"}, 404
+# 	if not collection:
+# 		return {"error": f"CourseCollection does not exist"}, 404
 
-	if collection.user_id != current_user.id:
-		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
+# 	if collection.user_id != current_user.id:
+# 		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
 	
-	if collection.userCourses:
-		return {"error": f"CourseCollection is not empty"}, 400
+# 	if collection.userCourses:
+# 		return {"error": f"CourseCollection is not empty"}, 400
 
-	db.session.delete(collection)
-	db.session.commit()
+# 	db.session.delete(collection)
+# 	db.session.commit()
 
-	return {"success": True}, 200
+# 	return {"success": True}, 200
 
 
 # UserCourse

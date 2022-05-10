@@ -1,6 +1,6 @@
 from app.constants import TIMEZONE
 
-from datetime import datetime as dt
+from datetime import datetime
 import pytz
 
 
@@ -9,7 +9,7 @@ class LocalDatetime:
 		self.timezone = zone if issubclass(type(zone), pytz.tzinfo.BaseTzInfo) else pytz.timezone(zone)
 
 	def now(self): # Gets the current datetime in the local timezone
-		return dt.now(self.timezone)
+		return datetime.now(self.timezone)
 
 	def date(self): # Gets the current date in the local timezone
 		return self.now().date()
@@ -17,10 +17,10 @@ class LocalDatetime:
 	def time(self): # Gets the current time in the local timezone
 		return self.now().time()
 
-	def localize(self, dt): # Adds timezone to an anaware datetime object
+	def localize(self, dt: datetime): # Adds timezone to an anaware datetime object
 		return self.timezone.localize(dt)
 
-	def normalize(self, dt): # Converts an aware datetime object into the local timezone
+	def normalize(self, dt: datetime): # Converts an aware datetime object into the local timezone
 		return self.timezone.normalize(dt)
 	
 	def __repr__(self):

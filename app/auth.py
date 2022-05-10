@@ -15,7 +15,7 @@ loginManager.user_loader(lambda uid: User.query.get(uid))
 
 @loginManager.unauthorized_handler
 def unauthorized():
-	if request.blueprint.split(".")[0] == "api":
+	if request.blueprint and request.blueprint.split(".")[0] == "api":
 		return {"error": "User not logged in"}, 401
 	else:
 		flash(loginManager.login_message, loginManager.login_message_category)

@@ -10,6 +10,8 @@ from flask_caching import Cache
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 
+from sqlalchemy.ext.declarative import DeclarativeMeta
+
 from jinja2 import Environment as JinjaEnvironment
 
 import os
@@ -30,7 +32,8 @@ app.config.from_object(config)
 # Init extra objects
 #
 
-db = SQLAlchemy(app)
+db: DeclarativeMeta = SQLAlchemy(app)
+
 
 migrate = Migrate(app, db)
 
@@ -50,7 +53,9 @@ ifttt = IFTTT(IFTTT_EVENTS)
 #
 
 try:
-	with open(os.path.join(app.static_folder, "changelog.json"), "r") as file:
+	static = app.static_folder
+	fname = "changelog.json"
+	with open(os.path.join(static, fname) if static else fname, "r") as file:
 		changelog = json.load(file)
 except:
 	changelog = []

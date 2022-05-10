@@ -29,7 +29,7 @@ class Course(db.Model):
 	def subject_code(self):
 		return self.subject.code
 	
-	@subject_code.expression
+	@subject_code.expression # type: ignore
 	def subject_code(cls):
 		return select(Subject.code).where(Subject.id == cls.subject_id)
 
@@ -37,7 +37,7 @@ class Course(db.Model):
 	def code(self):
 		return f"{self.subject_code}-{self.number}"
 	
-	@code.expression
+	@code.expression # type: ignore
 	def code(cls):
 		return func.concat(cls.subject_code.scalar_subquery(), "-", cast(cls.number, db.String))
 
@@ -45,7 +45,7 @@ class Course(db.Model):
 	def level(self):
 		return self.number // 100
 	
-	@level.expression
+	@level.expression # type: ignore
 	def level(cls):
 		return func.floor(cls.number / 100) # This might only work in MySQL and PostgreSQL
 
