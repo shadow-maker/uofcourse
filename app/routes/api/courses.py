@@ -43,15 +43,6 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 	except:
 		return {"error": "Could not parse levels, invalid format"}, 400
 
-	# OLD IMPLEMENTATION: Convert levels list into a list of tuples where each tuple is a range of levels
-	# levelsFilter = []
-	# for l in levels:
-	# 	if levelsFilter and levelsFilter[-1][1] == l:
-	# 		levelsFilter[-1][1] = l + 1
-	# 	else:
-	# 		levelsFilter.append([l, l + 1])
-	# In filters: or_(and_(Course.number >= l[0] * 100, Course.number < l[1] * 100) for l in levelsFilter)
-
 	# Parse faculties
 	try:
 		if not faculties: # faculties not passed as function argument
@@ -61,6 +52,8 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 				return {"error": f"Invalid faculty {f}"}, 400
 	except:
 		return {"error": "Could not parse faculties, invalid format"}, 400
+	
+	print(faculties)
 
 	# Parse subjects
 	try:
