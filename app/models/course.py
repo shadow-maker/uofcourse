@@ -26,6 +26,14 @@ class Course(db.Model):
 	userCourses = db.relationship("UserCourse", backref="course")
 
 	@hybrid_property
+	def faculty_id(self):
+		return self.subject.faculty_id
+
+	@faculty_id.expression # type: ignore
+	def faculty_id(cls):
+		return select(Subject.faculty_id).where(Subject.id == cls.subject_id)
+
+	@hybrid_property
 	def subject_code(self):
 		return self.subject.code
 	
