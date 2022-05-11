@@ -52,15 +52,15 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 				return {"error": f"Invalid faculty {f}"}, 400
 	except:
 		return {"error": "Could not parse faculties, invalid format"}, 400
-	
-	print(faculties)
 
 	# Parse subjects
 	try:
 		if not subjects: # subjects not passed as function argument
 			subjects = list(dict.fromkeys(request.args.getlist("subject", type=str)))
 		if not subjects: # subjects not passed as url argument
-			subjects = [s[0] for s in list(Subject.query.with_entities(Subject.id))]
+			subjects = [s[0] for s in Subject.query.filter(
+				*([Subject.faculty_id.in_(faculties)] if faculties else [])
+			).with_entities(Subject.id)]
 		else:
 			for s in subjects[:]: # check if subjects are valid
 				subject = Subject.query.get(s) if s.isdigit() else utils.getSubjectByCode(s)

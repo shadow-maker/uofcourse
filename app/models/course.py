@@ -6,6 +6,7 @@ from flask.helpers import url_for
 from sqlalchemy import select, cast, func
 from sqlalchemy.ext.hybrid import hybrid_property
 
+
 class Course(db.Model):
 	__tablename__ = "course"
 	id = db.Column(db.Integer, primary_key=True)
