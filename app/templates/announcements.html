@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% from "components/pagination.html" import paginationNav, paginationCode with context %}
+
+{% block content %}
+
+<div class="container row mb-5 ps-2 ps-sm-4 pe-0 pe-sm-4">
+    <div class="col-12 col-md-3 col-lg-2">
+        <h2>Announcements</h2>
+    </div>
+    <div class="col-12 col-md-9 col-lg-10 pe-xxl-5">
+        {{SITE_NAME}} is a website created to aid UofC students in their program course planning. The <a
+            href="{{url_for('view.courseBrowser')}}">Course Browser</a> allows users to quickly browse through the
+        university's full course catalog, with intuitive filter and sorting options. By clicking on any course in the
+        Course Browser, the course's view page opens with all the essential information for students. With an optional
+        account, users can save courses with custom tags and add them to a virtual Course Planner. In the <a
+            href="{{url_for('view.planner')}}">Course Planner</a>, students can arrange courses in all the terms they
+        have been enrolled in, and are planning on enrolling in the future. Grades can be added to courses inside terms
+        that have concluded, and the GPA for the term will be automatically calculated.
+        <br>
+        {{SITE_NAME}} also offers a public Web <a href="{{url_for('view.api')}}">API</a> to easily retrieve Grade, Term,
+        Faculty, Subject and Course data within your own application. The available endpoints are listed in the <a
+            href="{{url_for('view.api')}}">API documentation</a>.
+        <br>
+        We plan to regularly add many more features that will keep on improving students' experience making the best
+        choices for their career plan.
+    </div>
+</div>
+
+<div class="container row mb-5 ps-2 ps-sm-4 pe-0 pe-sm-4">
+    <div class="col-12 col-md-3 col-lg-2">
+        <h2>Why?</h2>
+    </div>
+    <div class="col-12 col-md-9 col-lg-10 pe-xxl-5">
+        {{SITE_NAME}} was inspired by the lack of ability in the university's public and official <a
+            href="https://www.ucalgary.ca/pubs/calendar/current/course-by-faculty.html">medium for browsing through
+            courses</a>. Design-wise, according to the Wayback Machine, the site has been <a
+            href="https://web.archive.org/web/20090908124154/http://www.ucalgary.ca/pubs/calendar/current/course-by-faculty.html">practically
+            left untouched since 2009!</a> More than a decade later, it's clear that a website every student is meant to
+        use requires a modern refresh. In terms of functionality, the website makes it hard to sort through the
+        selection of courses available without any filtering functionality. Even with a good course browsing experience,
+        it is expected that students find their own resources to organize their selected and desired courses.
+        {{SITE_NAME}} aims to provide a uniform experience for general course planning that adapts to every student,
+        with more features to come.
+    </div>
+</div>
+
+<div class="container row mb-5 ps-2 ps-sm-4 pe-0 pe-sm-4">
+    <div class="col-12 col-md-3 col-lg-2">
+        <h2>How?</h2>
+    </div>
+    <div class="col-12 col-md-9 col-lg-10 pe-xxl-5">
+        The back-end of this website was developed in <a href="https://www.python.org">Python</a> using the <a
+            href="https://flask.palletsprojects.com">Flask</a> micro web framework. To store all the site data,
+        including user data, a relational <a href="https://www.mysql.com">MySQL</a> database is used and connected to
+        Flask using the <a href="https://flask-sqlalchemy.palletsprojects.com">SQLAlchemy</a> library. User-sensitive
+        data, like passwords, are stored as a hash using the <a href="https://en.wikipedia.org/wiki/Bcrypt">Bcrypt</a>
+        hashing algorithm. Front-end-wise, the layout and design of this website was created using the <a
+            href="https://getbootstrap.com">Bootstrap</a> framework.
+    </div>
+</div>
+
+
+<div class="container row mb-5 ps-2 ps-sm-4 pe-0 pe-sm-4">
+    <div class="col-12 col-md-3 col-lg-2">
+        <h2>Who?</h2>
+    </div>
+    <div class="col-12 col-md-9 col-lg-10 pe-xxl-5">
+        {{SITE_NAME}} was developed by a single UofC undergraduate student, currently studying Natural Science with
+        concentrations in Computer Science and Physics. This site is not affiliated with the university in any way.
+    </div>
+</div>
+
+{{paginationNav()}}
+
+
+{% endblock %}
