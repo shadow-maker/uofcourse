@@ -1,4 +1,3 @@
-from app import db
 from app.models import Course, Subject, Faculty, utils
 from app.auth import current_user
 from app.routes.api.utils import *

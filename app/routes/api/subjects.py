@@ -1,4 +1,3 @@
-from app.models import db
 from app.models import Subject, Faculty
 from app.models import utils as utils
 from app.routes.api.utils import *
