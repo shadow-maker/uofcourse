@@ -36,6 +36,22 @@
 </script>
 {% endblock %}
 
+{% block header %}
+<div class="container mb-4 border-bottom d-flex justify-content-between">
+	<h1>
+		{% if headerIcon %}
+		<i class="bi-{{headerIcon}}"></i>
+		{% endif %}
+		{{header}}
+	</h1>
+	<div>
+		<a class="display-5" href="{{url_for('file.api')}}" title="Download docs in Markdown">
+			<i class="bi-markdown-fill text-secondary"></i>
+		</a>
+	</div>
+</div>
+{% endblock %}
+
 {% block content %}
 
 <div class="row" style="position: relative;">
