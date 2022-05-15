@@ -79,6 +79,7 @@
 	{% include "components/back.html" %}
 
 	<!--Page header-->
+	{% block header %}
 	{% if header or headerIcon %}
 	<div class="container mb-4 border-bottom">
 		<h1>
@@ -89,6 +90,7 @@
 		</h1>
 	</div>
 	{% endif %}
+	{% endblock %}
 
 	<!--Page content-->
 	<div class="container">
