@@ -1,6 +1,5 @@
 from app import db
 from app.models import Role, Season, Term, Grade, CourseCollection
-from app.models.utils import getAllYears
 from app.auth import current_user, login_required
 from app.forms import formChangePassw
 from app.constants import *
