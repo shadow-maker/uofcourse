@@ -1,7 +1,7 @@
 from app import db
+from app.localdt import local
 
 from enum import Enum
-from app.localdt import local
 
 
 class Season(Enum):
@@ -33,6 +33,30 @@ class Term(db.Model):
 	
 	def isNext(self, today=local.date()):
 		return self.start and self.start > today
+	
+	@classmethod
+	def getPrev(cls):
+		today = local.date()
+		for term in cls.query.order_by(cls.end.desc()).all():
+			if term.isPrev(today):
+				return term
+		return None
+	
+	@classmethod
+	def getCurrent(cls):
+		today = local.date()
+		for term in cls.query.order_by(cls.end.desc()).all():
+			if term.isCurrent(today):
+				return term
+		return None
+
+	@classmethod
+	def getNext(cls):
+		today = local.date()
+		for term in cls.query.order_by(cls.start.asc()).all():
+			if term.isNext(today):
+				return term
+		return None
 
 	def __repr__(self):
 		return f"TERM {self.season.name} {self.year} (#{self.id})"

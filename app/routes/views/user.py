@@ -60,7 +60,7 @@ def planner():
 		transferred = "transferred" in session and session["transferred"],
 		grades = {grade.id : dict(grade) for grade in Grade.query.all()},
 		seasons = list(Season),
-		years = getAllYears(False)
+		years = sorted(set([t[0] for t in Term.query.with_entities(Term.year)]), reverse=True)
 	)
 
 

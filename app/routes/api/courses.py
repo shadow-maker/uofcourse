@@ -1,4 +1,4 @@
-from app.models import Course, Subject, Faculty, utils
+from app.models import Course, Subject, Faculty
 from app.auth import current_user
 from app.routes.api.utils import *
 
@@ -62,7 +62,7 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 			).with_entities(Subject.id)]
 		else:
 			for s in subjects[:]: # check if subjects are valid
-				subject = Subject.query.get(s) if s.isdigit() else utils.getSubjectByCode(s)
+				subject = Subject.query.get(s) if s.isdigit() else Subject.query.filter_by(code=s.upper()).first()
 				if subject:
 					# Only select subjects that belong to one of the passed faculties
 					if faculties and not subject.faculty_id in faculties:
@@ -127,7 +127,7 @@ def getCourseById(id):
 
 @course.route("/code/<subjectCode>/<courseNumber>", methods=["GET"])
 def getCourseByCode(subjectCode, courseNumber):
-	subject = utils.getSubjectByCode(subjectCode)
+	subject = Subject.query.filter_by(code=subjectCode.upper()).first()
 	if not subject:
 		return {"error": f"Subject with code {subjectCode} does not exist"}, 404
 	course = Course.query.filter_by(subject_id=subject.id, number=courseNumber).first()

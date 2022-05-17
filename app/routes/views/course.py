@@ -1,5 +1,4 @@
 from app.models import Faculty, Subject, Course
-from app.models.utils import getSubjectByCode
 from app.auth import current_user
 from app.constants import COURSE_LEVELS, REDDIT_URL
 from app.routes.views import view
@@ -18,7 +17,7 @@ def course(subjectCode, courseNumber):
 			subjectCode=subjectCode.upper(),
 			courseNumber=courseNumber
 		))
-	subject = getSubjectByCode(subjectCode)
+	subject = Subject.query.filter_by(code=subjectCode.upper()).first()
 	if not subject:
 		flash(f"Subject with code {subjectCode} does not exist!", "danger")
 		return redirect(url_for("view.home"))
@@ -63,7 +62,7 @@ def courseBrowser():
 	selFaculty = request.args.get("faculty")
 
 	if selSubject:
-		if not getSubjectByCode(selSubject):
+		if not Subject.query.filter_by(code=selFaculty.upper()).first():
 			flash(f"Subject with code {selSubject} does not exist!", "danger")
 			return redirect(url_for("view.home"))
 	if selFaculty:
@@ -107,7 +106,7 @@ def courseBrowser():
 
 @view.route("/c/<subjectCode>")
 def courseBrowserSubject(subjectCode):
-	subject = getSubjectByCode(subjectCode)
+	subject = Subject.query.filter_by(code=subjectCode.upper()).first()
 	if not subject:
 		flash(f"Subject with code {subjectCode} does not exist!", "danger")
 		return redirect(url_for("view.home"))
