@@ -1,5 +1,5 @@
 from app import db, ipcache
-from app.localdt import utc
+from app.localdt import utc, local
 
 from flask import request
 
@@ -34,6 +34,14 @@ class UserLog(db.Model):
 		return " ".join(self.event.name.split("_")[1:])
 
 	@property
+	def datetime_utc(self):
+		return utc.localize(self.datetime)
+	
+	@property
+	def datetime_local(self):
+		return local.normalize(self.datetime_utc)
+
+	@property
 	def location(self):
 		data = ipcache.get(self.ip)
 		if data == None:
@@ -65,7 +73,8 @@ class UserLog(db.Model):
 	def __iter__(self):
 		yield "id", self.id
 		yield "user_id", self.user_id
-		yield "datetime", self.datetime.isoformat()
+		yield "datetime_utc", self.datetime_utc.isoformat()
+		yield "datetime_local", self.datetime_local.isoformat()
 		yield "event_type", self.type
 		yield "event_name", self.name
 		yield "ip", self.ip
