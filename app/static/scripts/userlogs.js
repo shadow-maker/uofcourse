@@ -52,6 +52,11 @@ function getLocation(id, callback) {
 // UPDATE FUNCS
 //
 
+function showDatetime(timezone) {
+	$("#logsTable tbody .datetime span").addClass("d-none")
+	$("#logsTable tbody .datetime ." + timezone).removeClass("d-none")
+}
+
 function updateLogs(data) {
 	$("#logs .loading").hide()
 	$("#logs .loaded").show()
@@ -63,7 +68,16 @@ function updateLogs(data) {
 		let logItem = $("#templates .log-item").clone()
 
 		logItem.find(".id").text(log.id)
-		logItem.find(".datetime").text(log.datetime.replace("T", " "))
+		logItem.find(".datetime .utc").text(
+			log.datetime_utc.substring(0, log.datetime_utc.lastIndexOf(
+				log.datetime_utc.includes("+") ? "+" : "-"
+			)).replace("T", " ")
+		)
+		logItem.find(".datetime .local").text(
+			log.datetime_local.substring(0, log.datetime_local.lastIndexOf(
+				log.datetime_local.includes("+") ? "+" : "-"
+			)).replace("T", " ")
+		)
 		logItem.find(".event_type").text(log.event_type)
 		logItem.find(".event_name").text(log.event_name)
 		logItem.find(".ip-link").attr("db-id", log.id)
@@ -71,6 +85,8 @@ function updateLogs(data) {
 
 		logItem.appendTo("#logsTable tbody")
 	}
+
+	showDatetime("utc")
 
 	page.current = data.page
 	page.total = data.pages
@@ -81,6 +97,10 @@ function updateLogs(data) {
 //
 // Events
 //
+
+$(document).on("change", "#logsTimezoneSelect", function (event) {
+	showDatetime($(this).val())
+})
 
 $(document).on("click", ".ip-link", function (event) {
 	event.preventDefault()
