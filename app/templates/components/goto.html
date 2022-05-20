@@ -15,13 +15,19 @@
 							<!--Select type-->
 							<div id="gotoSelectType" class="btn-group px-2">
 								<button class="btn btn-sm dropdown-toggle p-0" type="button"
-									data-bs-toggle="dropdown" aria-expanded="false">
+									data-bs-toggle="dropdown" aria-expanded="false" title="Go-To...">
 									<span class="selected-type fs-5 font-monospace">/c</span>
 								</button>
 								<ul class="dropdown-menu">
-									<li><a class="course dropdown-item font-monospace active" onclick="gotoSwitch('course')">/c</a></li>
-									<li><a class="subject dropdown-item font-monospace" onclick="gotoSwitch('subject')">/s</a></li>
-									<li><a class="faculty dropdown-item font-monospace" onclick="gotoSwitch('faculty')">/f</a></li>
+									<li><a class="course dropdown-item font-monospace active" onclick="gotoSwitch('course')" title="Course">
+										/c
+									</a></li>
+									<li><a class="subject dropdown-item font-monospace" onclick="gotoSwitch('subject')" title="Subject">
+										/s
+									</a></li>
+									<li><a class="faculty dropdown-item font-monospace" onclick="gotoSwitch('faculty')" title="Faculty">
+										/f
+									</a></li>
 								</ul>
 							</div>
 
@@ -46,12 +52,12 @@
 						<div class="right w-50 d-flex justify-content-start">
 							<!--Course number-->
 							<input type="text"
-								class="selectNumber form-control form-control-lg p-2 fs-4 lh-1 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3"
+								class="selectNumber form-control form-control-lg p-2 fs-4 lh-1 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle"
 								id="gotoSelectCourse" maxlength="3" value="" placeholder="NUM" title="Course number"
 								disabled autocomplete="off">
 
 							<!--Course exists status-->
-							<div class="status p-2 d-flex flex-column justify-content-center" id="gotoStatus">
+							<div class="status px-3 d-flex flex-column justify-content-center" id="gotoStatus">
 								<span class="error">
 									<i class="bi-exclamation-circle-fill text-danger fs-5" data-bs-toggle="tooltip"
 										data-bs-placement="right" aria-label="Course does not exist"
