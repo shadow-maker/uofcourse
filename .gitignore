@@ -151,3 +151,4 @@ backups/
 icon?
 icon
 mypy.ini
+.python-version
