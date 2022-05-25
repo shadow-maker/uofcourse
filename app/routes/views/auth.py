@@ -30,7 +30,7 @@ def signup():
 			user = User(
 				form.uname.data,
 				form.name.data.strip(),
-				form.email.dataform.name.data.strip(),
+				form.email.data.strip(),
 				form.passw.data,
 				form.fac.data
 			)

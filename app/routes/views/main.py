@@ -48,7 +48,8 @@ def about():
 def announcements():
 	return render_template("announcements.html",
 		title = "Announcements",
-		description = "Relevant changes and modifications performed on the website.")
+		description = "Relevant changes and modifications performed on the website."
+	)
 
 @view.route("/api")
 def api():
