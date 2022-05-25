@@ -9,39 +9,42 @@
 					</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="modal-body px-3 px-md-0 pb-1">
-					<div class="d-flex flex-row justify-content-center">
+				<div class="modal-body px-md-0 pb-1">
+					<div class="d-flex flex-row justify-content-center px-4">
 						<div class="left w-50 d-flex justify-content-end">
 							<!--Select type-->
-							<div id="gotoSelectType" class="btn-group px-2">
-								<button class="btn btn-sm dropdown-toggle p-0" type="button"
-									data-bs-toggle="dropdown" aria-expanded="false" title="Go-To...">
-									<span class="selected-type fs-5 font-monospace">/c</span>
+							<div id="gotoSelectType" class="btn-group px-1">
+								<button class="btn btn-sm dropdown-toggle p-0" type="button" data-bs-toggle="dropdown"
+									aria-expanded="false" title="Go-To...">
+									<span class="selected-type fs-4 font-monospace"></span>
 								</button>
 								<ul class="dropdown-menu">
-									<li><a class="course dropdown-item font-monospace active" onclick="gotoSwitch('course')" title="Course">
-										/c
-									</a></li>
-									<li><a class="subject dropdown-item font-monospace" onclick="gotoSwitch('subject')" title="Subject">
-										/s
-									</a></li>
-									<li><a class="faculty dropdown-item font-monospace" onclick="gotoSwitch('faculty')" title="Faculty">
-										/f
-									</a></li>
+									<li><a class="course dropdown-item font-monospace active"
+											onclick="gotoSwitch('course')" title="Course">
+											c/
+										</a></li>
+									<li><a class="subject dropdown-item font-monospace" onclick="gotoSwitch('subject')"
+											title="Subject">
+											s/
+										</a></li>
+									<li><a class="faculty dropdown-item font-monospace" onclick="gotoSwitch('faculty')"
+											title="Faculty">
+											f/
+										</a></li>
 								</ul>
 							</div>
 
 							<!--Subject code-->
-							<input type="text"
-								class="selectSubject form-control form-control-lg p-2 fs-4 lh-1 font-monospace text-end border-2 border-secondary bg-light text-body align-middle"
-								id="gotoSelectSubject" minlength="3" maxlength="4" value="" placeholder="CODE"
-								title="Subject code" autocomplete="off">
+							<input type="text" id="gotoSelectSubject"
+								class="form-control form-control-lg px-2 py-0 fs-4 lh-1 font-monospace text-end border-2 border-secondary bg-light text-body align-middle"
+								minlength="3" maxlength="4" value="" placeholder="CODE" title="Subject code"
+								autocomplete="off">
 
 							<!--Faculty-->
-							<input type="text"
-								class="selectFaculty form-control form-control-lg p-2 fs-4 lh-1 font-monospace border-2 border-secondary bg-light text-body align-middle"
-								id="gotoSelectFaculty" minlength="3" maxlength="16" value="" placeholder="FACULTY"
-								title="Faculty name" autocomplete="off">
+							<input type="text" id="gotoSelectFaculty"
+								class="form-control form-control-lg px-2 py-0 fs-4 lh-1 font-monospace border-2 border-secondary bg-light text-body align-middle"
+								minlength="3" maxlength="16" value="" placeholder="FACULTY" title="Faculty name"
+								autocomplete="off">
 						</div>
 
 						<div id="gotoSeparator" class="flex-shrink-1 d-flex flex-column justify-content-center">
@@ -51,13 +54,13 @@
 
 						<div class="right w-50 d-flex justify-content-start">
 							<!--Course number-->
-							<input type="text"
-								class="selectNumber form-control form-control-lg p-2 fs-4 lh-1 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle"
-								id="gotoSelectCourse" maxlength="3" value="" placeholder="NUM" title="Course number"
-								disabled autocomplete="off">
+							<input type="text" id="gotoSelectCourse"
+								class="form-control form-control-lg px-2 py-0 fs-4 lh-1 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle"
+								maxlength="3" value="" placeholder="NUM" title="Course number" disabled
+								autocomplete="off">
 
 							<!--Course exists status-->
-							<div class="status px-3 d-flex flex-column justify-content-center" id="gotoStatus">
+							<div class="status ps-3 d-flex flex-column justify-content-center" id="gotoStatus">
 								<span class="error">
 									<i class="bi-exclamation-circle-fill text-danger fs-5" data-bs-toggle="tooltip"
 										data-bs-placement="right" aria-label="Course does not exist"
@@ -93,25 +96,29 @@
 
 <style>
 	#modalGoTo .dropdown-toggle::after {
-		margin: 0;
+		display: none;
+	}
+
+	#modalGoTo .dropdown-toggle:hover {
+		color: var(--bs-gray-600);
 	}
 
 	#modalGoTo .dropdown-menu {
 		min-width: 0;
 	}
 
-	#modalGoTo input:not(.selectFaculty) {
+	#modalGoTo input:not(#gotoSelectFaculty) {
 		width: 3.4em;
 	}
 
 	@media (min-width: 576px) {
-		#modalGoTo input:not(.selectFaculty) {
+		#modalGoTo input:not(#gotoSelectFaculty) {
 			width: 3.3em;
 		}
 	}
 
 	@media (min-width: 992px) {
-		#modalGoTo input:not(.selectFaculty) {
+		#modalGoTo input:not(#gotoSelectFaculty) {
 			width: 3.2em;
 		}
 	}
@@ -134,55 +141,63 @@
 	function gotoSwitch(type) {
 		if (type)
 			gotoType = type
-		
+
 		gotoStatus()
-		
+
 		$("#gotoSelectType .dropdown-item").removeClass("active")
 		$("#gotoSelectType ." + gotoType).addClass("active")
 
 		modalGoTo.find(".modal-title span").text(gotoType)
 		formGoTo.find(".feedback span").text(gotoType)
 		formGoTo.find(".feedback").addClass("invisible")
-		
+
 		if (gotoType == "course") {
 			formGoTo.find(".left").addClass("w-50")
-			$("#gotoSelectType .selected-type").text("/c")
+			$("#gotoSelectType .selected-type").text("c/")
 			$("#gotoSelectSubject").removeClass("d-none")
 			$("#gotoSelectCourse").removeClass("d-none")
+			$("#gotoSelectCourse").removeClass("invisible")
 			$("#gotoSelectFaculty").addClass("d-none")
-			$("#gotoSeparator").removeClass("d-none")
 			$("#gotoSeparator").removeClass("invisible")
-			formGoTo.find(".selectNumber").val("")
-			formGoTo.find(".selectSubject").focus()
+			modalGoTo.find(".right").removeClass("d-none")
+			$("#gotoSelectCourse").val("")
+
+			if (modalGoTo.hasClass("show"))
+				$("#gotoSelectSubject").focus()
 		} else if (gotoType == "subject") {
 			formGoTo.find(".left").addClass("w-50")
-			$("#gotoSelectType .selected-type").text("/s")
+			$("#gotoSelectType .selected-type").text("s/")
 			$("#gotoSelectSubject").removeClass("d-none")
-			$("#gotoSelectCourse").addClass("d-none")
+			$("#gotoSelectCourse").removeClass("d-none")
+			$("#gotoSelectCourse").addClass("invisible")
 			$("#gotoSelectFaculty").addClass("d-none")
-			$("#gotoSeparator").removeClass("d-none")
 			$("#gotoSeparator").addClass("invisible")
-			formGoTo.find(".selectSubject").focus()
+			modalGoTo.find(".right").removeClass("d-none")
 
 			if ($("#gotoSelectSubject").val().length >= $("#gotoSelectSubject").attr("minLength"))
 				gotoSubjectCheck()
+
+			if (modalGoTo.hasClass("show"))
+				$("#gotoSelectSubject").focus()
 		} else if (gotoType == "faculty") {
 			formGoTo.find(".left").removeClass("w-50")
-			$("#gotoSelectType .selected-type").text("/f")
+			$("#gotoSelectType .selected-type").text("f/")
 			$("#gotoSelectSubject").addClass("d-none")
 			$("#gotoSelectCourse").addClass("d-none")
 			$("#gotoSelectFaculty").removeClass("d-none")
-			$("#gotoSeparator").addClass("d-none")
-			formGoTo.find(".selectFaculty").val("")
-			formGoTo.find(".selectFaculty").focus()
+			$("#gotoSeparator").addClass("invisible")
+			modalGoTo.find(".right").addClass("d-none")
+			$("#gotoSelectFaculty").val("")
+
+			if (modalGoTo.hasClass("show"))
+				$("#gotoSelectFaculty").focus()
 		}
 	}
 
 	// Check if course exists and change status
 	function gotoCourseCheck() {
 		$.ajax({
-			url: "/api/courses/code/" + formGoTo.find(".selectSubject").val() + "/" + formGoTo.find(
-				".selectNumber").val(),
+			url: "/api/courses/code/" + $("#gotoSelectSubject").val() + "/" + $("#gotoSelectCourse").val(),
 			method: "GET",
 			success: (response) => {
 				formGoTo.find(".submit").prop("disabled", false)
@@ -199,10 +214,10 @@
 		})
 	}
 
-		// Check if course exists and change status
-		function gotoSubjectCheck() {
+	// Check if course exists and change status
+	function gotoSubjectCheck() {
 		$.ajax({
-			url: "/api/subjects/code/" + formGoTo.find(".selectSubject").val(),
+			url: "/api/subjects/code/" + $("#gotoSelectSubject").val(),
 			method: "GET",
 			success: (response) => {
 				formGoTo.find(".submit").prop("disabled", false)
@@ -242,9 +257,9 @@
 	$("#modalGoTo").on("shown.bs.modal", () => {
 		// Move focus to subject selection when modal is shown
 		if (gotoType == "course" || gotoType == "subject")
-			formGoTo.find(".selectSubject").focus()
+			formGoTo.find("#gotoSelectSubject").focus()
 		else if (gotoType == "faculty")
-			formGoTo.find(".selectFaculty").focus()
+			formGoTo.find("#gotoSelectFaculty").focus()
 	})
 
 	// On key up inside subject selection
@@ -256,29 +271,29 @@
 		$(this).val($(this).val().replace(/[0-9]/g, ""))
 
 		if ($(this).val().length < $(this).attr("minLength")) {
-			formGoTo.find(".selectNumber").prop("disabled", true)
+			$("#gotoSelectCourse").prop("disabled", true)
 			formGoTo.find(".submit").prop("disabled", true)
 			formGoTo.find(".feedback").addClass("invisible")
 			gotoStatus("")
 		} else if (gotoType == "subject" && $(this).val().length >= $(this).attr("minLength")) {
 			gotoSubjectCheck()
 		} else {
-			formGoTo.find(".selectNumber").prop("disabled", false)
-			if (formGoTo.find(".selectNumber").val().length == formGoTo.find(".selectNumber").attr(
+			$("#gotoSelectCourse").prop("disabled", false)
+			if ($("#gotoSelectCourse").val().length == $("#gotoSelectCourse").attr(
 					"maxLength"))
 				gotoCourseCheck()
 		}
 
 		// Move focus to number selection if max length is reached
 		if (gotoType == "course" && $(this).val().length == $(this).attr("maxLength"))
-			formGoTo.find(".selectNumber").focus()
+			$("#gotoSelectCourse").focus()
 	})
 
 	// On key up inside number selection
 	$("#gotoSelectCourse").on("keydown", function (e) {
 		// If pressing backspace and the value is empty, move focus to subject selection
 		if ($(this).val().length == 0 && e.keyCode == 8)
-			formGoTo.find(".selectSubject").focus()
+			$("#gotoSelectSubject").focus()
 		else if (e.keyCode == 13)
 			formGoTo.submit()
 	})
@@ -319,11 +334,11 @@
 		e.stopImmediatePropagation()
 
 		if (gotoType == "course") {
-			window.location.href = "/c/" + formGoTo.find(".selectSubject").val() + "-" + formGoTo.find(".selectNumber").val()
+			window.location.href = "/c/" + $("#gotoSelectSubject").val() + "-" + $("#gotoSelectCourse").val()
 		} else if (gotoType == "subject") {
-			window.location.href = "/s/" + formGoTo.find(".selectSubject").val()
+			window.location.href = "/s/" + $("#gotoSelectSubject").val()
 		} else if (gotoType == "faculty") {
-			window.location.href = "/f/" + formGoTo.find(".selectFaculty").val()
+			window.location.href = "/f/" + $("#gotoSelectFaculty").val()
 		}
 	})
 </script>
