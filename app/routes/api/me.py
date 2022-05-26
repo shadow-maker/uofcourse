@@ -12,6 +12,13 @@ import json
 
 me = Blueprint("me", __name__, url_prefix="/me")
 
+# Validate login for all /api/me routes
+
+@me.before_request
+@login_required
+def before_request():
+	pass
+
 #
 # GET
 #
@@ -19,7 +26,6 @@ me = Blueprint("me", __name__, url_prefix="/me")
 # UserLog
 
 @me.route("/logs")
-@login_required
 def getUserLogs():
 	filters = (
 		UserLog.user_id == current_user.id,
@@ -28,7 +34,6 @@ def getUserLogs():
 
 
 @me.route("/logs/<id>")
-@login_required
 def getUserLog(id):
 	log = UserLog.query.filter_by(id=id, user_id=current_user.id).first()
 	if not log:
@@ -37,7 +42,6 @@ def getUserLog(id):
 
 
 @me.route("/logs/<id>/location")
-@login_required
 def getUserLogLocation(id):
 	log = UserLog.query.filter_by(id=id, user_id=current_user.id).first()
 	if not log:
@@ -48,7 +52,6 @@ def getUserLogLocation(id):
 # CourseCollection
 
 @me.route("/collections")
-@login_required
 def getCourseCollections():
 	sort = list(dict.fromkeys(request.args.getlist("sort", type=str)))
 	asc = request.args.get("asc", default="true", type=str).lower()
@@ -78,7 +81,6 @@ def getCourseCollections():
 	return {"collections": [dict(collection) for collection in results]}, 200
 
 @me.route("/collections/<id>")
-@login_required
 def getCourseCollection(id):
 	collection = CourseCollection.query.filter_by(id=id).first()
 
@@ -91,7 +93,6 @@ def getCourseCollection(id):
 	return dict(collection), 200
 
 @me.route("/collections/<id>/courses")
-@login_required
 def getCourseCollectionCourses(id):
 	collection = CourseCollection.query.filter_by(id=id).first()
 
@@ -104,7 +105,6 @@ def getCourseCollectionCourses(id):
 	return {"courses": [dict(course) for course in collection.userCourses]}, 200
 
 @me.route("/collections/<id>/gpa")
-@login_required
 def getCourseCollectionGpa(id, precision=3):
 	collection = CourseCollection.query.filter_by(id=id).first()
 
@@ -127,7 +127,6 @@ def getCourseCollectionGpa(id, precision=3):
 # User Course
 
 @me.route("/course", methods=["POST"])
-@login_required
 def postUserCourse(data={}):
 	if not data:
 		data = request.form.to_dict()
@@ -166,7 +165,6 @@ def postUserCourse(data={}):
 #
 
 @me.route("/session/welcome", methods=["PUT"])
-@login_required
 def putSessionWelcome():
 	data = request.form.to_dict()
 	if not "set" in data:
@@ -182,7 +180,6 @@ def putSessionWelcome():
 	return {"success": True}, 200
 
 @me.route("/session/transferred", methods=["PUT"])
-@login_required
 def putSessionTransferred():
 	data = request.form.to_dict()
 	if not "set" in data:
@@ -200,7 +197,6 @@ def putSessionTransferred():
 # User Course
 
 @me.route("/course", methods=["PUT"])
-@login_required
 def putUserCourse(data={}):
 	if not data:
 		data = request.form.to_dict()
@@ -262,7 +258,6 @@ def putUserCourse(data={}):
 
 # @me.route("/collection", defaults={"id":None}, methods=["DELETE"])
 # @me.route("/collection/<id>", methods=["DELETE"])
-# @login_required
 # def delCourseCollection(data={}, id=None):
 # 	if not id:
 # 		if not data:
@@ -296,7 +291,6 @@ def putUserCourse(data={}):
 
 @me.route("/course", defaults={"id":None}, methods=["DELETE"])
 @me.route("/course/<id>", methods=["DELETE"])
-@login_required
 def delUserCourse(data={}, id=None):
 	if not id:
 		if not data:
