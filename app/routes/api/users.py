@@ -1,7 +1,5 @@
 # These routes are meant to be used internally by AJAX calls
 
-# TODO: Add try statements to db.session.commit()
-
 from app import db
 from app.models import Grade, Course, UserLog, UserCourse, CourseCollection
 from app.auth import current_user, login_required
@@ -97,10 +95,13 @@ def postUserCourse(data={}):
 		if course.id == userCourse.course_id:
 			return {"error": "a UserCourse with the same Course already exists in this CourseCollection"}, 400
 	
-	userCourse = UserCourse(collection.id, course.id)
+	try:
+		userCourse = UserCourse(collection.id, course.id)
 
-	db.session.add(userCourse)
-	db.session.commit()
+		db.session.add(userCourse)
+		db.session.commit()
+	except:
+		return {"error": "error creating UserCourse"}, 500
 	
 	return {"success": True}, 200
 
@@ -189,7 +190,10 @@ def putUserCourse(data={}):
 		except:
 			return {"error": "passed must be a boolean"}, 400
 	
-	db.session.commit()
+	try:
+		db.session.commit()
+	except:
+		return {"error": "error updating UserCourse"}, 500
 	
 	return {"success": True}, 200
 
@@ -257,7 +261,10 @@ def delUserCourse(data={}, id=None):
 	if userCourse.collection.user_id != current_user.id:
 		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
 
-	db.session.delete(userCourse)
-	db.session.commit()
+	try:
+		db.session.delete(userCourse)
+		db.session.commit()
+	except:
+		return {"error": "error deleting UserCourse"}, 500
 
 	return {"success": True}, 200
