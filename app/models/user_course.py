@@ -36,3 +36,11 @@ class UserCourse(db.Model):
 
 	def __repr__(self):
 		return f"USER_COURSE (#{self.id}): CourseCollection {self.course_collection_id} - Course {self.course_id}"
+
+	def __iter__(self):
+		yield "id", self.id
+		yield "course_collection_id", self.course_collection_id
+		yield "course_id", self.course_id
+		yield "grade_id", self.grade_id
+		yield "passed", self.passed
+		yield "weightedGPV", self.weightedGPV

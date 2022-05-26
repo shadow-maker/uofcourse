@@ -47,7 +47,63 @@ def getUserLogLocation(id):
 
 # CourseCollection
 
-@user.route("/collection/<id>/gpa")
+@user.route("/collections")
+@login_required
+def getCourseCollections():
+	sort = list(dict.fromkeys(request.args.getlist("sort", type=str)))
+	asc = request.args.get("asc", default="true", type=str).lower()
+
+	# Get list of table columns for sorting
+	order = []
+	for column in sort:
+		try:
+			col = getattr(CourseCollection, column)
+			if not issubclass(type(col), QueryableAttribute):
+				raise AttributeError
+		except AttributeError:
+			return {"error": f"'{column}' is not a valid column for CourseCollection"}, 400
+		order.append(col)
+	order.append(CourseCollection.id)
+
+	# Add sorting columns to desc() if asc is false
+	if asc in ["false", "0"]:
+		order = [desc(i) for i in order]
+
+	# Query database
+	try:
+		results = CourseCollection.query.filter_by(user_id=current_user.id).order_by(*order).all()
+	except:
+		return {"error": "sort columns are not valid"}, 400
+		
+	return {"collections": [dict(collection) for collection in results]}, 200
+
+@user.route("/collections/<id>")
+@login_required
+def getCourseCollection(id):
+	collection = CourseCollection.query.filter_by(id=id).first()
+
+	if not collection:
+		return {"error": f"CourseCollection does not exist"}, 404
+
+	if collection.user_id != current_user.id:
+		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
+	
+	return dict(collection), 200
+
+@user.route("/collections/<id>/courses")
+@login_required
+def getCourseCollectionCourses(id):
+	collection = CourseCollection.query.filter_by(id=id).first()
+
+	if not collection:
+		return {"error": f"CourseCollection does not exist"}, 404
+
+	if collection.user_id != current_user.id:
+		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
+	
+	return {"courses": [dict(course) for course in collection.userCourses]}, 200
+
+@user.route("/collections/<id>/gpa")
 @login_required
 def getCourseCollectionGpa(id, precision=3):
 	collection = CourseCollection.query.filter_by(id=id).first()

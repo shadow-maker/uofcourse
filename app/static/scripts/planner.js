@@ -84,7 +84,7 @@ function getCourseExists(subject, number, callback) {
 
 function getCollectionGPA(id, callback) {
 	$.ajax({
-		url: "/api/users/collection/" + id + "/gpa",
+		url: "/api/users/collections/" + id + "/gpa",
 		method: "GET",
 		success: (response) => {
 			callback(response)
