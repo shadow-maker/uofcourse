@@ -25,4 +25,4 @@ class Announcement(db.Model):
 		yield "author_id", self.user_id
 		yield "title", self.title
 		yield "body", self.body
-		yield "datetime", self.datetime
+		yield "datetime", self.datetime.isoformat()
