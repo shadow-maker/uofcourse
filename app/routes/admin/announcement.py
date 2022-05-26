@@ -9,7 +9,7 @@ class AnnouncementModelView(BaseModelView):
 	def is_accessible(self):
 		return current_user.is_authenticated and current_user.role >= Role.admin
 	
-	form_excluded_columns = ["read_by", "author"]
+	form_excluded_columns = ["read_by", "author", "datetime"]
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(Announcement, *args, **kwargs)
