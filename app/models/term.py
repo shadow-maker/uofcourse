@@ -67,3 +67,6 @@ class Term(db.Model):
 		yield "year", self.year
 		yield "start", self.start.isoformat() if self.start else None
 		yield "end", self.end.isoformat() if self.end else None
+		yield "prev", self.isPrev()
+		yield "current", self.isCurrent()
+		yield "next", self.isNext()
