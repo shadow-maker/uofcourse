@@ -5,7 +5,7 @@ from app.forms import formChangePassw
 from app.constants import *
 
 from app.routes.views import view
-from app.routes.api.users import *
+from app.routes.api.me import *
 
 from flask import render_template, flash, redirect, request, session
 from flask.helpers import url_for

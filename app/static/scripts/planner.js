@@ -71,7 +71,7 @@ function checkCourse() {
 
 function getCollections(callback) {
 	$.ajax({
-		url: "/api/users/collections",
+		url: "/api/me/collections",
 		method: "GET",
 		success: (response) => {
 			callback(response)
@@ -97,7 +97,7 @@ function getTerm(id, callback) {
 
 function getCollectionCourses(id, callback) {
 	$.ajax({
-		url: "/api/users/collections/" + id + "/courses",
+		url: "/api/me/collections/" + id + "/courses",
 		method: "GET",
 		success: (response) => {
 			callback(response)
@@ -123,7 +123,7 @@ function getCourseExists(subject, number, callback) {
 
 function getCollectionGPA(id, callback) {
 	$.ajax({
-		url: "/api/users/collections/" + id + "/gpa",
+		url: "/api/me/collections/" + id + "/gpa",
 		method: "GET",
 		success: (response) => {
 			callback(response)
@@ -136,7 +136,7 @@ function getCollectionGPA(id, callback) {
 
 function putTransferred(set, callback) {
 	$.ajax({
-		url: "/api/users/session/transferred",
+		url: "/api/me/session/transferred",
 		method: "PUT",
 		data: {set: set},
 		success: (response) => {
@@ -150,7 +150,7 @@ function putTransferred(set, callback) {
 
 function putCollection(data, callback) {
 	$.ajax({
-		url: "/api/users/course",
+		url: "/api/me/course",
 		method: "PUT",
 		data: data,
 		success: (response) => {

@@ -102,17 +102,22 @@ function requestResults(callback, ignorePrev=false) {
 	$(".loading").show()
 	$(".loaded").hide()
 
-	$.ajax({
-		url: "/api/courses",
-		method: "GET",
-		data: data,
-		traditional: true,
-		success: (response) => {callback(response)},
-		error: (response) => {
-			$(".loading").hide()
-			displayError(response)
-		}
+	apiRequest("GET", "courses", callback, data, (response) => {
+		$(".loading").hide()
+		displayError(response)
 	})
+
+	// $.ajax({
+	// 	url: "/api/courses",
+	// 	method: "GET",
+	// 	data: data,
+	// 	traditional: true,
+	// 	success: (response) => {callback(response)},
+	// 	error: (response) => {
+	// 		$(".loading").hide()
+	// 		displayError(response)
+	// 	}
+	// })
 }
 
 function toggleCourseTag(courseId, tagId) {
@@ -131,7 +136,7 @@ function toggleCourseTag(courseId, tagId) {
 
 function addCollection(courseId, collectionId) {
 	$.ajax({
-		url: "/api/users/course",
+		url: "/api/me/course",
 		method: "POST",
 		data: {
 			course_id: courseId,

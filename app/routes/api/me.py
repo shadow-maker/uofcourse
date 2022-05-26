@@ -10,7 +10,7 @@ from flask import Blueprint, request, session
 
 import json
 
-user = Blueprint("users", __name__, url_prefix="/users")
+me = Blueprint("me", __name__, url_prefix="/me")
 
 #
 # GET
@@ -18,7 +18,7 @@ user = Blueprint("users", __name__, url_prefix="/users")
 
 # UserLog
 
-@user.route("/logs")
+@me.route("/logs")
 @login_required
 def getUserLogs():
 	filters = (
@@ -27,7 +27,7 @@ def getUserLogs():
 	return getAll(UserLog, filters)
 
 
-@user.route("/logs/<id>")
+@me.route("/logs/<id>")
 @login_required
 def getUserLog(id):
 	log = UserLog.query.filter_by(id=id, user_id=current_user.id).first()
@@ -36,7 +36,7 @@ def getUserLog(id):
 	return dict(log), 200
 
 
-@user.route("/logs/<id>/location")
+@me.route("/logs/<id>/location")
 @login_required
 def getUserLogLocation(id):
 	log = UserLog.query.filter_by(id=id, user_id=current_user.id).first()
@@ -47,7 +47,7 @@ def getUserLogLocation(id):
 
 # CourseCollection
 
-@user.route("/collections")
+@me.route("/collections")
 @login_required
 def getCourseCollections():
 	sort = list(dict.fromkeys(request.args.getlist("sort", type=str)))
@@ -77,7 +77,7 @@ def getCourseCollections():
 		
 	return {"collections": [dict(collection) for collection in results]}, 200
 
-@user.route("/collections/<id>")
+@me.route("/collections/<id>")
 @login_required
 def getCourseCollection(id):
 	collection = CourseCollection.query.filter_by(id=id).first()
@@ -90,7 +90,7 @@ def getCourseCollection(id):
 	
 	return dict(collection), 200
 
-@user.route("/collections/<id>/courses")
+@me.route("/collections/<id>/courses")
 @login_required
 def getCourseCollectionCourses(id):
 	collection = CourseCollection.query.filter_by(id=id).first()
@@ -103,7 +103,7 @@ def getCourseCollectionCourses(id):
 	
 	return {"courses": [dict(course) for course in collection.userCourses]}, 200
 
-@user.route("/collections/<id>/gpa")
+@me.route("/collections/<id>/gpa")
 @login_required
 def getCourseCollectionGpa(id, precision=3):
 	collection = CourseCollection.query.filter_by(id=id).first()
@@ -126,7 +126,7 @@ def getCourseCollectionGpa(id, precision=3):
 
 # User Course
 
-@user.route("/course", methods=["POST"])
+@me.route("/course", methods=["POST"])
 @login_required
 def postUserCourse(data={}):
 	if not data:
@@ -165,7 +165,7 @@ def postUserCourse(data={}):
 # PUT
 #
 
-@user.route("/session/welcome", methods=["PUT"])
+@me.route("/session/welcome", methods=["PUT"])
 @login_required
 def putSessionWelcome():
 	data = request.form.to_dict()
@@ -181,7 +181,7 @@ def putSessionWelcome():
 			return {"error": "invalid 'set' value in data"}, 400
 	return {"success": True}, 200
 
-@user.route("/session/transferred", methods=["PUT"])
+@me.route("/session/transferred", methods=["PUT"])
 @login_required
 def putSessionTransferred():
 	data = request.form.to_dict()
@@ -199,7 +199,7 @@ def putSessionTransferred():
 
 # User Course
 
-@user.route("/course", methods=["PUT"])
+@me.route("/course", methods=["PUT"])
 @login_required
 def putUserCourse(data={}):
 	if not data:
@@ -260,8 +260,8 @@ def putUserCourse(data={}):
 
 # CourseCollection
 
-# @user.route("/collection", defaults={"id":None}, methods=["DELETE"])
-# @user.route("/collection/<id>", methods=["DELETE"])
+# @me.route("/collection", defaults={"id":None}, methods=["DELETE"])
+# @me.route("/collection/<id>", methods=["DELETE"])
 # @login_required
 # def delCourseCollection(data={}, id=None):
 # 	if not id:
@@ -294,8 +294,8 @@ def putUserCourse(data={}):
 
 # UserCourse
 
-@user.route("/course", defaults={"id":None}, methods=["DELETE"])
-@user.route("/course/<id>", methods=["DELETE"])
+@me.route("/course", defaults={"id":None}, methods=["DELETE"])
+@me.route("/course/<id>", methods=["DELETE"])
 @login_required
 def delUserCourse(data={}, id=None):
 	if not id:

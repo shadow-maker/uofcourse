@@ -18,7 +18,7 @@ function getLogs(callback) {
 	$("#logs .loaded").hide()
 
 	$.ajax({
-		url: "/api/users/logs",
+		url: "/api/me/logs",
 		method: "GET",
 		data: {
 			sort: ["datetime"],
@@ -37,7 +37,7 @@ function getLogs(callback) {
 
 function getLocation(id, callback) {
 	$.ajax({
-		url: "/api/users/logs/" + id + "/location",
+		url: "/api/me/logs/" + id + "/location",
 		method: "GET",
 		success: (response) => {
 			callback(response)
