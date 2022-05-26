@@ -1,4 +1,4 @@
-from app import db, ipcache
+from app import db, ipcache, ipcache2
 from app.localdt import utc, local
 
 from flask import request
@@ -53,6 +53,7 @@ class UserLog(db.Model):
 			else:
 				data = {}
 		ipcache.set(self.ip, data)
+		ipcache2[self.ip] = data
 		return data
 	
 	def __init__(self, user_id, event, ip=None):
