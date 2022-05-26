@@ -69,6 +69,45 @@ function checkCourse() {
 // REQUEST FUNCS
 //
 
+function getCollections(callback) {
+	$.ajax({
+		url: "/api/users/collections",
+		method: "GET",
+		success: (response) => {
+			callback(response)
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
+function getTerm(id, callback) {
+	$.ajax({
+		url: "/api/terms/" + id,
+		method: "GET",
+		success: (response) => {
+			callback(response)
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
+function getCollectionCourses(id, callback) {
+	$.ajax({
+		url: "/api/users/collections/" + id + "/courses",
+		method: "GET",
+		success: (response) => {
+			callback(response)
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
+
 function getCourseExists(subject, number, callback) {
 	$.ajax({
 		url: "/api/courses/code/" + subject + "/" + number,
