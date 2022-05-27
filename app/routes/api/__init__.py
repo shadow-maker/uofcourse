@@ -16,7 +16,6 @@ from app.routes.api.courses import *
 from app.routes.api.subjects import *
 from app.routes.api.faculties import *
 from app.routes.api.me import *
-from app.routes.api.tags import *
 
 #
 # Register all sub-blueprints to the api blueprint
@@ -28,4 +27,3 @@ api.register_blueprint(subject)
 api.register_blueprint(faculty)
 api.register_blueprint(grade)
 api.register_blueprint(me)
-api.register_blueprint(tag)
