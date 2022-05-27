@@ -136,7 +136,7 @@ function getCollectionGPA(id, callback) {
 
 function putTransferred(set, callback) {
 	$.ajax({
-		url: "/api/me/session/transferred",
+		url: "/api/me/sessions/transferred",
 		method: "PUT",
 		data: {set: set},
 		success: (response) => {
