@@ -1,4 +1,5 @@
-from app.models import CourseCollection
+from app import db
+from app.models import CourseCollection, Term, Season
 from app.auth import current_user
 
 from flask import Blueprint, request
@@ -42,38 +43,29 @@ def getCourseCollections():
 
 @me_collection.route("/<id>")
 def getCourseCollection(id):
-	collection = CourseCollection.query.filter_by(id=id).first()
+	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
 
 	if not collection:
-		return {"error": f"CourseCollection does not exist"}, 404
+		return {"error": f"CourseCollection from this user does not exist"}, 404
 
-	if collection.user_id != current_user.id:
-		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
-	
 	return dict(collection), 200
 
 @me_collection.route("/<id>/courses")
 def getCourseCollectionCourses(id):
-	collection = CourseCollection.query.filter_by(id=id).first()
+	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
 
 	if not collection:
-		return {"error": f"CourseCollection does not exist"}, 404
-
-	if collection.user_id != current_user.id:
-		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
+		return {"error": f"CourseCollection from this user does not exist"}, 404
 	
 	return {"courses": [dict(course) for course in collection.userCourses]}, 200
 
 @me_collection.route("/<id>/gpa")
 def getCourseCollectionGpa(id, precision=3):
-	collection = CourseCollection.query.filter_by(id=id).first()
+	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
 
 	if not collection:
-		return {"error": f"CourseCollection does not exist"}, 404
+		return {"error": f"CourseCollection from this user does not exist"}, 404
 
-	if collection.user_id != current_user.id:
-		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
-	
 	return {
 		"points": collection.getPoints(precision),
 		"units": collection.units,
@@ -81,37 +73,65 @@ def getCourseCollectionGpa(id, precision=3):
 	}, 200
 
 #
+# POST
+#
+
+@me_collection.route("", methods=["POST"])
+def postCourseCollection(data={}):
+	if not data:
+		data = request.form.to_dict()
+		if not data:
+			return {"error": "no data provided"}, 400
+
+	if "term" in data:
+		term = Term.query.filter_by(term_id=data["term"]).first()
+	elif ("season" in data) and ("year" in data):
+		try:
+			if data["season"].isdigit():
+				season = Season(int(data["season"]))
+			else:
+				season = getattr(Season, data["season"])
+		except:
+			return {"error": "season not found"}, 400
+		term = Term.query.filter_by(season=season, year=data["year"]).first()
+	else:
+		return {"error": "term not specified"}, 400
+
+	if not term:
+		return {"error": "term does not exist"}, 400
+
+	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=term.id).first():
+		return {"error": f"User already has a collection for term {term.name.capitalize()}"}, 400
+
+	try:
+		collection = CourseCollection(current_user.id, term.id)
+		db.session.add(collection)
+		db.session.commit()
+	except:
+		return {"error": "failed to create collection"}, 500
+	
+	return {"success": True}, 200
+
+#
 # DELETE
 #
 
 # CourseCollection
 
-# @me_collection.route("/collection", defaults={"id":None}, methods=["DELETE"])
-# @me_collection.route("/collection/<id>", methods=["DELETE"])
-# def delCourseCollection(data={}, id=None):
-# 	if not id:
-# 		if not data:
-# 			data = request.get_json()
-# 		if not data:
-# 			data = request.form.to_dict()
-# 		if not data:
-# 			return {"error": "no data provided"}, 400
-# 		if not "id" in data:
-# 			return {"error": "no CourseCollection id provided"}, 400
-# 		id = data["id"]
+@me_collection.route("/<id>", methods=["DELETE"])
+def delCourseCollection(id):
+	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
 
-# 	collection = CourseCollection.query.filter_by(id=id).first()
+	if not collection:
+		return {"error": f"CourseCollection from this user does not exist"}, 404
 
-# 	if not collection:
-# 		return {"error": f"CourseCollection does not exist"}, 404
+	if collection.userCourses:
+		return {"error": f"CourseCollection is not empty"}, 400
 
-# 	if collection.user_id != current_user.id:
-# 		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
-	
-# 	if collection.userCourses:
-# 		return {"error": f"CourseCollection is not empty"}, 400
+	try:
+		db.session.delete(collection)
+		db.session.commit()
+	except:
+		return {"error": "failed to delete collection"}, 500
 
-# 	db.session.delete(collection)
-# 	db.session.commit()
-
-# 	return {"success": True}, 200
+	return {"success": True}, 200
