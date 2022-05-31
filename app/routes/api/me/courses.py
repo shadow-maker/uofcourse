@@ -25,13 +25,11 @@ def postUserCourse(data={}):
 	if not "course_id" in data:
 		return {"error": "no Course id provided in data"}, 400
 
-	collection = CourseCollection.query.filter_by(id=data["collection_id"]).first()
+	collection = CourseCollection.query.filter_by(id=data["collection_id"], user_id=current_user.id).first()
 	if not collection:
-		return {"error": "CourseCollection not found"}, 404
-	if collection.user_id != current_user.id:
-		return {"error": "User does not have access to this CourseCollection"}, 403
+		return {"error": "CourseCollection from this user does not exist"}, 404
 	
-	course = Course.query.filter_by(id=data["course_id"]).first()
+	course = Course.query.get(data["course_id"])
 	if not course:
 		return {"error": "Course not found"}, 404
 	for userCourse in collection.userCourses:
@@ -52,16 +50,19 @@ def postUserCourse(data={}):
 # PUT
 #
 
-@me_course.route("", methods=["PUT"])
-def putUserCourse(data={}):
+@me_course.route("", defaults={"id":None}, methods=["PUT"])
+@me_course.route("/<id>", methods=["PUT"])
+def putUserCourse(data={}, id=None):
 	if not data:
 		data = request.form.to_dict()
 		if not data:
 			return {"error": "no data provided"}, 400
-	if not "id" in data:
-		return {"error": "no UserCourse id provided in data"}, 400
+	if not id:
+		if not "id" in data:
+			return {"error": "no UserCourse id provided"}, 400
+		id = data["id"]
 
-	userCourse = UserCourse.query.filter_by(id=data["id"]).first()
+	userCourse = UserCourse.query.get(id)
 
 	if not userCourse:
 		return {"error": "UserCourse not found"}, 404
@@ -69,25 +70,23 @@ def putUserCourse(data={}):
 		return {"error": "User does not have access to this UserCourse"}, 403
 	
 	if "collection_id" in data:
-		collection = CourseCollection.query.filter_by(id=data["collection_id"]).first()
+		collection = CourseCollection.query.filter_by(id=data["collection_id"], user_id=current_user.id).first()
 		if not collection:
-			return {"error": "CourseCollection not found"}, 404
-		if collection.user_id != current_user.id:
-			return {"error": "User does not have access to this CourseCollection"}, 403
+			return {"error": "CourseCollection from this user does not exist"}, 404
 		for uCourse in collection.userCourses:
 			if userCourse != uCourse and userCourse.course_id == uCourse.course_id:
 				return {"error": "a UserCourse with the same Course already exists in this CourseCollection"}, 400
 		userCourse.course_collection_id = collection.id
 	
-	if "grade" in data:
+	if "grade_id" in data:
 		try:
-			gradeId = json.loads(data["grade"])
+			gradeId = json.loads(data["grade_id"])
 		except:
-			return {"error": "grade must be a float"}, 400
+			return {"error": "grade must be an int"}, 400
 		if gradeId == 0:
 			gradeId = None
 		else:
-			grade = Grade.query.filter_by(id=gradeId).first()
+			grade = Grade.query.get(gradeId)
 			if not grade:
 				return {"error": "Grade not found"}, 404
 		userCourse.grade_id = gradeId
@@ -109,12 +108,10 @@ def putUserCourse(data={}):
 # DELETE
 #
 
-@me_course.route("/course", defaults={"id":None}, methods=["DELETE"])
-@me_course.route("/course/<id>", methods=["DELETE"])
+@me_course.route("", defaults={"id":None}, methods=["DELETE"])
+@me_course.route("/<id>", methods=["DELETE"])
 def delUserCourse(data={}, id=None):
 	if not id:
-		if not data:
-			data = request.get_json()
 		if not data:
 			data = request.form.to_dict()
 		if not data:
@@ -123,13 +120,13 @@ def delUserCourse(data={}, id=None):
 			return {"error": "no UserCourse id provided"}, 400
 		id = data["id"]
 
-	userCourse = UserCourse.query.filter_by(id=id).first()
+	userCourse = UserCourse.query.get(id)
 
 	if not userCourse:
 		return {"error": f"UserCourse does not exist"}, 404
 
 	if userCourse.collection.user_id != current_user.id:
-		return {"error": f"User (#{current_user.id}) does not have access to this CourseCollection"}, 403
+		return {"error": f"User does not have access to this UserCourse"}, 403
 
 	try:
 		db.session.delete(userCourse)
