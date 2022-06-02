@@ -59,19 +59,6 @@ def getCourseCollectionCourses(id):
 	
 	return {"courses": [dict(course) for course in collection.userCourses]}, 200
 
-@me_collection.route("/<id>/gpa")
-def getCourseCollectionGpa(id, precision=3):
-	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
-
-	if not collection:
-		return {"error": f"CourseCollection from this user does not exist"}, 404
-
-	return {
-		"points": collection.getPoints(precision),
-		"units": collection.units,
-		"gpa": collection.getGPA(precision)
-	}, 200
-
 #
 # POST
 #
