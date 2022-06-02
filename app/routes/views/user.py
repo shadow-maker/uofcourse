@@ -1,5 +1,5 @@
 from app import db
-from app.models import Role, Season, Term, Grade, CourseCollection
+from app.models import Role, Season, Term, Grade
 from app.auth import current_user, login_required
 from app.forms import formChangePassw
 from app.constants import *
@@ -7,8 +7,7 @@ from app.constants import *
 from app.routes.views import view
 from app.routes.api.me import *
 
-from flask import render_template, flash, redirect, request, session
-from flask.helpers import url_for
+from flask import render_template, flash, session
 
 
 @view.route("/account", methods=["GET", "POST"])
@@ -61,106 +60,3 @@ def planner():
 		seasons = list(Season),
 		years = sorted(set([t[0] for t in Term.query.with_entities(Term.year)]), reverse=True)
 	)
-
-
-@view.route("/planner/add/collection", methods=["POST"])
-def addCourseCollection():
-	def ret(message, category, id=""):
-		flash(message, category)
-		return redirect(url_for("view.planner") + f"#{id}")
-
-	if not current_user.is_authenticated:
-		return ret("ERROR: User not logged in", "danger")
-
-	data = request.form.to_dict()
-	if not data:
-		return ret("ERROR: No form data provided to add CourseCollection", "danger")
-
-	if "term" in data:
-		term = Term.query.filter_by(term_id=data["term"]).first()
-	elif not (("season" in data) and ("year" in data)):
-		return ret("ERROR: Term not specified", "danger")
-	else:
-		try:
-			if data["season"].isdigit():
-				season = Season(int(data["season"]))
-			else:
-				season = getattr(Season, data["season"])
-		except:
-			return ret("ERROR: Season not found", "danger")
-		term = Term.query.filter_by(season=season, year=data["year"]).first()
-
-	if not term:
-		return ret("ERROR: Term does not exist", "danger")
-
-	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=term.id).first():
-		return ret(f"ERROR: User (#{current_user.id}) already has a collection for term {term.id}", "warning")
-
-	collection = CourseCollection(current_user.id, term.id)
-	db.session.add(collection)
-	db.session.commit()
-	return ret("Term added!", "success", collection.id)
-
-
-@view.route("/planner/del/collection", methods=["DELETE", "POST"])
-def delCourseCollection():
-	def ret(message, category):
-		flash(message, category)
-		return redirect(url_for("view.planner"))
-
-	if not current_user.is_authenticated:
-		return ret("ERROR: User not logged in", "danger")
-
-	data = request.form.to_dict()
-	if not data:
-		return ret("ERROR: No form data provided to remove CourseCollection", "danger")
-	if not "id" in data:
-		return ret("ERROR: No CourseCollection id provided", "danger")
-
-	collection = CourseCollection.query.filter_by(id=data["id"]).first()
-
-	if not collection:
-		return ret(f"ERROR: CourseCollection does not exist!", "danger")
-
-	if collection.user_id != current_user.id:
-		return ret(f"ERROR: User (#{current_user.id}) does not have access to this CourseCollection", "danger")
-	
-	if collection.userCourses:
-		return ret(f"ERROR: CourseCollection is not empty", "danger")
-
-	db.session.delete(collection)
-	db.session.commit()
-
-	return ret(f"Term removed!", "success")
-
-
-@view.route("/planner/add/course", methods=["POST"])
-def addUserCourse():
-	data = request.form.to_dict()
-	response, _ = postUserCourse(data)
-
-	if "error" in response:
-		flash(f"ERROR: {response['error']}", "danger")
-
-	return redirect(url_for("view.planner") + "#" + data["collection_id"])
-
-
-@view.route("planner/course", methods=["POST"])
-def modUserCourse():
-	data = request.form.to_dict()
-	if not data:
-		flash("ERROR: No form data provided to remove UserCourse", "danger")
-		return redirect(url_for("view.planner"))
-	if not "method" in data:
-		flash("ERROR: No method provided", "danger")
-		return redirect(url_for("view.planner"))
-	
-	if data["method"] == "PUT":
-		response, _ = putUserCourse(request.form.to_dict())
-	elif data["method"] == "DELETE":
-		response, _ = delUserCourse(request.form.to_dict())
-
-	if "error" in response:
-		flash(f"ERROR: {response['error']}", "danger")
-
-	return redirect(url_for("view.planner"))
