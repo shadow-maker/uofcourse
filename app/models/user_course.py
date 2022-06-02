@@ -1,4 +1,8 @@
 from app import db
+from app.models import Course
+
+from sqlalchemy import select
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class UserCourse(db.Model):
 	__tablename__ = "user_course"
@@ -8,6 +12,14 @@ class UserCourse(db.Model):
 
 	grade_id = db.Column(db.Integer, db.ForeignKey("grade.id"))
 	passed = db.Column(db.Boolean)
+
+	@hybrid_property
+	def course_code(self):
+		return self.subject.code
+	
+	@course_code.expression # type: ignore
+	def course_code(cls):
+		return select(Course.code).where(Course.id == cls.course_id)
 
 	@property
 	def user(self):
