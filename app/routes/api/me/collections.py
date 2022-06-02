@@ -6,6 +6,8 @@ from flask import Blueprint, request
 from sqlalchemy import desc
 from sqlalchemy.orm.attributes import QueryableAttribute
 
+from app.models.user_course import UserCourse
+
 me_collection = Blueprint("collections", __name__, url_prefix="/collections")
 
 #
@@ -56,8 +58,33 @@ def getCourseCollectionCourses(id):
 
 	if not collection:
 		return {"error": f"CourseCollection from this user does not exist"}, 404
+
+	sort = list(dict.fromkeys(request.args.getlist("sort", type=str)))
+	asc = request.args.get("asc", default="true", type=str).lower()
+
+	# Get list of table columns for sorting
+	order = []
+	for column in sort:
+		try:
+			col = getattr(UserCourse, column)
+			if not issubclass(type(col), QueryableAttribute):
+				raise AttributeError
+		except AttributeError:
+			return {"error": f"'{column}' is not a valid column for UserCourse"}, 400
+		order.append(col)
+	order.append(UserCourse.id)
+
+	# Add sorting columns to desc() if asc is false
+	if asc in ["false", "0"]:
+		order = [desc(i) for i in order]
+
+	# Query database
+	try:
+		results = UserCourse.query.filter_by(course_collection_id=id).order_by(*order).all()
+	except:
+		return {"error": "sort columns are not valid"}, 400
 	
-	return {"courses": [dict(course) for course in collection.userCourses]}, 200
+	return {"courses": [dict(uc) for uc in results]}, 200
 
 #
 # POST
