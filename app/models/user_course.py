@@ -41,6 +41,9 @@ class UserCourse(db.Model):
 		yield "id", self.id
 		yield "course_collection_id", self.course_collection_id
 		yield "course_id", self.course_id
+		yield "course_code", self.course.code
+		yield "course_emoji", self.course.subject.emoji
+		yield "course_units", self.course.units
 		yield "grade_id", self.grade_id
 		yield "passed", self.passed
 		yield "weightedGPV", self.weightedGPV
