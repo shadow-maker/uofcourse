@@ -101,7 +101,7 @@ class Course(db.Model):
 		yield "name", self.name
 		yield "aka", self.aka
 		yield "emoji", self.subject.emoji
-		yield "units", self.units
+		yield "units", float(self.units)
 		yield "desc", self.desc
 		yield "prereqs", self.prereqs
 		yield "coreqs", self.coreqs
