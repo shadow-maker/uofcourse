@@ -398,17 +398,7 @@
 						<label class="col-3 col-form-label" for="selectCollection">Term</label>
 						<div class="col-9">
 							<select class="form-select" aria-label="Select term" name="collection_id"
-								id="selectCollection">
-								{% for collection in collections %}
-								<option value="{{collection.id}}">
-									{% if collection.transfer %}
-									Transferred
-									{% else %}
-									{{collection.term.season.name | capitalize}} {{collection.term.year}}
-									{% endif %}
-								</option>
-								{% endfor %}
-							</select>
+								id="selectCollection"></select>
 						</div>
 					</div>
 					<!--Grade-->

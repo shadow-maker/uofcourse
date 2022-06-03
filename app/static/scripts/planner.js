@@ -262,6 +262,7 @@ function delUserCourse(id, callback) {
 
 function updateCollections() {
 	$("#collectionsContainer .collection-item").remove()
+	$("#formEditUserCourse #selectCollection").empty()
 	$(".loading").show()
 	$(".loaded").hide()
 	getCollections((data) => {
@@ -319,6 +320,10 @@ function updateCollection(id) {
 
 			item.find(".collection-remove").attr("title", "Remove term")
 			item.find(".collection-remove").attr("onclick", "removeCollection('" + id + "')")
+
+			$("#formEditUserCourse #selectCollection").append(
+				$("<option>", {value: collection.id, text: collection.term_name})
+			)
 		})
 	} else if (collection.transfer) {
 		collection.term_name = "Transferred"
@@ -329,6 +334,9 @@ function updateCollection(id) {
 		item.find(".collection-remove").attr("onclick", "transferredHide()")
 		if (!showTransferred)
 			transferredHide()
+		$("#formEditUserCourse #selectCollection").append(
+			$("<option>", {value: collection.id, text: collection.term_name})
+		)
 	}
 
 	getCollectionCourses(id, (data) => {
@@ -432,7 +440,6 @@ function updateCollectionCourse(collection_id, id) {
 }
 
 function updateOverallGPA() {
-	console.log("updateOverallGPA")
 	overallGPA.sumUnits = 0
 	overallGPA.sumPoints = 0
 	const overall = $("#overallGPA")
