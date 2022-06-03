@@ -370,10 +370,10 @@ function updateCollection(id) {
 	})
 
 	if (collection.gpa) {
-		item.find(".collection-gpa .gpa").text(collection.gpa)
+		item.find(".collection-gpa .gpa").text(collection.gpa.toFixed(2))
 		item.find(".collection-gpa .gpa").attr(
 			"data-bs-original-title",
-			collection.gpa + " x " + collection.units + " = " + collection.points + " points"
+			collection.gpa.toFixed(2) + " x " + collection.units + " = " + collection.points + " points"
 		)
 		item.find(".collection-gpa .nogpa").addClass("d-none")
 		item.find(".countInGPA").prop("checked", true)
@@ -384,6 +384,13 @@ function updateCollection(id) {
 		item.find(".countInGPA").prop("checked", false)
 		item.find(".countInGPA").prop("disabled", true)
 	}
+}
+
+function getUpdateCollection(id) {
+	getCollection(id, (data) => {
+		Object.assign(collections.find(c => c.id == id), data)
+		updateCollection(id)
+	})
 }
 
 function updateCollectionCourse(collection_id, id) {
@@ -423,17 +430,8 @@ function updateCollectionCourse(collection_id, id) {
 				},
 				() => {
 					alert("success", "Course moved!")
-					getCollection(collection_id, (data) => {
-						Object.assign(collection, data)
-						updateCollection(collection_id)
-					})
-					getCollection(newId, (data) => {
-						Object.assign(
-							collections.find(c => c.id == newId),
-							data
-						)
-						updateCollection(newId)
-					})
+					getUpdateCollection(collection_id)
+					getUpdateCollection(newId)
 				},
 				(response) => {
 					displayError(response)
@@ -461,9 +459,9 @@ function updateOverallGPA() {
 			let item = $("#templates .overall-collection-item").clone()
 	
 			item.find(".term").text(collection.term_name)
-			item.find(".gpa").text(collection.gpa)
-			item.find(".units").text(collection.units)
-			item.find(".points").text(collection.points)
+			item.find(".gpa").text(collection.gpa.toFixed(3))
+			item.find(".units").text(collection.units.toFixed(2))
+			item.find(".points").text(collection.points.toFixed(2))
 			item.find(".disable").attr("onclick", "disableOverallGPA('" + collection.id + "')")
 	
 			$("#overallCollectionContainer").append(item)
@@ -472,9 +470,13 @@ function updateOverallGPA() {
 	
 	overallGPA.finalGPA = overallGPA.sumUnits > 0 ? overallGPA.sumPoints / overallGPA.sumUnits : 0
 
-	overall.find(".sum-points").text(Number((overallGPA.sumPoints).toFixed(3)))
+	overall.find(".sum-points").text(overallGPA.sumPoints.toFixed(2))
 	overall.find(".sum-units").text(overallGPA.sumUnits)
-	overall.find(".final-gpa").text(overallGPA.finalGPA > 0 ? Number(overallGPA.finalGPA.toFixed(3)) : "-")
+	overall.find(".final-gpa").text(overallGPA.finalGPA > 0 ? overallGPA.finalGPA.toFixed(2) : "-")
+	overall.find(".final-gpa").attr(
+		"title",
+		overallGPA.finalGPA > 0 ? overallGPA.finalGPA.toFixed(5) : "-"
+	)
 }
 
 function disableOverallGPA(id) {
@@ -641,13 +643,7 @@ $("#formAddUserCourse").on("submit", (event) => {
 		form.find("#selectCourseId").val(),
 		() => {
 			alert("success", "Course added!")
-			getCollection(form.find("#selectCollection").val(), (data) => {
-				Object.assign(
-					collections.find(c => c.id == form.find("#selectCollection").val()),
-					data
-				)
-				updateCollection(form.find("#selectCollection").val())
-			})
+			getUpdateCollection(form.find("#selectCollection").val())
 		}
 	)
 })
@@ -668,34 +664,15 @@ $("#formEditUserCourse").on("submit", (event) => {
 			},
 			() => {
 				alert("success", "Course updated!")
-				getCollection(form.find("#selectCollection").val(), (data) => {
-					Object.assign(
-						collections.find(c => c.id == form.find("#selectCollection").val()),
-						data
-					)
-					updateCollection(form.find("#selectCollection").val())
-				})
-				if (form.find("#selectCollectionOld").val() != form.find("#selectCollection").val()) {
-					getCollection(form.find("#selectCollectionOld").val(), (data) => {
-						Object.assign(
-							collections.find(c => c.id == form.find("#selectCollectionOld").val()),
-							data
-						)
-						updateCollection(form.find("#selectCollectionOld").val())
-					})
-				}
+				getUpdateCollection(form.find("#selectCollection").val())
+				if (form.find("#selectCollectionOld").val() != form.find("#selectCollection").val())
+					getUpdateCollection(form.find("#selectCollectionOld").val())
 			}
 		)
 	} else if (method == "DELETE") {
 		delUserCourse(form.find("#selectUserCourse").val(), () => {
 			alert("success", "Course removed!")
-			getCollection(form.find("#selectCollectionOld").val(), (data) => {
-				Object.assign(
-					collections.find(c => c.id == form.find("#selectCollectionOld").val()),
-					data
-				)
-				updateCollection(form.find("#selectCollectionOld").val())
-			})
+			getUpdateCollection(form.find("#selectCollectionOld").val())
 		})
 	}
 })
