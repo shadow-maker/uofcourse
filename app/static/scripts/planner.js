@@ -275,7 +275,6 @@ function delUserCourse(id, callback) {
 
 function updateCollections() {
 	$("#collectionsContainer .collection-item").remove()
-	$("#formEditUserCourse #selectCollection").empty()
 	$(".loading").show()
 	$(".loaded").hide()
 	getCollections((data) => {
@@ -332,10 +331,6 @@ function updateCollection(id) {
 
 			item.find(".collection-remove").attr("title", "Remove term")
 			item.find(".collection-remove").attr("onclick", "removeCollection('" + id + "')")
-
-			$("#formEditUserCourse #selectCollection").append(
-				$("<option>", {value: collection.id, text: collection.term_name})
-			)
 		})
 	} else if (collection.transfer) {
 		collection.term_name = "Transferred"
@@ -345,9 +340,6 @@ function updateCollection(id) {
 		item.find(".collection-remove").attr("onclick", "transferredHide()")
 		if (!showTransferred)
 			transferredHide()
-		$("#formEditUserCourse #selectCollection").append(
-			$("<option>", {value: collection.id, text: collection.term_name})
-		)
 	}
 
 	getCollectionCourses(id, (data) => {
@@ -607,10 +599,17 @@ $(document).on("click", ".collection-course-item", function () {
 
 		formEdit.find("#selectUserCourse").val(uc.id)
 		formEdit.find("#selectCoursePlaceholder").val(uc.course_code)
-		formEdit.find("#selectCollection").val(collection.id)
-		formEdit.find("#selectCollectionOld").val(collection.id)
 		formEdit.find("#selectGrade").val(uc.grade_id ? uc.grade_id : 0)
 		formEdit.find("#selectPassed").prop("checked", uc.passed ? uc.passed : false)
+
+		$("#formEditUserCourse #selectCollection").empty()
+		for (let c of collections) {
+			$("#formEditUserCourse #selectCollection").append(
+				$("<option>", {value: c.id, text: c.term_name})
+			)
+		}
+		formEdit.find("#selectCollection").val(collection.id)
+		formEdit.find("#selectCollectionOld").val(collection.id)
 	}
 })
 
