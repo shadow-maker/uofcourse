@@ -3,6 +3,11 @@
 //
 
 var collections = {}
+var overallGPA = {
+	sumUnits: 0,
+	sumGPA: 0,
+	finalGPA: 0
+}
 
 var oldContainer = null
 
@@ -266,8 +271,9 @@ function updateCollections() {
 		for (let collection of collections) {
 			collection.element = $("#templates .collection-item").clone()
 			collection.element.appendTo("#collectionsContainer")
-			updateCollection(collection.id)
 		}
+		for (let collection of collections)
+			updateCollection(collection.id)
 	})
 }
 
@@ -295,13 +301,12 @@ function updateCollection(id) {
 
 	item.find(".countInGPA").change(updateOverallGPA)
 
-	let name
 	if (collection.term_id) {
 		getTerm(collection.term_id, (term) => {
+			collection.term_name = term.season.charAt(0).toUpperCase() + term.season.slice(1) + " " + term.year
 			collection.term = term
-			name = term.season.charAt(0).toUpperCase() + term.season.slice(1) + " " + term.year
-			item.attr("db-term", name)
-			item.find(".term-name").text(name)
+			item.attr("db-term", collection.term_name)
+			item.find(".term-name").text(collection.term_name)
 
 			if (term.start || term.end) {
 				item.find(".term-date").removeClass("invisible")
@@ -313,20 +318,17 @@ function updateCollection(id) {
 				item.find(".term-current").removeClass("d-none")
 
 			item.find(".collection-remove").attr("title", "Remove term")
-			item.find(".collection-remove").attr("onclick", `removeCollection("` + id + `")`)
+			item.find(".collection-remove").attr("onclick", "removeCollection('" + id + "')")
 		})
 	} else if (collection.transfer) {
-		name = "Transferred"
+		collection.term_name = "Transferred"
 		item.addClass("transfer")
-		item.attr("db-term", name)
-		item.find(".term-name").text(name)
+		item.attr("db-term", collection.term_name)
+		item.find(".term-name").text(collection.term_name)
 		item.find(".collection-remove").attr("title", "Hide transferred")
 		item.find(".collection-remove").attr("onclick", "transferredHide()")
-		if (!showTransferred) {
-			$("#transfer-collapsed").removeClass("d-none")
-			item.addClass("d-none")
-			item.find(".countInGPA").prop("checked", false)
-		}
+		if (!showTransferred)
+			transferredHide()
 	}
 
 	getCollectionCourses(id, (data) => {
@@ -344,12 +346,11 @@ function updateCollection(id) {
 
 		for (let uc of collection.courses)
 			updateCollectionCourse(id, uc.id)
+
+		updateOverallGPA()
 	})
 
 	if (collection.gpa) {
-		item.attr("db-units", collection.units)
-		item.attr("db-points", collection.points)
-		item.attr("db-gpa", collection.gpa)
 		item.find(".collection-gpa .gpa").text(collection.gpa)
 		item.find(".collection-gpa .gpa").attr(
 			"data-bs-original-title",
@@ -364,8 +365,6 @@ function updateCollection(id) {
 		item.find(".countInGPA").prop("checked", false)
 		item.find(".countInGPA").prop("disabled", true)
 	}
-
-	updateOverallGPA()
 }
 
 function updateCollectionCourse(collection_id, id) {
@@ -433,52 +432,40 @@ function updateCollectionCourse(collection_id, id) {
 }
 
 function updateOverallGPA() {
-	let sumUnits = 0
-	let sumPoints = 0
+	console.log("updateOverallGPA")
+	overallGPA.sumUnits = 0
+	overallGPA.sumPoints = 0
 	const overall = $("#overallGPA")
 	overall.find("#overallCollectionContainer").empty()
 
-	$("#collectionsContainer").children(".collection-item").each(function () {
-		if ($(this).find(".countInGPA").prop("checked")) {
-			sumUnits += parseFloat($(this).attr("db-units"))
-			sumPoints += parseFloat($(this).attr("db-points"))
-
-			let overallCollection = `
-			<div class="row overall-collection-item">
-				<span class="col-12 col-sm-3 text-sm-end ps-sm-2 fw-bold">
-					` + $(this).attr("db-term") + `
-				</span>
-				<span class="col-6 col-sm-4 font-monospace pe-0">
-					<span class="d-inline-block" style="width: 3.1em;" title="Term GPA">
-						` + $(this).attr("db-gpa") + `
-					</span>
-					x
-					<span class="d-inline-block" style="width: 2.9em;" title="Term accumulated units">
-						` + $(this).attr("db-units") + `
-					</span>
-					=
-				</span>
-				<span class="col-2 font-monospace px-0 d-flex justify-content-between" title="Term accumulated points">
-					<span>` + $(this).attr("db-points") + `</span>
-					<i class="disable bi-x pe-sm-2" title="Hide in overall GPA" onclick="disableOverallGPA('` + $(this).attr("db-id") + `')"></i>
-				</span>
-			</div>`
-			overall.find("#overallCollectionContainer").append(overallCollection)
+	for (let collection of collections){
+		if (collection.element.find(".countInGPA").prop("checked")) {
+			overallGPA.sumUnits += collection.units
+			overallGPA.sumPoints += collection.points
+	
+			let item = $("#templates .overall-collection-item").clone()
+	
+			item.find(".term").text(collection.term_name)
+			item.find(".gpa").text(collection.gpa)
+			item.find(".units").text(collection.units)
+			item.find(".points").text(collection.points)
+			item.find(".disable").attr("onclick", "disableOverallGPA('" + collection.id + "')")
+	
+			$("#overallCollectionContainer").append(item)
 		}
-	})
+	}
+	
+	overallGPA.finalGPA = overallGPA.sumUnits > 0 ? overallGPA.sumPoints / overallGPA.sumUnits : 0
 
-	overall.find(".sum-points").text(Number((sumPoints).toFixed(3)))
-	overall.find(".sum-units").text(sumUnits)
-	overall.find(".final-gpa").text(sumUnits ? Number((sumPoints / sumUnits).toFixed(3)) : "-")
+	overall.find(".sum-points").text(Number((overallGPA.sumPoints).toFixed(3)))
+	overall.find(".sum-units").text(overallGPA.sumUnits)
+	overall.find(".final-gpa").text(overallGPA.finalGPA > 0 ? Number(overallGPA.finalGPA.toFixed(3)) : "-")
 }
 
-function disableOverallGPA(collectionId) {
-	$("#collectionsContainer").children(".collection-item").each(function () {
-		if ($(this).attr("db-id") == collectionId) {
-			$(this).find(".countInGPA").prop("checked", false)
-			updateOverallGPA()
-		}
-	})
+function disableOverallGPA(id) {
+	let collection = collections.find(c => c.id == id)
+	collection.element.find(".countInGPA").prop("checked", false)
+	updateOverallGPA()
 }
 
 //

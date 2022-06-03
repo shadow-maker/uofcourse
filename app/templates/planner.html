@@ -2,15 +2,19 @@
 
 {% block styles %}
 <style>
-	.collection-course-item:hover, .tag-course-item:hover, #collectionsContainer .btn:hover {
+	.collection-course-item:hover,
+	.tag-course-item:hover,
+	#collectionsContainer .btn:hover {
 		background-color: var(--bs-gray-200) !important;
 	}
-	
-	.collection-course-item .edit, .overall-collection-item .disable {
+
+	.collection-course-item .edit,
+	.overall-collection-item .disable {
 		display: none;
 	}
-	
-	.collection-course-item:hover .edit, .overall-collection-item:hover .disable {
+
+	.collection-course-item:hover .edit,
+	.overall-collection-item:hover .disable {
 		display: block;
 	}
 
@@ -33,17 +37,21 @@
 
 <!--TEMPLATES-->
 <div id="templates" class="d-none">
-	<div class="collection-item col-10 col-sm-7 col-md-5 col-lg-4 col-xl-3 px-2" db-id="" db-units="" db-points="" db-gpa="" db-term="">
+	<!--Collection card item-->
+	<div class="collection-item col-10 col-sm-7 col-md-5 col-lg-4 col-xl-3 px-2" db-id="" db-term="">
 		<div class="card h-100">
 			<!--Remove collection button-->
-			<button class="collection-remove position-absolute top-0 start-100 translate-middle badge rounded-pill btn btn-light border-secondary" title="" onclick="">
+			<button
+				class="collection-remove position-absolute top-0 start-100 translate-middle badge rounded-pill btn btn-light border-secondary"
+				title="" onclick="">
 				<i class="bi-x-lg text-secondary"></i>
 			</button>
 			<!--Term info header-->
 			<div class="card-header text-center">
 				<span class="h5" title="Term season and year">
 					<span class="term-name"></span>
-					<i class="term-current d-none fs-6 bi-circle-fill text-success" data-bs-toggle="tooltip" data-bs-placement="right" title="Current"></i>
+					<i class="term-current d-none fs-6 bi-circle-fill text-success" data-bs-toggle="tooltip"
+						data-bs-placement="right" title="Current"></i>
 				</span>
 				<div class="term-date invisible m-0 text-muted fst-italic lh-1" style="height: 1rem;">
 					<small class="start" title="Start date"></small>
@@ -58,21 +66,25 @@
 			</div>
 			<div class="collection-course-container card-body p-1" db-id=""></div>
 			<div class="loaded pb-2 text-center">
-				<a class="add-course text-body" href="" data-bs-toggle="modal" data-bs-target="#modalAddCourse" db-id="">
+				<a class="add-course text-body" href="" data-bs-toggle="modal" data-bs-target="#modalAddCourse"
+					db-id="">
 					Add course
 				</a>
 			</div>
 			<div class="card-footer">
 				<div class="row">
 					<span class="col-3">
-						<div class="form-check form-switch" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Show in overall GPA">
+						<div class="form-check form-switch" data-bs-toggle="tooltip" data-bs-placement="bottom"
+							title="Show in overall GPA">
 							<input class="countInGPA form-check-input" type="checkbox" role="switch">
 						</div>
 					</span>
 					<span class="col-6 text-center">Term GPA:</span>
 					<span class="col-3 font-monospace text-start collection-gpa pe-0">
 						<span class="gpa" data-bs-toggle="tooltip" data-bs-placement="bottom" title=""></span>
-						<span class="nogpa pe-2" style="cursor: default;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="One or more courses don't have a grade or they don't count towards the GPA">
+						<span class="nogpa pe-2" style="cursor: default;" data-bs-toggle="tooltip"
+							data-bs-placement="bottom"
+							title="One or more courses don't have a grade or they don't count towards the GPA">
 							-
 						</span>
 					</span>
@@ -80,8 +92,10 @@
 			</div>
 		</div>
 	</div>
-	<div class="collection-course-item m-1 btn bg-light card" db-id="" db-term="" db-passed="" db-grade="" db-code="" db-name="" db-url="" db-units="" db-repeat="" db-countgpa="" draggable="true"
-	data-bs-toggle="modal" data-bs-target="#modalInfoUserCourse" title="Click to view or drag to change term">
+	<!--Collection course item-->
+	<div class="collection-course-item m-1 btn bg-light card" db-id="" db-term="" db-passed="" db-grade="" db-code=""
+		db-name="" db-url="" db-units="" db-repeat="" db-countgpa="" draggable="true" data-bs-toggle="modal"
+		data-bs-target="#modalInfoUserCourse" title="Click to view or drag to change term">
 		<div class="row">
 			<span class="emoji col-3 h5 p-0 m-0"></span>
 			<span class="code col-6 font-monospace"></span>
@@ -90,6 +104,20 @@
 		<div class="edit position-absolute end-0 pe-2">
 			<i class="bi-pencil-fill"></i>
 		</div>
+	</div>
+	<!--Overall GPA collection item-->
+	<div class="overall-collection-item row">
+		<span class="term col-12 col-sm-3 text-sm-end ps-sm-2 fw-bold"></span>
+		<span class="col-6 col-sm-4 font-monospace pe-0">
+			<span class="gpa d-inline-block" style="width: 3.1em;" title="Term GPA"></span>
+			x
+			<span class="units d-inline-block" style="width: 3.1em;" title="Term accumulated units"></span>
+			=
+		</span>
+		<span class="col-2 font-monospace px-0 d-flex justify-content-between" title="Term accumulated points">
+			<span class="points"></span>
+			<i class="disable bi-x pe-sm-2" title="Hide in overall GPA" onclick=""></i>
+		</span>
 	</div>
 </div>
 
@@ -102,7 +130,8 @@
 			<span class="visually-hidden">Loading...</span>
 		</div>
 
-		<button type="button" class="loaded btn btn-secondary m-0 py-0" data-bs-toggle="modal" data-bs-target="#modalAddCollection">
+		<button type="button" class="loaded btn btn-secondary m-0 py-0" data-bs-toggle="modal"
+			data-bs-target="#modalAddCollection">
 			<i class="bi-calendar-plus-fill"></i>
 			Add term
 		</button>
@@ -133,7 +162,9 @@
 			<div class="card-body px-2">
 				<div id="overallCollectionContainer"></div>
 				<div class="row">
-					<span class="col-8 col-sm-9 ps-2 ps-lg-3 pe-4"><hr class="my-2"></span>
+					<span class="col-8 col-sm-9 ps-2 ps-lg-3 pe-4">
+						<hr class="my-2">
+					</span>
 				</div>
 				<div class="row">
 					<span class="col-6 col-sm-7 text-end ps-2"></span>
@@ -177,7 +208,8 @@
 					<div class="col">
 						<div class="fs-5">
 							<span class="emoji" title="Course emoji"></span>
-							<a class="link text-decoration-none text-body" href="" target="_blank" rel="noopener noreferrer">
+							<a class="link text-decoration-none text-body" href="" target="_blank"
+								rel="noopener noreferrer">
 								<span class="code text-decoration-underline font-monospace" title="Course code"></span>
 								<i class="bi-box-arrow-up-right"></i>
 							</a>
@@ -221,13 +253,15 @@
 						</div>
 						<div class="mt-2">
 							<span class="fw-bold">Weighted GPV:</span>
-							<span class="grade-weighted" title="GPV x Units" data-bs-toggle="tooltip" data-bs-placement="right"></span>
+							<span class="grade-weighted" title="GPV x Units" data-bs-toggle="tooltip"
+								data-bs-placement="right"></span>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="modal-footer d-flex justify-content-around">
-				<button class="btn btn-primary" data-bs-dismiss="modal" onclick="$('#modalEditUserCourse').modal('show')">
+				<button class="btn btn-primary" data-bs-dismiss="modal"
+					onclick="$('#modalEditUserCourse').modal('show')">
 					<i class="bi-pencil-fill"></i>
 					Edit
 				</button>
@@ -297,29 +331,40 @@
 
 					<div class="d-flex flex-row justify-content-center">
 						<!--Subject code-->
-						<input type="text" class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle" id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;" autocomplete="off">
+						<input type="text"
+							class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle"
+							id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;"
+							autocomplete="off">
 
 						<!--Separator-->
 						<span class="h-100 p-2 m-0 fs-2 align-middle">–</span>
 
 						<!--Course number-->
-						<input type="text" class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3" id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;" autocomplete="off">
+						<input type="text"
+							class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3"
+							id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;"
+							autocomplete="off">
 
 						<!--Course exists status-->
 						<div class="position-relative">
-							<div class="status fs-4 h-100 position-absolute start-100 p-2 ps-3 d-flex flex-column justify-content-center" id="selectCourseStatus">
+							<div class="status fs-4 h-100 position-absolute start-100 p-2 ps-3 d-flex flex-column justify-content-center"
+								id="selectCourseStatus">
 								<span class="error">
-									<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Course does not exist" title="Course does not exist"></i>
+									<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip"
+										data-bs-placement="right" aria-label="Course does not exist"
+										title="Course does not exist"></i>
 								</span>
 								<span class="success">
-									<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Course exists" title="Course exists"></i>
+									<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip"
+										data-bs-placement="right" aria-label="Course exists" title="Course exists"></i>
 								</span>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-around">
-					<button id="selectCourseSubmit" type="submit" class="submit btn btn-primary"  data-bs-dismiss="modal" disabled>
+					<button id="selectCourseSubmit" type="submit" class="submit btn btn-primary" data-bs-dismiss="modal"
+						disabled>
 						Add
 					</button>
 				</div>
@@ -388,10 +433,10 @@
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-around">
-					<button type="submit" method="DELETE" class="btn btn-danger"  data-bs-dismiss="modal">
+					<button type="submit" method="DELETE" class="btn btn-danger" data-bs-dismiss="modal">
 						Remove
 					</button>
-					<button type="submit" method="PUT" class="btn btn-primary"  data-bs-dismiss="modal">
+					<button type="submit" method="PUT" class="btn btn-primary" data-bs-dismiss="modal">
 						Save changes
 					</button>
 				</div>
