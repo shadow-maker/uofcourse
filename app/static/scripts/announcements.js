@@ -22,7 +22,7 @@ function requestResults(callback) {
 	$.ajax({
 		url: "/api/announcements",
 		method: "GET",
-		datatype: "json",
+		data: "json",
 		traditional: true,
 		success: (response) => {
 			callback(response)
