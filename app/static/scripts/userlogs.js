@@ -133,6 +133,4 @@ $(document).on("click", ".ip-link", function (event) {
 // DOCUMENT READY
 //
 
-$(document).ready(() => {
-	page.callback()
-})
+$(document).ready(page.callback)

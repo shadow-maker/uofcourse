@@ -101,7 +101,5 @@ function updateTags() {
 //
 
 $(document).ready(() => {
-	tagsInit(() => {
-		updateTags()
-	})
+	tagsInit(updateTags)
 })
