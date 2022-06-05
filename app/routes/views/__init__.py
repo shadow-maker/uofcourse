@@ -1,6 +1,6 @@
 from app import app
 from app import changelog as change
-from app.models import Role
+from app.models import Role, Faculty
 from app.constants import *
 from flask import Blueprint
 
@@ -29,7 +29,8 @@ constants = {
 	"COLORS_DARK" : COLORS_DARK,
 	"DEFAULT_EMOJI" : DEFAULT_EMOJI,
 	"ROLE_ADMIN": Role.admin,
-	"ROLE_MOD": Role.moderator
+	"ROLE_MOD": Role.moderator,
+	"FACULTIES": Faculty.query.all()
 }
 
 @view.context_processor

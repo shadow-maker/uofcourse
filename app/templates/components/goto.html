@@ -41,10 +41,16 @@
 								autocomplete="off">
 
 							<!--Faculty-->
-							<input type="text" id="gotoSelectFaculty"
+							<input type="text" id="gotoSelectFaculty" list="gotoSelectFacultySuggestions"
 								class="form-control form-control-lg px-2 py-0 fs-4 lh-1 font-monospace border-2 border-secondary bg-light text-body align-middle"
-								minlength="3" maxlength="16" value="" placeholder="FACULTY" title="Faculty name"
-								autocomplete="off">
+								minlength="3" maxlength="16" value="" placeholder="FACULTY" title="Faculty name" autocomplete="off">
+							<datalist id="gotoSelectFacultySuggestions">
+								{% for faculty in FACULTIES %}
+								{% if faculty.subdomain %}
+								<option value="{{faculty.subdomain}}">
+								{% endif %}
+								{% endfor %}
+							</datalist>
 						</div>
 
 						<div id="gotoSeparator" class="flex-shrink-1 d-flex flex-column justify-content-center">
@@ -262,6 +268,36 @@
 			formGoTo.find("#gotoSelectFaculty").focus()
 	})
 
+	// On key up inside number selection
+	$("#gotoSelectCourse").on("keydown", function (e) {
+		// If pressing backspace and the value is empty, move focus to subject selection
+		if ($(this).val().length == 0 && e.keyCode == 8)
+			$("#gotoSelectSubject").focus()
+		else if (e.keyCode == 13)
+			formGoTo.submit()
+	})
+
+	// On key down inside number selection
+	$("#gotoSelectCourse").on("keyup", function (e) {
+		// Remove non-numeric characters
+		$(this).val($(this).val().replace(/\D/g, ""))
+
+		// Check course if length is complete
+		if ($(this).val().length == $(this).attr("maxLength")) {
+			gotoCourseCheck()
+		} else {
+			formGoTo.find(".submit").prop("disabled", true)
+			formGoTo.find(".feedback").addClass("invisible")
+			gotoStatus("")
+		}
+	})
+
+	// On key up inside subject selection
+	$("#gotoSelectSubject").on("keydown", function (e) {
+		if (e.keyCode == 13)
+			formGoTo.submit()
+	})
+
 	// On key up inside subject selection
 	$("#gotoSelectSubject").on("keyup", function (e) {
 		// Convert subject into uppercase
@@ -289,28 +325,10 @@
 			$("#gotoSelectCourse").focus()
 	})
 
-	// On key up inside number selection
-	$("#gotoSelectCourse").on("keydown", function (e) {
-		// If pressing backspace and the value is empty, move focus to subject selection
-		if ($(this).val().length == 0 && e.keyCode == 8)
-			$("#gotoSelectSubject").focus()
-		else if (e.keyCode == 13)
+	// On key up inside subject selection
+	$("#gotoSelectFaculty").on("keydown", function (e) {
+		if (e.keyCode == 13)
 			formGoTo.submit()
-	})
-
-	// On key down inside number selection
-	$("#gotoSelectCourse").on("keyup", function (e) {
-		// Remove non-numeric characters
-		$(this).val($(this).val().replace(/\D/g, ""))
-
-		// Check course if length is complete
-		if ($(this).val().length == $(this).attr("maxLength")) {
-			gotoCourseCheck()
-		} else {
-			formGoTo.find(".submit").prop("disabled", true)
-			formGoTo.find(".feedback").addClass("invisible")
-			gotoStatus("")
-		}
 	})
 
 	// On key down inside number selection
