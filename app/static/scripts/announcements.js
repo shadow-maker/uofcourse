@@ -2,14 +2,9 @@
 // GLOBAL VARS
 //
 
-var prevData = {}
-const modalInfo = $("#modalInfoAnnouncement")
-
 // Init Page object (defined in pagination.html)
 var page = new Page(0, () => {
-	requestResults((data) => {
-		updateResults(data)
-	})
+	requestResults(updateResults)
 })
 
 //
@@ -21,12 +16,14 @@ function requestResults(callback) {
 		url: "/api/announcements",
 		method: "GET",
 		data: {
-			limit: 5,
-			page: page.current,
+			sort: ["datetime"],
 			asc: false,
+			limit: 5,
+			page: page.current
 		},
 		traditional: true,
-		success: (response) => {			callback(response)
+		success: (response) => {
+			callback(response)
 			console.log(response)
 		},
 		error: (response) => {
@@ -40,8 +37,8 @@ function requestResults(callback) {
 // 
 
 function updateResults(data) {
-	$(" .loading").hide()
-	$(" .loaded").show()
+	$(".loading").hide()
+	$(".loaded").show()
 
 	$("#announcementsContainer").empty()
 	for (let announcement of data.results) {
@@ -51,7 +48,8 @@ function updateResults(data) {
 		announcementItem.find(".announcement-time").text(announcement.datetime.replace("T", " "))
 		announcementItem.find(".announcement-text").text(announcement.body)
 
-		$(document).on("click", ".announcement-item", function() {
+		announcementItem.find(".card-header").click(e => {
+			const modalInfo = $("#modalInfoAnnouncement")
 			modalInfo.find(".title").text(announcement.title)
 			modalInfo.find(".datetime").text(announcement.datetime.replace("T", " "))
 			modalInfo.find(".body").text(announcement.body)
@@ -70,6 +68,4 @@ function updateResults(data) {
 // DOCUMENT READY
 //
 
-$(document).ready(() => {
-	page.callback()
-})
+$(document).ready(page.callback)

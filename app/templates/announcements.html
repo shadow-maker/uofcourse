@@ -4,24 +4,12 @@
 
 {% block styles %}
 <style>
-    .announcement-item:hover {
-        background-color: var(--bs-gray-200) !important;
-    }
+	/* .announcement-item:hover {
+		background-color: var(--bs-gray-200) !important;
+	} */
 
-    .announcement-item .edit {
-        display:none
-    }
-
-	.announcement-itemhover .edit {
-		display: block;
-	}
-    
-    .overall-collection-item .disable {
-		display: none;
-	}
-	
-	.overall-collection-item:hover .disable {
-		display: block;
+	.announcement-item .card-header {
+		cursor: pointer;
 	}
 </style>
 {% endblock %}
@@ -35,104 +23,96 @@
 {% block content %}
 
 <!--TEMPLATES-->
-<!--Announcement Card-->
 <div id="templates" class="d-none">
-    <div class="announcement-item m-2 card" title="Click to view full announcement">
-        <div class="card-header bg-light btn" data-bs-toggle="modal" data-bs-target="#modalInfoAnnouncement">
-            <!--Top Text: Title & Date-->
-            <div class="row">
-                <!--Announcement Title-->
-                <div class="card-title">
-                    <span class="announcement-title p-0 m-0 h2"></span>
-                </div>
-                <!--Announcement Datetime-->
-                <div class="card-subtitle">
-                    <span class="announcement-time card-subtitle m-0 text-secondary h6"></span>
-                </div>
-            </div>
-        <div class="card-body bg-light">
-            <!--Announcement Body-->
-            <div class="text-truncate">
-                <span class="announcement-text card-body text-dark"></span>
-            </div>
-        </div>
-        </div>
-    </div>
-    <!--Eye Emoji-->
-    <div class="edit position-absolute end-0">
-        <i class="bi-eye-fill"></i>
-    </div>
+	<!--Announcement Card-->
+	<div class="announcement-item card m-2" title="Click to view full announcement">
+		<div class="card-header bg-light" data-bs-toggle="modal" data-bs-target="#modalInfoAnnouncement">
+			<!--Announcement Title-->
+			<div class="card-title">
+				<span class="announcement-title p-0 m-0 h2"></span>
+			</div>
+			<!--Announcement Datetime-->
+			<div class="card-subtitle">
+				<span class="announcement-time card-subtitle m-0 text-secondary h6"></span>
+			</div>
+		</div>
+		<div class="card-body">
+			<!--Announcement Body-->
+			<div class="announcement-text text-truncate text-dark"></div>
+		</div>
+	</div>
 </div>
+
 <!--Announcement Modal-->
 <div id="modalInfoAnnouncement" class="modal fade" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Announcement Info</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body px-4">
-                <!--Title-->
-                <div class="row">
-                    <div class="col-3">
-                        <span class="h5">Title</span>
-                    </div>
-                    <div class="col">
-                        <span class="title fs-5"></span>
-                    </div>
-                </div>
-                <hr>
-                <!--Date-->
-                <div class="row">
-                    <div class="col-3">
-                        <span class="h5">Datetime</span>
-                    </div>
-                    <div class="col">
-                        <span class="datetime fs-5"></span>
-                    </div>
-                </div>
-                <hr>
-                <!--Body-->
-                <div class="row">
-                    <div class="col-3">
-                        <span class="h5">Body</span>
-                    </div>
-                    <div class="col">
-                        <span class="body fs-5"></span>
-                    </div>
-                </div>
-                <hr>
-            </div>
-            <div class="modal-footer d-flex justify-content-around">
-                <!--ID-->
-                <div class="col-3">
-                    <span class="id"></span>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Announcement Info</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body px-4">
+				<!--Title-->
+				<div class="row">
+					<div class="col-3">
+						<span class="h5">Title</span>
+					</div>
+					<div class="col">
+						<span class="title fs-5"></span>
+					</div>
+				</div>
+				<hr>
+				<!--Date-->
+				<div class="row">
+					<div class="col-3">
+						<span class="h5">Datetime</span>
+					</div>
+					<div class="col">
+						<span class="datetime"></span>
+					</div>
+				</div>
+				<hr>
+				<!--Body-->
+				<div class="row">
+					<div class="col-3">
+						<span class="h5">Body</span>
+					</div>
+					<div class="col">
+						<span class="body"></span>
+					</div>
+				</div>
+				<hr>
+			</div>
+			<div class="modal-footer d-flex justify-content-around">
+				<!--ID-->
+				<div class="col-3">
+					<span class="id"></span>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- RENDERING -->
 <div class="row justify-content-between">
-    <div class="container col-12 col-lg-8 col-xl-9">
-        <!--Loading-->
-        <div class="loading text-center py-4">
-            <div class="spinner-border" style="width: 4rem; height: 4rem;" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
+	<div class="container col-12 col-lg-8 col-xl-9">
+		<!--Loading-->
+		<div class="loading text-center py-4">
+			<div class="spinner-border" style="width: 4rem; height: 4rem;" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+		</div>
 
-        <!--Announcement list-->
-        <div id="announcementsContainer" class="loaded"></div>
+		<!--Announcement list-->
+		<div id="announcementsContainer" class="loaded"></div>
 
-        <!--Page navigation-->
-        {{paginationNav()}}
+		<!--Page navigation-->
+		{{paginationNav()}}
 
-        <!--Note-->
-        <div class="alert alert-warning" role="alert">
-        Note: Light blue announcements have been read by you. Grey ones haven't.
-        </div>
-    </div>
+		<!--Note-->
+		<div class="alert alert-warning" role="alert">
+			Note: Light blue announcements have been read by you. Grey ones haven't.
+		</div>
+	</div>
 </div>
 {% endblock %}
