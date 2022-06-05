@@ -3,6 +3,7 @@
 //
 
 var prevData = {}
+const modalInfo = $("#modalInfoAnnouncement")
 
 // Init Page object (defined in pagination.html)
 var page = new Page(0, () => {
@@ -25,8 +26,7 @@ function requestResults(callback) {
 			asc: false,
 		},
 		traditional: true,
-		success: (response) => {
-			callback(response)
+		success: (response) => {			callback(response)
 			console.log(response)
 		},
 		error: (response) => {
@@ -51,6 +51,13 @@ function updateResults(data) {
 		announcementItem.find(".announcement-time").text(announcement.datetime.replace("T", " "))
 		announcementItem.find(".announcement-text").text(announcement.body)
 
+		$(document).on("click", ".announcement-item", function() {
+			modalInfo.find(".title").text(announcement.title)
+			modalInfo.find(".datetime").text(announcement.datetime.replace("T", " "))
+			modalInfo.find(".body").text(announcement.body)
+			modalInfo.find(".id").text(announcement.id)
+		})
+
 		announcementItem.appendTo("#announcementsContainer")
 	}
 
@@ -59,7 +66,6 @@ function updateResults(data) {
 
 	page.updateNav()
 }
-
 //
 // DOCUMENT READY
 //
