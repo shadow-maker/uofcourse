@@ -35,10 +35,6 @@ a.text-muted:hover {
 	display: none;
 }
 
-.subjItem {
-	cursor: pointer;
-}
-
 .collapsing {
 	transition: 0.3s;
 }

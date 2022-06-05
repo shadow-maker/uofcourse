@@ -62,7 +62,7 @@ def courseBrowser():
 	selFaculty = request.args.get("faculty")
 
 	if selSubject:
-		if not Subject.query.filter_by(code=selFaculty.upper()).first():
+		if not Subject.query.filter_by(code=selSubject.upper()).first():
 			flash(f"Subject with code {selSubject} does not exist!", "danger")
 			return redirect(url_for("view.home"))
 	if selFaculty:

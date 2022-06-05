@@ -16,6 +16,14 @@
 <script src="/static/scripts/courseBrowser.js"></script>
 {% endblock %}
 
+{% block styles %}
+<style>
+	.subjItem {
+		cursor: pointer;
+	}
+</style>
+{% endblock %}
+
 {% block content %}
 
 <!--TEMPLATES-->
@@ -245,14 +253,7 @@
 							<label for="subjectSearch" class="ms-1 mb-0 form-label text-uppercase">
 								<small>Subjects</small>
 							</label>
-							<div id="subjectSelector" class="d-flex flex-wrap ms-3 ps-1">
-								{% for s, data in filterData["subjects"].items() %}
-								{% if data["sel"] %}
-								<span
-									class="bg-secondary px-2 py-1 m-1 rounded font-monospace text-light subjItem">{{data["code"]}}</span>
-								{% endif %}
-								{% endfor %}
-							</div>
+							<div id="subjectSelector" class="d-flex flex-wrap ms-3 ps-1"></div>
 							<div class="ms-3 ps-1">
 								<input class="form-control form-control-sm mr-sm-2 mt-1" type="search"
 									placeholder="Enter subject code" aria-label="Search subjects" id="subjectSearch"
