@@ -44,14 +44,15 @@ class UserLog(db.Model):
 	@property
 	def location(self):
 		data = ipcache.get(self.ip)
-		if data == None:
+		if data is None:
 			r = requests.get("http://ip-api.com/json/" + self.ip)
+			print(dir(r))
 			if r.status_code == 200:
 				data = r.json()
 				if "lat" in data and "lon" in data:
 					data["gmaps"] = f"https://www.google.com/maps/place/{data['lat']},{data['lon']}"
 			else:
-				data = {}
+				data = {"message": f"Could not get IP location ({r.status_code} {r.reason})"}
 		ipcache.set(self.ip, data)
 		ipcache2[self.ip] = data
 		return data

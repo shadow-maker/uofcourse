@@ -4,9 +4,7 @@
 
 // Init Page object (defined in pagination.html)
 var page = new Page(0, () => {
-	getLogs((data) => {
-		updateLogs(data)
-	})
+	getLogs(updateLogs)
 })
 
 //
@@ -27,7 +25,7 @@ function getLogs(callback) {
 			page: page.current
 		},
 		traditional: true,
-		success: (response) => {callback(response)},
+		success: callback,
 		error: (response) => {
 			$(".loading").hide()
 			displayError(response)
@@ -61,8 +59,7 @@ function updateLogs(data) {
 	$("#logs .loading").hide()
 	$("#logs .loaded").show()
 
-	const logsContainer = $("#logsTable tbody")
-	logsContainer.empty()
+	$("#logsTable tbody").empty()
 
 	for (let log of data.results) {
 		let logItem = $("#templates .log-item").clone()
@@ -80,54 +77,45 @@ function updateLogs(data) {
 		)
 		logItem.find(".event_type").text(log.event_type)
 		logItem.find(".event_name").text(log.event_name)
-		logItem.find(".ip-link").attr("db-id", log.id)
 		logItem.find(".ip-link .ip").html(log.ip)
 
-		logItem.appendTo("#logsTable tbody")
+		logItem.find(".ip-link").click(e => {
+			e.preventDefault()
+
+			const modal = $("#modalShowLocation")
+		
+			modal.find(".loading").show()
+			modal.find(".success").hide()
+			modal.find(".error").hide()
+		
+			modal.find(".ip").val(log.ip)
+		
+			getLocation(log.id, (data) => {
+				modal.find(".loading").hide()
+				if (data.status == "success") {
+					modal.find(".success").show()
+					for (property in data)
+						modal.find(".success ." + property).text(data[property])
+					modal.find(".success .gmaps-link").attr("href", data.gmaps)
+				} else {
+					modal.find(".error").show()
+					modal.find(".error .message").text(data.message)
+				}
+			})
+		
+			modal.modal("show")
+		})
+
+		logItem.appendTo($("#logsTable tbody"))
 	}
 
 	showDatetime("utc")
 
-	page.current = data.page
 	page.total = data.pages
+	page.current = data.page
 
 	page.updateNav()
 }
-
-//
-// Events
-//
-
-$(document).on("change", "#logsTimezoneSelect", function (event) {
-	showDatetime($(this).val())
-})
-
-$(document).on("click", ".ip-link", function (event) {
-	event.preventDefault()
-
-	const modal = $("#modalShowLocation")
-
-	modal.find(".loading").show()
-	modal.find(".success").hide()
-	modal.find(".error").hide()
-
-	modal.find(".ip").val($(this).find(".ip").text())
-
-	getLocation($(this).attr("db-id"), (data) => {
-		modal.find(".loading").hide()
-		if (data.status == "success") {
-			modal.find(".success").show()
-			for (property in data)
-				modal.find(".success ." + property).text(data[property])
-			modal.find(".success .gmaps-link").attr("href", data.gmaps)
-		} else {
-			modal.find(".error").show()
-			modal.find(".error .message").text(data.message)
-		}
-	})
-
-	modal.modal("show")
-})
 
 //
 // DOCUMENT READY
