@@ -3,13 +3,13 @@
 //
 
 var collections = {}
+var courseCanMoveTo = []
+var courseOldCollection = null
 var overallGPA = {
 	sumUnits: 0,
 	sumGPA: 0,
 	finalGPA: 0
 }
-
-var oldContainer = null
 
 const modalInfo = $("#modalInfoUserCourse")
 const formAdd = $("#formAddUserCourse")
@@ -18,21 +18,6 @@ const formEdit = $("#formEditUserCourse")
 //
 // UTIL FUNCS
 //
-
-function sortCourses(container) {
-	$(container).children(".collection-course-item").sort(function (a, b) {
-		if (($(a).attr("db-code").toLowerCase() < $(b).attr("db-code").toLowerCase()))
-			return -1
-		else if (($(a).attr("db-code").toLowerCase() > $(b).attr("db-code").toLowerCase()))
-			return 1
-		else
-			return 0
-	}).each(function () {
-		var elem = $(this)
-		elem.remove()
-		$(elem).appendTo(container)
-	})
-}
 
 function transferredShow() {
 	showTransferred = true
@@ -296,24 +281,61 @@ function updateCollection(id) {
 
 	item.find(".collection-course-item").remove()
 
-	item.attr("db-id", id)
-	item.find("[db-id]").attr("db-id", id)
-
 	item.find(".loading").show()
 	item.find(".loaded").hide()
 
+	item.find(".collection-course-container").attr("db-id", id)
+
+	item.find(".countInGPA").change(updateOverallGPA)
+	item.find(".add-course").attr("onclick", "$('#formAddUserCourse #selectCollection').val(" + id + ")")
+
+
+	// Init tooltips
 	item.find("[data-bs-toggle='tooltip']").each((i, e) => {
 		new bootstrap.Tooltip(e)
 	})
 
+	// Events
+
 	item.find(".collection-course-container").on("dragover", e => {
 		e.preventDefault()
-		item.find(".collection-course-container").append($(".dragging"))
-		sortCourses(item.find(".collection-course-container"))
+		if (!collection.dragover) {
+			collection.dragover = true
+			if (courseCanMoveTo.includes(collection.id)) {
+				item.addClass("dragover-success")
+				let container = item.find(".collection-course-container")
+				$(".dragging").appendTo(container)
+				// Sort course items
+				container.children(".collection-course-item").sort((a, b) => {
+					if (($(a).attr("db-code").toLowerCase() < $(b).attr("db-code").toLowerCase()))
+						return -1
+					else if (($(a).attr("db-code").toLowerCase() > $(b).attr("db-code").toLowerCase()))
+						return 1
+					else
+						return 0
+				}).each(function () {
+					$(this).remove()
+					$(this).appendTo(container)
+				})
+			} else {
+				item.addClass("dragover-danger")
+				let match = collection.courses.find(c => c.course_code == $(".dragging").attr("db-code"))
+				match.element.addClass("drag-course-match")
+			}
+		}
 	})
 
-	item.find(".countInGPA").change(updateOverallGPA)
+	item.find(".collection-course-container").on("dragleave", e => {
+		e.preventDefault()
+		if (collection.dragover) {
+			collection.dragover = false
+			item.removeClass("dragover-success").removeClass("dragover-danger")
+			for (let course of collection.courses)
+				course.element.removeClass("drag-course-match")
+		}
+	})
 
+	// Set term specific data
 	if (collection.term_id) {
 		getTerm(collection.term_id, (term) => {
 			collection.term_name = term.season.charAt(0).toUpperCase() + term.season.slice(1) + " " + term.year
@@ -342,6 +364,24 @@ function updateCollection(id) {
 			transferredHide()
 	}
 
+	// Update GPA data
+	if (collection.gpa) {
+		item.find(".collection-gpa .gpa").text(collection.gpa.toFixed(2))
+		item.find(".collection-gpa .gpa").attr(
+			"data-bs-original-title",
+			collection.gpa.toFixed(2) + " x " + collection.units + " = " + collection.points + " points"
+		)
+		item.find(".collection-gpa .nogpa").addClass("d-none")
+		item.find(".countInGPA").prop("checked", true)
+		collection.element.find(".countInGPA").prop("disabled", false)
+	} else {
+		item.find(".collection-gpa .gpa").text("")
+		item.find(".collection-gpa .nogpa").removeClass("d-none")
+		item.find(".countInGPA").prop("checked", false)
+		item.find(".countInGPA").prop("disabled", true)
+	}
+
+	// Get and update collection courses
 	getCollectionCourses(id, (data) => {
 		collection.courses = data.courses
 
@@ -360,22 +400,6 @@ function updateCollection(id) {
 
 		updateOverallGPA()
 	})
-
-	if (collection.gpa) {
-		item.find(".collection-gpa .gpa").text(collection.gpa.toFixed(2))
-		item.find(".collection-gpa .gpa").attr(
-			"data-bs-original-title",
-			collection.gpa.toFixed(2) + " x " + collection.units + " = " + collection.points + " points"
-		)
-		item.find(".collection-gpa .nogpa").addClass("d-none")
-		item.find(".countInGPA").prop("checked", true)
-		collection.element.find(".countInGPA").prop("disabled", false)
-	} else {
-		item.find(".collection-gpa .gpa").text("")
-		item.find(".collection-gpa .nogpa").removeClass("d-none")
-		item.find(".countInGPA").prop("checked", false)
-		item.find(".countInGPA").prop("disabled", true)
-	}
 }
 
 function getUpdateCollection(id) {
@@ -395,8 +419,6 @@ function updateCollectionCourse(collection_id, id) {
 
 	const grade = grades[uc.grade_id]
 
-	item.attr("db-id", id)
-	item.attr("db-collection", collection_id)
 	item.attr("db-code", uc.course_code)
 
 	item.find(".emoji").html("&#" + (uc.course_emoji ? uc.course_emoji : DEFAULT_EMOJI))
@@ -407,15 +429,75 @@ function updateCollectionCourse(collection_id, id) {
 		uc.grade_id ? ((grade.gpv ? grade.gpv : "-") + " GPV | " + (uc.weightedGPV ? uc.weightedGPV : "-") + " Weighted") : "Grade not set"
 	)
 
+	// Item events
+
+	item.click(e => {
+		if (!item.hasClass("dragging")) {
+			getCourse(uc.course_id, (course) => {
+				modalInfo.find(".name").text(course.name)
+				modalInfo.find(".link").prop("href", course.url)
+				modalInfo.find(".repeat").text(course.repeat ? "Yes" : "No")
+				modalInfo.find(".countgpa").text(course.countgpa ? "Yes" : "No")
+			})
+
+			if (uc.grade_id) {
+				const grade = grades[uc.grade_id]
+				modalInfo.find(".grade-symbol").text(grade.symbol)
+				modalInfo.find(".grade-desc").text(grade.desc)
+				modalInfo.find(".grade-passed").text(grade.passed ? "Yes" : "No")
+				if (grade.gpv) {
+					modalInfo.find(".grade-gpv").text(grade.gpv.toFixed(2))
+					modalInfo.find(".grade-weighted").text((grade.gpv * uc.course_units).toFixed(2))
+				} else {
+					modalInfo.find(".grade-gpv").text("N/A")
+					modalInfo.find(".grade-weighted").text("N/A")
+				}
+			} else {
+				modalInfo.find(".grade-symbol").text("-")
+				modalInfo.find(".grade-desc").text("")
+				modalInfo.find(".grade-gpv").text("")
+				modalInfo.find(".grade-passed").text("")
+				modalInfo.find(".grade-weighted").text("")
+			}
+
+			modalInfo.find(".term").text(collection.term_name)
+			modalInfo.find(".emoji").html("&#" + (uc.course_emoji ? uc.course_emoji : DEFAULT_EMOJI))
+			modalInfo.find(".code").text(uc.course_code)
+			modalInfo.find(".units").text(uc.course_units.toFixed(2))
+
+			formEdit.find("#selectUserCourse").val(uc.id)
+			formEdit.find("#selectCoursePlaceholder").val(uc.course_code)
+			formEdit.find("#selectGrade").val(uc.grade_id ? uc.grade_id : 0)
+			formEdit.find("#selectPassed").prop("checked", uc.passed ? uc.passed : false)
+
+			$("#formEditUserCourse #selectCollection").empty()
+			for (let c of collections) {
+				$("#formEditUserCourse #selectCollection").append(
+					$("<option>", {
+						value: c.id,
+						text: c.term_name
+					})
+				)
+			}
+			formEdit.find("#selectCollection").val(collection.id)
+			formEdit.find("#selectCollectionOld").val(collection.id)
+		}
+	})
+
 	item.get(0).addEventListener("dragstart", () => {
 		item.addClass("dragging")
-		oldContainer = item.parent().get(0)
+		courseOldCollection = collection_id
+		courseCanMoveTo = []
+		for (let collec of collections)
+			if (collec.id == collection_id || !collec.courses.find(c => c.course_id == uc.course_id))
+				courseCanMoveTo.push(collec.id)
+		alert("info", "Drag course to move to another term")
 	})
 
 	item.get(0).addEventListener("dragend", () => {
 		item.removeClass("dragging")
-		if (oldContainer != item.parent().get(0)) {
-			let newId = item.parent().attr("db-id")
+		let newId = parseInt(item.parent().attr("db-id"))
+		if (courseOldCollection != newId && courseCanMoveTo.includes(newId)) {
 			putUserCourse({
 					id: id,
 					collection_id: newId
@@ -432,6 +514,11 @@ function updateCollectionCourse(collection_id, id) {
 				}
 			)
 		}
+		for (let collec of collections) {
+			collec.element.removeClass("dragover-success").removeClass("dragover-danger")
+			for (let c of collec.courses)
+				c.element.removeClass("drag-course-match")
+		}
 	})
 
 	item.appendTo(collection.element.find(".collection-course-container"))
@@ -443,23 +530,23 @@ function updateOverallGPA() {
 	const overall = $("#overallGPA")
 	overall.find("#overallCollectionContainer").empty()
 
-	for (let collection of collections){
+	for (let collection of collections) {
 		if (collection.element.find(".countInGPA").prop("checked")) {
 			overallGPA.sumUnits += collection.units
 			overallGPA.sumPoints += collection.points
-	
+
 			let item = $("#templates .overall-collection-item").clone()
-	
+
 			item.find(".term").text(collection.term_name)
 			item.find(".gpa").text(collection.gpa.toFixed(3))
 			item.find(".units").text(collection.units.toFixed(2))
 			item.find(".points").text(collection.points.toFixed(2))
 			item.find(".disable").attr("onclick", "disableOverallGPA('" + collection.id + "')")
-	
+
 			$("#overallCollectionContainer").append(item)
 		}
 	}
-	
+
 	overallGPA.finalGPA = overallGPA.sumUnits > 0 ? overallGPA.sumPoints / overallGPA.sumUnits : 0
 
 	overall.find(".sum-points").text(overallGPA.sumPoints.toFixed(2))
@@ -480,11 +567,6 @@ function disableOverallGPA(id) {
 //
 // EVENTS
 //
-
-// Set collection.id input in formAdd whenever its opened
-$(document).on("click", ".add-course", function () {
-	formAdd.find("#selectCollection").val($(this).attr("db-id"))
-})
 
 // On modal starts to show
 $("#modalAddCourse").on("show.bs.modal", () => {
@@ -556,60 +638,6 @@ $("#selectCourseNumber").on("keyup", function (e) {
 		formAdd.find(".submit").prop("disabled", true)
 		formAdd.find(".feedback").addClass("invisible")
 		selectCourseStatus("")
-	}
-})
-
-// UserCourse click
-$(document).on("click", ".collection-course-item", function () {
-	if (!$(this).hasClass("dragging")) {
-		let collection = collections.find(c => c.id == $(this).attr("db-collection"))
-		let uc = collection.courses.find(c => c.id == $(this).attr("db-id"))
-
-		getCourse(uc.course_id, (course) => {
-			modalInfo.find(".name").text(course.name)
-			modalInfo.find(".link").prop("href", course.url)
-			modalInfo.find(".repeat").text(course.repeat ? "Yes" : "No")
-			modalInfo.find(".countgpa").text(course.countgpa ? "Yes" : "No")
-		})
-
-		if (uc.grade_id) {
-			const grade = grades[uc.grade_id]
-			modalInfo.find(".grade-symbol").text(grade.symbol)
-			modalInfo.find(".grade-desc").text(grade.desc)
-			modalInfo.find(".grade-passed").text(grade.passed ? "Yes" : "No")
-			if (grade.gpv) {
-				modalInfo.find(".grade-gpv").text(grade.gpv.toFixed(2))
-				modalInfo.find(".grade-weighted").text((grade.gpv * uc.course_units).toFixed(2))
-			} else {
-				modalInfo.find(".grade-gpv").text("N/A")
-				modalInfo.find(".grade-weighted").text("N/A")
-			}
-		} else {
-			modalInfo.find(".grade-symbol").text("-")
-			modalInfo.find(".grade-desc").text("")
-			modalInfo.find(".grade-gpv").text("")
-			modalInfo.find(".grade-passed").text("")
-			modalInfo.find(".grade-weighted").text("")
-		}
-
-		modalInfo.find(".term").text(collection.term_name)
-		modalInfo.find(".emoji").html("&#" + (uc.course_emoji ? uc.course_emoji : DEFAULT_EMOJI))
-		modalInfo.find(".code").text(uc.course_code)
-		modalInfo.find(".units").text(uc.course_units.toFixed(2))
-
-		formEdit.find("#selectUserCourse").val(uc.id)
-		formEdit.find("#selectCoursePlaceholder").val(uc.course_code)
-		formEdit.find("#selectGrade").val(uc.grade_id ? uc.grade_id : 0)
-		formEdit.find("#selectPassed").prop("checked", uc.passed ? uc.passed : false)
-
-		$("#formEditUserCourse #selectCollection").empty()
-		for (let c of collections) {
-			$("#formEditUserCourse #selectCollection").append(
-				$("<option>", {value: c.id, text: c.term_name})
-			)
-		}
-		formEdit.find("#selectCollection").val(collection.id)
-		formEdit.find("#selectCollectionOld").val(collection.id)
 	}
 })
 

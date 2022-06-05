@@ -1,5 +1,12 @@
 {% extends "layout.html" %}
 
+{% block headscripts %}
+<script>
+	var grades = JSON.parse('{{ grades | tojson | safe }}')
+	var showTransferred = JSON.parse('{{ transferred | tojson | safe }}')
+</script>
+{% endblock %}
+
 {% block styles %}
 <style>
 	.collection-course-item:hover,
@@ -23,14 +30,33 @@
 		text-orientation: sideways;
 		transform: rotate(180deg);
 	}
-</style>
-{% endblock %}
 
-{% block headscripts %}
-<script>
-	var grades = JSON.parse('{{ grades | tojson | safe }}')
-	var showTransferred = JSON.parse('{{ transferred | tojson | safe }}')
-</script>
+	.dragging {
+		opacity: 0.5;
+		background-color: var(--bs-success);
+	}
+
+	.dragover-success>.card, .dragover-success .card-header, .dragover-success .card-footer {
+		border-color: var(--bs-success);
+	}
+
+	.dragover-success .card-header, .dragover-success .card-footer {
+		background-color: #d1e7dd; /* green-100 */
+	}
+
+	.dragover-danger>.card, .dragover-danger .card-header, .dragover-danger .card-footer {
+		border-color: var(--bs-danger);
+	}
+
+	.dragover-danger .card-header, .dragover-danger .card-footer {
+		background-color: #f8d7da; /* red-100 */
+	}
+
+	.drag-course-match {
+		border-color: var(--bs-danger) !important;
+		background-color: #f8d7da !important;
+	}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -38,7 +64,7 @@
 <!--TEMPLATES-->
 <div id="templates" class="d-none">
 	<!--Collection card item-->
-	<div class="collection-item col-10 col-sm-7 col-md-5 col-lg-4 col-xl-3 px-2" db-id="">
+	<div class="collection-item col-10 col-sm-7 col-md-5 col-lg-4 col-xl-3 px-2">
 		<div class="card h-100">
 			<!--Remove collection button-->
 			<button
@@ -67,7 +93,7 @@
 			<div class="collection-course-container card-body p-1" db-id=""></div>
 			<div class="loaded pb-2 text-center">
 				<a class="add-course text-body" href="" data-bs-toggle="modal" data-bs-target="#modalAddCourse"
-					db-id="">
+					onclick="">
 					Add course
 				</a>
 			</div>
@@ -93,7 +119,7 @@
 		</div>
 	</div>
 	<!--Collection course item-->
-	<div class="collection-course-item m-1 btn bg-light card" db-id="" db-collection="" db-code="" draggable="true" data-bs-toggle="modal"
+	<div class="collection-course-item m-1 btn bg-light card" db-code="" draggable="true" data-bs-toggle="modal"
 		data-bs-target="#modalInfoUserCourse" title="Click to view or drag to change term">
 		<div class="row">
 			<span class="emoji col-3 h5 p-0 m-0"></span>
@@ -121,7 +147,7 @@
 </div>
 
 <!--Courses per term-->
-<div class="container-fluid mb-5">
+<div class="container-fluid mb-4">
 	<div class="d-flex justify-content-between">
 		<h2 class="m-0">Courses per term</h2>
 
@@ -136,7 +162,7 @@
 		</button>
 	</div>
 
-	<div id="collectionsContainer" class="loaded row flex-nowrap overflow-scroll pt-3">
+	<div id="collectionsContainer" class="loaded row flex-nowrap overflow-scroll py-3">
 		<div id="transfer-collapsed" class="col-2 col-md-1 card mx-2 p-0 d-none">
 			<div class="card-body btn btn-light" onclick="transferredShow()" title="Show transferred courses">
 				<div class="h-100 d-flex justify-content-center text-center">

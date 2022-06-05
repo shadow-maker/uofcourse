@@ -39,10 +39,6 @@ a.text-muted:hover {
 	cursor: pointer;
 }
 
-.dragging {
-	opacity: 0.5;
-}
-
 .collapsing {
 	transition: 0.3s;
 }
