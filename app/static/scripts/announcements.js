@@ -21,7 +21,8 @@ function requestResults(callback) {
 		method: "GET",
 		data: {
 			limit: 5,
-			page: page.current
+			page: page.current,
+			asc: false,
 		},
 		traditional: true,
 		success: (response) => {
