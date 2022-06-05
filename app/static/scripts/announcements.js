@@ -16,20 +16,19 @@ var page = new Page(0, () => {
 // 
 
 function requestResults(callback) {
-	$("#announcements .loading").show()
-	$("#announcements .loaded").hide()
-
 	$.ajax({
 		url: "/api/announcements",
 		method: "GET",
-		data: "json",
+		data: {
+			limit: 5,
+			page: page.current
+		},
 		traditional: true,
 		success: (response) => {
 			callback(response)
 			console.log(response)
 		},
 		error: (response) => {
-			$(".loading").hide()
 			displayError(response)
 			console.log("Error")
 		}
@@ -40,19 +39,18 @@ function requestResults(callback) {
 // 
 
 function updateResults(data) {
-	$("#announcements .loading").hide()
-	$("#announcements .loaded").show()
+	$(" .loading").hide()
+	$(" .loaded").show()
 
-	const announcementsContainer = $("#announcementsTable tbody")
-	announcementsContainer.empty()
+	$("#announcementsContainer").empty()
+	for (let announcement of data.results) {
+		let announcementItem = $("#templates .announcement-item").clone()
 
-	for (let log of data.results) {
-		let announcementItem = $("#templates .log-item").clone()
+		announcementItem.find(".announcement-title").text(announcement.title)
+		announcementItem.find(".announcement-time").text(announcement.datetime.replace("T", " "))
+		announcementItem.find(".announcement-text").text(announcement.body)
 
-		announcementItem.find(".id").text(log.id)
-		announcementItem.find(".datetime").text(log.datetime.replace("T", " "))
-
-		announcementItem.appendTo("#announcementsTable tbody")
+		announcementItem.appendTo("#announcementsContainer")
 	}
 
 	page.current = data.page
