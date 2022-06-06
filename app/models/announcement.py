@@ -1,6 +1,7 @@
 from app import db
 from app.models.user_announcement import UserAnnouncement
 from app.localdt import utc
+from app.auth import current_user
 
 
 class Announcement(db.Model):
@@ -26,3 +27,4 @@ class Announcement(db.Model):
 		yield "title", self.title
 		yield "body", self.body
 		yield "datetime", self.datetime.isoformat()
+		yield "read", current_user in self.read_by
