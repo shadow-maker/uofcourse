@@ -47,6 +47,8 @@ function updateResults(data) {
 		announcementItem.find(".announcement-title").text(announcement.title)
 		announcementItem.find(".announcement-time").text(announcement.datetime.replace("T", " "))
 		announcementItem.find(".announcement-text").text(announcement.body)
+		if (isAuth && !announcement.read)
+			announcementItem.find(".card-header").removeClass("bg-light").addClass("alert-info")
 
 		announcementItem.find(".card-header").click(e => {
 			const modalInfo = $("#modalInfoAnnouncement")
@@ -54,6 +56,7 @@ function updateResults(data) {
 			modalInfo.find(".datetime").text(announcement.datetime.replace("T", " "))
 			modalInfo.find(".body").text(announcement.body)
 			modalInfo.find(".id").text(announcement.id)
+			announcementItem.find(".card-header").removeClass("alert-info").addClass("bg-light")
 		})
 
 		announcementItem.appendTo("#announcementsContainer")
