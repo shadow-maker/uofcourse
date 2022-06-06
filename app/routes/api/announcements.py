@@ -39,6 +39,7 @@ def putAnnouncementRead(id):
 	a = Announcement.query.get(id)
 	if not a:
 		return {"error": f"Announcement with id {id} does not exist"}, 404
-	current_user.read_announcements.append(a)
+	if current_user not in a.read_by:
+		current_user.read_announcements.append(a)
 	db.session.commit()
 	return {"success": True}, 200

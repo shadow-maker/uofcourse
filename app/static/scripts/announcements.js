@@ -32,6 +32,19 @@ function requestResults(callback) {
 		}
 	})
 }
+
+function putRead(id, callback) {
+	$.ajax({
+		url: "/api/announcements/" + id + "/read",
+		method: "PUT",
+		success: (response) => {
+			callback(response)
+		},
+		error: (response) => {
+			displayError(response)
+		}
+	})
+}
 //
 // UPDATE FUNCS
 // 
@@ -47,6 +60,7 @@ function updateResults(data) {
 		announcementItem.find(".announcement-title").text(announcement.title)
 		announcementItem.find(".announcement-time").text(announcement.datetime.replace("T", " "))
 		announcementItem.find(".announcement-text").text(announcement.body)
+
 		if (isAuth && !announcement.read)
 			announcementItem.find(".card-header").removeClass("bg-light").addClass("alert-info")
 
@@ -56,7 +70,13 @@ function updateResults(data) {
 			modalInfo.find(".datetime").text(announcement.datetime.replace("T", " "))
 			modalInfo.find(".body").text(announcement.body)
 			modalInfo.find(".id").text(announcement.id)
+
 			announcementItem.find(".card-header").removeClass("alert-info").addClass("bg-light")
+			
+			putRead(announcement.id, (response) => {
+				console.log(response)
+				announcementItem.find(".card-header").removeClass("alert-info").addClass("bg-light")
+			})
 		})
 
 		announcementItem.appendTo("#announcementsContainer")
