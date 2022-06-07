@@ -36,14 +36,14 @@
 </div>
 
 <!--Faculty Code-->
-<div class="mb-3">
+<div class="mb-2">
 	<span class="h3 font-monospace align-top">f/</span><span class="h3 align-middle font-monospace border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{% if faculty.subdomain %}{{faculty.subdomain}}{% else %}{{faculty.id}}{% endif %}</span>
 	<span class="align-bottom text-muted fs-6">(#{{faculty.id}})</span>
 </div>
 
 <!--Header-->
-<div class="mb-4 mb-lg-5 pb-0">
-	<span class="h1">{{faculty.name}}</span>
+<div class="row">
+	<h1 class="mt-2 mb-3 mb-lg-4">{{faculty.name}}</h1>
 </div>
 
 <div class="row mb-1 px-0 px-lg-3">
@@ -53,7 +53,7 @@
 			<div class="row mb-3 mt-0">
 				<!--Heading-->
 				<div class="col-12 col-sm-5 col-md-6 col-lg-12 col-xl-6 col-xxl-7 pe-0">
-					<h2 class="m-0">Faculty Subjects:</h2>
+					<h2 class="m-0">Subjects in this faculty</h2>
 				</div>
 
 				<!--Sorting options-->
