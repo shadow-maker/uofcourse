@@ -99,7 +99,7 @@
 			</li>
 			{% for announcement in current_user.unread_announcements %}
 			<a class="list-group-item list-group-item-action d-flex justify-content-between">
-				<span>{{announcement.title}}</span>
+				<p class="text-break">{{announcement.title}}</p>
 				<i class="bi-box-arrow-up-right"></i>
 			</a>
 			{% endfor %}
