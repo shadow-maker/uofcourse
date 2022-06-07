@@ -10,8 +10,12 @@ class CourseCollection(db.Model):
 	userCourses = db.relationship("UserCourse", backref="collection")
 
 	@property
-	def units(self):
-		return sum([float(uc.course.units) for uc in self.userCourses if uc.grade and uc.grade.gpv])
+	def units_total(self):
+		return sum(float(uc.course.units) for uc in self.userCourses)
+
+	@property
+	def units_counted(self):
+		return sum(float(uc.course.units) for uc in self.userCourses if uc.grade and uc.grade.gpv)
 	
 	def getPoints(self, precision=3):
 		points = 0
@@ -25,7 +29,7 @@ class CourseCollection(db.Model):
 
 	def getGPA(self, precision=3):
 		points = self.getPoints(6)
-		accUnits = self.units
+		accUnits = self.units_counted
 		if points is None or accUnits == 0:
 			return None
 		return round(points / accUnits, precision)
@@ -57,7 +61,7 @@ class CourseCollection(db.Model):
 		yield "term_id", self.term_id
 		yield "transfer", self.transfer
 		yield "points", self.points
-		yield "units", self.units
+		yield "units", self.units_counted
 		yield "gpa", self.gpa
 
 	def __repr__(self):
