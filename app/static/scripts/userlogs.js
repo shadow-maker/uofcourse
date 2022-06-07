@@ -25,7 +25,7 @@ function getLogs(callback) {
 			page: page.current
 		},
 		traditional: true,
-		success: callback,
+    success: callback,
 		error: (response) => {
 			$(".loading").hide()
 			displayError(response)

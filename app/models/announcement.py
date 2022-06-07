@@ -1,5 +1,8 @@
 from app import db
 from app.models.user_announcement import UserAnnouncement
+from app.localdt import utc
+from app.auth import current_user
+
 
 class Announcement(db.Model):
 	__tablename__ = "announcement"
@@ -7,7 +10,7 @@ class Announcement(db.Model):
 	user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 	title = db.Column(db.String(256), nullable=False)
 	body = db.Column(db.Text)
-
+	datetime = db.Column(db.DateTime, nullable=False, default=utc.now)
 	read_by = db.relationship("User", secondary=UserAnnouncement, backref="read_announcements")
 
 	def __init__(self, user_id, title, body):
@@ -16,4 +19,12 @@ class Announcement(db.Model):
 		self.body = body
 
 	def __repr__(self):
-		return f"Announcement(#{self.id})"
+		return f"Announcement(id={self.id}"
+	
+	def __iter__(self):
+		yield "id", self.id
+		yield "author_id", self.user_id
+		yield "title", self.title
+		yield "body", self.body
+		yield "datetime", self.datetime.isoformat()
+		yield "read", current_user in self.read_by

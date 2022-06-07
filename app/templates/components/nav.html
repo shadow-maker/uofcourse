@@ -34,6 +34,11 @@
 						About
 					</a>
 				</li>
+				<li>
+					<a class="nav-link {% if request.path == url_for('view.announcements') %}active{% endif %}" href="{{url_for('view.announcements')}}">
+						Announcements
+					</a>
+				</li>
 			</ul>
 
 			<ul class="navbar-nav text-center">

@@ -44,6 +44,14 @@ def about():
 		headerIcon = "info-square"
 	)
 
+@view.route("/announcements")
+def announcements():
+	return render_template("announcements.html",
+		title = "Announcements",
+		header = "Recent Announcements",
+		headerIcon = "shield-exclamation",
+		description = "Relevant changes and modifications performed on the website."
+	)
 
 @view.route("/api")
 def api():
