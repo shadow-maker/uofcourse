@@ -1,10 +1,11 @@
-from flask_login import login_required
 from app import db
 from app.models import Announcement
-from app.auth import current_user
+from app.auth import login_required, current_user
 from app.routes.api.utils import *
 
 from flask import Blueprint
+
+import json
 
 
 announcement = Blueprint("announcements", __name__, url_prefix="/announcements")
@@ -35,11 +36,30 @@ def getAnnouncementRead(id):
 
 @announcement.route("/<id>/read", methods=["PUT"])
 @login_required
-def putAnnouncementRead(id):
+def putAnnouncementRead(id, set=None):
 	a = Announcement.query.get(id)
 	if not a:
 		return {"error": f"Announcement with id {id} does not exist"}, 404
-	if current_user not in a.read_by:
-		current_user.read_announcements.append(a)
-	db.session.commit()
-	return {"success": True}, 200
+	if set is None:
+		data = request.form.to_dict()
+		if not "set" in data:
+			set = False
+		else:
+			try:
+				set = bool(json.loads(data["set"]))
+			except:
+				return {"error": "invalid 'set' value in data"}, 400
+	try:
+		if set == True:
+			current_user.read_announcements.append(a)
+		elif set == False:
+			current_user.read_announcements.remove(a)
+		else:
+			return {"error": "invalid 'set' value"}, 400
+		db.session.commit()
+	except:
+		return {"error": "failed to set 'read' for announcement"}, 400
+	return {
+		"success": True,
+		"read": a in current_user.read_announcements
+	}, 200
