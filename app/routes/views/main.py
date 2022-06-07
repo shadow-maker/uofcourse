@@ -45,12 +45,13 @@ def about():
 	)
 
 @view.route("/announcements")
-def announcements():
+def announcements(id=""):
 	return render_template("announcements.html",
 		title = "Announcements",
 		header = "Recent Announcements",
 		headerIcon = "shield-exclamation",
-		description = "Relevant changes and modifications performed on the website."
+		description = "Relevant changes and modifications performed on the website.",
+		announcement_id = id
 	)
 
 @view.route("/api")
