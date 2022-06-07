@@ -42,7 +42,7 @@ class User(db.Model, UserMixin):
 	created = db.Column(db.DateTime, nullable=False, default=utc.now)
 	
 	faculty_id = db.Column(db.Integer, db.ForeignKey("faculty.id"), nullable=False)
-	neededUnits = db.Column(db.Numeric(precision=5, scale=2)) # 3 integer places, 2 decimal places
+	units = db.Column(db.Numeric(precision=5, scale=2), default=120) # 3 integer places, 2 decimal places
 
 	collections = db.relationship("CourseCollection", backref="user")
 	tags = db.relationship("UserTag", backref="user")
@@ -63,6 +63,34 @@ class User(db.Model, UserMixin):
 		starred.starred = True
 		starred.deletable = False
 		self.tags.append(starred)
+
+	@property
+	def coursesTaken(self):
+		return sum(
+			len(collection.userCourses) for collection in self.collections
+			if collection.transfer or collection.term.isPrev()
+		)
+
+	@property
+	def coursesEnrolled(self):
+		return sum(len(collection.userCourses) for collection in self.collections)
+
+	@property
+	def unitsNeeded(self):
+		return self.units
+
+	@property
+	def unitsTaken(self):
+		for collection in self.collections:
+			print(collection, collection.transfer or collection.term.isPrev(), collection.units_total)
+		return sum(
+			collection.units_total for collection in self.collections
+			if collection.transfer or collection.term.isPrev()
+		)
+
+	@property
+	def unitsEnrolled(self):
+		return sum(collection.units_total for collection in self.collections)
 
 	def log(self, event, ip=None):
 		log = UserLog(self.id, event, ip)
@@ -106,7 +134,7 @@ class User(db.Model, UserMixin):
 	def __iter__(self):
 		yield "id", self.id
 		yield "username", self.username
+		yield "role", self.role.name
 		yield "name", self.name
 		yield "email", self.email
-		yield "faculty", dict(self.faculty)
-		yield "neededUnits", self.neededUnits
+		yield "faculty_id", self.faculty_id
