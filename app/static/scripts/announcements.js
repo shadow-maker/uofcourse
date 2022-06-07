@@ -65,8 +65,9 @@ function updateResults(data) {
 			item.find(".card-header").removeClass("alert-info").addClass("bg-light")
 			
 			if (isAuth && !announcement.read) {
-				putRead(announcement.id, true, () => {
+				putRead(announcement.id, true, (response) => {
 					item.find(".card-header").removeClass("alert-info").addClass("bg-light")
+					announcement.read = response.read
 				})
 			}
 		})
