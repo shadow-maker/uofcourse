@@ -26,13 +26,13 @@ class Term(db.Model):
 		return f"{self.season.name} {self.year}"
 
 	def isPrev(self, today=local.date()):
-		return self.end and self.end < today
+		return (self.year < today.year) if self.end is None else (self.end < today)
 
 	def isCurrent(self, today=local.date()):
 		return self.start and self.end and self.start <= today <= self.end
 	
 	def isNext(self, today=local.date()):
-		return self.start and self.start > today
+		return (self.year > today.year) if self.start is None else (self.start > today)
 	
 	@classmethod
 	def getPrev(cls):
