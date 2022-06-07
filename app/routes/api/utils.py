@@ -2,6 +2,7 @@ from app.constants import *
 from sqlalchemy.orm.attributes import QueryableAttribute
 
 from flask import request
+from sqlalchemy import desc
 
 
 def getById(table, id):
@@ -38,7 +39,7 @@ def getAll(table, filters=(), serializer=None):
 		return {"error": f"page cannot be lower than 1 (got {page})"}, 400
 
 	# Get list of table columns for sorting
-	sortBy = []
+	order = []
 	for column in sort:
 		try:
 			col = getattr(table, column)
@@ -46,13 +47,13 @@ def getAll(table, filters=(), serializer=None):
 				raise AttributeError
 		except AttributeError:
 			return {"error": f"'{column}' is not a valid column for {table.__tablename__}"}, 400
-		sortBy.append(col)
-	if table.id not in sortBy:
-		sortBy.append(table.id)
+		order.append(col)
+	if table.id not in order:
+		order.append(table.id)
 
-	# Add .desc() to sorting columns if asc is false
+	# Add sorting columns to desc() if asc is false
 	if asc in ["false", "0"]:
-		sortBy = [i.desc() for i in sortBy]
+		order = [desc(i) for i in order]
 
 	# Query database with filters
 	try:
@@ -60,7 +61,7 @@ def getAll(table, filters=(), serializer=None):
 	except:
 		return {"error": "filters are not valid"}, 400
 	try:
-		query = query.order_by(*sortBy)
+		query = query.order_by(*order)
 	except:
 		return {"error": "sort columns are not valid"}, 400
 

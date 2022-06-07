@@ -11,6 +11,7 @@
 
 {% block content %}
 
+<!--Course Code-->
 <div class="mb-3">
 	<span class="h3 font-monospace align-top">c/</span><span class="h3 font-monospace my-0 mx-1"><span class="border border-2 border-secondary bg-light rounded p-1" title="Subject code">{{subject.code}}</span>-<span
 	class="border border-2 border-secondary bg-light rounded p-1" title="Course number">{{course.number}}</span></span>
@@ -19,7 +20,7 @@
 
 <div class="row mb-1">
 	<!--Course Header-->
-	<div class="col-12 col-md-7 col-lg-8">
+	<div class="col-12 col-md-7 col-lg-8 col-xl-9">
 		<h1 class="mt-2" title="Course name">&#{{course.emoji}} {{course.name}}</h1>
 
 		<div class="">
@@ -41,7 +42,7 @@
 	</div>
 
 	<!--Other info-->
-	<div class="col-12 col-md-5 col-lg-4 row pt-2 pt-md-3 ps-4 ps-md-3 pe-0">
+	<div class="col-12 col-md-5 col-lg-4 col-xl-3 row pt-2 pt-md-3 ps-4 ps-md-3 pe-0">
 		<!--Extra info-->
 		<div class="card border-0 col-12 col-sm-6 col-md-12 ps-2 pe-2 ps-sm-0 ps-md-2 pb-1">
 			<div class="card-body p-0">
@@ -90,7 +91,7 @@
 
 <div class="row">
 	<!--LEFT-->
-	<div class="order-2 order-sm-1 col-12 col-sm-6 col-md-7 col-lg-8 pe-0">
+	<div class="order-2 order-sm-1 col-12 col-sm-6 col-md-7 col-lg-8 col-xl-9 pe-0">
 		<!--Course Info-->
 		<div class="container p-0 ps-lg-4 row mb-4">
 			{% macro textCard(title, content, tooltip) %}
@@ -146,7 +147,7 @@
 	</div>
 
 	<!--RIGHT-->
-	<div class="order-1 order-sm-2 col-12 col-sm-6 col-md-5 col-lg-4 p-2">
+	<div class="order-1 order-sm-2 col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3 p-2">
 		<div class="sticky-sm-top sticky-offset">
 			<!--User data-->
 			<div class="card bg-light">
@@ -209,6 +210,7 @@
 						</div>
 
 						{% if current_user.is_authenticated %}
+						{% if userCourses %}
 						<div class="card bg-light">
 							<ul class="list-group list-group-flush">
 								{% for uCourse in userCourses %}
@@ -219,13 +221,28 @@
 										{% else %}
 										<span>{{uCourse.collection.term.name | capitalize}}</span>
 										{% endif %}
-										<span class="font-monospace" title="{{uCourse.grade.gpv}}">
+										{% if uCourse.grade %}
+										<span class="font-monospace" title="{{uCourse.grade.gpv}} GPV | {{uCourse.weightedGPV}} Weighted">
 											{{uCourse.grade.symbol}}
 										</span>
+										{% else %}
+										<span class="font-monospace" title="Grade not set">
+											-
+										</span>
+										{% endif %}
 									</div>
 								</li>
 								{% endfor %}
 							</ul>
+						</div>
+						{% else %}
+						<div class="text-center fst-italic">None</div>
+						{% endif %}
+						<div class="text-center mt-2">
+							<a class="btn btn-sm btn-outline-secondary" href="{{url_for('view.planner')}}">
+								<i class="bi-pencil-square"></i>
+								Edit in My Planner
+							</a>
 						</div>
 						{% else %}
 						<span class="fst-italic">

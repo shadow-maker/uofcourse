@@ -6,6 +6,7 @@ from flask.helpers import url_for
 from sqlalchemy import select, cast, func
 from sqlalchemy.ext.hybrid import hybrid_property
 
+
 class Course(db.Model):
 	__tablename__ = "course"
 	id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +25,14 @@ class Course(db.Model):
 	subsite = db.Column(db.String(32))
 
 	userCourses = db.relationship("UserCourse", backref="course")
+
+	@hybrid_property
+	def faculty_id(self):
+		return self.subject.faculty_id
+
+	@faculty_id.expression # type: ignore
+	def faculty_id(cls):
+		return select(Subject.faculty_id).where(Subject.id == cls.subject_id)
 
 	@hybrid_property
 	def subject_code(self):
@@ -92,7 +101,7 @@ class Course(db.Model):
 		yield "name", self.name
 		yield "aka", self.aka
 		yield "emoji", self.subject.emoji
-		yield "units", self.units
+		yield "units", float(self.units)
 		yield "desc", self.desc
 		yield "prereqs", self.prereqs
 		yield "coreqs", self.coreqs

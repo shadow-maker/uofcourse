@@ -16,7 +16,7 @@ function toggleTag(tagId) {
 
 function addCollection(collectionId) {
 	$.ajax({
-		url: "/api/users/course",
+		url: "/api/me/course",
 		method: "POST",
 		data: {
 			course_id: course_id,
@@ -101,7 +101,5 @@ function updateTags() {
 //
 
 $(document).ready(() => {
-	tagsInit(() => {
-		updateTags()
-	})
+	tagsInit(updateTags)
 })

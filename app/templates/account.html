@@ -14,10 +14,13 @@
 	<table>
 		<tr class="log-item">
 			<th class="id" scope="row"></th>
-			<td class="datetime"></td>
+			<td class="datetime">
+				<span class="d-none utc"></span>
+				<span class="d-none local"></span>
+			</td>
 			<td class="event_name"></td>
 			<td class="ip-container">
-				<a href="" class="ip-link text-body text-decoration-none" title="View IP location" db-id="">
+				<a href="" class="ip-link text-body text-decoration-none" title="View IP location">
 					<span class="ip font-monospace"></span>
 					<i class="bi-pin-map-fill"></i>
 				</a>
@@ -95,7 +98,18 @@
 		<thead>
 			<tr>
 				<th scope="col">ID</th>
-				<th scope="col">Date-Time (UTC)</th>
+				<th scope="col">
+					<div class="d-sm-flex">
+						<span>Date-Time</span>
+						<div class="ms-sm-2" title="Timezone">
+							<select id="logsTimezoneSelect" class="form-select form-select-sm py-0 ps-1"
+								onchange="showDatetime($(this).val())">
+								<option value="utc" selected title="Universal Time">UTC</option>
+								<option value="local" title="Calgary Time (Mountain)">MDT</option>
+							</select>
+						</div>
+					</div>
+				</th>
 				<th scope="col">Event</th>
 				<th scope="col">IP</th>
 			</tr>
@@ -166,7 +180,8 @@
 					</div>
 					<div class="row mt-2">
 						<div class="col ps-5">
-							<a href="" class="gmaps-link text-body text-decoration-none" target="_blank" rel="noopener noreferrer">
+							<a href="" class="gmaps-link text-body text-decoration-none" target="_blank"
+								rel="noopener noreferrer">
 								<span class="text-decoration-underline">Open in Google Maps</span>
 								<i class="bi-box-arrow-up-right"></i>
 							</a>
@@ -174,19 +189,15 @@
 					</div>
 				</div>
 				<div class="error alert alert-danger">
-					<div class="fw-bold">
-						Error requesting location from this IP address
-					</div>
-					<div>
-						<span class="">Message:</span>
-						<span class="message"></span>
-					</div>
+					<div class="fw-bold">Error requesting location of this IP address</div>
+					<div class="message"></div>
 				</div>
 
 				<div class="text-muted mt-3 px-1">
 					<small>
 						<i class="bi-info-circle-fill"></i>
-						IP address location provided by <a href="https://ip-api.com" target="_blank" rel="noopener noreferrer">ip-api.com</a>
+						IP address location provided by <a href="https://ip-api.com" target="_blank"
+							rel="noopener noreferrer">ip-api.com</a>
 					</small>
 				</div>
 			</div>

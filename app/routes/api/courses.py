@@ -1,5 +1,4 @@
-from app import db
-from app.models import Course, Subject, Faculty, utils
+from app.models import Course, Subject, Faculty
 from app.auth import current_user
 from app.routes.api.utils import *
 
@@ -43,15 +42,6 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 	except:
 		return {"error": "Could not parse levels, invalid format"}, 400
 
-	# OLD IMPLEMENTATION: Convert levels list into a list of tuples where each tuple is a range of levels
-	# levelsFilter = []
-	# for l in levels:
-	# 	if levelsFilter and levelsFilter[-1][1] == l:
-	# 		levelsFilter[-1][1] = l + 1
-	# 	else:
-	# 		levelsFilter.append([l, l + 1])
-	# In filters: or_(and_(Course.number >= l[0] * 100, Course.number < l[1] * 100) for l in levelsFilter)
-
 	# Parse faculties
 	try:
 		if not faculties: # faculties not passed as function argument
@@ -67,10 +57,12 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 		if not subjects: # subjects not passed as function argument
 			subjects = list(dict.fromkeys(request.args.getlist("subject", type=str)))
 		if not subjects: # subjects not passed as url argument
-			subjects = [s[0] for s in list(Subject.query.with_entities(Subject.id))]
+			subjects = [s[0] for s in Subject.query.filter(
+				*([Subject.faculty_id.in_(faculties)] if faculties else [])
+			).with_entities(Subject.id)]
 		else:
 			for s in subjects[:]: # check if subjects are valid
-				subject = Subject.query.get(s) if s.isdigit() else utils.getSubjectByCode(s)
+				subject = Subject.query.get(s) if s.isdigit() else Subject.query.filter_by(code=s.upper()).first()
 				if subject:
 					# Only select subjects that belong to one of the passed faculties
 					if faculties and not subject.faculty_id in faculties:
@@ -135,7 +127,7 @@ def getCourseById(id):
 
 @course.route("/code/<subjectCode>/<courseNumber>", methods=["GET"])
 def getCourseByCode(subjectCode, courseNumber):
-	subject = utils.getSubjectByCode(subjectCode)
+	subject = Subject.query.filter_by(code=subjectCode.upper()).first()
 	if not subject:
 		return {"error": f"Subject with code {subjectCode} does not exist"}, 404
 	course = Course.query.filter_by(subject_id=subject.id, number=courseNumber).first()

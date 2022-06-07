@@ -1,4 +1,4 @@
-from app.models.utils import getSubjectByCode
+from app.models import Subject
 from app.routes.views import view
 
 from flask import render_template, flash, redirect
@@ -8,7 +8,8 @@ from flask.helpers import url_for
 def subject(subjectCode):
 	if not subjectCode.isupper():
 		return redirect(url_for("view.subject",	subjectCode=subjectCode.upper()))
-	subject = getSubjectByCode(subjectCode)
+	subject = Subject.query.filter_by(code=subjectCode.upper()).first()
+
 	if not subject:
 		flash(f"Subject with code {subjectCode} does not exist!", "danger")
 		return redirect(url_for("view.home"))

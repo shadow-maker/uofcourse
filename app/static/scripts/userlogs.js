@@ -4,9 +4,7 @@
 
 // Init Page object (defined in pagination.html)
 var page = new Page(0, () => {
-	getLogs((data) => {
-		updateLogs(data)
-	})
+	getLogs(updateLogs)
 })
 
 //
@@ -18,7 +16,7 @@ function getLogs(callback) {
 	$("#logs .loaded").hide()
 
 	$.ajax({
-		url: "/api/users/logs",
+		url: "/api/me/logs",
 		method: "GET",
 		data: {
 			sort: ["datetime"],
@@ -27,9 +25,7 @@ function getLogs(callback) {
 			page: page.current
 		},
 		traditional: true,
-		success: (response) => {
-			callback(response)
-		},
+    success: callback,
 		error: (response) => {
 			$(".loading").hide()
 			displayError(response)
@@ -39,7 +35,7 @@ function getLogs(callback) {
 
 function getLocation(id, callback) {
 	$.ajax({
-		url: "/api/users/logs/" + id + "/location",
+		url: "/api/me/logs/" + id + "/location",
 		method: "GET",
 		success: (response) => {
 			callback(response)
@@ -54,67 +50,75 @@ function getLocation(id, callback) {
 // UPDATE FUNCS
 //
 
+function showDatetime(timezone) {
+	$("#logsTable tbody .datetime span").addClass("d-none")
+	$("#logsTable tbody .datetime ." + timezone).removeClass("d-none")
+}
+
 function updateLogs(data) {
 	$("#logs .loading").hide()
 	$("#logs .loaded").show()
 
-	const logsContainer = $("#logsTable tbody")
-	logsContainer.empty()
+	$("#logsTable tbody").empty()
 
 	for (let log of data.results) {
 		let logItem = $("#templates .log-item").clone()
 
 		logItem.find(".id").text(log.id)
-		logItem.find(".datetime").text(log.datetime.replace("T", " "))
+		logItem.find(".datetime .utc").text(
+			log.datetime_utc.substring(0, log.datetime_utc.lastIndexOf(
+				log.datetime_utc.includes("+") ? "+" : "-"
+			)).replace("T", " ")
+		)
+		logItem.find(".datetime .local").text(
+			log.datetime_local.substring(0, log.datetime_local.lastIndexOf(
+				log.datetime_local.includes("+") ? "+" : "-"
+			)).replace("T", " ")
+		)
 		logItem.find(".event_type").text(log.event_type)
 		logItem.find(".event_name").text(log.event_name)
-		logItem.find(".ip-link").attr("db-id", log.id)
 		logItem.find(".ip-link .ip").html(log.ip)
 
-		logItem.appendTo("#logsTable tbody")
+		logItem.find(".ip-link").click(e => {
+			e.preventDefault()
+
+			const modal = $("#modalShowLocation")
+		
+			modal.find(".loading").show()
+			modal.find(".success").hide()
+			modal.find(".error").hide()
+		
+			modal.find(".ip").val(log.ip)
+		
+			getLocation(log.id, (data) => {
+				modal.find(".loading").hide()
+				if (data.status == "success") {
+					modal.find(".success").show()
+					for (property in data)
+						modal.find(".success ." + property).text(data[property])
+					modal.find(".success .gmaps-link").attr("href", data.gmaps)
+				} else {
+					modal.find(".error").show()
+					modal.find(".error .message").text(data.message)
+				}
+			})
+		
+			modal.modal("show")
+		})
+
+		logItem.appendTo($("#logsTable tbody"))
 	}
 
-	page.current = data.page
+	showDatetime("utc")
+
 	page.total = data.pages
+	page.current = data.page
 
 	page.updateNav()
 }
 
 //
-// Events
-//
-
-$(document).on("click", ".ip-link", function (event) {
-	event.preventDefault()
-
-	const modal = $("#modalShowLocation")
-
-	modal.find(".loading").show()
-	modal.find(".success").hide()
-	modal.find(".error").hide()
-
-	modal.find(".ip").val($(this).find(".ip").text())
-
-	getLocation($(this).attr("db-id"), (data) => {
-		modal.find(".loading").hide()
-		if (data.status == "success") {
-			modal.find(".success").show()
-			for (property in data)
-				modal.find(".success ." + property).text(data[property])
-			modal.find(".success .gmaps-link").attr("href", data.gmaps)
-		} else {
-			modal.find(".error").show()
-			modal.find(".error .message").text(data.message)
-		}
-	})
-
-	modal.modal("show")
-})
-
-//
 // DOCUMENT READY
 //
 
-$(document).ready(() => {
-	page.callback()
-})
+$(document).ready(page.callback)

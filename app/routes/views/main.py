@@ -1,9 +1,9 @@
 from app import app, jinja, ifttt
 from app import changelog as change
 from app.auth import current_user
+from app.models import Term
 from app.forms import formContact
 from app.routes.views import view
-from app.models import utils
 from app.constants import MESSAGES_TIMEOUT
 from app.localdt import utc, local
 
@@ -17,9 +17,9 @@ import os
 @view.route("/home")
 @view.route("/")
 def home():
-	term = utils.getCurrentTerm()
+	term = Term.getCurrent()
 	if not term:
-		term = utils.getNextTerm()
+		term = Term.getNext()
 	courses = []
 	if term and current_user.is_authenticated:
 		for collection in current_user.collections:

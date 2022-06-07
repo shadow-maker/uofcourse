@@ -39,6 +39,7 @@ migrate = Migrate(app, db)
 alchemydumps = AlchemyDumps(app, db)
 
 ipcache = Cache(app, config={"CACHE_DEFAULT_TIMEOUT": 600})
+ipcache2 = {}
 
 bcrypt = Bcrypt(app)
 loginManager = LoginManager(app)

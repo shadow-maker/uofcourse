@@ -72,7 +72,7 @@ function colorToHex(color) {
 
 function requestTag(subpath, method, data, callback) {
 	$.ajax({
-		url: "/api/tags" + subpath,
+		url: "/api/me/tags" + subpath,
 		method: method,
 		data: data,
 		success: (response) => {

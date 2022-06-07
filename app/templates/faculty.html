@@ -7,8 +7,19 @@
 <script src="/static/scripts/faculty.js"></script>
 {% endblock %}
 
+{% block styles %}
+<style>
+	@media (min-width: 768px) {
+		span.h1 {
+			margin-left: 1em;
+		}
+	}
+</style>
+{% endblock %}
+
 {% block content %}
 
+<!--TEMPLATES-->
 <div id="templates" class="d-none">
 	<div class="subject-item mb-3 card">
 		<a class="subject-link m-0 p-0 text-decoration-none text-body" href="">
@@ -24,11 +35,15 @@
 	</div>
 </div>
 
+<!--Faculty Code-->
+<div class="mb-3">
+	<span class="h3 font-monospace align-top">f/</span><span class="h3 align-middle font-monospace border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{% if faculty.subdomain %}{{faculty.subdomain}}{% else %}{{faculty.id}}{% endif %}</span>
+	<span class="align-bottom text-muted fs-6">(#{{faculty.id}})</span>
+</div>
+
 <!--Header-->
-<div class="mb-4 py-0 py-lg-3 py-xl-4">
-	<span class="h3 font-monospace">f/</span>
+<div class="mb-4 mb-lg-5 pb-0">
 	<span class="h1">{{faculty.name}}</span>
-	<span class="text-muted fs-6">(#{{faculty.id}})</span>
 </div>
 
 <div class="row mb-1 px-0 px-lg-3">

@@ -1,29 +1,5 @@
 {% extends "layout.html" %}
 
-{% block styles %}
-<style>
-	.collection-course-item:hover, .tag-course-item:hover, #btnAddTerm:hover {
-		background-color: var(--bs-gray-200) !important;
-	}
-	
-	.collection-course-item .edit {
-		display: none;
-	}
-	
-	.collection-course-item:hover .edit {
-		display: block;
-	}
-	
-	.overall-collection-item .disable {
-		display: none;
-	}
-	
-	.overall-collection-item:hover .disable {
-		display: block;
-	}
-</style>
-{% endblock %}
-
 {% block headscripts %}
 <script>
 	var grades = JSON.parse('{{ grades | tojson | safe }}')
@@ -31,127 +7,169 @@
 </script>
 {% endblock %}
 
+{% block styles %}
+<style>
+	.collection-course-item:hover,
+	.tag-course-item:hover,
+	#collectionsContainer .btn:hover {
+		background-color: var(--bs-gray-200) !important;
+	}
+
+	.collection-course-item .edit,
+	.overall-collection-item .disable {
+		display: none;
+	}
+
+	.collection-course-item:hover .edit,
+	.overall-collection-item:hover .disable {
+		display: block;
+	}
+
+	#transfer-collapsed .d-flex span {
+		writing-mode: vertical-lr;
+		text-orientation: sideways;
+		transform: rotate(180deg);
+	}
+
+	.dragging {
+		opacity: 0.5;
+		background-color: var(--bs-success);
+	}
+
+	.dragover-success>.card, .dragover-success .card-header, .dragover-success .card-footer {
+		border-color: var(--bs-success);
+	}
+
+	.dragover-success .card-header, .dragover-success .card-footer {
+		background-color: #d1e7dd; /* green-100 */
+	}
+
+	.dragover-danger>.card, .dragover-danger .card-header, .dragover-danger .card-footer {
+		border-color: var(--bs-danger);
+	}
+
+	.dragover-danger .card-header, .dragover-danger .card-footer {
+		background-color: #f8d7da; /* red-100 */
+	}
+
+	.drag-course-match {
+		border-color: var(--bs-danger) !important;
+		background-color: #f8d7da !important;
+	}
+</style>
+{% endblock %}
+
 {% block content %}
 
+<!--TEMPLATES-->
+<div id="templates" class="d-none">
+	<!--Collection card item-->
+	<div class="collection-item col-10 col-sm-7 col-md-5 col-lg-4 col-xl-3 px-2">
+		<div class="card h-100">
+			<!--Remove collection button-->
+			<button
+				class="collection-remove position-absolute top-0 start-100 translate-middle badge rounded-pill btn btn-light border-secondary"
+				title="" onclick="">
+				<i class="bi-x-lg text-secondary"></i>
+			</button>
+			<!--Term info header-->
+			<div class="card-header text-center">
+				<span class="h5" title="Term season and year">
+					<span class="term-name"></span>
+					<i class="term-current d-none fs-6 bi-circle-fill text-success" data-bs-toggle="tooltip"
+						data-bs-placement="right" title="Current"></i>
+				</span>
+				<div class="term-date invisible m-0 text-muted fst-italic lh-1" style="height: 1rem;">
+					<small class="start" title="Start date"></small>
+					<i class="bi-arrow-right-short"></i>
+					<small class="end" title="End date"></small>
+				</div>
+			</div>
+			<div class="loading text-center mt-4 mb-2" title="Loading courses...">
+				<div class="spinner-border" role="status">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+			</div>
+			<div class="collection-course-container card-body p-1" db-id=""></div>
+			<div class="loaded pb-2 text-center">
+				<a class="add-course text-body" href="" data-bs-toggle="modal" data-bs-target="#modalAddCourse"
+					onclick="">
+					Add course
+				</a>
+			</div>
+			<div class="card-footer">
+				<div class="row">
+					<span class="col-3">
+						<div class="form-check form-switch" data-bs-toggle="tooltip" data-bs-placement="bottom"
+							title="Show in overall GPA">
+							<input class="countInGPA form-check-input" type="checkbox" role="switch">
+						</div>
+					</span>
+					<span class="col-6 text-center">Term GPA:</span>
+					<span class="col-3 font-monospace text-start collection-gpa pe-0">
+						<span class="gpa" data-bs-toggle="tooltip" data-bs-placement="bottom" title=""></span>
+						<span class="nogpa pe-2" style="cursor: default;" data-bs-toggle="tooltip"
+							data-bs-placement="bottom"
+							title="One or more courses don't have a grade or they don't count towards the GPA">
+							-
+						</span>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--Collection course item-->
+	<div class="collection-course-item m-1 btn bg-light card" db-code="" draggable="true" data-bs-toggle="modal"
+		data-bs-target="#modalInfoUserCourse" title="Click to view or drag to change term">
+		<div class="row">
+			<span class="emoji col-3 h5 p-0 m-0"></span>
+			<span class="code col-6 font-monospace"></span>
+			<span class="grade col-3 font-monospace text-start" title=""></span>
+		</div>
+		<div class="edit position-absolute end-0 pe-2">
+			<i class="bi-pencil-fill"></i>
+		</div>
+	</div>
+	<!--Overall GPA collection item-->
+	<div class="overall-collection-item row">
+		<span class="term col-12 col-sm-3 text-sm-end ps-sm-2 fw-bold"></span>
+		<span class="col-6 col-sm-4 font-monospace pe-0">
+			<span class="gpa d-inline-block" style="width: 3.1em;" title="Term GPA"></span>
+			x
+			<span class="units d-inline-block" style="width: 3.1em;" title="Term accumulated units"></span>
+			=
+		</span>
+		<span class="col-2 font-monospace px-0 d-flex justify-content-between" title="Term accumulated points">
+			<span class="points"></span>
+			<i class="disable bi-x pe-sm-2" title="Hide in overall GPA" onclick=""></i>
+		</span>
+	</div>
+</div>
+
 <!--Courses per term-->
-<div class="container-fluid mb-5">
+<div class="container-fluid mb-4">
 	<div class="d-flex justify-content-between">
 		<h2 class="m-0">Courses per term</h2>
 
-		<button type="button" class="btn btn-secondary m-0 py-0" data-bs-toggle="modal" data-bs-target="#modalAddCollection">
+		<div class="loading spinner-border" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+
+		<button type="button" class="loaded btn btn-secondary m-0 py-0" data-bs-toggle="modal"
+			data-bs-target="#modalAddCollection">
 			<i class="bi-calendar-plus-fill"></i>
 			Add term
 		</button>
 	</div>
 
-	<div id="collectionsContainer" class="row flex-nowrap overflow-scroll pt-3">
-		<div class="transfer-collapsed col-2 col-md-1 px-2">
-			<div class="card h-100 text-body text-decoration-none" onclick="transferredShow()" title="Show transferred courses" style="cursor: pointer;">
-				<div class="bg-light text-center h-100 d-flex justify-content-center">
-					<span class="h5 lh-1" style="writing-mode: vertical-lr; text-orientation: sideways; transform: rotate(180deg);">
+	<div id="collectionsContainer" class="loaded row flex-nowrap overflow-scroll py-3">
+		<div id="transfer-collapsed" class="col-2 col-md-1 card mx-2 p-0 d-none">
+			<div class="card-body btn btn-light" onclick="transferredShow()" title="Show transferred courses">
+				<div class="h-100 d-flex justify-content-center text-center">
+					<span class="h4 lh-1">
 						<span class="align-top">Transferred</span>
 						<i class="bi-caret-down-fill fs-4"></i>
 					</span>
-				</div>
-			</div>
-		</div>
-		{% for collection in collections %}
-		<div id="{{collection.id}}" class="{% if collection.transfer %}transfer{% endif %} collection-item col-10 col-sm-7 col-md-5 col-lg-4 col-xl-3 px-2" db-id="{{collection.id}}" db-units="" db-points="" db-gpa="" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}">
-			<div class="card h-100">
-				{% if not (collection.transfer or collection.userCourses) %}
-				<form action="{{url_for('view.delCourseCollection')}}" method="POST">
-					<input type="hidden" name="id" value="{{collection.id}}">
-					<button class="position-absolute top-0 start-100 translate-middle badge rounded-pill btn btn-light border-secondary" title="Remove term">
-						<i class="bi-x-lg text-secondary"></i>
-						<span class="visually-hidden">Remove term</span>
-					</button>
-				</form>
-				{% elif collection.transfer %}
-				<button class="position-absolute top-0 start-100 translate-middle badge rounded-pill btn btn-light border-secondary" title="Hide transferred" onclick="transferredHide()">
-					<i class="bi-x-lg text-secondary"></i>
-					<span class="visually-hidden">Hide</span>
-				</button>
-				{% endif %}
-				<div class="card-header text-center">
-					<span class="h5" title="Term season and year">
-						{% if collection.transfer %}
-							Transferred
-						{% else %}
-							{{collection.term.name | capitalize}}
-							{% if collection.term.isCurrent() %}
-							<i class="fs-6 bi-circle-fill text-success" data-bs-toggle="tooltip" data-bs-placement="right" title="Current"></i>
-							{% endif %}
-						{% endif %}
-					</span>
-					<div class="m-0 text-muted fst-italic lh-1" style="height: 1rem;">
-						{% if collection.transfer %}
-						<small></small>
-						{% else %}
-						<small title="Start date">{{collection.term.start}}</small>
-						<i class="bi-arrow-right-short"></i>
-						<small title="End date">{{collection.term.end}}</small>
-						{% endif %}
-					</div>
-				</div>
-				<div class="collection-course-container card-body p-1" db-id="{{collection.id}}">
-					{% for uCourse in collection.userCourses | sort(attribute="course.code") %}
-					{% set course = uCourse.course %}
-					<div class="collection-course-item m-1 btn bg-light card" db-id="{{uCourse.id}}" db-term="{% if collection.transfer %}Transferred{% else %}{{collection.term.name | capitalize}}{% endif %}" db-passed="{{uCourse.passed | tojson | safe}}" db-grade="{{uCourse.grade.id}}" db-code="{{course.code}}" db-name="{{course.name}}" db-url="{{course.url}}" db-units="{{course.units}}" db-repeat="{{course.repeat | tojson | safe}}" db-countgpa="{{course.countgpa | tojson | safe}}" draggable="true"
-						data-bs-toggle="modal" data-bs-target="#modalInfoUserCourse" title="Click to view or drag to change term">
-						<div class="row">
-							<span class="emoji col-3 h5 p-0 m-0">
-								&#{{uCourse.course.emoji}}
-							</span>
-							<span class="code col-6 font-monospace">
-								{{uCourse.course.code}}
-							</span>
-							{% set gpv = uCourse.grade.gpv if uCourse.grade.gpv else "-" %}
-							{% set weightedGPV = uCourse.weightedGPV if uCourse.weightedGPV else "-" %}
-							<span class="grade col-3 font-monospace text-start" title="{% if uCourse.grade%}{{gpv}} GPV | {{weightedGPV}} Weighted{% else %}Grade not set{% endif %}">
-								{% if uCourse.grade %}
-								{{uCourse.grade.symbol}}
-								{% else %}
-								-
-								{% endif %}
-							</span>
-						</div>
-						<div class="edit position-absolute end-0 pe-2">
-							<i class="bi-pencil-fill"></i>
-						</div>
-					</div>
-					{% endfor %}
-				</div>
-				<div class="pb-2 text-center">
-					<a class="add-course text-body" href="" data-bs-toggle="modal" data-bs-target="#modalAddCourse" db-id="{{collection.id}}">
-						Add course
-					</a>
-				</div>
-				<div class="card-footer">
-					<div class="row">
-						<span class="col-3">
-							<div class="form-check form-switch" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Show in overall GPA">
-								<input class="countInGPA form-check-input" type="checkbox" role="switch">
-							</div>
-						</span>
-						<span class="col-6 text-center">Term GPA:</span>
-						<span class="col-3 font-monospace text-start collection-gpa pe-0">
-							<span class="gpa" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">
-								{% if collection.gpa %}{{collection.gpa}}{% endif %}
-							</span>
-							<span class="nogpa pe-2 {% if collection.gpa %}d-none{% endif %}" style="cursor: default;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="One or more courses don't have a grade or they don't count towards the GPA">
-								-
-							</span>
-						</span>
-					</div>
-				</div>
-			</div>
-		</div>
-		{% endfor %}
-		<div class="col-6 col-sm-3 col-lg-2 card mx-2 p-0">
-			<div class="card-body btn btn-light" id="btnAddTerm" data-bs-toggle="modal" data-bs-target="#modalAddCollection">
-				<div class="h-100 d-flex flex-column align-content-center text-muted">
-					<div class="mt-auto"><i class="bi-plus-lg display-4"></i></div>
-					<div class="h5 mb-auto">Add term</div>
 				</div>
 			</div>
 		</div>
@@ -163,13 +181,15 @@
 	<div id="overallGPA" class="row ms-0">
 		<div class="col-12 col-lg-5 col-xl-6 col-xxl-3 h2 ps-0">
 			<span class="">Overall GPA:</span>
-			<span class="final-gpa ms-4 font-monospace">3.2</span>
+			<span class="final-gpa ms-4 font-monospace" title="-">-</span>
 		</div>
 		<div class="col-12 col-md-9 col-lg-7 col-xl-6 col-xxl-5 px-1 card ms-xxl-4">
 			<div class="card-body px-2">
 				<div id="overallCollectionContainer"></div>
 				<div class="row">
-					<span class="col-8 col-sm-9 ps-2 ps-lg-3 pe-4"><hr class="my-2"></span>
+					<span class="col-8 col-sm-9 ps-2 ps-lg-3 pe-4">
+						<hr class="my-2">
+					</span>
 				</div>
 				<div class="row">
 					<span class="col-6 col-sm-7 text-end ps-2"></span>
@@ -213,7 +233,8 @@
 					<div class="col">
 						<div class="fs-5">
 							<span class="emoji" title="Course emoji"></span>
-							<a class="link text-decoration-none text-body" href="" target="_blank" rel="noopener noreferrer">
+							<a class="link text-decoration-none text-body" href="" target="_blank"
+								rel="noopener noreferrer">
 								<span class="code text-decoration-underline font-monospace" title="Course code"></span>
 								<i class="bi-box-arrow-up-right"></i>
 							</a>
@@ -257,13 +278,15 @@
 						</div>
 						<div class="mt-2">
 							<span class="fw-bold">Weighted GPV:</span>
-							<span class="grade-weighted" title="GPV x Units" data-bs-toggle="tooltip" data-bs-placement="right"></span>
+							<span class="grade-weighted" title="GPV x Units" data-bs-toggle="tooltip"
+								data-bs-placement="right"></span>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="modal-footer d-flex justify-content-around">
-				<button class="btn btn-primary" data-bs-dismiss="modal" onclick="$('#modalEditUserCourse').modal('show')">
+				<button class="btn btn-primary" data-bs-dismiss="modal"
+					onclick="$('#modalEditUserCourse').modal('show')">
 					<i class="bi-pencil-fill"></i>
 					Edit
 				</button>
@@ -275,7 +298,7 @@
 <!--Form modals-->
 
 <!--Form add CourseCollection-->
-<form id="formAddCollection" name="formAddCollection" action="{{url_for('view.addCourseCollection')}}" method="POST">
+<form id="formAddCollection" name="formAddCollection" method="POST">
 	<div class="modal fade" id="modalAddCollection" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -308,7 +331,9 @@
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-around">
-					<button type="submit" class="btn btn-primary">Add</button>
+					<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+						Add
+					</button>
 				</div>
 			</div>
 		</div>
@@ -316,7 +341,7 @@
 </form>
 
 <!--Form add UserCourse-->
-<form id="formAddUserCourse" name="formAddUserCourse" action="{{url_for('view.addUserCourse')}}" method="POST">
+<form id="formAddUserCourse" name="formAddUserCourse" method="POST">
 	<div class="modal fade" id="modalAddCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -325,33 +350,48 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body px-5">
-					<input type="number" name="collection_id" id="selectCollectionId" value="" readonly hidden>
+					<!--Hidden fields-->
+					<input type="number" name="collection_id" id="selectCollection" value="" readonly hidden>
 					<input type="number" name="course_id" id="selectCourseId" value="" readonly hidden>
+
 					<div class="d-flex flex-row justify-content-center">
 						<!--Subject code-->
-						<input type="text" class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle" id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;" autocomplete="off">
+						<input type="text"
+							class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle"
+							id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;"
+							autocomplete="off">
 
 						<!--Separator-->
 						<span class="h-100 p-2 m-0 fs-2 align-middle">–</span>
 
 						<!--Course number-->
-						<input type="text" class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3" id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;" autocomplete="off">
+						<input type="text"
+							class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3"
+							id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;"
+							autocomplete="off">
 
 						<!--Course exists status-->
 						<div class="position-relative">
-							<div class="status fs-4 h-100 position-absolute start-100 p-2 ps-3 d-flex flex-column justify-content-center" id="selectCourseStatus">
+							<div class="status fs-4 h-100 position-absolute start-100 p-2 ps-3 d-flex flex-column justify-content-center"
+								id="selectCourseStatus">
 								<span class="error">
-									<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Course does not exist" title="Course does not exist"></i>
+									<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip"
+										data-bs-placement="right" aria-label="Course does not exist"
+										title="Course does not exist"></i>
 								</span>
 								<span class="success">
-									<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Course exists" title="Course exists"></i>
+									<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip"
+										data-bs-placement="right" aria-label="Course exists" title="Course exists"></i>
 								</span>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-around">
-					<button id="selectCourseSubmit" type="submit" class="submit btn btn-primary" disabled>Add</button>
+					<button id="selectCourseSubmit" type="submit" class="submit btn btn-primary" data-bs-dismiss="modal"
+						disabled>
+						Add
+					</button>
 				</div>
 			</div>
 		</div>
@@ -359,7 +399,7 @@
 </form>
 
 <!--Form edit UserCourse-->
-<form id="formEditUserCourse" name="formEditUserCourse" action="{{url_for('view.modUserCourse')}}" method="POST">
+<form id="formEditUserCourse" name="formEditUserCourse" method="POST">
 	<div class="modal fade" id="modalEditUserCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -372,27 +412,18 @@
 					<div class="row mb-2">
 						<label for="selectCoursePlaceholder" class="col-3 col-form-label">Course</label>
 						<div class="col-9">
-							<input type="hidden" id="selectCourse" name="id" value="">
+							<input type="hidden" id="selectUserCourse" name="id" value="">
 							<input type="text" id="selectCoursePlaceholder" class="form-control col-9" value="" disabled
 								readonly>
 						</div>
 					</div>
 					<!--Term-->
 					<div class="row mb-2">
+						<input type="hidden" id="selectCollectionOld" value="">
 						<label class="col-3 col-form-label" for="selectCollection">Term</label>
 						<div class="col-9">
 							<select class="form-select" aria-label="Select term" name="collection_id"
-								id="selectCollection">
-								{% for collection in collections %}
-								<option value="{{collection.id}}">
-									{% if collection.transfer %}
-									Transferred
-									{% else %}
-									{{collection.term.season.name | capitalize}} {{collection.term.year}}
-									{% endif %}
-								</option>
-								{% endfor %}
-							</select>
+								id="selectCollection"></select>
 						</div>
 					</div>
 					<!--Grade-->
@@ -413,14 +444,16 @@
 							<div class="form-check">
 								<input class="form-check-input" type="checkbox" name="passedCheck" id="selectPassed">
 							</div>
-							<input class="form-check-input" type="radio" name="passed" id="selectPassedTrue" value="true" hidden>
-							<input class="form-check-input" type="radio" name="passed" id="selectPassedFalse" value="false" hidden>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-around">
-					<button type="submit" name="method" value="DELETE" class="btn btn-danger">Remove</button>
-					<button type="submit" name="method" value="PUT" class="btn btn-primary">Save changes</button>
+					<button type="submit" method="DELETE" class="btn btn-danger" data-bs-dismiss="modal">
+						Remove
+					</button>
+					<button type="submit" method="PUT" class="btn btn-primary" data-bs-dismiss="modal">
+						Save changes
+					</button>
 				</div>
 			</div>
 		</div>

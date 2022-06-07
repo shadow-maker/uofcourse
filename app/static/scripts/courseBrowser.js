@@ -117,7 +117,7 @@ function requestResults(callback, ignorePrev=false) {
 
 function toggleCourseTag(courseId, tagId) {
 	$.ajax({
-		url: "/api/tags/" + tagId +"/course/" + courseId,
+		url: "/api/me/tags/" + tagId +"/course/" + courseId,
 		method: "PUT",
 		success: (data) => {
 			alert("success", data.success)
@@ -131,7 +131,7 @@ function toggleCourseTag(courseId, tagId) {
 
 function addCollection(courseId, collectionId) {
 	$.ajax({
-		url: "/api/users/course",
+		url: "/api/me/course",
 		method: "POST",
 		data: {
 			course_id: courseId,

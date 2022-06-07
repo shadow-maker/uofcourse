@@ -13,9 +13,9 @@ class UserModelView(BaseModelView):
 	def is_accessible(self):
 		return current_user.is_authenticated and current_user.role >= Role.admin
 	
-	column_list = ["id", "username", "role", "name", "email", "created", "neededUnits", "faculty_id"]
+	column_list = ["id", "username", "role", "name", "email", "created", "units", "faculty_id"]
 	column_details_list = [
-		"id", "username", "role", "name", "email", "created", "neededUnits", "faculty"
+		"id", "username", "role", "name", "email", "created", "units", "faculty"
 	]
 	column_filters = ["role", "faculty_id", "faculty"]
 	form_excluded_columns = ["created", "logs", "tags", "collections"]
@@ -34,7 +34,7 @@ class UserModelView(BaseModelView):
 		"password": {
 			"validators": [validators.DataRequired(), passwValidation]
 		},
-		"neededUnits": {
+		"units": {
 			"validators": [validators.NumberRange(min=0.0, max=999.99)]
 		}
 	}

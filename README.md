@@ -43,3 +43,10 @@ A `.env` file in the root project directory is used to store secure variables. T
 * `GANALYTICS_ID`: The Google Analytics ID for the application (begins with "G-")
 * `GADSENSE_ID`: The Google AdSense ID for the application
 * `IFTTT_KEY`: The IFTTT key for the application, used to send requests to IFTTT events
+
+## Style guidelines (all languages)
+
+* Indentation - Use tab characters (`\t`) to denote full indentations
+* Strings - Double quotes (`"..."`)
+* Class names - Pascal case
+* Function names - Camel case
