@@ -122,18 +122,22 @@
 		
 				{% if term.isCurrent() %}
 					<div class="fst-italic" title="Ends {{term.end}}">
-					{% if (term.end - today).days > 0 %}
-						{{(term.end - today).days}} days remaining
-					{% else %}
-						Last day
+					{% if term.end %}
+						{% if (term.end - today).days > 0 %}
+							{{(term.end - today).days}} days remaining
+						{% else %}
+							Last day
+						{% endif %}
 					{% endif %}
 					</div>
 				{% elif term.isNext() %}
 					<div class="fst-italic" title="Begins {{term.start}}">
-					{% if (term.start - today).days > 1 %}
-						Begins in {{(term.start - today).days}} days
-					{% else %}
-						Begins tomorrow
+					{% if term.start %}
+						{% if (term.start - today).days > 1 %}
+							Begins in {{(term.start - today).days}} days
+						{% else %}
+							Begins tomorrow
+						{% endif %}
 					{% endif %}
 					</div>
 				{% endif %}
