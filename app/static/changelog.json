@@ -3,15 +3,21 @@
 		"beta": false,
 		"date": "",
 		"changes": [
-			"The Go-To modal now supports navigating to subjects and faculties by their code",
+			"Announcements - A new way for admins to communicate with users. New announcements will appear in the home page and all announcements can be viewed in /announcements",
+			"The course planner has been completely rebuilt using only asynchronous requests to increase response rate and improve interactivity",
+			"New Program Progress view in the course planner, showing an overview of the amount of course units taken/enrolled in and amount of units left to graduate",
+			"The Go-To modal now supports navigating to subjects and faculties by their respective codes",
 			"All main pages now have related icons besides the title in the heading",
+			"Removed 'My' from the navbar links to reduce clutter in small screens",
 			"Support for viewing user logs' datetime in MDT or UTC timezones",
-			"Cache IP location requests",
-			"Added faculty_id sorting option to /api/courses"
+			"Cache IP location requests to reduce external API calls",
+			"Added faculty_id sorting option to /api/courses",
+			"General front-end improvements and optimizations"
 		],
 		"fixes": [
 			"Fix filtering by faculties in /api/courses and in Course Browser",
-			"Fix sorting courses by subject_code in descending order in /api/courses"
+			"Fix sorting courses by subject_code in descending order in /api/courses",
+			"/api/courses endpoints would return units as a string instead of float"
 		]
 	},
 	"1.0.2": {
