@@ -18,31 +18,22 @@ function requestResults(callback) {
 		data: {
 			sort: ["datetime"],
 			asc: false,
-			limit: 5,
+			limit: 15,
 			page: page.current
 		},
 		traditional: true,
-		success: (response) => {
-			callback(response)
-			console.log(response)
-		},
-		error: (response) => {
-			displayError(response)
-			console.log("Error")
-		}
+		success: callback,
+		error: displayError
 	})
 }
 
-function putRead(id, callback) {
+function putRead(id, set, callback) {
 	$.ajax({
 		url: "/api/announcements/" + id + "/read",
 		method: "PUT",
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
+		data: {set: set},
+		success: callback,
+		error: displayError
 	})
 }
 //
@@ -55,31 +46,32 @@ function updateResults(data) {
 
 	$("#announcementsContainer").empty()
 	for (let announcement of data.results) {
-		let announcementItem = $("#templates .announcement-item").clone()
+		let item = $("#templates .announcement-item").clone()
 
-		announcementItem.find(".announcement-title").text(announcement.title)
-		announcementItem.find(".announcement-time").text(announcement.datetime.replace("T", " "))
-		announcementItem.find(".announcement-text").text(announcement.body)
+		item.find(".announcement-title").text(announcement.title)
+		item.find(".announcement-time").text(announcement.datetime.replace("T", " "))
+		item.find(".announcement-text").text(announcement.body)
 
 		if (isAuth && !announcement.read)
-			announcementItem.find(".card-header").removeClass("bg-light").addClass("alert-info")
+			item.find(".card-header").removeClass("bg-light").addClass("alert-info")
 
-		announcementItem.find(".card-header").click(e => {
+		item.find(".card-header").click(e => {
 			const modalInfo = $("#modalInfoAnnouncement")
 			modalInfo.find(".title").text(announcement.title)
 			modalInfo.find(".datetime").text(announcement.datetime.replace("T", " "))
 			modalInfo.find(".body").text(announcement.body)
 			modalInfo.find(".id").text(announcement.id)
 
-			announcementItem.find(".card-header").removeClass("alert-info").addClass("bg-light")
+			item.find(".card-header").removeClass("alert-info").addClass("bg-light")
 			
-			putRead(announcement.id, (response) => {
-				console.log(response)
-				announcementItem.find(".card-header").removeClass("alert-info").addClass("bg-light")
-			})
+			if (isAuth && !announcement.read) {
+				putRead(announcement.id, true, () => {
+					item.find(".card-header").removeClass("alert-info").addClass("bg-light")
+				})
+			}
 		})
 
-		announcementItem.appendTo("#announcementsContainer")
+		item.appendTo("#announcementsContainer")
 	}
 
 	page.current = data.page
