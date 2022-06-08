@@ -4,20 +4,16 @@
 
 {% block styles %}
 <style>
-	/* .announcement-item:hover {
-		background-color: var(--bs-gray-200) !important;
-	} */
-
 	.announcement-item .card-header {
 		cursor: pointer;
 	}
 </style>
 {% endblock %}
 
-
 {% block headscripts %}
 {{ paginationCode() }}
-<script>let announcementID = {{announcement_id}}</script>
+{{announcement_id}}
+<script const announcementID = "{{announcement_id}}"></script>
 <script src="/static/scripts/announcements.js"></script>
 {% endblock %}
 
@@ -113,6 +109,8 @@
 		<!--Note-->
 		<div class="alert alert-warning" role="alert">
 			Note: Light blue announcements have been read by you. Grey ones haven't.
+			
+			{{announcement_id}}
 		</div>
 	</div>
 </div>
