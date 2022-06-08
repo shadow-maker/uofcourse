@@ -17,8 +17,8 @@ def getMe():
 def getProgress():
 	return {
 		"courses_taken": current_user.coursesTaken,
-		"courses_enrolled": current_user.coursesEnrolled,
+		"courses_planned": current_user.coursesPlanned,
 		"units_taken": current_user.unitsTaken,
-		"units_enrolled": current_user.unitsEnrolled,
+		"units_planned": current_user.unitsPlanned,
 		"units_needed": float(current_user.units) if current_user.units else None
 	}, 200

@@ -72,7 +72,7 @@ class User(db.Model, UserMixin):
 		)
 
 	@property
-	def coursesEnrolled(self):
+	def coursesPlanned(self):
 		return sum(len(collection.userCourses) for collection in self.collections)
 
 	@property
@@ -89,8 +89,11 @@ class User(db.Model, UserMixin):
 		)
 
 	@property
-	def unitsEnrolled(self):
-		return sum(collection.units_total for collection in self.collections)
+	def unitsPlanned(self):
+		return sum(
+			collection.units_total for collection in self.collections
+			if not(collection.transfer or collection.term.isPrev())
+		)
 
 	def log(self, event, ip=None):
 		log = UserLog(self.id, event, ip)
