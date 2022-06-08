@@ -34,11 +34,6 @@
 						About
 					</a>
 				</li>
-				<li>
-					<a class="nav-link {% if request.path == url_for('view.announcements') %}active{% endif %}" href="{{url_for('view.announcements')}}">
-						Announcements
-					</a>
-				</li>
 			</ul>
 
 			<ul class="navbar-nav text-center">
@@ -60,12 +55,22 @@
 							Account
 						</a>
 					</li>
+					<li title="Announcements">
+						<a class="nav-link {% if request.path == url_for('view.announcements') %}active{% endif %}" href="{{url_for('view.announcements')}}">
+							<i class="bi-bell-fill fs-5 lh-1"></i>
+						</a>
+					</li>
 					<li class="py-1 py-md-0 px-1">
 						<a class="btn btn-outline-primary d-block" href="{{url_for('view.logout')}}">
 							Log Out
 						</a>
 					</li>
 				{% else %}
+					<li title="Announcements">
+						<a class="nav-link {% if request.path == url_for('view.announcements') %}active{% endif %}" href="{{url_for('view.announcements')}}">
+							<i class="bi-bell-fill fs-5 lh-1"></i>
+						</a>
+					</li>
 					<li class="py-1 py-md-0 px-1">
 						<a class="btn btn-outline-info d-block" href="{{url_for('view.login')}}">
 							Log In
