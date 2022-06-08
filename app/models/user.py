@@ -77,7 +77,7 @@ class User(db.Model, UserMixin):
 
 	@property
 	def unitsNeeded(self):
-		return self.units
+		return float(self.units) if self.units else None
 
 	@property
 	def unitsTaken(self):
