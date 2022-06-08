@@ -68,19 +68,17 @@ function colorToHex(color) {
 	return ("000000" + color.toString(16)).slice(-6)
 }
 
+//
 // REQUEST FUNCS
+//
 
 function requestTag(subpath, method, data, callback) {
 	$.ajax({
 		url: "/api/me/tags" + subpath,
 		method: method,
 		data: data,
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
+		success: callback,
+		error: displayError
 	})
 }
 
@@ -108,7 +106,9 @@ function requestToggleTag(tagId, courseId) {
 	})
 }
 
+//
 // TAG EDIT FUNCS
+//
 
 function addTag() {
 	const color = Object.keys(COLORS)[Math.floor(Math.random() * Object.keys(COLORS).length)]
@@ -209,7 +209,9 @@ function tagExecuteChanges() {
 	})
 }
 
+//
 // EXTRA
+//
 
 function colorOptions(tagColor) {
 	var html = ""
@@ -286,9 +288,8 @@ function loadEditTagsModal() {
 function loadTagsDrawer() {
 	const container = $("#tagsDrawer .offcanvas-body")
 	container.empty()
-	tagIndex = 0
 	for (let tag of userTags) {
-		let tagItem = $("<div class='list-group mb-3'></div>")
+		let tagItem = $("<div class='tags-drawer-group list-group mb-3'></div>")
 		let emoji = ""
 		if (tag.emoji) {
 			emoji = `
@@ -304,24 +305,25 @@ function loadTagsDrawer() {
 			`
 		}
 		tagItem.append(`
-			<div class="list-group-item fs-5 bg-light d-flex justify-content-between align-items-center">
+			<div class="tags-drawer-header list-group-item fs-5 bg-light d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#tagsDrawerCollapse` + tag.id + `" role="button" aria-expanded="true" title="">
 				<span class="name">
 					` + emoji +` ` + tag.name.charAt(0).toUpperCase() + tag.name.slice(1) + `
 				</span>
 				<span class="count badge bg-primary rounded-pill" title="Courses count"></span>
 			</div>
-		`)
-		tagItem.append(`
+		`).append(`
 			<div class="loading list-group-item fst-italic">Loading...</div>
-		`)
+		`).append(`
+			<div id="tagsDrawerCollapse` + tag.id + `" class="tags-drawer-container rounded-bottom collapse"></div>`
+		)
 		container.append(tagItem)
 
 		requestTagCourses(tag.id, (data) => {
 			tagItem.find(".loading").remove()
 			tagItem.find(".count").text(data.courses.length)
 			for (let course of data.courses) {
-				tagItem.append(`
-					<div class="list-group-item list-group-item-action p-0 d-flex justify-content-between">
+				tagItem.find(".tags-drawer-container").append(`
+					<div class="tags-drawer-course list-group-item list-group-item-action p-0 d-flex justify-content-between">
 						<a class="flex-grow-1 px-4 py-2 text-body text-decoration-none" href="` + course.url +`">
 							<span class="emoji">&#` + (course.emoji ? course.emoji : DEFAULT_EMOJI) +`</span>
 							<span class="code font-monospace">` + course.code +`</span>	
@@ -332,6 +334,20 @@ function loadTagsDrawer() {
 					</div>
 				`)
 			}
+			
+			tagItem.find(".tags-drawer-container").collapse("show")
+		})
+
+		tagItem.find(".tags-drawer-container").on("hidden.bs.collapse", () => {
+			tagItem.find(".count").removeClass("invisible")
+			tagItem.find(".tags-drawer-header").addClass("rounded-bottom")
+			tagItem.find(".tags-drawer-header").attr("title", "Click to show tagged courses")
+		})
+
+		tagItem.find(".tags-drawer-container").on("show.bs.collapse", () => {
+			tagItem.find(".count").addClass("invisible")
+			tagItem.find(".tags-drawer-header").removeClass("rounded-bottom")
+			tagItem.find(".tags-drawer-header").attr("title", "Click to collapse tagged courses")
 		})
 	}
 }
