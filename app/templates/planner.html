@@ -9,8 +9,6 @@
 
 {% block styles %}
 <style>
-	.collection-course-item:hover,
-	.tag-course-item:hover,
 	#collectionsContainer .btn:hover {
 		background-color: var(--bs-gray-200) !important;
 	}
@@ -36,25 +34,39 @@
 		background-color: var(--bs-success);
 	}
 
-	.dragover-success>.card, .dragover-success .card-header, .dragover-success .card-footer {
+	.dragover-success>.card,
+	.dragover-success .card-header,
+	.dragover-success .card-footer {
 		border-color: var(--bs-success);
 	}
 
-	.dragover-success .card-header, .dragover-success .card-footer {
-		background-color: #d1e7dd; /* green-100 */
+	.dragover-success .card-header,
+	.dragover-success .card-footer {
+		background-color: #d1e7dd;
+		/* green-100 */
 	}
 
-	.dragover-danger>.card, .dragover-danger .card-header, .dragover-danger .card-footer {
+	.dragover-danger>.card,
+	.dragover-danger .card-header,
+	.dragover-danger .card-footer {
 		border-color: var(--bs-danger);
 	}
 
-	.dragover-danger .card-header, .dragover-danger .card-footer {
-		background-color: #f8d7da; /* red-100 */
+	.dragover-danger .card-header,
+	.dragover-danger .card-footer {
+		background-color: #f8d7da;
+		/* red-100 */
 	}
 
 	.drag-course-match {
 		border-color: var(--bs-danger) !important;
 		background-color: #f8d7da !important;
+	}
+
+	@media (min-width: 992px) {
+		#overallGPA {
+			border-right: 2px solid var(--bs-gray-300);
+		}
 	}
 </style>
 {% endblock %}
@@ -64,7 +76,7 @@
 <!--TEMPLATES-->
 <div id="templates" class="d-none">
 	<!--Collection card item-->
-	<div class="collection-item col-10 col-sm-7 col-md-5 col-lg-4 col-xl-3 px-2">
+	<div class="collection-item col-10 col-sm-7 col-md-5 col-lg-4 col-xl-3 ps-3 pe-0">
 		<div class="card h-100">
 			<!--Remove collection button-->
 			<button
@@ -147,9 +159,9 @@
 </div>
 
 <!--Courses per term-->
-<div class="container-fluid mb-4">
+<div class="container-fluid mb-4 px-0">
 	<div class="d-flex justify-content-between">
-		<h2 class="m-0">Courses per term</h2>
+		<div class="h2 m-0">Courses per term</div>
 
 		<div class="loading spinner-border" role="status">
 			<span class="visually-hidden">Loading...</span>
@@ -162,44 +174,133 @@
 		</button>
 	</div>
 
-	<div id="collectionsContainer" class="loaded row flex-nowrap overflow-scroll py-3">
-		<div id="transfer-collapsed" class="col-2 col-md-1 card mx-2 p-0 d-none">
-			<div class="card-body btn btn-light" onclick="transferredShow()" title="Show transferred courses">
-				<div class="h-100 d-flex justify-content-center text-center">
-					<span class="h4 lh-1">
-						<span class="align-top">Transferred</span>
-						<i class="bi-caret-down-fill fs-4"></i>
-					</span>
+	<div id="collectionsContainer" class="loaded row flex-nowrap overflow-scroll ms-2 me-0 py-3">
+		<div id="transfer-collapsed" class="col-2 col-md-1 px-0 m-0 d-none">
+			<div class="card h-100 bg-light btn">
+				<div class="card-body p-0" onclick="transferredShow()" title="Show transferred courses">
+					<div class="h-100 d-flex justify-content-center text-center">
+						<span class="h4 lh-1">
+							<span class="align-top">Transferred</span>
+							<i class="bi-caret-down-fill fs-4"></i>
+						</span>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-<!--Overall GPA-->
-<div class="container">
-	<div id="overallGPA" class="row ms-0">
-		<div class="col-12 col-lg-5 col-xl-6 col-xxl-3 h2 ps-0">
-			<span class="">Overall GPA:</span>
-			<span class="final-gpa ms-4 font-monospace" title="-">-</span>
-		</div>
-		<div class="col-12 col-md-9 col-lg-7 col-xl-6 col-xxl-5 px-1 card ms-xxl-4">
-			<div class="card-body px-2">
-				<div id="overallCollectionContainer"></div>
-				<div class="row">
-					<span class="col-8 col-sm-9 ps-2 ps-lg-3 pe-4">
-						<hr class="my-2">
-					</span>
+<div class="container-fluid mb-4 px-0">
+	<div class="row">
+		<!--Overall GPA-->
+		<div id="overallGPA" class="col-12 col-lg-7 col-xl-6 mb-2 pe-lg-4">
+			<div class="h2">
+				<span class="">Overall GPA:</span>
+				<span class="final-gpa ms-3 font-monospace" title="-">-</span>
+			</div>
+			<div class="card ms-2">
+				<div class="card-body px-2">
+					<div id="overallCollectionContainer"></div>
+					<div class="row">
+						<span class="col-8 col-sm-9 ps-2 ps-lg-3 pe-4">
+							<hr class="my-2">
+						</span>
+					</div>
+					<div class="row">
+						<span class="col-6 col-sm-7 text-end ps-2"></span>
+						<span class="col-6 col-sm-5 px-0 font-monospace">
+							<span class="sum-points" title="Sum of points">-</span>
+							/
+							<span class="sum-units" title="Sum of units">-</span>
+							=
+							<span class="final-gpa fw-bold" title="Overall GPA">-</span>
+						</span>
+					</div>
 				</div>
-				<div class="row">
-					<span class="col-6 col-sm-7 text-end ps-2"></span>
-					<span class="col-6 col-sm-5 px-0 font-monospace">
-						<span class="sum-points" title="Sum of points">-</span>
-						/
-						<span class="sum-units" title="Sum of units">-</span>
-						=
-						<span class="final-gpa fw-bold" title="Overall GPA">-</span>
-					</span>
+			</div>
+		</div>
+
+		<div id="progress" class="col ps-lg-3">
+			<div class="h2">Program progress</div>
+			<div class="bar row ps-2 mb-2">
+				<div class="col-8 pt-1">
+					<div class="progress mb-1">
+						<div class="units-taken progress-bar progress-bar-striped" role="progressbar" aria-valuenow=""
+							aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="bottom"
+							title="Course units taken"></div>
+						<div class="units-planned progress-bar progress-bar-striped bg-info" role="progressbar"
+							aria-valuenow="" aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip"
+							data-bs-placement="bottom" title="Course units planned"></div>
+					</div>
+					<div class="d-md-none">
+						<div>
+							<i class="bi-square-fill text-primary"></i>
+							Course units taken
+						</div>
+						<div>
+							<i class="bi-square-fill text-info"></i>
+							Course units planned
+						</div>
+					</div>
+					<div class="d-none d-md-block pb-4"></div>
+				</div>
+				<div class="col ps-0 pe-sm-0">
+					<div class="lh-1 fs-4 fw-bold" title="Units taken / Units needed">
+						<span class="units-taken-percent">-</span>%
+					</div>
+					<div class="lh-sm text-muted" title="(Units taken + planned) / Units needed">
+						<span class="units-planned-percent">-</span>% planned
+					</div>
+				</div>
+			</div>
+			<div class="info row ps-2">
+				<div class="col-6 col-sm-4 col-lg-6 col-xl-4 mb-3 pe-1">
+					<div class="fs-5">
+						Units taken:
+						<span class="units-taken fw-bold"></span>
+					</div>
+					<div class="text-muted">
+						<span class="units-planned"></span>
+						Planned
+					</div>
+					<div class="text-muted">
+						<span class="units-taken-planned"></span>
+						Taken + planned
+					</div>
+				</div>
+				<div class="col-6 col-sm-4 col-lg-6 col-xl-4 mb-3 ps-1">
+					<div class="fs-5" title="Units needed - Units taken">
+						Units missing:
+						<span class="units-missing-taken fw-bold"></span>
+					</div>
+					<div class="text-muted" title="Units needed - (Units taken + planned)">
+						<span class="units-missing-taken-planned"></span>
+						Not taken or planned
+					</div>
+				</div>
+				<div class="col-12 col-sm-4 col-lg-12 col-xl-4 mb-3 ps-3 ps-sm-0 ps-lg-3 ps-xl-0 pe-0">
+					<div class="fs-5">
+						Units needed to graduate:
+						<a class="text-body" data-bs-toggle="modal" data-bs-target="#modalEditUnits">
+							<span class="units-needed fw-bold"></span><i class="bi-pencil-fill fs-6"></i>
+						</a>
+					</div>
+					<div class="d-grid">
+					</div>
+				</div>
+			</div>
+			<div class="defs px-2 mb-2">
+				<div class="text-muted">
+					<small>
+						<i class="bi-info-circle-fill"></i>
+						Taken - Course units from terms before the current term or transferred
+					</small>
+				</div>
+				<div class="text-muted">
+					<small>
+						<i class="bi-info-circle-fill"></i>
+						Planned - Course units from the current term or after it
+					</small>
 				</div>
 			</div>
 		</div>
@@ -298,7 +399,7 @@
 <!--Form modals-->
 
 <!--Form add CourseCollection-->
-<form id="formAddCollection" name="formAddCollection" method="POST">
+<form id="formAddCollection" name="formAddCollection">
 	<div class="modal fade" id="modalAddCollection" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -341,7 +442,7 @@
 </form>
 
 <!--Form add UserCourse-->
-<form id="formAddUserCourse" name="formAddUserCourse" method="POST">
+<form id="formAddUserCourse" name="formAddUserCourse">
 	<div class="modal fade" id="modalAddCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -399,7 +500,7 @@
 </form>
 
 <!--Form edit UserCourse-->
-<form id="formEditUserCourse" name="formEditUserCourse" method="POST">
+<form id="formEditUserCourse" name="formEditUserCourse">
 	<div class="modal fade" id="modalEditUserCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -453,6 +554,28 @@
 					</button>
 					<button type="submit" method="PUT" class="btn btn-primary" data-bs-dismiss="modal">
 						Save changes
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+<!--Form edit units needed-->
+<form id="formEditUnits" name="formEditUnits">
+	<div class="modal fade" id="modalEditUnits" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit units needed</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body px-5">
+					<input id="selectUnitsNeeded" class="form-control" type="number" step=".01" min="0" max="999">
+				</div>
+				<div class="modal-footer d-flex justify-content-around py-1">
+					<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+						Save
 					</button>
 				</div>
 			</div>

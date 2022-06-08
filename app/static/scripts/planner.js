@@ -2,6 +2,8 @@
 // GLOBAL VARS
 //
 
+let firstDrag = false
+
 var collections = {}
 var courseCanMoveTo = []
 var courseOldCollection = null
@@ -73,12 +75,8 @@ function getCollections(callback) {
 			sort: ["term_id"],
 		},
 		traditional: true,
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
+		success: callback,
+		error: displayError
 	})
 }
 
@@ -86,12 +84,8 @@ function getCollection(id, callback) {
 	$.ajax({
 		url: "/api/me/collections/" + id,
 		method: "GET",
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
+		success: callback,
+		error: displayError
 	})
 }
 
@@ -103,12 +97,8 @@ function getCollectionCourses(id, callback) {
 			sort: ["course_code"],
 		},
 		traditional: true,
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
+		success: callback,
+		error: displayError
 	})
 }
 
@@ -116,12 +106,8 @@ function getTerm(id, callback) {
 	$.ajax({
 		url: "/api/terms/" + id,
 		method: "GET",
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
+		success: callback,
+		error: displayError
 	})
 }
 
@@ -129,12 +115,8 @@ function getCourse(id, callback) {
 	$.ajax({
 		url: "/api/courses/" + id,
 		method: "GET",
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
+		success: callback,
+		error: displayError
 	})
 }
 
@@ -148,6 +130,15 @@ function getCourseExists(subject, number, callback) {
 		error: (response) => {
 			callback(false, null)
 		}
+	})
+}
+
+function getProgress(callback) {
+	$.ajax({
+		url: "/api/me/progress",
+		method: "GET",
+		success: callback,
+		error: displayError
 	})
 }
 
@@ -216,6 +207,18 @@ function putTransferred(set, callback) {
 		error: (response) => {
 			displayError(response)
 		}
+	})
+}
+
+function putUnitsNeeded(units, callback) {
+	$.ajax({
+		url: "/api/me/progress",
+		method: "PUT",
+		data: {
+			units_needed: units
+		},
+		success: callback,
+		error: displayError
 	})
 }
 
@@ -491,7 +494,10 @@ function updateCollectionCourse(collection_id, id) {
 		for (let collec of collections)
 			if (collec.id == collection_id || !collec.courses.find(c => c.course_id == uc.course_id))
 				courseCanMoveTo.push(collec.id)
-		alert("info", "Drag course to move to another term")
+		if (!firstDrag) {
+			alert("info", "Drag course to move to another term")
+			firstDrag = true
+		}
 	})
 
 	item.get(0).addEventListener("dragend", () => {
@@ -506,6 +512,7 @@ function updateCollectionCourse(collection_id, id) {
 					alert("success", "Course moved!")
 					getUpdateCollection(collection_id)
 					getUpdateCollection(newId)
+					updateProgress()
 				},
 				(response) => {
 					displayError(response)
@@ -564,6 +571,65 @@ function disableOverallGPA(id) {
 	updateOverallGPA()
 }
 
+function updateProgress() {
+	getProgress((data) => {
+		console.log(data)
+		if (data.units_needed) {
+			const progressBar = $("#progress .bar")
+			const progressInfo = $("#progress .info")
+			let unitsTakenPercent = (data.units_taken / data.units_needed) * 100
+			let unitsTotalPercent = ((data.units_taken + data.units_planned) / data.units_needed) * 100
+
+			console.log(unitsTakenPercent, unitsTotalPercent)
+
+			progressBar.find(".units-taken").attr("aria-valuenow", Math.round(unitsTakenPercent))
+			progressBar.find(".units-taken").css(
+				"width",
+				Math.round(unitsTakenPercent) + "%"
+			)
+
+			progressBar.find(".units-planned").attr("aria-valuenow", Math.round(unitsTotalPercent))
+			progressBar.find(".units-planned").css(
+				"width",
+				Math.round(
+					(unitsTotalPercent < 100 ? unitsTotalPercent : 100) - unitsTakenPercent
+				) + "%"
+			)
+			progressBar.find(".units-taken-percent").text(unitsTakenPercent.toFixed(1))
+			progressBar.find(".units-planned-percent").text(unitsTotalPercent.toFixed(1))
+
+			progressInfo.find(".units-taken").text(data.units_taken)
+			progressInfo.find(".units-planned").text(data.units_planned)
+			progressInfo.find(".units-taken-planned").text(data.units_taken + data.units_planned)
+
+			progressInfo.find(".units-missing-taken").text(data.units_needed - data.units_taken)
+			progressInfo.find(".units-missing-taken-planned").text(data.units_needed - data.units_taken - data.units_planned)
+
+			progressInfo.find(".units-needed").text(data.units_needed)
+
+			$("#selectUnitsNeeded").val(data.units_needed)
+		} else {
+			progressBar.find(".units-taken").attr("aria-valuenow", "")
+			progressBar.find(".units-taken").css("width", "0%")
+			progressBar.find(".units-planned").attr("aria-valuenow", "")
+			progressBar.find(".units-planned").css("width", "0%")
+			progressBar.find(".units-taken-percent").text("-")
+			progressBar.find(".units-planned-percent").text("-")
+
+			progressInfo.find(".units-taken").text("-")
+			progressInfo.find(".units-planned").text("-")
+			progressInfo.find(".units-taken-planned").text("-")
+
+			progressInfo.find(".units-missing-taken").text("-")
+			progressInfo.find(".units-missing-taken-planned").text("-")
+
+			progressInfo.find(".units-needed").text("-")
+
+			$("#selectUnitsNeeded").val("")
+		}
+	})
+}
+
 //
 // EVENTS
 //
@@ -582,10 +648,14 @@ $("#modalAddCourse").on("show.bs.modal", () => {
 	formAdd.find(".submit").prop("disabled", true)
 })
 
-// On modal is shown
+// On modal is shown - move focus to input
 $("#modalAddCourse").on("shown.bs.modal", () => {
-	// Move focus to subject selection when modal is shown
 	formAdd.find(".selectSubject").focus()
+})
+
+$("#modalEditUnits").on("shown.bs.modal", () => {
+	let value = $("#formEditUnits #selectUnitsNeeded").val()
+	$("#formEditUnits #selectUnitsNeeded").val("").focus().val(value)
 })
 
 // On grade changed in form
@@ -647,7 +717,7 @@ $("#formAddCollection").on("submit", (event) => {
 	event.preventDefault()
 	event.stopImmediatePropagation()
 
-	let form = $(event.target)
+	let form = $("#formAddCollection")
 
 	addCollection(
 		form.find("#selectSeason").val(),
@@ -663,7 +733,7 @@ $("#formAddUserCourse").on("submit", (event) => {
 	event.preventDefault()
 	event.stopImmediatePropagation()
 
-	let form = $(event.target)
+	let form = $("#formAddUserCourse")
 
 	addUserCourse(
 		form.find("#selectCollection").val(),
@@ -671,6 +741,7 @@ $("#formAddUserCourse").on("submit", (event) => {
 		() => {
 			alert("success", "Course added!")
 			getUpdateCollection(form.find("#selectCollection").val())
+			updateProgress()
 		}
 	)
 })
@@ -694,18 +765,35 @@ $("#formEditUserCourse").on("submit", (event) => {
 				getUpdateCollection(form.find("#selectCollection").val())
 				if (form.find("#selectCollectionOld").val() != form.find("#selectCollection").val())
 					getUpdateCollection(form.find("#selectCollectionOld").val())
+				updateProgress()
 			}
 		)
 	} else if (method == "DELETE") {
 		delUserCourse(form.find("#selectUserCourse").val(), () => {
 			alert("success", "Course removed!")
 			getUpdateCollection(form.find("#selectCollectionOld").val())
+			updateProgress()
 		})
 	}
+})
+
+$("#formEditUnits").on("submit", (event) => {
+	event.preventDefault()
+	event.stopImmediatePropagation()
+
+	let form = $("#formEditUnits")
+
+	putUnitsNeeded(parseFloat(form.find("#selectUnitsNeeded").val()), () => {
+		alert("success", "Units needed updated!")
+		updateProgress()
+	})
 })
 
 //
 // DOCUMENT READY
 //
 
-$(document).ready(updateCollections)
+$(document).ready(() => {
+	updateCollections()
+	updateProgress()
+})
