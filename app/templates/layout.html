@@ -4,7 +4,7 @@
 <!--Component imports-->
 {% from "components/alert.html" import alertTemplates, alertHTML, alertStyles, alertHeadScripts, alertTailScripts %}
 {% from "components/quicknav.html" import quicknavHTML, quicknavStyles, quicknavScripts %}
-{% from "components/tags.html" import tagsHTML, tagsStyles, tagsScripts %}
+{% from "components/tags.html" import tagsTemplates, tagsHTML, tagsStyles, tagsScripts %}
 {% from "components/goto.html" import gotoHTML, gotoStyles, gotoScripts %}
 
 <head>
@@ -95,6 +95,7 @@
 	<!--Templates-->
 	<div id="templates" class="d-none">
 		{{alertTemplates()}}
+		{{tagsTemplates()}}
 		{% block templates %}{% endblock %}
 	</div>
 
