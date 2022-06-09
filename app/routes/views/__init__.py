@@ -23,6 +23,7 @@ constants = {
 	"DEBUG" : app.debug,
 	"GANALYTICS_ID" : app.config["GANALYTICS_ID"],
 	"GADSENSE_ID" : app.config["GADSENSE_ID"],
+	"PROPELLER_ID" : app.config["PROPELLER_ID"],
 	"DISQUS_EMBED": DISQUS_EMBED,
 	"COLORS_LIGHT" : COLORS_LIGHT,
 	"COLORS" : COLORS,

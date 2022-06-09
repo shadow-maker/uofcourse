@@ -39,9 +39,16 @@
 	</script>
 	{% endif %}
 
-	<!--Google Adsense code-->
+	<!--Ad Network Codes-->
 	{% if not DEBUG and not noads %}
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{GADSENSE_ID}}" crossorigin="anonymous"></script>
+		<!--Google Adsense-->
+		{% if GADSENSE_ID %}
+		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{GADSENSE_ID}}" crossorigin="anonymous"></script>
+		{% endif %}
+		<!--Propeller Ads-->
+		{% if PROPELLER_ID %}
+		<meta name="propeller" content="{{PROPELLER_ID}}">
+		{% endif %}
 	{% endif %}
 
 	<!--jQuery-->
@@ -89,15 +96,15 @@
 </head>
 
 <body>
-	<!--Nav bar-->
-	{% include "includes/nav.html" %}
-
 	<!--Templates-->
 	<div id="templates" class="d-none">
 		{{alertTemplates()}}
 		{{tagsTemplates()}}
 		{% block templates %}{% endblock %}
 	</div>
+
+	<!--Nav bar-->
+	{% include "includes/nav.html" %}
 
 	<!--Back buttons-->
 	{% include "includes/back.html" %}
