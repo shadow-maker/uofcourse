@@ -1,28 +1,70 @@
-{% macro tagsHTML() %}
-<!--Modal edit tags-->
-<div id="modalEditTags" class="modal fade" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Edit tags</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<div class="tag-items"></div>
-				<div class="d-flex justify-content-center">
-					<button type="button" class="btn btn-sm btn-secondary" onclick="addTag()">
-						<i class="bi-plus-lg"></i> Add tag
-					</button>
-				</div>
-			</div>
-			<div class="modal-footer d-flex justify-content-around">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				<button id="modalEditTagsSubmit" type="submit" class="btn btn-primary" onclick="tagExecuteChanges()">Save changes</button>
-			</div>
-		</div>
+{% macro tagsTemplates() %}
+<!--Tags Drawer Group-->
+<div class="tags-drawer-group list-group mb-3">
+	<div class="tags-drawer-header list-group-item fs-5 bg-light d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="" role="button" aria-expanded="true" title="Click to collapse tagged courses">
+		<span>
+			<span class="tag-emoji"></span>
+			<span class="tag-color"><i class="bi-circle-fill"></i></span>
+			<span class="tag-name"></span>
+		</span>
+		<span class="count badge bg-primary rounded-pill invisible" title="Courses count"></span>
+	</div>
+	<div id="" class="tags-drawer-container rounded-bottom collapse show"></div>
+</div>
+
+<!--Tags Drawer Course-->
+<div class="tags-drawer-course list-group-item list-group-item-action p-0 d-flex justify-content-between">
+	<a class="link flex-grow-1 px-4 py-2 text-body text-decoration-none" href="">
+		<span class="emoji"></span>
+		<span class="code font-monospace"></span>	
+	</a>
+	<span class="remove px-4 py-2 text-body" href="" style="cursor: pointer;" title="Remove course from tag">
+		<i class="bi-x-lg"></i>
+	</span>
+</div>
+
+<!--Tags Drawer Empty-->
+<div class="tags-drawer-empty list-group-item list-group-item-action p-0 d-flex justify-content-between">
+	<div class="flex-grow-1 px-4 py-2">
+		<span class="text-muted fst-italic">No courses tagged</span>
 	</div>
 </div>
 
+<!--Tag edit item-->
+<div class="tag-edit-item" db-delete="false">
+	<div class="inputs row">
+		<div class="col-11">
+			<div class="input-group">
+				<span class="tag-color input-group-text">
+					<i class="bi-circle-fill"></i>
+				</span>
+				<select class="tag-select-color form-select" name="color"></select>
+				<input type="text" class="tag-name form-control w-25" name="name" placeholder="Tag name" aria-label="Tag name" value="">
+			</div>
+		</div>
+		<div class="col-1 ps-0">
+			<button class="tag-delete btn px-0" type="button" title="">
+				<i class="h5 bi-trash text-danger"></i>
+			</button>
+		</div>
+	</div>
+	<div class="deleted row d-none">
+		<div class="col-11">
+			<div class="input-group">
+				<input type="text" class="form-control fst-italic" placeholder="Tag deleted" aria-label="Tag deleted" value="Deleted" disabled>
+			</div>
+		</div>
+		<div class="col-1 ps-0">
+			<button class="tag-undo-delete btn px-0" type="button" title="Undo delete tag">
+				<i class="h5 bi-arrow-counterclockwise"></i>
+			</button>
+		</div>
+	</div>
+	<hr class="my-3">
+</div>
+{% endmacro %}
+
+{% macro tagsHTML() %}
 <!--Tags drawer offcanvas-->
 <div id="tagsDrawer" class="offcanvas offcanvas-end" tabindex="-1" aria-labelledby="Tags Drawer">
 	<div class="offcanvas-header px-lg-4">
@@ -44,141 +86,274 @@
 		</button>
 	</div>
 </div>
+
+<!--Modal edit tags-->
+<div id="modalEditTags" class="modal fade" tabindex="-1" aria-hidden="true">
+	<form id="formEditTags" name="formEditTags">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit tags</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="tag-items"></div>
+					<div class="d-flex justify-content-center">
+						<button type="button" class="tag-add btn btn-sm btn-secondary">
+							<i class="bi-plus-lg"></i> Add tag
+						</button>
+					</div>
+				</div>
+				<div class="modal-footer d-flex justify-content-around">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button id="modalEditTagsSubmit" type="submit" class="btn btn-primary">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
 {% endmacro %}
 
 {% macro tagsStyles() %}
 <style>
-@media (max-width: 992px) {
-	#tagsDrawer {
-		width: 300px;
+	@media (max-width: 992px) {
+		#tagsDrawer {
+			width: 300px;
+		}
 	}
-}
 
-@media (min-width: 768px) {
-	#tagsDrawer .list-group-item .remove {
-		opacity: 0;
+	@media (min-width: 768px) {
+		#tagsDrawer .list-group-item .remove {
+			opacity: 0;
+		}
+
+		#tagsDrawer .list-group-item:hover .remove {
+			opacity: 1;
+		}
 	}
-	#tagsDrawer .list-group-item:hover .remove {
-		opacity: 1;
-	}
-}
 </style>
 {% endmacro %}
 
 {% macro tagsScripts() %}
 <script>
-var tagsCallback = () => {}
+	let tagsInitialized = false;
+	let tagsCallback = () => {}
 
-var tagIndex = 0
-
-function colorToHex(color) {
-	return ("000000" + color.toString(16)).slice(-6)
-}
-
-//
-// REQUEST FUNCS
-//
-
-function requestTag(subpath, method, data, callback) {
-	$.ajax({
-		url: "/api/me/tags" + subpath,
-		method: method,
-		data: data,
-		success: callback,
-		error: displayError
-	})
-}
-
-function requestEditTag(id, data, callback) {
-	requestTag("/" + id, "PUT", data, callback)
-}
-
-function requestDeleteTag(id, callback) {
-	requestTag("/" + id, "DELETE", {}, callback)
-}
-
-function requestTagCourses(id, callback) {
-	requestTag("/" + id + "/courses", "GET", {}, callback)
-}
-
-function requestCourseTags(id, callback) {
-	requestTag("/course/" + id, "GET", {}, callback)
-}
-
-function requestToggleTag(tagId, courseId) {
-	requestTag("/" + tagId + "/course/" + courseId, "PUT", {}, (response) => {
-		alert("success", response.success)
-		loadTagsDrawer()
-		tagsCallback()
-	})
-}
-
-//
-// TAG EDIT FUNCS
-//
-
-function addTag() {
-	const color = Object.keys(COLORS)[Math.floor(Math.random() * Object.keys(COLORS).length)]
-	$("#modalEditTags .tag-items").append(`
-		<div id="tag-edit-` + tagIndex +`" class="">
-		<div class="inputs row">
-			<div class="col-11">
-				<div class="input-group">
-					<span class="tag-color-indicator input-group-text" style="color: #` + colorToHex(COLORS[color]) + `;">
-						<i class="bi-circle-fill"></i>
-					</span>
-					<select class="tag-color form-select" name="color" onchange="tagUpdateColor(` + tagIndex +`)" >
-						` + colorOptions(COLORS[color]) + `
-					</select>
-					<input type="text" class="tag-name form-control w-25" name="name" placeholder="Tag name" aria-label="Tag name">
-				</div>
-			</div>
-			<div class="col-1 ps-0">
-				<button class="btn px-0" type="button" title="Delete tag" onclick="tagDelete(` + tagIndex +`)">
-					<i class="h5 bi-trash text-danger"></i>
-				</button>
-			</div>
-		</div>
-		<hr class="my-3">
-		</div>
-	`)
-	tagIndex++
-}
-
-function tagDelete(index) {
-	$("#tag-edit-" + index).remove()
-}
-
-function tagRemove(index) {
-	$("#tag-edit-" + index).attr("db-delete", "true")
-	$("#tag-edit-" + index + " .inputs").hide()
-	$("#tag-edit-" + index + " .deleted").show()
-}
-
-function tagUndoRemove(index) {
-	$("#tag-edit-" + index).attr("db-delete", "false")
-	$("#tag-edit-" + index + " .inputs").show()
-	$("#tag-edit-" + index + " .deleted").hide()
-}
-
-function tagUpdateColor(index) {
-	const item = $("#tag-edit-" + index)
-	item.find(".tag-color-indicator").css("color", "#" +  colorToHex(parseInt(item.find(".tag-color").val())))
-}
-
-function tagExecuteChanges() {
-	$("#modalEditTags").modal("hide")
-	var data = {}
-	var callback = (response) => {
-		if (response.success)
-			alert("success", response.success)
+	function colorToHex(color) {
+		return ("000000" + color.toString(16)).slice(-6)
 	}
 
-	$("#modalEditTags .tag-items").children().each(function(i) {
-		if (i == $("#modalEditTags .tag-items").children().length - 1) {
-			callback = (response) => {
-				if (response.success)
-					alert("success", response.success)
+	//
+	// REQUEST FUNCS
+	//
+
+	function requestTag(subpath, method, data, callback) {
+		$.ajax({
+			url: "/api/me/tags" + subpath,
+			method: method,
+			data: data,
+			success: callback,
+			error: displayError
+		})
+	}
+
+	function requestEditTag(id, data, callback) {
+		requestTag("/" + id, "PUT", data, callback)
+	}
+
+	function requestDeleteTag(id, callback) {
+		requestTag("/" + id, "DELETE", {}, callback)
+	}
+
+	function requestTagCourses(id, callback) {
+		requestTag("/" + id + "/courses", "GET", {}, callback)
+	}
+
+	function requestCourseTags(id, callback) {
+		requestTag("/course/" + id, "GET", {}, callback)
+	}
+
+	function requestToggleTag(tagId, courseId) {
+		requestTag("/" + tagId + "/course/" + courseId, "PUT", {}, (response) => {
+			alert("success", response.success)
+			loadTagsDrawer()
+			tagsCallback()
+		})
+	}
+
+	//
+	// TAG LOAD FUNCS
+	//
+
+	function colorOptions(tagColor) {
+		let options = []
+		var colorFound = false
+
+		for (let color in COLORS) {
+			if (COLORS[color] == tagColor)
+				colorFound = true
+			
+			options.push($("<option>", {
+				value: COLORS[color],
+				text: color,
+				selected: COLORS[color] == tagColor
+			}))
+		}
+		if (!colorFound) {
+			options = [$("<option>", {
+				value: tagColor,
+				text: "#" + colorToHex(tagColor),
+				selected: true
+			}), ...options]
+		}
+
+		return options
+	}
+
+	function loadTagsDrawer() {
+		const container = $("#tagsDrawer .offcanvas-body")
+		container.empty()
+		for (let tag of userTags) {
+			let tagItem = $("#templates .tags-drawer-group").clone()
+			
+			if (tag.emoji) {
+				tagItem.find(".tag-color").addClass("d-none")
+				tagItem.find(".tag-emoji").html("&#" + tag.emoji + ";")
+			} else {
+				tagItem.find(".tag-emoji").addClass("d-none")
+				tagItem.find(".tag-color").css("color", "#" + colorToHex(tag.color))
+			}
+
+			tagItem.find(".tag-name").text(tag.name.charAt(0).toUpperCase() + tag.name.slice(1))
+			tagItem.find(".tags-drawer-header").attr("href", "#tagsDrawerCollapse" + tag.id)
+			tagItem.find(".tags-drawer-container").attr("id", "tagsDrawerCollapse" + tag.id)
+
+			container.append(tagItem)
+
+			requestTagCourses(tag.id, (data) => {
+				tagItem.find(".loading").remove()
+				tagItem.find(".count").text(data.courses.length)
+				if (data.courses.length > 0) {
+					for (let course of data.courses) {
+						let tagCourseItem = $("#templates .tags-drawer-course").clone()
+
+						tagCourseItem.find(".link").attr("href", course.url)
+						tagCourseItem.find(".code").text(course.code)
+						tagCourseItem.find(".emoji").html(
+							"&#" + (course.emoji ? course.emoji : DEFAULT_EMOJI) + ";"
+						)
+
+						tagCourseItem.find(".remove").click(() => {
+							requestToggleTag(tag.id, course.id)
+						})
+
+						tagItem.find(".tags-drawer-container").append(tagCourseItem)
+					}
+				} else {
+					let emptyItem = $("#templates .tags-drawer-empty").clone()
+					tagItem.find(".tags-drawer-container").append(emptyItem)
+				}
+
+				tagItem.find(".tags-drawer-container").collapse("show")
+			})
+
+			tagItem.find(".tags-drawer-container").on("hidden.bs.collapse", () => {
+				tagItem.find(".count").removeClass("invisible")
+				tagItem.find(".tags-drawer-header").addClass("rounded-bottom")
+				tagItem.find(".tags-drawer-header").attr("title", "Click to show tagged courses")
+			})
+
+			tagItem.find(".tags-drawer-container").on("show.bs.collapse", () => {
+				tagItem.find(".count").addClass("invisible")
+				tagItem.find(".tags-drawer-header").removeClass("rounded-bottom")
+				tagItem.find(".tags-drawer-header").attr("title", "Click to collapse tagged courses")
+			})
+		}
+	}
+
+	function loadEditTagsModal() {
+		$("#modalEditTags .tag-items").empty()
+		for (let tag of userTags) {
+			let tagEditItem = $("#templates .tag-edit-item").clone()
+			tagEditItem.attr("db-id", tag.id)
+			tagEditItem.find(".tag-color").css("color", "#" + colorToHex(tag.color))
+			tagEditItem.find(".tag-select-color").append(colorOptions(tag.color))
+			tagEditItem.find(".tag-name").val(tag.name)
+
+			tagEditItem.find(".tag-select-color").on("change", () => {
+				tagEditItem.find(".tag-color").css(
+					"color", "#" + colorToHex(parseInt(tagEditItem.find(".tag-select-color").val()))
+				)
+			})
+			tagEditItem.find(".tag-delete").on("click", () => {
+				tagEditItem.attr("db-delete", "true")
+				tagEditItem.find(".inputs").addClass("d-none")
+				tagEditItem.find(".deleted").removeClass("d-none")
+			})
+			tagEditItem.find(".tag-undo-delete").on("click", () => {
+				tagEditItem.attr("db-delete", "false")
+				tagEditItem.find(".inputs").removeClass("d-none")
+				tagEditItem.find(".deleted").addClass("d-none")
+			})
+
+			if (tag.deletable) {
+				tagEditItem.find(".tag-delete").attr("title", "Delete tag")
+			} else {
+				tagEditItem.find(".tag-select-color").prop("disabled", true)
+				tagEditItem.find(".tag-select-color").attr("title", "Tag cannot be edited")
+				tagEditItem.find(".tag-name").prop("readonly", true)
+				tagEditItem.find(".tag-name").attr("title", "Tag cannot be edited")
+				tagEditItem.find(".tag-delete").prop("disabled", true)
+				tagEditItem.find(".tag-delete").attr("title", "Tag cannot be deleted")
+			}
+			$("#modalEditTags .tag-items").append(tagEditItem)
+		}
+	}
+
+	// EVENTS
+
+	// On tags modal starts to show
+	$("#modalEditTags").on("show.bs.modal", loadEditTagsModal)
+
+	// On tags drawer starts to show
+	$("#tagsDrawer").on("show.bs.offcanvas", (e) => {
+		if (isAuth) {
+			loadTagsDrawer()
+		} else {
+			e.preventDefault()
+			alert("warning", "You must be logged in to view your tagged courses")
+		}
+	})
+
+	// On tag is added in edit form
+	$("#formEditTags .tag-add").on("click", () => {
+		const color = Object.keys(COLORS)[Math.floor(Math.random() * Object.keys(COLORS).length)]
+		let tagEditItem = $("#templates .tag-edit-item").clone()
+		tagEditItem.find(".tag-color").css("color", "#" + colorToHex(COLORS[color]))
+		tagEditItem.find(".tag-select-color").append(colorOptions(COLORS[color]))
+
+		tagEditItem.find(".tag-select-color").on("change", () => {
+			tagEditItem.find(".tag-color").css(
+				"color", "#" + colorToHex(parseInt(tagEditItem.find(".tag-select-color").val()))
+			)
+		})
+		tagEditItem.find(".tag-delete").on("click", () => {
+			tagEditItem.remove()
+		})
+
+		$("#modalEditTags .tag-items").append(tagEditItem)
+	})
+
+	// On tag edit form is submitted
+	$("#formEditTags").on("submit", (e) => {
+		e.preventDefault()
+		$("#modalEditTags").modal("hide")
+
+		let data = {}
+		let completed = 0
+		function checkCompleted() {
+			completed++
+			if (completed == $("#modalEditTags .tag-edit-item").length) {
 				requestTag("", "GET", {}, (data) => {
 					userTags = data.tags
 					loadTagsDrawer()
@@ -187,222 +362,88 @@ function tagExecuteChanges() {
 			}
 		}
 
-		data = {}
-		tag_id = $(this).attr("db-id")
+		$("#modalEditTags .tag-edit-item").each(function () {
 
-		var existing = null
-	
-		for (let tag of userTags)
-			if (tag.id == tag_id) {
-				existing = tag
-				break
+			data = {}
+			tagId = $(this).attr("db-id")
+
+			let existing = null
+
+			for (let tag of userTags) {
+				if (tag.id == tagId) {
+					existing = tag
+					break
+				}
 			}
 
-		if (existing) { // Existing tag
-			if ($(this).attr("db-delete") == "true") { // Delete tag
-				requestDeleteTag(tag_id, callback)
-			} else if (existing.deletable) { // Update tag
+			if (existing) { // Existing tag
+				if (existing.deletable) {
+					if ($(this).attr("db-delete") == "true") { // Delete tag
+						requestDeleteTag(tagId, (response) => {
+							alert("success", response.success)
+							checkCompleted();
+						})
+					} else { // Update tag
+						data.name = $(this).find(".tag-name").val()
+						data.color = parseInt($(this).find(".tag-select-color").val())
+						if (data.name.length < 3) {
+							alert("warning", "Tag name must be at least 3 characters long")
+							checkCompleted();
+						} else if (data.name.length > 16) {
+							alert("warning", "Tag name must be at most 16 characters long")
+							checkCompleted();
+						} else if (data.name != existing.name || data.color != existing.color) {
+							requestEditTag(tagId, data, (response) => {
+								alert("success", response.success)
+								checkCompleted();
+							})
+						} else {
+							checkCompleted();
+						}
+					}
+				} else {
+					checkCompleted();
+				}
+			} else { // New tag
 				data.name = $(this).find(".tag-name").val()
-				data.color = parseInt($(this).find(".tag-color").val())
-				if (data.name.length > 0 && (data.name != existing.name || data.color != existing.color))
-					requestEditTag(tag_id, data, callback)
+				data.color = parseInt($(this).find(".tag-select-color").val())
+				if (data.name.length < 3) {
+					alert("warning", "Tag name must be at least 3 characters long")
+					checkCompleted();
+				} else if (data.name.length > 16) {
+					alert("warning", "Tag name must be at most 16 characters long")
+					checkCompleted();
+				} else {
+					requestTag("", "POST", data, (response) => {
+						alert("success", response.success)
+						checkCompleted();
+					})
+				}
 			}
-		} else { // New tag
-			data.name = $(this).find(".tag-name").val()
-			data.color = parseInt($(this).find(".tag-color").val())
-			if (data.name.length > 0)
-				requestTag("", "POST", data, callback)
-		}
+		})
 	})
-}
 
-//
-// EXTRA
-//
+	// INIT
 
-function colorOptions(tagColor) {
-	var html = ""
-
-	var colorFound = false
-
-	for (let color in COLORS) {
-		if (COLORS[color] == tagColor)
-			colorFound = true
-	
-		html += `
-			<option value='` + COLORS[color] +`' `  + (COLORS[color] == tagColor ? `selected` : ``) + `>
-				` + color.charAt(0).toUpperCase() + color.slice(1) +`
-			</option>
-		`
-	}
-
-	if (!colorFound) {
-		html = `
-			<option value='` + tagColor +`' selected>
-				#` + colorToHex(tagColor) +`
-			</option>
-		` + html
-	}
-
-	return html
-}
-
-function loadEditTagsModal() {
-	tagIndex = 0
-
-	$("#modalEditTags .tag-items").empty()
-	for (let tag of userTags) {
-		$("#modalEditTags .tag-items").append(`
-			<div id="tag-edit-` + tagIndex +`" db-id=` + tag.id +` db-delete="false">
-				<div class="inputs row">
-					<div class="col-11">
-						<div class="input-group">
-							<span class="tag-color-indicator input-group-text" style="color: #` + colorToHex(tag.color) + `;">
-								<i class="bi-circle-fill"></i>
-							</span>
-							<select class="tag-color form-select" name="color" onchange="tagUpdateColor(` + tagIndex +`)" ` + (tag.deletable ? `` : `disabled title="Tag cannot be edited"`) + `>
-								` + colorOptions(tag.color) + `
-							</select>
-							<input type="text" class="tag-name form-control w-25" name="name" placeholder="Tag name" aria-label="Tag name" value="` + tag.name + `" ` + (tag.deletable ? `` : `readonly title="Tag cannot be edited"`) + `>
-						</div>
-					</div>
-					<div class="col-1 ps-0">
-						<button class="btn px-0" type="button" ` + (tag.deletable ? `title="Delete tag" onclick="tagRemove(` + tagIndex +`)"` : `disabled title="Tag cannot be deleted"`) + `>
-							<i class="h5 bi-trash text-danger"></i>
-						</button>
-					</div>
-				</div>
-				<div class="deleted row">
-					<div class="col-11">
-						<div class="input-group">
-							<input type="text" class="form-control fst-italic" placeholder="Tag deleted" aria-label="Tag deleted" value="Deleted" disabled>
-						</div>
-					</div>
-					<div class="col-1 ps-0">
-						<button class="btn px-0" type="button" title="Undo delete tag" onclick="tagUndoRemove(` + tagIndex +`)">
-							<i class="h5 bi-arrow-counterclockwise"></i>
-						</button>
-					</div>
-				</div>
-				<hr class="my-3">
-			</div>
-		`)
-		$("#tag-edit-" + tagIndex + " .deleted").hide()
-		tagIndex++
-	}
-}
-
-function loadTagsDrawer() {
-	const container = $("#tagsDrawer .offcanvas-body")
-	container.empty()
-	for (let tag of userTags) {
-		let tagItem = $("<div class='tags-drawer-group list-group mb-3'></div>")
-		let emoji = ""
-		if (tag.emoji) {
-			emoji = `
-				<span class="tag-emoji">
-					&#` + tag.emoji + `;
-				</span>
-			`
-		} else {
-			emoji = `
-				<span class="tag-color-indicator" style="color: #` + colorToHex(tag.color) + `;">
-					<i class="bi-circle-fill"></i>
-				</span>
-			`
-		}
-		tagItem.append(`
-			<div class="tags-drawer-header list-group-item fs-5 bg-light d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#tagsDrawerCollapse` + tag.id + `" role="button" aria-expanded="true" title="">
-				<span class="name">
-					` + emoji +` ` + tag.name.charAt(0).toUpperCase() + tag.name.slice(1) + `
-				</span>
-				<span class="count badge bg-primary rounded-pill" title="Courses count"></span>
-			</div>
-		`).append(`
-			<div class="loading list-group-item fst-italic">Loading...</div>
-		`).append(`
-			<div id="tagsDrawerCollapse` + tag.id + `" class="tags-drawer-container rounded-bottom collapse"></div>`
-		)
-		container.append(tagItem)
-
-		requestTagCourses(tag.id, (data) => {
-			tagItem.find(".loading").remove()
-			tagItem.find(".count").text(data.courses.length)
-			for (let course of data.courses) {
-				tagItem.find(".tags-drawer-container").append(`
-					<div class="tags-drawer-course list-group-item list-group-item-action p-0 d-flex justify-content-between">
-						<a class="flex-grow-1 px-4 py-2 text-body text-decoration-none" href="` + course.url +`">
-							<span class="emoji">&#` + (course.emoji ? course.emoji : DEFAULT_EMOJI) +`</span>
-							<span class="code font-monospace">` + course.code +`</span>	
-						</a>
-						<span class="remove px-4 py-2 text-body" href="" onclick="requestToggleTag(` + tag.id + `,` + course.id + `)" style="cursor: pointer;" title="Remove course from tag">
-							<i class="bi-x-lg"></i>
-						</span>
-					</div>
-				`)
-			}
+	function tagsInit(callback = () => {}) {
+		if (!tagsInitialized) {
+			tagsInitialized = true
 			
-			tagItem.find(".tags-drawer-container").collapse("show")
-		})
+			tagsCallback = callback
 
-		tagItem.find(".tags-drawer-container").on("hidden.bs.collapse", () => {
-			tagItem.find(".count").removeClass("invisible")
-			tagItem.find(".tags-drawer-header").addClass("rounded-bottom")
-			tagItem.find(".tags-drawer-header").attr("title", "Click to show tagged courses")
-		})
-
-		tagItem.find(".tags-drawer-container").on("show.bs.collapse", () => {
-			tagItem.find(".count").addClass("invisible")
-			tagItem.find(".tags-drawer-header").removeClass("rounded-bottom")
-			tagItem.find(".tags-drawer-header").attr("title", "Click to collapse tagged courses")
-		})
+			if (!isAuth) {
+				userTags = []
+			} else {
+				requestTag("", "GET", {}, (data) => {
+					userTags = data.tags
+					tagsCallback()
+				})
+			}
+		}
 	}
-}
 
-// EVENTS
-
-// On tags modal starts to show
-$("#modalEditTags").on("show.bs.modal", loadEditTagsModal)
-
-// On tags drawer starts to show
-$("#tagsDrawer").on("show.bs.offcanvas", (e) => {
-	if (isAuth) {
-		loadTagsDrawer()
-	} else {
-		e.preventDefault()
-		alert("warning", "You must be logged in to view your tagged courses")
-	}
-})
-
-$("#tagsDrawer .list-group-item .remove").on("click", (e) => {
-	e.preventDefault()
-})
-
-// INIT
-
-$(document).ready(() => {
-	if (!isAuth) {
-		userTags = []
-	}
-	else {
-		requestTag("", "GET", {}, (data) => {
-			userTags = data.tags
-		})
-	}
-})
-
-function tagsInit(callback = () => {}) {
-	tagsCallback = callback
-
-	if (!isAuth) {
-		userTags = []
-	}
-	else {
-		requestTag("", "GET", {}, (data) => {
-			userTags = data.tags
-			tagsCallback()
-		})
-	}
-}
+	$(document).ready(() => {
+		setTimeout(tagsInit, 500)
+	})
 </script>
 {% endmacro %}
