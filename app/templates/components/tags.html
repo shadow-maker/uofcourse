@@ -1,5 +1,6 @@
+{% macro tagsHTML() %}
 <!--Modal edit tags-->
-<div class="modal fade" id="modalEditTags" tabindex="-1" aria-hidden="true">
+<div id="modalEditTags" class="modal fade" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -23,12 +24,15 @@
 </div>
 
 <!--Tags drawer offcanvas-->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="tagsDrawer" aria-labelledby="Tags Drawer">
+<div id="tagsDrawer" class="offcanvas offcanvas-end" tabindex="-1" aria-labelledby="Tags Drawer">
 	<div class="offcanvas-header px-lg-4">
-		<h3 class="m-0">Tags drawer</h3>
+		<h3 class="m-0">
+			<i class="bi-tags-fill"></i>
+			Tags drawer
+		</h3>
 		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 	</div>
-	<div class="offcanvas-body px-lg-4"></div>
+	<div class="offcanvas-body px-lg-4 py-0"></div>
 	<div class="offcanvas-footer py-3 d-flex justify-content-center">
 		<button class="btn btn-secondary mx-2 d-sm-none" data-bs-dismiss="offcanvas" aria-label="Close">
 			<i class="bi-x-lg"></i>
@@ -40,7 +44,9 @@
 		</button>
 	</div>
 </div>
+{% endmacro %}
 
+{% macro tagsStyles() %}
 <style>
 @media (max-width: 992px) {
 	#tagsDrawer {
@@ -57,8 +63,9 @@
 	}
 }
 </style>
+{% endmacro %}
 
-<!--Tags scripts-->
+{% macro tagsScripts() %}
 <script>
 var tagsCallback = () => {}
 
@@ -398,3 +405,4 @@ function tagsInit(callback = () => {}) {
 	}
 }
 </script>
+{% endmacro %}

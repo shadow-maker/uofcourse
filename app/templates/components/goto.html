@@ -1,3 +1,4 @@
+{% macro gotoHTML() %}
 <form id="formGoTo" name="formGoTo" method="GET" autocomplete="off">
 	<div class="modal fade" id="modalGoTo" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-sm">
@@ -99,7 +100,9 @@
 		</div>
 	</div>
 </form>
+{% endmacro %}
 
+{% macro gotoStyles() %}
 <style>
 	#modalGoTo .dropdown-toggle::after {
 		display: none;
@@ -129,7 +132,9 @@
 		}
 	}
 </style>
+{% endmacro %}
 
+{% macro gotoScripts() %}
 <script>
 	const formGoTo = $("#formGoTo")
 	const modalGoTo = $("#modalGoTo")
@@ -360,3 +365,4 @@
 		}
 	})
 </script>
+{% endmacro %}

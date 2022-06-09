@@ -7,27 +7,27 @@
 <script src="static/scripts/userlogs.js"></script>
 {% endblock %}
 
-{% block content %}
+{% block templates %}
+<!--User Log Item-->
+<table>
+	<tr class="log-item">
+		<th class="id" scope="row"></th>
+		<td class="datetime">
+			<span class="d-none utc"></span>
+			<span class="d-none local"></span>
+		</td>
+		<td class="event_name"></td>
+		<td class="ip-container">
+			<a href="" class="ip-link text-body text-decoration-none" title="View IP location">
+				<span class="ip font-monospace"></span>
+				<i class="bi-pin-map-fill"></i>
+			</a>
+		</td>
+	</tr>
+</table>
+{% endblock %}
 
-<!--TEMPLATES-->
-<div id="templates" class="d-none">
-	<table>
-		<tr class="log-item">
-			<th class="id" scope="row"></th>
-			<td class="datetime">
-				<span class="d-none utc"></span>
-				<span class="d-none local"></span>
-			</td>
-			<td class="event_name"></td>
-			<td class="ip-container">
-				<a href="" class="ip-link text-body text-decoration-none" title="View IP location">
-					<span class="ip font-monospace"></span>
-					<i class="bi-pin-map-fill"></i>
-				</a>
-			</td>
-		</tr>
-	</table>
-</div>
+{% block content %}
 
 <h2>
 	<span class="align-middle">
