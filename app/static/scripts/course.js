@@ -81,7 +81,7 @@ function updateTags() {
 				icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex +";'></i> "
 
 			container.append(`
-				<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleTag(` + tag.id+ `)">
+				<span class="course-tag btn badge btn-secondary px-1 cursor-pointer" title="`+ tag.name + `" db-id="` + tag.id + `" onclick="toggleTag(` + tag.id+ `)">
 					` + icon + tag.name + `
 				</span>
 			`)

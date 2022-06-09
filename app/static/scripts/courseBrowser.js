@@ -165,7 +165,7 @@ function updateSubjects() {
 	for (let s in subjects) {
 		if (subjects[s].sel) {
 			$("#subjectSelector").append(`
-				<span class="badge btn btn-secondary border-secondary px-1 py-1 m-1 ms-0 font-monospace text-light fs-6 fw-normal subjItem" code="` + s + `"  title="Click to remove">
+				<span class="subjItem badge btn btn-secondary border-secondary px-1 py-1 m-1 ms-0 font-monospace text-light fs-6 fw-normal cursor-pointer" code="` + s + `"  title="Click to remove">
 					` + s + `
 				</span>
 			`)
@@ -193,7 +193,7 @@ function updateCourseTags(courseId) {
 					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex +";'></i> "
 
 				container.append(`
-					<span class="course-tag btn badge btn-secondary px-1" title="`+ tag.name + `" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleCourseTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
+					<span class="course-tag btn badge btn-secondary px-1 cursor-pointer" title="`+ tag.name + `" db-id="` + tag.id + `" onclick="toggleCourseTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
 						` + icon + tag.name + `
 					</span>
 				`)
@@ -276,7 +276,7 @@ function updateResults(data) {
 					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex + ";'></i> "
 
 				courseItem.find(".tags-selected").append(`
-					<span class="course-tag btn badge btn-secondary px-1" style="cursor: pointer;" db-id="` + tag.id + `" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id+ `)" title="Click to remove tag">
+					<span class="course-tag btn badge btn-secondary px-1 cursor-pointer" db-id="` + tag.id + `" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id+ `)" title="Click to remove tag">
 						` + icon + tag.name + `
 					</span>
 				`)
