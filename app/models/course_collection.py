@@ -10,6 +10,10 @@ class CourseCollection(db.Model):
 	userCourses = db.relationship("UserCourse", backref="collection")
 
 	@property
+	def courses(self):
+		return [uc.course for uc in self.userCourses]
+
+	@property
 	def units_total(self):
 		return sum(float(uc.course.units) for uc in self.userCourses)
 
