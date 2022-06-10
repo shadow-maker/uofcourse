@@ -46,8 +46,6 @@ def about():
 
 @view.route("/announcements")
 def announcements():
-	print(request.args.get("id"))
-	
 	return render_template("announcements.html",
 		title = "Announcements",
 		header = "Recent Announcements",
