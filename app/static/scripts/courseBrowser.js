@@ -201,7 +201,9 @@ function updateCourse(id) {
 			tagDropItem.attr("db-id", tag.id)
 			tagDropItem.find(".tag-name").text(tag.name)
 			
-			tagDropItem.on("click", () => {
+			tagDropItem.on("click", (e) => {
+				e.preventDefault()
+				e.stopImmediatePropagation()
 				toggleCourseTag(course.id, tag.id)
 			})
 
@@ -249,10 +251,6 @@ function updateCourseTags(id) {
 	const course = coursesData.find(c => c.id == id)
 	const tags = course.element.find(".course-tags")
 
-	tags.find(".tags-dropdown-item").each(function () {
-		$(this).find(".bi-check").addClass("invisible")
-	})
-
 	tags.find(".tags-selected").empty()
 	for (let tagId of course.tags) {
 		let tag = userTags.find(t => t.id == tagId)
@@ -260,7 +258,7 @@ function updateCourseTags(id) {
 		if (!tag)
 			continue
 
-		let tagItem = $("#templates .course-tag-selected").clone()
+		let tagItem = $("#templates .tag-selected-item").clone()
 
 		tagItem.find(".tag-name").text(tag.name)
 
@@ -272,17 +270,21 @@ function updateCourseTags(id) {
 			tagItem.find(".tag-color").removeClass("d-none")
 		}
 
-		tagItem.on("click", () => {
+		tagItem.on("click", (e) => {
+			e.preventDefault()
+			e.stopImmediatePropagation()
 			toggleCourseTag(id, tag.id)
 		})
 
 		tags.find(".tags-selected").append(tagItem)
-
-		tags.find(".tags-dropdown-item").each(function () {
-			if($(this).attr("db-id") == tag.id)
-				$(this).find(".bi-check").removeClass("invisible")
-		})
 	}
+
+	tags.find(".tags-dropdown-item").each(function () {
+		if (course.tags.includes(parseInt($(this).attr("db-id"))))
+			$(this).find(".bi-check").removeClass("invisible")
+		else
+			$(this).find(".bi-check").addClass("invisible")
+	})
 }
 
 function updateCourseCollections(id) {
@@ -308,7 +310,9 @@ function updateCourseCollections(id) {
 			$(this).find(".dropdown-item").on("click", () => {})
 		} else {
 			$(this).find(".bi-check").addClass("invisible")
-			$(this).find(".dropdown-item").on("click", () => {
+			$(this).find(".dropdown-item").on("click", (e) => {
+				e.preventDefault()
+				e.stopImmediatePropagation()
 				addCollection(course.id, $(this).attr("db-id"))
 			})
 		}
