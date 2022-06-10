@@ -92,13 +92,14 @@ function requestResults(callback) {
 	let data = {
 		sort: sortOptions[$("#sortBy").val()].value,
 		asc: $("#orderBy").val(),
-		name: name,
 		level: selectedLevel,
 		faculty: selectedFaculty,
 		subject: selectedSubject,
 		page: page.current
 	}
 
+	if (name.length > 0)
+		data.name = name
 	if (number != null)
 		data.number = number
 	if (repeat != null)
@@ -140,7 +141,7 @@ function toggleCourseTag(courseId, tagId) {
 
 function addCollection(courseId, collectionId) {
 	$.ajax({
-		url: "/api/me/course",
+		url: "/api/me/courses",
 		method: "POST",
 		data: {
 			course_id: courseId,

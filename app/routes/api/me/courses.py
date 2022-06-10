@@ -6,7 +6,14 @@ from flask import Blueprint, request
 
 import json
 
-me_course = Blueprint("course", __name__, url_prefix="/course")
+me_course = Blueprint("course", __name__, url_prefix="/courses")
+
+@me_course.route("/course/<id>", methods=["GET"])
+def getCourseUserCourses(id):
+	course = Course.query.get(id)
+	if not course:
+		return {"error": f"Course with id {id} does not exist"}, 404
+	return {"collection_courses": [dict(uc) for uc in course.getUserCourses(current_user.id)]}, 200
 
 #
 # POST
