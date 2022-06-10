@@ -3,8 +3,8 @@
 <div class="tags-drawer-group list-group mb-3">
 	<div class="tags-drawer-header list-group-item fs-5 bg-light d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="" role="button" aria-expanded="true" title="Click to collapse tagged courses">
 		<span>
-			<span class="tag-emoji"></span>
-			<span class="tag-color"><i class="bi-circle-fill"></i></span>
+			<span class="tag-emoji d-none"></span>
+			<span class="tag-color d-none"><i class="bi-circle-fill"></i></span>
 			<span class="tag-name"></span>
 		</span>
 		<span class="count badge bg-primary rounded-pill invisible" title="Courses count"></span>
@@ -170,10 +170,6 @@
 		requestTag("/" + id + "/courses", "GET", {}, callback)
 	}
 
-	function requestCourseTags(id, callback) {
-		requestTag("/course/" + id, "GET", {}, callback)
-	}
-
 	function requestToggleTag(tagId, courseId) {
 		requestTag("/" + tagId + "/course/" + courseId, "PUT", {}, (response) => {
 			alert("success", response.success)
@@ -219,11 +215,11 @@
 			let tagItem = $("#templates .tags-drawer-group").clone()
 			
 			if (tag.emoji) {
-				tagItem.find(".tag-color").addClass("d-none")
 				tagItem.find(".tag-emoji").html("&#" + tag.emoji + ";")
+				tagItem.find(".tag-emoji").removeClass("d-none")
 			} else {
-				tagItem.find(".tag-emoji").addClass("d-none")
 				tagItem.find(".tag-color").css("color", "#" + colorToHex(tag.color))
+				tagItem.find(".tag-color").removeClass("d-none")
 			}
 
 			tagItem.find(".tag-name").text(tag.name.charAt(0).toUpperCase() + tag.name.slice(1))
