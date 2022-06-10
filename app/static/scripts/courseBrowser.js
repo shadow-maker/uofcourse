@@ -2,13 +2,12 @@
 // GLOBAL VARS
 //
 
-var prevData = {}
+var coursesData = []
+var prevQuery = {}
 
 // Init Page object (defined in pagination.html)
 var page = new Page(0, () => {
-	requestResults((data) => {
-		updateResults(data)
-	})
+	requestResults(updateResults)
 })
 
 //
@@ -33,7 +32,7 @@ function checkAll(container) {
 // REQUEST FUNCS
 //
 
-function requestResults(callback, ignorePrev=false) {
+function requestResults(callback) {
 	let name = ""
 	let number = []
 
@@ -77,7 +76,7 @@ function requestResults(callback, ignorePrev=false) {
 	let repeat = JSON.parse($('input[name=repeat]:checked', '#formFilterCourses').val())
 	let countgpa = JSON.parse($('input[name=countgpa]:checked', '#formFilterCourses').val())
 	
-	var data = {
+	let data = {
 		sort: sortOptions[$("#sortBy").val()].value,
 		asc: $("#orderBy").val(),
 		name: name,
@@ -94,10 +93,10 @@ function requestResults(callback, ignorePrev=false) {
 	if (countgpa != null)
 		data.countgpa = countgpa
 
-	if (!ignorePrev && JSON.stringify(data) == JSON.stringify(prevData))
+	if (JSON.stringify(data) == JSON.stringify(prevQuery))
 		return
 
-	prevData = data
+	prevQuery = data
 
 	$(".loading").show()
 	$(".loaded").hide()
@@ -107,7 +106,7 @@ function requestResults(callback, ignorePrev=false) {
 		method: "GET",
 		data: data,
 		traditional: true,
-		success: (response) => {callback(response)},
+		success: callback,
 		error: (response) => {
 			$(".loading").hide()
 			displayError(response)
@@ -119,13 +118,11 @@ function toggleCourseTag(courseId, tagId) {
 	$.ajax({
 		url: "/api/me/tags/" + tagId +"/course/" + courseId,
 		method: "PUT",
-		success: (data) => {
-			alert("success", data.success)
+		success: (response) => {
+			alert("success", response.success)
 			updateCourseTags(courseId)
 		},
-		error: (data) => {
-			displayError(data)
-		}
+		error: displayError
 	})
 }
 
@@ -137,15 +134,13 @@ function addCollection(courseId, collectionId) {
 			course_id: courseId,
 			collection_id: collectionId
 		},
-		success: (data) => {
-			prevData = {}
+		success: (response) => {
+			prevQuery = {}
 			requestResults((data) => {
 				updateResults(data)
 			})
 		},
-		error: (data) => {
-			displayError(data)
-		}
+		error: displayError
 	})
 }
 
@@ -153,157 +148,16 @@ function addCollection(courseId, collectionId) {
 // UPDATE FUNCS
 //
 
-function updateSubjects() {
-	var subjSearch = $("#subjectSearch").val().toUpperCase()
-	$("#subjectSearch").val("")
-
-	if (subjSearch in subjects)
-		subjects[subjSearch].sel = true
-
-	$("#subjectSelector").empty()
-
-	for (let s in subjects) {
-		if (subjects[s].sel) {
-			$("#subjectSelector").append(`
-				<span class="subjItem badge btn btn-secondary border-secondary px-1 py-1 m-1 ms-0 font-monospace text-light fs-6 fw-normal cursor-pointer" code="` + s + `"  title="Click to remove">
-					` + s + `
-				</span>
-			`)
-		}
-	}
-}
-
-function updateCourseTags(courseId) {
-	const item = $("#course-" + courseId)
-	let icon = ""
-	requestCourseTags(
-		courseId,
-		(response) => {
-			item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
-				$(this).find(".bi-check").addClass("invisible")
-			})
-
-			const container = item.find(".tags-selected")
-			container.empty()
-			for (tag of response.tags) {
-
-				if (tag.emoji)
-					icon = "&#" + tag.emoji + " "
-				else
-					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex +";'></i> "
-
-				container.append(`
-					<span class="course-tag btn badge btn-secondary px-1 cursor-pointer" title="`+ tag.name + `" db-id="` + tag.id + `" onclick="toggleCourseTag(` + item.attr("db-id") + `, ` +  tag.id+ `)">
-						` + icon + tag.name + `
-					</span>
-				`)
-
-				item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
-					if($(this).attr("db-id") == tag.id)
-						$(this).find(".bi-check").removeClass("invisible")
-				})
-			}
-		}
-	)
-}
-
 function updateResults(data) {
 	$(".loading").hide()
 	$(".loaded").show()
 
 	$("#coursesContainer").empty()
-	for (let course of data.results) {
-		let courseItem = $("#templates .course-item").clone()
 
-		courseItem.attr("id", "course-" + course.id)
-		courseItem.attr("db-id", course.id)
-
-		courseItem.find(".course-link").attr("href", course.url)
-		courseItem.find(".course-emoji").html("&#" + (course.emoji ? course.emoji : DEFAULT_EMOJI))
-		courseItem.find(".course-code").text(course.code)
-		courseItem.find(".course-name").text(course.name)
-
-		// Add content only available if user is authenticated
-		if (isAuth) {
-			// Add course collections
-
-			const collections = courseItem.find(".course-collections")
-
-			let message = ""
-			if (course.collections.length == 0)
-				message = "Not taken"
-			else if (course.collections.length == 1)
-				message = "Taken in " + course.collections.length + " term"
-			else
-				message = "Taken in " + course.collections.length + " terms"
-
-			collections.find(".collections-dropdown-btn").text(message)
-
-			const dropdown = collections.find(".collections-dropdown")
-
-			dropdown.children(".collections-dropdown-item").each(function () {
-				$(this).find(".dropdown-item").attr("onclick", "addCollection('" + course.id + "', '" + $(this).attr("db-id") + "')")
-				$(this).find(".bi-check").addClass("invisible")
-			})
-
-			for (let collection of course.collections) {
-				dropdown.children(".collections-dropdown-item").each(function () {
-					if ($(this).attr("db-id") == collection.id) {
-						$(this).find(".dropdown-item").attr("onclick", "")
-						$(this).find(".bi-check").removeClass("invisible")
-					}
-				})
-			}
-
-			// Add tag badges
-			var icon = ""
-			for (let id of course.tags) {
-				var tag = null
-
-				for (t of userTags) {
-					if (t.id == id) {
-						tag = t
-						break
-					}
-				}
-				
-				if (!tag)
-					continue
-
-				if (tag.emoji)
-					icon = "&#" + tag.emoji + " "
-				else
-					icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex + ";'></i> "
-
-				courseItem.find(".tags-selected").append(`
-					<span class="course-tag btn badge btn-secondary px-1 cursor-pointer" db-id="` + tag.id + `" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id+ `)" title="Click to remove tag">
-						` + icon + tag.name + `
-					</span>
-				`)
-			}
-
-			// Add tag dropdown items to tag dropdown
-			for (let tag of userTags) {
-				courseItem.find(".tags-dropdown").append(`
-					<li class="tags-dropdown-item" db-id="` + tag.id +`">
-						<a class="dropdown-item px-2 py-1" onclick="toggleCourseTag(` + course.id + `, ` +  tag.id + `)">
-							<i class="bi-check ` + (course.tags.includes(tag.id) ? `` : `invisible`) + `"></i>
-							<small>` + tag.name +`</small>
-						</a>
-					</li>
-				`)
-			}
-
-			courseItem.find(".tags-dropdown").append(`
-				<li><hr class="dropdown-divider my-1"></li>
-				<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags">
-					<i class="bi-pencil-square"></i>
-					<small>Edit tags</small>
-				</a></li>
-			`)
-		}
-
-		courseItem.appendTo("#coursesContainer")
+	coursesData = data.results
+	for (let course of coursesData) {
+		course.element = $("#templates .course-item").clone()
+		updateCourse(course.id)
 	}
 
 	$(".num-total").text(data.total)
@@ -314,28 +168,160 @@ function updateResults(data) {
 	page.updateNav()
 }
 
-//
-// EVENTS
-//
+function updateCourse(id) {
+	let course = coursesData.find(c => c.id == id)
 
-$(document).on("click", ".subjItem", function () {
-	subjects[this.getAttribute("code")].sel = false
-	this.remove()
-	$("#formFilterCourses").submit()
-});
+	course.element.find(".course-link").attr("href", course.url)
+	course.element.find(".course-emoji").html("&#" + (course.emoji ? course.emoji : DEFAULT_EMOJI))
+	course.element.find(".course-code").text(course.code)
+	course.element.find(".course-name").text(course.name)
 
-$(document).on("click", ".subjSuggestion", function () {
-	$("#subjectSearch").val(this.getAttribute("code"))
-	$("#subjectSearchSuggestions").empty()
-	$("#formFilterCourses").submit()
-});
+	// Add content only available if user is authenticated
+	if (isAuth) {
+		// Add course collections
 
-$(document).on("click", ".tags-dropdown-btn", function(e) {
-	if (!isAuth) {
-		e.preventDefault()
-		alert("warning", "You must be logged in to add tags")
+		const collections = course.element.find(".course-collections")
+
+		if (course.collections.length == 0)
+			collections.find(".collections-dropdown-btn").text(
+				"Not taken"
+			)
+		else if (course.collections.length == 1)
+			collections.find(".collections-dropdown-btn").text(
+				"Taken in " + course.collections.length + " term"
+			)
+		else
+			collections.find(".collections-dropdown-btn").text(
+				"Taken in " + course.collections.length + " terms"
+			)
+
+		const dropdown = collections.find(".collections-dropdown")
+
+		dropdown.children(".collections-dropdown-item").each(function () {
+			$(this).find(".dropdown-item").attr("onclick", "addCollection('" + course.id + "', '" + $(this).attr("db-id") + "')")
+			$(this).find(".bi-check").addClass("invisible")
+		})
+
+		for (let collection of course.collections) {
+			dropdown.children(".collections-dropdown-item").each(function () {
+				if ($(this).attr("db-id") == collection) {
+					$(this).find(".dropdown-item").attr("onclick", "")
+					$(this).find(".bi-check").removeClass("invisible")
+				}
+			})
+		}
+
+		// Add tag badges
+		for (let id of course.tags) {
+			let tag = userTags.find(t => t.id == id)
+			
+			if (!tag)
+				continue
+
+			let tagItem = $("#templates .course-tag-selected").clone()
+
+			tagItem.find(".tag-name").text(tag.name)
+
+			if (tag.emoji) {
+				tagItem.find(".tag-emoji").html("&#" + tag.emoji)
+				tagItem.find(".tag-emoji").removeClass("d-none")
+			} else {
+				tagItem.find(".tag-color").css("color", "#" + tag.color_hex)
+				tagItem.find(".tag-color").removeClass("d-none")
+			}
+
+			tagItem.on("click", () => {
+				toggleCourseTag(course.id, tag.id)
+			})
+
+			course.element.find(".tags-selected").append(tagItem)
+		}
+
+		// Add tag dropdown items to tag dropdown
+		course.element.find(".tags-dropdown").empty()
+		for (let tag of userTags) {
+			let tagDropItem = $("#templates .tags-dropdown-item").clone()
+
+			tagDropItem.attr("db-id", tag.id)
+			tagDropItem.find(".tag-name").text(tag.name)
+			if (course.tags.includes(tag.id))
+				tagDropItem.find(".tag-selected").removeClass("invisible")
+			
+			tagDropItem.on("click", () => {
+				toggleCourseTag(course.id, tag.id)
+			})
+
+			course.element.find(".tags-dropdown").append(tagDropItem)
+		}
+	} else {
+		course.element.find(".tags-dropdown-btn").on("click", function(e) {
+			$(this).dropdown("hide")
+			alert("warning", "You must be logged in to add tags")
+		})
 	}
-})
+
+	course.element.appendTo("#coursesContainer")
+}
+
+function updateSubjects() {
+	let subjSearch = $("#subjectSearch").val().toUpperCase()
+	$("#subjectSearch").val("")
+
+	if (subjSearch in subjects)
+		subjects[subjSearch].sel = true
+
+	$("#subjectSelector").empty()
+
+	for (let s in subjects) {
+		if (subjects[s].sel) {
+			let subjSearchItem = $("#templates .subject-item").clone()
+			subjSearchItem.text(s)
+
+			subjSearchItem.on("click", () => {
+				subjects[s].sel = false
+				subjSearchItem.remove()
+				$("#formFilterCourses").submit()
+			})
+
+			$("#subjectSelector").append(subjSearchItem)
+		}
+	}
+}
+
+function updateCourseTags(id) {
+	let course = coursesData.find(c => c.id == id)
+	requestCourseTags(id, (response) => {
+		course.element.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
+			$(this).find(".bi-check").addClass("invisible")
+		})
+
+		course.element.find(".tags-selected").empty()
+		for (let tag of response.tags) {
+			let tagItem = $("#templates .course-tag-selected").clone()
+
+			tagItem.find(".tag-name").text(tag.name)
+
+			if (tag.emoji) {
+				tagItem.find(".tag-emoji").html("&#" + tag.emoji)
+				tagItem.find(".tag-emoji").removeClass("d-none")
+			} else {
+				tagItem.find(".tag-color").css("color", "#" + tag.color_hex)
+				tagItem.find(".tag-color").removeClass("d-none")
+			}
+
+			tagItem.on("click", () => {
+				toggleCourseTag(id, tag.id)
+			})
+
+			course.element.find(".tags-selected").append(tagItem)
+
+			course.element.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
+				if($(this).attr("db-id") == tag.id)
+					$(this).find(".bi-check").removeClass("invisible")
+			})
+		}
+	})
+}
 
 //
 // DOCUMENT READY
@@ -345,8 +331,9 @@ $(document).ready(() => {
 	if (isAuth) {
 		tagsInit(() => {
 			requestResults((data) => {
+				prevQuery = {}
 				updateResults(data)
-			}, true)
+			})
 		})
 	} else {
 		page.callback()
@@ -354,22 +341,28 @@ $(document).ready(() => {
 
 	updateSubjects()
 
-	$("#subjectSearch").keyup((e) => {
+	$("#subjectSearch").on("keyup", (e) => {
 		$("#subjectSearchSuggestions").empty()
 		if (e.keyCode == 13) {
 			$("#subjectSearch").dropdown("hide")
 			$("#formFilterCourses").submit()
 			$("#subjectSearch").dropdown("show")
 		} else {
-			var subjSearch = $("#subjectSearch").val().toUpperCase()
+			let subjSearch = $("#subjectSearch").val().toUpperCase()
 			if (subjSearch.length > 0) {
-				for (s in subjects) {
+				for (let s in subjects) {
 					if (s.startsWith(subjSearch)) {
-						$("#subjectSearchSuggestions").append(`
-							<li><a class="subjSuggestion dropdown-item form-control-sm px-2 py-1" href="#" code="` + s +`"><span class="font-monospace">` +
-							s + `</span> - ` + subjects[s].name +
-							`</a></li>
-						`)
+						let subjSuggestion = $("#templates .subject-suggestion").clone()
+						subjSuggestion.find(".code").text(s)
+						subjSuggestion.find(".name").text(subjects[s].name)
+
+						subjSuggestion.on("click", () => {
+							$("#subjectSearch").val(s)
+							$("#subjectSearchSuggestions").empty()
+							$("#formFilterCourses").submit()
+						})
+
+						$("#subjectSearchSuggestions").append(subjSuggestion)
 					}
 				}
 			}
@@ -390,7 +383,7 @@ $(document).ready(() => {
 
 		updateSubjects()
 
-		// Remove query parameters
+		// Remove URL query parameters
 		window.history.pushState({}, document.title, window.location.pathname)
 
 		// Switch page and request and update data

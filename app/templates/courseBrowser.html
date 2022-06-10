@@ -44,7 +44,18 @@
 						data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
 						<i class="bi-tag-fill"></i>
 					</button>
-					<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
+					<ul class="dropdown-menu fs-6 py-1">
+						<div class="tags-dropdown"></div>
+						<div>
+							<li><hr class="dropdown-divider my-1"></li>
+							<li>
+								<a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags">
+									<i class="bi-pencil-square"></i>
+									<small>Edit tags</small>
+								</a>
+							</li>
+						</div>
+					</ul>
 				</div>
 			</div>
 
@@ -81,6 +92,27 @@
 		</div>
 	</div>
 </div>
+<!--Subject search item-->
+<span class="subject-item badge btn btn-secondary border-secondary px-1 py-1 m-1 ms-0 font-monospace text-light fs-6 fw-normal cursor-pointer" title="Click to remove"></span>
+<!--Subject search suggestion-->
+<li class="subject-suggestion">
+	<a class="dropdown-item form-control-sm px-2 py-1" href="#">
+		<span class="code font-monospace"></span> - <span class="name"></span>
+	</a>
+</li>
+<!--Course tag selected item-->
+<span class="course-tag-selected btn badge btn-secondary px-1 me-1 cursor-pointer" title="Click to remove tag">
+	<span class="tag-color d-none"><i class="bi-circle-fill"></i></span>
+	<span class="tag-emoji d-none"></span>
+	<span class="tag-name"></span>
+</span>
+<!--Course tag dropdown item-->
+<li class="tags-dropdown-item" db-id="">
+	<a class="dropdown-item px-2 py-1">
+		<i class="tag-selected bi-check invisible"></i>
+		<small class="tag-name"></small>
+	</a>
+</li>
 {% endblock %}
 
 {% block content %}
