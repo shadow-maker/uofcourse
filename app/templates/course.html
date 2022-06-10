@@ -5,8 +5,32 @@
 {% block headscripts %}
 <script>
 	var course_id = parseInt("{{course.id}}")
+	var grades = JSON.parse('{{ grades | tojson | safe }}')
 </script>
 <script src="/static/scripts/course.js"></script>
+{% endblock %}
+
+{% block templates %}
+<!--Course tag selected item-->
+<span class="tag-selected-item btn badge btn-secondary px-1 me-1 cursor-pointer" title="Click to remove tag">
+	<span class="tag-color d-none"><i class="bi-circle-fill"></i></span>
+	<span class="tag-emoji d-none"></span>
+	<span class="tag-name"></span>
+</span>
+<!--Course tag dropdown item-->
+<li class="tags-dropdown-item" db-id="">
+	<a class="dropdown-item px-2 py-1">
+		<i class="tag-selected bi-check invisible"></i>
+		<small class="tag-name"></small>
+	</a>
+</li>
+<!--Collection course item-->
+<li class="collection-course-item list-group-item list-group-item-action">
+	<div class="d-flex justify-content-between">
+		<span class="term-name"></span>
+		<span class="grade font-monospace" title=""></span>
+	</div>
+</li>
 {% endblock %}
 
 {% block content %}
@@ -160,14 +184,22 @@
 							<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
 								Add tags
 							</button>
-							<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
+							<ul class="dropdown-menu fs-6 py-1">
+								<div class="tags-dropdown"></div>
+								<li><hr class="dropdown-divider my-1"></li>
+								<li>
+									<a class="dropdown-item px-2 p-y1" data-bs-toggle="modal" data-bs-target="#modalEditTags">
+										<i class="bi-pencil-square"></i>
+										<small>Edit tags</small>
+									</a>
+								</li>
+							</ul>
 							{% endif %}
 						</div>
 						{% if current_user.is_authenticated %}
 						<div class="loading fst-italic">Loading...</div>
-						{% endif %}
 						<div class="tags-selected"></div>
-						{% if not current_user.is_authenticated %}
+						{% else %}
 						<span class="fst-italic">
 							You must be logged in to see and add tags to this course
 						</span>
@@ -187,9 +219,9 @@
 							</button>
 							<ul class="collections-dropdown dropdown-menu fs-6 py-1">
 								{% for collection in collections %}
-								<li>
-									<a class="dropdown-item px-2 py-1" {% if not hasCourse(collection) %}onclick="addCollection('{{collection.id}}')"{% endif %}>
-										<i class="bi-check {% if not hasCourse(collection) %}invisible{% endif %}"></i>
+								<li class="collections-dropdown-item" db-id="{{collection.id}}">
+									<a class="dropdown-item px-2 py-1">
+										<i class="bi-check invisible"></i>
 										{% if collection.transfer %}
 										<small>Transferred</small>
 										{% else %}
@@ -208,37 +240,13 @@
 							</ul>
 							{% endif %}
 						</div>
-
 						{% if current_user.is_authenticated %}
-						{% if userCourses %}
-						<div class="card bg-light">
-							<ul class="list-group list-group-flush">
-								{% for uCourse in userCourses %}
-								<li class="list-group-item">
-									<div class="d-flex justify-content-between">
-										{% if uCourse.collection.transfer %}
-										<span>Transferred</span>
-										{% else %}
-										<span>{{uCourse.collection.term.name | capitalize}}</span>
-										{% endif %}
-										{% if uCourse.grade %}
-										<span class="font-monospace" title="{{uCourse.grade.gpv}} GPV | {{uCourse.weightedGPV}} Weighted">
-											{{uCourse.grade.symbol}}
-										</span>
-										{% else %}
-										<span class="font-monospace" title="Grade not set">
-											-
-										</span>
-										{% endif %}
-									</div>
-								</li>
-								{% endfor %}
-							</ul>
+						<div class="loading fst-italic">Loading...</div>
+						<div class="collections-container card bg-light d-none">
+							<ul class="list-group list-group-flush"></ul>
 						</div>
-						{% else %}
-						<div class="text-center fst-italic">None</div>
-						{% endif %}
-						<div class="text-center mt-2">
+						<div class="collections-none text-center fst-italic d-none">None</div>
+						<div class="loaded text-center mt-2">
 							<a class="btn btn-sm btn-outline-secondary" href="{{url_for('view.planner')}}">
 								<i class="bi-pencil-square"></i>
 								Edit in My Planner

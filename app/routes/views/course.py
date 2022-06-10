@@ -1,4 +1,4 @@
-from app.models import Faculty, Subject, Course
+from app.models import Faculty, Subject, Course, Grade
 from app.auth import current_user
 from app.constants import COURSE_LEVELS, REDDIT_URL
 from app.routes.views import view
@@ -26,8 +26,6 @@ def course(subjectCode, courseNumber):
 		flash(f"Course with code {subjectCode}-{courseNumber} does not exist!", "danger")
 		return redirect(url_for("view.home"))
 
-	userCourses = course.getUserCourses(current_user.id) if current_user.is_authenticated else []
-	collections = current_user.collections if current_user.is_authenticated else []
 	return render_template("course.html",
 		title = f"{course.subject_code} {course.number}",
 		description = f"Course info for {course.code} : {course.name}",
@@ -35,9 +33,10 @@ def course(subjectCode, courseNumber):
 		subject = subject,
 		faculty = subject.faculty,
 		redditSearch = REDDIT_URL + "search/?q=" + course.code.replace("-", "%20"),
-		userCourses = userCourses,
-		collections = collections,
-		hasCourse = lambda collection : bool(sum([uc.course_collection_id == collection.id for uc in userCourses]))
+		grades = {grade.id : dict(grade) for grade in Grade.query.all()},
+		collections = sorted(
+			current_user.collections, key=lambda c : c.term_id or 0
+		) if current_user.is_authenticated else []
 	)
 
 

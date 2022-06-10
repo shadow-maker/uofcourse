@@ -2,32 +2,49 @@
 // REQUEST FUNCTIONS
 //
 
-function requestCourseTagsCustom(callback) {
-	if (isAuth)
-		requestCourseTags(course_id, callback)
+function requestCourseTags(callback) {
+	requestTag("/course/" + course_id, "GET", {}, callback)
 }
 
-function toggleTag(tagId) {
-	requestTag("/" + tagId + "/course/" + course_id, "PUT", {}, (data) => {
+function requestCourseCollectionCourses(callback) {
+	$.ajax({
+		url: "/api/me/courses/course/" + course_id,
+		method: "GET",
+		success: callback,
+		error: displayError
+	})
+}
+
+function requestCollectionTerm(id, callback) {
+	$.ajax({
+		url: "/api/me/collections/" + id + "/term",
+		method: "GET",
+		success: callback,
+		error: displayError
+	})
+}
+
+function toggleTag(id) {
+	requestTag("/" + id + "/course/" + course_id, "PUT", {}, (data) => {
 		alert("success", data.success)
 		updateTags()
 	})
 }
 
-function addCollection(collectionId) {
+function addCollection(id) {
+	console.log("Adding to collection " + id)
 	$.ajax({
-		url: "/api/me/course",
+		url: "/api/me/courses",
 		method: "POST",
 		data: {
 			course_id: course_id,
-			collection_id: collectionId
+			collection_id: id
 		},
-		success: (data) => {
-			location.reload()
+		success: (response) => {
+			alert("success", "Added Course to Term")
+			updateCollections()
 		},
-		error: (data) => {
-			displayError(data)
-		}
+		error: displayError
 	})
 }
 
@@ -36,64 +53,112 @@ function addCollection(collectionId) {
 //
 
 function updateTags() {
-	const item = $("#tags")
-	item.find(".loading").show()
+	const tags = $("#tags")
+	tags.find(".loading").show()
 
 	// Add dropdown items
-
-	const dropdown = item.find(".tags-dropdown")
-	dropdown.empty()
-
+	tags.find(".tags-dropdown").empty()
 	for (let tag of userTags) {
-		dropdown.append(`
-			<li class="tags-dropdown-item" db-id="` + tag.id +`">
-				<a class="dropdown-item px-2 py-1" onclick="toggleTag(` + tag.id + `)">
-					<i class="bi-check"></i>
-					<small>` + tag.name +`</small>
-				</a>
-			</li>
-		`)
-	}
+		let tagDropItem = $("#templates .tags-dropdown-item").clone()
 
-	dropdown.append(`
-		<li><hr class="dropdown-divider my-1"></li>
-		<li><a class="dropdown-item px-2 p-y1" href="" data-bs-toggle="modal" data-bs-target="#modalEditTags">
-			<i class="bi-pencil-square"></i>
-			<small>Edit tags</small>
-		</a></li>
-	`)
+		tagDropItem.attr("db-id", tag.id)
+		tagDropItem.find(".tag-name").text(tag.name)
 
-	// Request course tags and add selected tags
-
-	let icon = ""
-	requestCourseTagsCustom((response) => {
-		item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
-			$(this).find(".bi-check").addClass("invisible")
+		tagDropItem.on("click", () => {
+			toggleTag(tag.id)
 		})
 
-		const container = item.find(".tags-selected")
-		container.empty()
-		for (tag of response.tags) {
+		tags.find(".tags-dropdown").append(tagDropItem)
+	}
 
-			if (tag.emoji)
-				icon = "&#" + tag.emoji + " "
-			else
-				icon = "<i class='bi-circle-fill' style='color: #" + tag.color_hex +";'></i> "
+	// Request course tags and add selected tags
+	requestCourseTags((data) => {
+		tags.find(".loading").hide()
 
-			container.append(`
-				<span class="course-tag btn badge btn-secondary px-1 cursor-pointer" title="`+ tag.name + `" db-id="` + tag.id + `" onclick="toggleTag(` + tag.id+ `)">
-					` + icon + tag.name + `
-				</span>
-			`)
+		tags.find(".tags-selected").empty()
+		for (let tag of data.tags) {
+			let tagItem = $("#templates .tag-selected-item").clone()
 
-			item.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
-				if($(this).attr("db-id") == tag.id)
-					$(this).find(".bi-check").removeClass("invisible")
+			tagItem.find(".tag-name").text(tag.name)
+
+			if (tag.emoji) {
+				tagItem.find(".tag-emoji").html("&#" + tag.emoji)
+				tagItem.find(".tag-emoji").removeClass("d-none")
+			} else {
+				tagItem.find(".tag-color").css("color", "#" + tag.color_hex)
+				tagItem.find(".tag-color").removeClass("d-none")
+			}
+
+			tagItem.on("click", () => {
+				toggleTag(tag.id)
 			})
-		}
-	})
 
-	item.find(".loading").hide()
+			tags.find(".tags-selected").append(tagItem)
+		}
+
+		tags.find(".tags-dropdown-item").each(function () {
+			if (data.tags.find(t => t.id == parseInt($(this).attr("db-id"))))
+				$(this).find(".bi-check").removeClass("invisible")
+			else
+				$(this).find(".bi-check").addClass("invisible")
+		})
+	})
+}
+
+function updateCollections() {
+	const collections = $("#collections")
+	collections.find(".loading").show()
+	collections.find(".loaded").hide()
+
+	requestCourseCollectionCourses((data) => {
+		collections.find(".loading").hide()
+		collections.find(".loaded").show()
+
+		collections.find(".collections-container .list-group").empty()
+		if (data.results.length > 0)
+			collections.find(".collections-container").removeClass("d-none")
+		else
+			collections.find(".collections-none").removeClass("d-none")
+		for (let course of data.results) {
+			let collecCourseItem = $("#templates .collection-course-item").clone()
+
+			requestCollectionTerm(course.course_collection_id, (term) => {
+				if (term.transfer)
+					collecCourseItem.find(".term-name").text("Transfer")
+				else
+					collecCourseItem.find(".term-name").text(
+						term.season.charAt(0).toUpperCase() + term.season.slice(1) + " " + term.year
+					)
+			})
+
+			if (course.grade_id) {
+				let grade = grades[course.grade_id]
+				collecCourseItem.find(".grade").text(grade.symbol)
+				collecCourseItem.find(".grade").attr(
+					"title", grade.gpv + " GPV | " + course.weightedGPV + " Weighted"
+				)
+			} else {
+				collecCourseItem.find(".grade").text("-")
+				collecCourseItem.find(".grade").attr("title", "Grade not set")
+			}
+
+			collections.find(".collections-container .list-group").append(collecCourseItem)
+		}
+
+		collections.find(".collections-dropdown-item").each(function () {
+			if (data.results.find(c => c.course_collection_id == parseInt($(this).attr("db-id")))) {
+				$(this).find(".bi-check").removeClass("invisible")
+				$(this).find(".dropdown-item").on("click", () => {})
+			} else {
+				$(this).find(".bi-check").addClass("invisible")
+				$(this).find(".dropdown-item").on("click", (e) => {
+					e.preventDefault()
+					e.stopImmediatePropagation()
+					addCollection($(this).attr("db-id"))
+				})
+			}
+		})
+	})
 }
 
 //
@@ -101,5 +166,8 @@ function updateTags() {
 //
 
 $(document).ready(() => {
-	tagsInit(updateTags)
+	tagsInit(() => {
+		updateTags()
+		updateCollections()
+	})
 })
