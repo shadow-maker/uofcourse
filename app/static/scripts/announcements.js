@@ -18,7 +18,7 @@ function requestResults(callback) {
 		data: {
 			sort: ["datetime"],
 			asc: false,
-			limit: 15,
+			limit: 8,
 			page: page.current
 		},
 		traditional: true,
@@ -71,8 +71,17 @@ function updateResults(data) {
 				})
 			}
 		})
-
+	
 		item.appendTo("#announcementsContainer")
+
+		if (announcement.id == announcementID) {
+			var modalInfo = $("#modalInfoAnnouncement")
+			modalInfo.find(".title").text(announcement.title)
+			modalInfo.find(".datetime").text(announcement.datetime.replace("T", " "))
+			modalInfo.find(".body").text(announcement.body)
+			modalInfo.find(".id").text(announcement.id)
+			modalInfo.modal("show")
+		}
 	}
 
 	page.current = data.page
