@@ -52,6 +52,15 @@ def getCollection(id):
 
 	return dict(collection), 200
 
+@me_collection.route("/<id>/term")
+def getCollectionTerm(id):
+	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
+
+	if not collection:
+		return {"error": f"CourseCollection from this user does not exist"}, 404
+
+	return {"transfer": True} if collection.transfer else dict(collection.term), 200
+
 @me_collection.route("/<id>/courses")
 def getCollectionCourses(id):
 	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
