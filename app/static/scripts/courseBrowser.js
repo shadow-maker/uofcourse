@@ -32,6 +32,19 @@ function checkAll(container) {
 // REQUEST FUNCS
 //
 
+function requestCourseTags(id, callback) {
+	requestTag("/course/" + id, "GET", {}, callback)
+}
+
+function requestCourseCollections(id, callback) {
+	$.ajax({
+		url: "/api/me/collections/course/" + id,
+		method: "GET",
+		success: callback,
+		error: displayError
+	})
+}
+
 function requestResults(callback) {
 	let name = ""
 	let number = []
@@ -115,14 +128,13 @@ function requestResults(callback) {
 }
 
 function toggleCourseTag(courseId, tagId) {
-	$.ajax({
-		url: "/api/me/tags/" + tagId +"/course/" + courseId,
-		method: "PUT",
-		success: (response) => {
-			alert("success", response.success)
+	requestTag("/" + tagId +"/course/" + courseId, "PUT", {}, (response) => {
+		alert("success", response.success)
+		let course = coursesData.find(c => c.id == courseId)
+		requestCourseTags(courseId, (data) => {
+			course.tags = data.tags.map(tag => tag.id)
 			updateCourseTags(courseId)
-		},
-		error: displayError
+		})
 	})
 }
 
@@ -135,9 +147,11 @@ function addCollection(courseId, collectionId) {
 			collection_id: collectionId
 		},
 		success: (response) => {
-			prevQuery = {}
-			requestResults((data) => {
-				updateResults(data)
+			alert("success", "Added Course to Term")
+			let course = coursesData.find(c => c.id == courseId)
+			requestCourseCollections(courseId, (data) => {
+				course.collections = data.collections.map(c => c.id)
+				updateCourseCollections(courseId)
 			})
 		},
 		error: displayError
@@ -178,65 +192,6 @@ function updateCourse(id) {
 
 	// Add content only available if user is authenticated
 	if (isAuth) {
-		// Add course collections
-
-		const collections = course.element.find(".course-collections")
-
-		if (course.collections.length == 0)
-			collections.find(".collections-dropdown-btn").text(
-				"Not taken"
-			)
-		else if (course.collections.length == 1)
-			collections.find(".collections-dropdown-btn").text(
-				"Taken in " + course.collections.length + " term"
-			)
-		else
-			collections.find(".collections-dropdown-btn").text(
-				"Taken in " + course.collections.length + " terms"
-			)
-
-		const dropdown = collections.find(".collections-dropdown")
-
-		dropdown.children(".collections-dropdown-item").each(function () {
-			$(this).find(".dropdown-item").attr("onclick", "addCollection('" + course.id + "', '" + $(this).attr("db-id") + "')")
-			$(this).find(".bi-check").addClass("invisible")
-		})
-
-		for (let collection of course.collections) {
-			dropdown.children(".collections-dropdown-item").each(function () {
-				if ($(this).attr("db-id") == collection) {
-					$(this).find(".dropdown-item").attr("onclick", "")
-					$(this).find(".bi-check").removeClass("invisible")
-				}
-			})
-		}
-
-		// Add tag badges
-		for (let id of course.tags) {
-			let tag = userTags.find(t => t.id == id)
-			
-			if (!tag)
-				continue
-
-			let tagItem = $("#templates .course-tag-selected").clone()
-
-			tagItem.find(".tag-name").text(tag.name)
-
-			if (tag.emoji) {
-				tagItem.find(".tag-emoji").html("&#" + tag.emoji)
-				tagItem.find(".tag-emoji").removeClass("d-none")
-			} else {
-				tagItem.find(".tag-color").css("color", "#" + tag.color_hex)
-				tagItem.find(".tag-color").removeClass("d-none")
-			}
-
-			tagItem.on("click", () => {
-				toggleCourseTag(course.id, tag.id)
-			})
-
-			course.element.find(".tags-selected").append(tagItem)
-		}
-
 		// Add tag dropdown items to tag dropdown
 		course.element.find(".tags-dropdown").empty()
 		for (let tag of userTags) {
@@ -244,8 +199,6 @@ function updateCourse(id) {
 
 			tagDropItem.attr("db-id", tag.id)
 			tagDropItem.find(".tag-name").text(tag.name)
-			if (course.tags.includes(tag.id))
-				tagDropItem.find(".tag-selected").removeClass("invisible")
 			
 			tagDropItem.on("click", () => {
 				toggleCourseTag(course.id, tag.id)
@@ -253,6 +206,9 @@ function updateCourse(id) {
 
 			course.element.find(".tags-dropdown").append(tagDropItem)
 		}
+
+		updateCourseTags(id)
+		updateCourseCollections(id)
 	} else {
 		course.element.find(".tags-dropdown-btn").on("click", function(e) {
 			$(this).dropdown("hide")
@@ -289,35 +245,70 @@ function updateSubjects() {
 }
 
 function updateCourseTags(id) {
-	let course = coursesData.find(c => c.id == id)
-	requestCourseTags(id, (response) => {
-		course.element.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
-			$(this).find(".bi-check").addClass("invisible")
+	const course = coursesData.find(c => c.id == id)
+	const tags = course.element.find(".course-tags")
+
+	tags.find(".tags-dropdown-item").each(function () {
+		$(this).find(".bi-check").addClass("invisible")
+	})
+
+	tags.find(".tags-selected").empty()
+	for (let tagId of course.tags) {
+		let tag = userTags.find(t => t.id == tagId)
+			
+		if (!tag)
+			continue
+
+		let tagItem = $("#templates .course-tag-selected").clone()
+
+		tagItem.find(".tag-name").text(tag.name)
+
+		if (tag.emoji) {
+			tagItem.find(".tag-emoji").html("&#" + tag.emoji)
+			tagItem.find(".tag-emoji").removeClass("d-none")
+		} else {
+			tagItem.find(".tag-color").css("color", "#" + tag.color_hex)
+			tagItem.find(".tag-color").removeClass("d-none")
+		}
+
+		tagItem.on("click", () => {
+			toggleCourseTag(id, tag.id)
 		})
 
-		course.element.find(".tags-selected").empty()
-		for (let tag of response.tags) {
-			let tagItem = $("#templates .course-tag-selected").clone()
+		tags.find(".tags-selected").append(tagItem)
 
-			tagItem.find(".tag-name").text(tag.name)
+		tags.find(".tags-dropdown-item").each(function () {
+			if($(this).attr("db-id") == tag.id)
+				$(this).find(".bi-check").removeClass("invisible")
+		})
+	}
+}
 
-			if (tag.emoji) {
-				tagItem.find(".tag-emoji").html("&#" + tag.emoji)
-				tagItem.find(".tag-emoji").removeClass("d-none")
-			} else {
-				tagItem.find(".tag-color").css("color", "#" + tag.color_hex)
-				tagItem.find(".tag-color").removeClass("d-none")
-			}
+function updateCourseCollections(id) {
+	const course = coursesData.find(c => c.id == id)
+	const collections = course.element.find(".course-collections")
 
-			tagItem.on("click", () => {
-				toggleCourseTag(id, tag.id)
-			})
+	if (course.collections.length == 0)
+		collections.find(".collections-dropdown-btn").text(
+			"Not taken"
+		)
+	else if (course.collections.length == 1)
+		collections.find(".collections-dropdown-btn").text(
+			"Taken in " + course.collections.length + " term"
+		)
+	else
+		collections.find(".collections-dropdown-btn").text(
+			"Taken in " + course.collections.length + " terms"
+		)
 
-			course.element.find(".tags-selected").append(tagItem)
-
-			course.element.find(".tags-dropdown").children(".tags-dropdown-item").each(function () {
-				if($(this).attr("db-id") == tag.id)
-					$(this).find(".bi-check").removeClass("invisible")
+	collections.find(".collections-dropdown-item").each(function () {
+		if (course.collections.includes(parseInt($(this).attr("db-id")))) {
+			$(this).find(".bi-check").removeClass("invisible")
+			$(this).find(".dropdown-item").on("click", () => {})
+		} else {
+			$(this).find(".bi-check").addClass("invisible")
+			$(this).find(".dropdown-item").on("click", () => {
+				addCollection(course.id, $(this).attr("db-id"))
 			})
 		}
 	})
