@@ -1,5 +1,5 @@
 from app import db
-from app.models import CourseCollection, Term, Season
+from app.models import CourseCollection, Term, Season, Course
 from app.auth import current_user
 
 from flask import Blueprint, request
@@ -15,7 +15,7 @@ me_collection = Blueprint("collections", __name__, url_prefix="/collections")
 #
 
 @me_collection.route("")
-def getCourseCollections():
+def getCollections():
 	sort = list(dict.fromkeys(request.args.getlist("sort", type=str)))
 	asc = request.args.get("asc", default="true", type=str).lower()
 
@@ -44,7 +44,7 @@ def getCourseCollections():
 	return {"collections": [dict(collection) for collection in results]}, 200
 
 @me_collection.route("/<id>")
-def getCourseCollection(id):
+def getCollection(id):
 	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
 
 	if not collection:
@@ -53,7 +53,7 @@ def getCourseCollection(id):
 	return dict(collection), 200
 
 @me_collection.route("/<id>/courses")
-def getCourseCollectionCourses(id):
+def getCollectionCourses(id):
 	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
 
 	if not collection:
@@ -86,12 +86,23 @@ def getCourseCollectionCourses(id):
 	
 	return {"courses": [dict(uc) for uc in results]}, 200
 
+@me_collection.route("/course/<id>")
+def getCourseCollections(id):
+	course = Course.query.get(id)
+	if not course:
+		return {"error": f"Course with id {id} does not exist"}, 404
+	return {
+		"collections": [
+			dict(collection) for collection in current_user.collections if course in collection.courses
+		]
+	}, 200
+
 #
 # POST
 #
 
 @me_collection.route("", methods=["POST"])
-def postCourseCollection(data={}):
+def postCollection(data={}):
 	if not data:
 		data = request.form.to_dict()
 		if not data:
@@ -133,7 +144,7 @@ def postCourseCollection(data={}):
 # CourseCollection
 
 @me_collection.route("/<id>", methods=["DELETE"])
-def delCourseCollection(id):
+def delCollection(id):
 	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
 
 	if not collection:
