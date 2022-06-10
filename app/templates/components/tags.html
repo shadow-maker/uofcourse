@@ -245,7 +245,7 @@
 							"&#" + (course.emoji ? course.emoji : DEFAULT_EMOJI) + ";"
 						)
 
-						tagCourseItem.find(".remove").click(() => {
+						tagCourseItem.find(".remove").on("click", () => {
 							requestToggleTag(tag.id, course.id)
 						})
 

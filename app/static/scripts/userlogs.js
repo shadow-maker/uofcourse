@@ -79,7 +79,7 @@ function updateLogs(data) {
 		logItem.find(".event_name").text(log.event_name)
 		logItem.find(".ip-link .ip").html(log.ip)
 
-		logItem.find(".ip-link").click(e => {
+		logItem.find(".ip-link").on("click", e => {
 			e.preventDefault()
 
 			const modal = $("#modalShowLocation")
