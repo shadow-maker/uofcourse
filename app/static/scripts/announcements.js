@@ -2,21 +2,14 @@
 // GLOBAL VARS
 //
 
-var announcements = []
-
 // Init Page object (defined in pagination.html)
 var page = new Page(0, () => {
 	getAnnouncements((data) => {
-		announcements = data.results
-		updateResults()
-		page.current = data.page
-		page.total = data.pages
-	
-		page.updateNav()
+		updateResults(data)
 
 		// Announcement passed in URL query parameter
 		if (selAnnouncement) {
-			let announcement = announcements.find(a => a.id == selAnnouncement)
+			let announcement = data.results.find(a => a.id == selAnnouncement)
 			if (announcement) { // Announcement in current page data
 				$("#modalInfoAnnouncement").modal("show")
 				loadModal(announcement)
@@ -92,12 +85,12 @@ function loadModal(announcement) {
 	}
 }
 
-function updateResults() {
+function updateResults(data) {
 	$(".loading").hide()
 	$(".loaded").show()
 
 	$("#announcementsContainer").empty()
-	for (let announcement of announcements) {
+	for (let announcement of data.results) {
 		announcement.element = $("#templates .announcement-item").clone()
 
 		announcement.element.find(".announcement-title").text(announcement.title)
@@ -113,6 +106,11 @@ function updateResults() {
 
 		announcement.element.appendTo("#announcementsContainer")
 	}
+
+	page.current = data.page
+	page.total = data.pages
+
+	page.updateNav()
 }
 //
 // DOCUMENT READY
