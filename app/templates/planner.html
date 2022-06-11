@@ -63,100 +63,129 @@
 		background-color: #f8d7da !important;
 	}
 
+	@media (min-width: 576px) {
+		#modalAddCourse .select-from-tagged {
+			border-left: 2px solid var(--bs-gray-300);
+		}
+	}
+
 	@media (min-width: 992px) {
 		#overallGPA {
 			border-right: 2px solid var(--bs-gray-300);
 		}
 	}
+
+	#selectCourseSubject,
+	#selectCourseNumber {
+		width: 3.4em;
+	}
+
+	@media (min-width: 576px) {
+		#selectCourseSubject,
+		#selectCourseNumber {
+			width: 3.3em;
+		}
+	}
+
+	@media (min-width: 992px) {
+		#selectCourseSubject,
+		#selectCourseNumber {
+			width: 3.2em;
+		}
+	}
+
+	.overall-collection-item-calc {
+		width: 8em;
+	}
 </style>
 {% endblock %}
 
-{% block content %}
-
-<!--TEMPLATES-->
-<div id="templates" class="d-none">
-	<!--Collection card item-->
-	<div class="collection-item col-10 col-sm-7 col-md-5 col-lg-4 col-xl-3 ps-3 pe-0">
-		<div class="card h-100">
-			<!--Remove collection button-->
-			<button
-				class="collection-remove position-absolute top-0 start-100 translate-middle badge rounded-pill btn btn-light border-secondary"
-				title="" onclick="">
-				<i class="bi-x-lg text-secondary"></i>
-			</button>
-			<!--Term info header-->
-			<div class="card-header text-center">
-				<span class="h5" title="Term season and year">
-					<span class="term-name"></span>
-					<i class="term-current d-none fs-6 bi-circle-fill text-success" data-bs-toggle="tooltip"
-						data-bs-placement="right" title="Current"></i>
+{% block templates %}
+<!--Collection card item-->
+<div class="collection-item col-10 col-sm-7 col-md-5 col-lg-4 col-xl-3 ps-3 pe-0">
+	<div class="card h-100">
+		<!--Remove collection button-->
+		<button
+			class="collection-remove position-absolute top-0 start-100 translate-middle badge rounded-pill btn btn-light border-secondary"
+			title="" onclick="">
+			<i class="bi-x-lg text-secondary"></i>
+		</button>
+		<!--Term info header-->
+		<div class="card-header text-center">
+			<span class="h5" title="Term season and year">
+				<span class="term-name"></span>
+				<i class="term-current d-none fs-6 bi-circle-fill text-success" data-bs-toggle="tooltip"
+					data-bs-placement="right" title="Current"></i>
+			</span>
+			<div class="term-date invisible m-0 text-muted fst-italic lh-1" style="height: 1rem;">
+				<small class="start" title="Start date"></small>
+				<i class="bi-arrow-right-short"></i>
+				<small class="end" title="End date"></small>
+			</div>
+		</div>
+		<div class="loading text-center mt-4 mb-2" title="Loading courses...">
+			<div class="spinner-border" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+		</div>
+		<div class="collection-course-container card-body p-1" db-id=""></div>
+		<div class="loaded pb-2 text-center">
+			<a class="add-course text-body" href="" data-bs-toggle="modal" data-bs-target="#modalAddCourse" onclick="">
+				Add course
+			</a>
+		</div>
+		<div class="card-footer">
+			<div class="row">
+				<span class="col-3">
+					<div class="form-check form-switch" data-bs-toggle="tooltip" data-bs-placement="bottom"
+						title="Show in overall GPA">
+						<input class="countInGPA form-check-input" type="checkbox" role="switch">
+					</div>
 				</span>
-				<div class="term-date invisible m-0 text-muted fst-italic lh-1" style="height: 1rem;">
-					<small class="start" title="Start date"></small>
-					<i class="bi-arrow-right-short"></i>
-					<small class="end" title="End date"></small>
-				</div>
-			</div>
-			<div class="loading text-center mt-4 mb-2" title="Loading courses...">
-				<div class="spinner-border" role="status">
-					<span class="visually-hidden">Loading...</span>
-				</div>
-			</div>
-			<div class="collection-course-container card-body p-1" db-id=""></div>
-			<div class="loaded pb-2 text-center">
-				<a class="add-course text-body" href="" data-bs-toggle="modal" data-bs-target="#modalAddCourse"
-					onclick="">
-					Add course
-				</a>
-			</div>
-			<div class="card-footer">
-				<div class="row">
-					<span class="col-3">
-						<div class="form-check form-switch" data-bs-toggle="tooltip" data-bs-placement="bottom"
-							title="Show in overall GPA">
-							<input class="countInGPA form-check-input" type="checkbox" role="switch">
-						</div>
+				<span class="col-6 text-center">Term GPA:</span>
+				<span class="col-3 font-monospace text-start collection-gpa pe-0">
+					<span class="gpa" data-bs-toggle="tooltip" data-bs-placement="bottom" title=""></span>
+					<span class="nogpa pe-2" style="cursor: default;" data-bs-toggle="tooltip"
+						data-bs-placement="bottom"
+						title="One or more courses don't have a grade or they don't count towards the GPA">
+						-
 					</span>
-					<span class="col-6 text-center">Term GPA:</span>
-					<span class="col-3 font-monospace text-start collection-gpa pe-0">
-						<span class="gpa" data-bs-toggle="tooltip" data-bs-placement="bottom" title=""></span>
-						<span class="nogpa pe-2" style="cursor: default;" data-bs-toggle="tooltip"
-							data-bs-placement="bottom"
-							title="One or more courses don't have a grade or they don't count towards the GPA">
-							-
-						</span>
-					</span>
-				</div>
+				</span>
 			</div>
 		</div>
-	</div>
-	<!--Collection course item-->
-	<div class="collection-course-item m-1 btn bg-light card" db-code="" draggable="true" data-bs-toggle="modal"
-		data-bs-target="#modalInfoUserCourse" title="Click to view or drag to change term">
-		<div class="row">
-			<span class="emoji col-3 h5 p-0 m-0"></span>
-			<span class="code col-6 font-monospace"></span>
-			<span class="grade col-3 font-monospace text-start" title=""></span>
-		</div>
-		<div class="edit position-absolute end-0 pe-2">
-			<i class="bi-pencil-fill"></i>
-		</div>
-	</div>
-	<!--Overall GPA collection item-->
-	<div class="overall-collection-item row">
-		<span class="term col-12 col-sm-3 text-sm-end ps-sm-2 fw-bold"></span>
-		<span class="col-6 col-sm-4 font-monospace pe-0">
-			<span class="gpa d-inline-block" style="width: 3.1em;" title="Term GPA"></span>
-			x
-			<span class="units d-inline-block" style="width: 3.1em;" title="Term accumulated units"></span>
-			=
-		</span>
-		<span class="col-2 font-monospace px-0 d-flex justify-content-between" title="Term accumulated points">
-			<span class="points"></span>
-			<i class="disable bi-x pe-sm-2" title="Hide in overall GPA" onclick=""></i>
-		</span>
 	</div>
 </div>
+<!--Collection course item-->
+<div class="collection-course-item m-1 btn bg-light card" db-code="" draggable="true" data-bs-toggle="modal"
+	data-bs-target="#modalInfoUserCourse" title="Click to view or drag to change term">
+	<div class="row">
+		<span class="emoji col-3 h5 p-0 m-0"></span>
+		<span class="code col-6 font-monospace"></span>
+		<span class="grade col-3 font-monospace text-start" title=""></span>
+	</div>
+	<div class="edit position-absolute end-0 pe-2">
+		<i class="bi-pencil-fill"></i>
+	</div>
+</div>
+<!--Overall GPA collection item-->
+<div class="overall-collection-item row">
+	<span class="term col-12 col-sm-3 text-sm-end fw-bold"></span>
+	<span class="col d-flex">
+		<span class="overall-collection-item-calc font-monospace">
+			<span class="gpa d-inline-block" title="Term GPA"></span>
+			x
+			<span class="units d-inline-block" title="Term accumulated units"></span>
+		</span>
+		<span class="font-monospace px-2">=</span>
+		<span class="font-monospace d-flex" title="Term accumulated points">
+			<span class="points"></span>
+			<i class="disable bi-x ps-2 ps-lg-3 pe-sm-2" title="Hide in overall GPA" onclick=""></i>
+		</span>
+	</span>
+</div>
+{% endblock %}
+
+{% block content %}
 
 <!--Courses per term-->
 <div class="container-fluid mb-4 px-0">
@@ -199,27 +228,32 @@
 				<span class="final-gpa ms-3 font-monospace" title="-">-</span>
 			</div>
 			<div class="card ms-2">
-				<div class="card-body px-2">
+				<div class="card-body pe-1">
 					<div id="overallCollectionContainer"></div>
 					<div class="row">
-						<span class="col-8 col-sm-9 ps-2 ps-lg-3 pe-4">
+						<span class="col-8 col-sm-9 ps-2 ps-lg-3 pe-3 pe-sm-4">
 							<hr class="my-2">
 						</span>
 					</div>
 					<div class="row">
-						<span class="col-6 col-sm-7 text-end ps-2"></span>
-						<span class="col-6 col-sm-5 px-0 font-monospace">
-							<span class="sum-points" title="Sum of points">-</span>
-							/
-							<span class="sum-units" title="Sum of units">-</span>
-							=
-							<span class="final-gpa fw-bold" title="Overall GPA">-</span>
+						<span class="col-12 col-sm-3"></span>
+						<span class="col d-flex">
+							<span class="overall-collection-item-calc"></span>
+							<span class="font-monospace px-2">+</span>
+							<span class="font-monospace">
+								<span class="sum-points" title="Sum of points">-</span>
+								/
+								<span class="sum-units" title="Sum of units">-</span>
+								=
+								<span class="final-gpa fw-bold" title="Overall GPA">-</span>
+							</span>
 						</span>
 					</div>
 				</div>
 			</div>
 		</div>
 
+		<!--Program Progress-->
 		<div id="progress" class="col ps-lg-3">
 			<div class="h2">Program progress</div>
 			<div class="bar row ps-2 mb-2">
@@ -399,8 +433,8 @@
 <!--Form modals-->
 
 <!--Form add CourseCollection-->
-<form id="formAddCollection" name="formAddCollection">
-	<div class="modal fade" id="modalAddCollection" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalAddCollection" tabindex="-1" aria-hidden="true">
+	<form id="formAddCollection" name="formAddCollection">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -438,8 +472,8 @@
 				</div>
 			</div>
 		</div>
-	</div>
-</form>
+	</form>
+</div>
 
 <!--Form add UserCourse-->
 <form id="formAddUserCourse" name="formAddUserCourse">
@@ -450,42 +484,63 @@
 					<h5 class="modal-title">Add course to term</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="modal-body px-5">
+				<div class="modal-body px-4">
 					<!--Hidden fields-->
 					<input type="number" name="collection_id" id="selectCollection" value="" readonly hidden>
 					<input type="number" name="course_id" id="selectCourseId" value="" readonly hidden>
 
-					<div class="d-flex flex-row justify-content-center">
-						<!--Subject code-->
-						<input type="text"
-							class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle"
-							id="selectCourseSubject" minlength="2" maxlength="4" value="" style="width: 4em;"
-							autocomplete="off">
+					<div class="row">
+						<div class="select-from-code col-sm-12 pb-3">
+							<div class="d-flex flex-row justify-content-center">
+								<!--Subject code-->
+								<input type="text"
+									class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle px-2 py-0"
+									id="selectCourseSubject" minlength="2" maxlength="4" value="" placeholder="CODE"
+									autocomplete="off">
 
-						<!--Separator-->
-						<span class="h-100 p-2 m-0 fs-2 align-middle">–</span>
+								<!--Separator-->
+								<div class="flex-shrink-1 d-flex flex-column justify-content-center">
+									<span class="p-1 pt-0 m-0 fs-3 lh-1 align-middle">–</span>
+								</div>
 
-						<!--Course number-->
-						<input type="text"
-							class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-3"
-							id="selectCourseNumber" maxlength="3" value="" disabled style="width: 4em;"
-							autocomplete="off">
+								<!--Course number-->
+								<input type="text"
+									class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-2 py-0"
+									id="selectCourseNumber" maxlength="3" value="" placeholder="NUM" autocomplete="off"
+									disabled>
 
-						<!--Course exists status-->
-						<div class="position-relative">
-							<div class="status fs-4 h-100 position-absolute start-100 p-2 ps-3 d-flex flex-column justify-content-center"
-								id="selectCourseStatus">
-								<span class="error">
-									<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip"
-										data-bs-placement="right" aria-label="Course does not exist"
-										title="Course does not exist"></i>
-								</span>
-								<span class="success">
-									<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip"
-										data-bs-placement="right" aria-label="Course exists" title="Course exists"></i>
-								</span>
+								<!--Course exists status-->
+								<div class="position-relative">
+									<div class="status fs-4 h-100 position-absolute start-100 p-2 d-flex flex-column justify-content-center"
+										id="selectCourseStatus">
+										<span class="error">
+											<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip"
+												data-bs-placement="right" aria-label="Course does not exist"
+												title="Course does not exist"></i>
+										</span>
+										<span class="success">
+											<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip"
+												data-bs-placement="right" aria-label="Course exists"
+												title="Course exists"></i>
+										</span>
+									</div>
+								</div>
 							</div>
 						</div>
+						<!-- <div class="select-from-tagged col-sm-6">
+							<div class="h5">Select from tagged</div>
+							<div class="h6 m-0">
+								<i class="bi-chevron-right"></i>
+								Starred
+							</div>
+							<ul class="list-group list-group-action">
+								<li class="list-group-item">An item</li>
+								<li class="list-group-item">A second item</li>
+								<li class="list-group-item">A third item</li>
+								<li class="list-group-item">A fourth item</li>
+								<li class="list-group-item">And a fifth one</li>
+							</ul>
+						</div> -->
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-around">
@@ -500,8 +555,8 @@
 </form>
 
 <!--Form edit UserCourse-->
-<form id="formEditUserCourse" name="formEditUserCourse">
-	<div class="modal fade" id="modalEditUserCourse" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalEditUserCourse" tabindex="-1" aria-hidden="true">
+	<form id="formEditUserCourse" name="formEditUserCourse">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -548,7 +603,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="modal-footer d-flex justify-content-around">
+				<div class="modal-footer d-flex justify-content-between px-5">
 					<button type="submit" method="DELETE" class="btn btn-danger" data-bs-dismiss="modal">
 						Remove
 					</button>
@@ -558,12 +613,12 @@
 				</div>
 			</div>
 		</div>
-	</div>
-</form>
+	</form>
+</div>
 
 <!--Form edit units needed-->
-<form id="formEditUnits" name="formEditUnits">
-	<div class="modal fade" id="modalEditUnits" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalEditUnits" tabindex="-1" aria-hidden="true">
+	<form id="formEditUnits" name="formEditUnits">
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -580,8 +635,8 @@
 				</div>
 			</div>
 		</div>
-	</div>
-</form>
+	</form>
+</div>
 
 {% endblock %}
 
