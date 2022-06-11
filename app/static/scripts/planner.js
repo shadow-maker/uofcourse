@@ -416,26 +416,24 @@ function updateCollectionCourse(collection_id, id) {
 	let collection = collections.find(c => c.id == collection_id)
 	let cc = collection.courses.find(c => c.id == id)
 
-	let item = $("#templates .collection-course-item").clone()
-
-	cc.element = item
+	cc.element = $("#templates .collection-course-item").clone()
 
 	const grade = grades[cc.grade_id]
 
-	item.attr("db-code", cc.course_code)
+	cc.element.attr("db-code", cc.course_code)
 
-	item.find(".emoji").html("&#" + (cc.course_emoji ? cc.course_emoji : DEFAULT_EMOJI))
-	item.find(".code").text(cc.course_code)
-	item.find(".grade").text(cc.grade_id ? grade.symbol : "-")
-	item.find(".grade").attr(
+	cc.element.find(".emoji").html("&#" + (cc.course_emoji ? cc.course_emoji : DEFAULT_EMOJI))
+	cc.element.find(".code").text(cc.course_code)
+	cc.element.find(".grade").text(cc.grade_id ? grade.symbol : "-")
+	cc.element.find(".grade").attr(
 		"title",
 		cc.grade_id ? ((grade.gpv ? grade.gpv : "-") + " GPV | " + (cc.weightedGPV ? cc.weightedGPV : "-") + " Weighted") : "Grade not set"
 	)
 
 	// Item events
 
-	item.on("click", () => {
-		if (!item.hasClass("dragging")) {
+	cc.element.on("click", () => {
+		if (!cc.element.hasClass("dragging")) {
 			getCourse(cc.course_id, (course) => {
 				modalInfo.find(".name").text(course.name)
 				modalInfo.find(".link").prop("href", course.url)
@@ -472,7 +470,7 @@ function updateCollectionCourse(collection_id, id) {
 			formEdit.find("#selectCoursePlaceholder").val(cc.course_code)
 			formEdit.find("#selectGrade").val(cc.grade_id ? cc.grade_id : 0)
 			formEdit.find("#selectPassed").prop("checked", cc.passed ? cc.passed : false)
-
+		
 			$("#formEditCollectionCourse #selectCollection").empty()
 			for (let c of collections) {
 				$("#formEditCollectionCourse #selectCollection").append(
@@ -487,8 +485,8 @@ function updateCollectionCourse(collection_id, id) {
 		}
 	})
 
-	item.get(0).addEventListener("dragstart", () => {
-		item.addClass("dragging")
+	cc.element.get(0).addEventListener("dragstart", () => {
+		cc.element.addClass("dragging")
 		courseOldCollection = collection_id
 		courseCanMoveTo = []
 		for (let collec of collections)
@@ -500,12 +498,12 @@ function updateCollectionCourse(collection_id, id) {
 		}
 	})
 
-	item.get(0).addEventListener("dragend", () => {
-		item.removeClass("dragging")
-		let newId = parseInt(item.parent().attr("db-id"))
+	cc.element.get(0).addEventListener("dragend", () => {
+		cc.element.removeClass("dragging")
+		let newId = parseInt(cc.element.parent().attr("db-id"))
 		if (courseOldCollection != newId && courseCanMoveTo.includes(newId)) {
 			putCollectionCourse({
-					id: id,
+					id: cc.id,
 					collection_id: newId
 				},
 				() => {
@@ -528,7 +526,14 @@ function updateCollectionCourse(collection_id, id) {
 		}
 	})
 
-	item.appendTo(collection.element.find(".collection-course-container"))
+	cc.element.appendTo(collection.element.find(".collection-course-container"))
+
+	// CollectionCourse id was passed as URL parameter
+	if (selCollectionCourse && selCollectionCourse == cc.id) {
+		cc.element.click()
+		selCollectionCourse = null
+		window.history.pushState({}, document.title, window.location.pathname)
+	}
 }
 
 function updateOverallGPA() {

@@ -117,10 +117,12 @@ function updateCollections() {
 		$("#collections").find(".collections-container").removeClass("d-none")
 		else
 		$("#collections").find(".collections-none").removeClass("d-none")
-		for (let course of data.results) {
+		for (let cc of data.results) {
 			let collecCourseItem = $("#templates .collection-course-item").clone()
 
-			requestCollectionTerm(course.collection_id, (term) => {
+			collecCourseItem.attr("href", "/planner?id=" + cc.id)
+
+			requestCollectionTerm(cc.collection_id, (term) => {
 				if (term.transfer)
 					collecCourseItem.find(".term-name").text("Transfer")
 				else
@@ -129,11 +131,11 @@ function updateCollections() {
 					)
 			})
 
-			if (course.grade_id) {
-				let grade = grades[course.grade_id]
+			if (cc.grade_id) {
+				let grade = grades[cc.grade_id]
 				collecCourseItem.find(".grade").text(grade.symbol)
 				collecCourseItem.find(".grade").attr(
-					"title", grade.gpv + " GPV | " + course.weightedGPV + " Weighted"
+					"title", grade.gpv + " GPV | " + cc.weightedGPV + " Weighted"
 				)
 			} else {
 				collecCourseItem.find(".grade").text("-")
