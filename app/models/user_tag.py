@@ -1,5 +1,5 @@
 from app import db
-from app.models.course_tag import CourseTag
+from app.models._course_tag import CourseTag
 
 class UserTag(db.Model):
 	__tablename__ = "user_tag"

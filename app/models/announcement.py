@@ -1,5 +1,5 @@
 from app import db
-from app.models.user_announcement import UserAnnouncement
+from app.models._user_announcement import UserAnnouncement
 from app.localdt import utc, local
 from app.auth import current_user
 
