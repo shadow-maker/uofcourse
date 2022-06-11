@@ -4,7 +4,7 @@
 
 let firstDrag = false
 
-var collections = {}
+var collections = []
 var courseCanMoveTo = []
 var courseOldCollection = null
 var overallGPA = {
@@ -163,7 +163,7 @@ function addCollection(season, year, callback) {
 
 function addUserCourse(collection_id, course_id, callback) {
 	$.ajax({
-		url: "/api/me/course",
+		url: "/api/me/courses",
 		method: "POST",
 		data: {
 			collection_id: collection_id,
@@ -182,7 +182,7 @@ function addUserCourse(collection_id, course_id, callback) {
 
 function putUserCourse(data, callback, onerror = displayError) {
 	$.ajax({
-		url: "/api/me/course",
+		url: "/api/me/courses",
 		method: "PUT",
 		data: data,
 		success: (response) => {
@@ -246,7 +246,7 @@ function removeCollection(id) {
 
 function delUserCourse(id, callback) {
 	$.ajax({
-		url: "/api/me/course/" + id,
+		url: "/api/me/courses/" + id,
 		method: "DELETE",
 		success: (response) => {
 			callback(response)
@@ -434,7 +434,7 @@ function updateCollectionCourse(collection_id, id) {
 
 	// Item events
 
-	item.click(e => {
+	item.on("click", () => {
 		if (!item.hasClass("dragging")) {
 			getCourse(uc.course_id, (course) => {
 				modalInfo.find(".name").text(course.name)
@@ -573,14 +573,11 @@ function disableOverallGPA(id) {
 
 function updateProgress() {
 	getProgress((data) => {
-		console.log(data)
 		if (data.units_needed) {
 			const progressBar = $("#progress .bar")
 			const progressInfo = $("#progress .info")
 			let unitsTakenPercent = (data.units_taken / data.units_needed) * 100
 			let unitsTotalPercent = ((data.units_taken + data.units_planned) / data.units_needed) * 100
-
-			console.log(unitsTakenPercent, unitsTotalPercent)
 
 			progressBar.find(".units-taken").attr("aria-valuenow", Math.round(unitsTakenPercent))
 			progressBar.find(".units-taken").css(
