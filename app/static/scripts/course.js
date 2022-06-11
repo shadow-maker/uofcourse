@@ -6,7 +6,7 @@ function requestCourseTags(callback) {
 	requestTag("/course/" + course_id, "GET", {}, callback)
 }
 
-function requestCourseCollectionCourses(callback) {
+function requestCollectionCourses(callback) {
 	$.ajax({
 		url: "/api/me/courses/course/" + course_id,
 		method: "GET",
@@ -53,12 +53,11 @@ function addCollection(id) {
 //
 
 function updateTags() {
-	const tags = $("#tags")
-	tags.find(".loading").show()
+	$("#tags").find(".loading").show()
 
 	// Add dropdown items
-	tags.find(".tags-dropdown").empty()
-	for (let tag of userTags) {
+	$("#tags").find(".tags-dropdown").empty()
+	for (let tag of tags) {
 		let tagDropItem = $("#templates .tags-dropdown-item").clone()
 
 		tagDropItem.attr("db-id", tag.id)
@@ -68,14 +67,14 @@ function updateTags() {
 			toggleTag(tag.id)
 		})
 
-		tags.find(".tags-dropdown").append(tagDropItem)
+		$("#tags").find(".tags-dropdown").append(tagDropItem)
 	}
 
 	// Request course tags and add selected tags
 	requestCourseTags((data) => {
-		tags.find(".loading").hide()
+		$("#tags").find(".loading").hide()
 
-		tags.find(".tags-selected").empty()
+		$("#tags").find(".tags-selected").empty()
 		for (let tag of data.tags) {
 			let tagItem = $("#templates .tag-selected-item").clone()
 
@@ -93,10 +92,10 @@ function updateTags() {
 				toggleTag(tag.id)
 			})
 
-			tags.find(".tags-selected").append(tagItem)
+			$("#tags").find(".tags-selected").append(tagItem)
 		}
 
-		tags.find(".tags-dropdown-item").each(function () {
+		$("#tags").find(".tags-dropdown-item").each(function () {
 			if (data.tags.find(t => t.id == parseInt($(this).attr("db-id"))))
 				$(this).find(".bi-check").removeClass("invisible")
 			else
@@ -106,23 +105,22 @@ function updateTags() {
 }
 
 function updateCollections() {
-	const collections = $("#collections")
-	collections.find(".loading").show()
-	collections.find(".loaded").hide()
+	$("#collections").find(".loading").show()
+	$("#collections").find(".loaded").hide()
 
-	requestCourseCollectionCourses((data) => {
-		collections.find(".loading").hide()
-		collections.find(".loaded").show()
+	requestCollectionCourses((data) => {
+		$("#collections").find(".loading").hide()
+		$("#collections").find(".loaded").show()
 
-		collections.find(".collections-container .list-group").empty()
+		$("#collections").find(".collections-container .list-group").empty()
 		if (data.results.length > 0)
-			collections.find(".collections-container").removeClass("d-none")
+		$("#collections").find(".collections-container").removeClass("d-none")
 		else
-			collections.find(".collections-none").removeClass("d-none")
+		$("#collections").find(".collections-none").removeClass("d-none")
 		for (let course of data.results) {
 			let collecCourseItem = $("#templates .collection-course-item").clone()
 
-			requestCollectionTerm(course.course_collection_id, (term) => {
+			requestCollectionTerm(course.collection_id, (term) => {
 				if (term.transfer)
 					collecCourseItem.find(".term-name").text("Transfer")
 				else
@@ -142,11 +140,11 @@ function updateCollections() {
 				collecCourseItem.find(".grade").attr("title", "Grade not set")
 			}
 
-			collections.find(".collections-container .list-group").append(collecCourseItem)
+			$("#collections").find(".collections-container .list-group").append(collecCourseItem)
 		}
 
-		collections.find(".collections-dropdown-item").each(function () {
-			if (data.results.find(c => c.course_collection_id == parseInt($(this).attr("db-id")))) {
+		$("#collections").find(".collections-dropdown-item").each(function () {
+			if (data.results.find(c => c.collection_id == parseInt($(this).attr("db-id")))) {
 				$(this).find(".bi-check").removeClass("invisible")
 				$(this).find(".dropdown-item").on("click", () => {})
 			} else {

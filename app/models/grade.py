@@ -8,7 +8,7 @@ class Grade(db.Model):
 	passed = db.Column(db.Boolean, nullable=False, default=True)
 	desc = db.Column(db.String(256))
 
-	userCourses = db.relationship("UserCourse", backref="grade")
+	collectionCourses = db.relationship("CollectionCourse", backref="grade")
 
 	def __init__(self, symbol, gpv, desc, passed=True):
 		self.symbol = symbol

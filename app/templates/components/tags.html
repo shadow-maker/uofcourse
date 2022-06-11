@@ -211,7 +211,7 @@
 	function loadTagsDrawer() {
 		const container = $("#tagsDrawer .offcanvas-body")
 		container.empty()
-		for (let tag of userTags) {
+		for (let tag of tags) {
 			let tagItem = $("#templates .tags-drawer-group").clone()
 			
 			if (tag.emoji) {
@@ -272,7 +272,7 @@
 	function loadEditTagsModal() {
 		tagsEdited = []
 		$("#modalEditTags .tag-items").empty()
-		for (let tag of userTags) {
+		for (let tag of tags) {
 			let tagEditItem = $("#templates .tag-edit-item").clone()
 			tagEditItem.find(".tag-color").css("color", "#" + colorToHex(tag.color))
 			tagEditItem.find(".tag-select-color").append(colorOptions(tag.color))
@@ -365,7 +365,7 @@
 			completed++
 			if (completed == $("#modalEditTags .tag-edit-item").length) {
 				requestTag("", "GET", {}, (data) => {
-					userTags = data.tags
+					tags = data.tags
 					if ($("#tagsDrawer").hasClass("show"))
 						loadTagsDrawer()
 					tagsCallback()
@@ -377,7 +377,7 @@
 			data = {}
 
 			if (tagEdit.existing) { // Existing tag
-				let tag = userTags.find(t => t.id == tagEdit.id)
+				let tag = tags.find(t => t.id == tagEdit.id)
 				if (tag.deletable) {
 					if (tagEdit.delete) { // Delete tag
 						requestDeleteTag(tagEdit.id, (response) => {
@@ -433,10 +433,10 @@
 			tagsCallback = callback
 
 			if (!isAuth) {
-				userTags = []
+				tags = []
 			} else {
 				requestTag("", "GET", {}, (data) => {
-					userTags = data.tags
+					tags = data.tags
 					tagsCallback()
 				})
 			}

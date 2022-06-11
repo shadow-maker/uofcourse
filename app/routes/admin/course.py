@@ -8,7 +8,7 @@ class CourseModelView(BaseModelView):
 		"id", "code", "number", "subject", "name", "units", "repeat", "countgpa", "desc", "notes", "prereqs", "coreqs", "antireqs", "url", "url_uni"
 	]
 	column_filters = ["number", "name", "units", "subject_id", "subject"]
-	form_excluded_columns = ["userCourses", "userTags"]
+	form_excluded_columns = ["collectionCourses", "tags"]
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(Course, *args, **kwargs)

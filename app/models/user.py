@@ -1,9 +1,9 @@
 from app import db, bcrypt
 from app.constants import STARRED_COLOR, STARRED_EMOJI
 from app.models.user_log import UserLog, UserLogEvent
-from app.models.user_tag import UserTag
+from app.models.tag import Tag
 from app.models.announcement import Announcement
-from app.models.course_collection import CourseCollection
+from app.models.collection import Collection
 from app.localdt import utc
 
 from flask_login import UserMixin
@@ -44,8 +44,8 @@ class User(db.Model, UserMixin):
 	faculty_id = db.Column(db.Integer, db.ForeignKey("faculty.id"), nullable=False)
 	units = db.Column(db.Numeric(precision=5, scale=2), default=120) # 3 integer places, 2 decimal places
 
-	collections = db.relationship("CourseCollection", backref="user")
-	tags = db.relationship("UserTag", backref="user")
+	collections = db.relationship("Collection", backref="user")
+	tags = db.relationship("Tag", backref="user")
 	announcements = db.relationship("Announcement", backref="author")
 
 	logs = db.relationship("UserLog", backref="user")
@@ -57,9 +57,9 @@ class User(db.Model, UserMixin):
 		self.password = bcrypt.generate_password_hash(passw).decode("utf-8")
 		self.faculty_id = faculty_id
 
-		self.collections.append(CourseCollection(self.id))
+		self.collections.append(Collection(self.id))
 
-		starred = UserTag(self.id, "Starred", color=STARRED_COLOR, emoji=STARRED_EMOJI)
+		starred = Tag(self.id, "Starred", color=STARRED_COLOR, emoji=STARRED_EMOJI)
 		starred.starred = True
 		starred.deletable = False
 		self.tags.append(starred)
@@ -67,13 +67,13 @@ class User(db.Model, UserMixin):
 	@property
 	def coursesTaken(self):
 		return sum(
-			len(collection.userCourses) for collection in self.collections
+			len(collection.collectionCourses) for collection in self.collections
 			if collection.transfer or collection.term.isPrev()
 		)
 
 	@property
 	def coursesPlanned(self):
-		return sum(len(collection.userCourses) for collection in self.collections)
+		return sum(len(collection.collectionCourses) for collection in self.collections)
 
 	@property
 	def unitsNeeded(self):
@@ -101,7 +101,7 @@ class User(db.Model, UserMixin):
 		db.session.commit()
 	
 	def addTag(self, name, color, emoji=None, deletable=True):
-		tag = UserTag(self.id, name, color, emoji, deletable)
+		tag = Tag(self.id, name, color, emoji, deletable)
 		self.tags.append(tag)
 		db.session.commit()
 		return tag

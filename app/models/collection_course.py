@@ -4,10 +4,10 @@ from app.models import Course
 from sqlalchemy import select
 from sqlalchemy.ext.hybrid import hybrid_property
 
-class UserCourse(db.Model):
-	__tablename__ = "user_course"
+class CollectionCourse(db.Model):
+	__tablename__ = "collection_course"
 	id = db.Column(db.Integer, primary_key=True)
-	course_collection_id = db.Column(db.Integer, db.ForeignKey("course_collection.id"), nullable=False)
+	collection_id = db.Column(db.Integer, db.ForeignKey("collection.id"), nullable=False)
 	course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
 
 	grade_id = db.Column(db.Integer, db.ForeignKey("grade.id"))
@@ -40,18 +40,18 @@ class UserCourse(db.Model):
 
 	@property
 	def tags(self):
-		return [tag for tag in self.course.userTags if tag.user_id == self.collection.user_id]
+		return [tag for tag in self.course.tags if tag.user_id == self.collection.user_id]
 
-	def __init__(self, course_collection_id, course_id):
-		self.course_collection_id = course_collection_id
+	def __init__(self, collection_id, course_id):
+		self.collection_id = collection_id
 		self.course_id = course_id
 
 	def __repr__(self):
-		return f"USER_COURSE (#{self.id}): CourseCollection {self.course_collection_id} - Course {self.course_id}"
+		return f"USER_COURSE (#{self.id}): Collection {self.collection_id} - Course {self.course_id}"
 
 	def __iter__(self):
 		yield "id", self.id
-		yield "course_collection_id", self.course_collection_id
+		yield "collection_id", self.collection_id
 		yield "course_id", self.course_id
 		yield "course_code", self.course.code
 		yield "course_emoji", self.course.subject.emoji

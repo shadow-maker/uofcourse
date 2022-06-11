@@ -1,5 +1,5 @@
 from app import db
-from app.models import Course, UserTag
+from app.models import Course, Tag
 from app.auth import current_user
 
 from flask import Blueprint, request
@@ -10,31 +10,31 @@ me_tag = Blueprint("tags", __name__, url_prefix="/tags")
 # GET
 #
 
-# User UserTags
+# User Tags
 
 @me_tag.route("", methods=["GET"])
-def getUserTags():
+def getTags():
 	return {"tags": [dict(tag) for tag in current_user.tags]}, 200
 
-# UserTag courses
+# Tag courses
 
 @me_tag.route("/<id>/courses", methods=["GET"])
 def getTagCourses(id):
-	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
+	tag = Tag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
 		return {"error": f"Tag with id {id} does not exist"}, 404
 	return {
 		"courses": [dict(course) for course in sorted(tag.courses, key=lambda course: course.code)]
 	}, 200
 
-# Course UserTags
+# Course Tags
 
 @me_tag.route("/course/<id>", methods=["GET"])
 def getCourseTags(id):
 	course = Course.query.get(id)
 	if not course:
 		return {"error": f"Course with id {id} does not exist"}, 404
-	return {"tags": [dict(tag) for tag in course.userTags if tag.user_id == current_user.id]}, 200
+	return {"tags": [dict(tag) for tag in course.tags if tag.user_id == current_user.id]}, 200
 
 
 #
@@ -42,7 +42,7 @@ def getCourseTags(id):
 #
 
 @me_tag.route("", methods=["POST"])
-def addUserTag(data={}):
+def addTag(data={}):
 	if not data:
 		data = request.form.to_dict()
 		if not data:
@@ -69,7 +69,7 @@ def addUserTag(data={}):
 		return {"error": "Tag color must be an integer between 0 and 16777215"}, 400
 
 	try:
-		tag = UserTag(current_user.id, name, color)
+		tag = Tag(current_user.id, name, color)
 
 		db.session.add(tag)	
 		db.session.commit()
@@ -83,11 +83,11 @@ def addUserTag(data={}):
 #
 
 @me_tag.route("/<id>", methods=["PUT"])
-def editUserTag(id, data={}):
+def putTag(id, data={}):
 	if not data:
 		data = request.form.to_dict()
 	
-	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
+	tag = Tag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
 		return {"error": f"Tag with id {data['tag_id']} does not exist"}, 404
 	if not tag.deletable:
@@ -127,7 +127,7 @@ def putCourseTag(id, course_id):
 	if not course:
 		return {"error": f"Course with id {course_id} does not exist"}, 404
 
-	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
+	tag = Tag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
 		return {"error": f"Tag with id {id} does not exist"}, 404
 
@@ -148,8 +148,8 @@ def putCourseTag(id, course_id):
 #
 
 @me_tag.route("/<id>", methods=["DELETE"])
-def deleteUserTag(id):
-	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
+def delTag(id):
+	tag = Tag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
 		return {"error": f"Tag with id {id} does not exist"}, 404
 	if not tag.deletable:

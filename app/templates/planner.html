@@ -157,7 +157,7 @@
 </div>
 <!--Collection course item-->
 <div class="collection-course-item m-1 btn bg-light card" db-code="" draggable="true" data-bs-toggle="modal"
-	data-bs-target="#modalInfoUserCourse" title="Click to view or drag to change term">
+	data-bs-target="#modalInfoCollectionCourse" title="Click to view or drag to change term">
 	<div class="row">
 		<span class="emoji col-3 h5 p-0 m-0"></span>
 		<span class="code col-6 font-monospace"></span>
@@ -342,7 +342,7 @@
 </div>
 
 <!--Info modals-->
-<div class="modal fade" id="modalInfoUserCourse" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalInfoCollectionCourse" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -421,7 +421,7 @@
 			</div>
 			<div class="modal-footer d-flex justify-content-around">
 				<button class="btn btn-primary" data-bs-dismiss="modal"
-					onclick="$('#modalEditUserCourse').modal('show')">
+					onclick="$('#modalEditCollectionCourse').modal('show')">
 					<i class="bi-pencil-fill"></i>
 					Edit
 				</button>
@@ -432,7 +432,7 @@
 
 <!--Form modals-->
 
-<!--Form add CourseCollection-->
+<!--Form add Collection-->
 <div class="modal fade" id="modalAddCollection" tabindex="-1" aria-hidden="true">
 	<form id="formAddCollection" name="formAddCollection">
 		<div class="modal-dialog">
@@ -475,8 +475,8 @@
 	</form>
 </div>
 
-<!--Form add UserCourse-->
-<form id="formAddUserCourse" name="formAddUserCourse">
+<!--Form add CollectionCourse-->
+<form id="formAddCollectionCourse" name="formAddCollectionCourse">
 	<div class="modal fade" id="modalAddCourse" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -554,9 +554,9 @@
 	</div>
 </form>
 
-<!--Form edit UserCourse-->
-<div class="modal fade" id="modalEditUserCourse" tabindex="-1" aria-hidden="true">
-	<form id="formEditUserCourse" name="formEditUserCourse">
+<!--Form edit CollectionCourse-->
+<div class="modal fade" id="modalEditCollectionCourse" tabindex="-1" aria-hidden="true">
+	<form id="formEditCollectionCourse" name="formEditCollectionCourse">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -568,7 +568,7 @@
 					<div class="row mb-2">
 						<label for="selectCoursePlaceholder" class="col-3 col-form-label">Course</label>
 						<div class="col-9">
-							<input type="hidden" id="selectUserCourse" name="id" value="">
+							<input type="hidden" id="selectCollectionCourse" name="id" value="">
 							<input type="text" id="selectCoursePlaceholder" class="form-control col-9" value="" disabled
 								readonly>
 						</div>

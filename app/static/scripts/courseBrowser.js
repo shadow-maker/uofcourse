@@ -36,7 +36,7 @@ function requestCourseTags(id, callback) {
 	requestTag("/course/" + id, "GET", {}, callback)
 }
 
-function requestCourseCollections(id, callback) {
+function requestCollections(id, callback) {
 	$.ajax({
 		url: "/api/me/collections/course/" + id,
 		method: "GET",
@@ -150,9 +150,9 @@ function addCollection(courseId, collectionId) {
 		success: (response) => {
 			alert("success", "Added Course to Term")
 			let course = coursesData.find(c => c.id == courseId)
-			requestCourseCollections(courseId, (data) => {
+			requestCollections(courseId, (data) => {
 				course.collections = data.collections.map(c => c.id)
-				updateCourseCollections(courseId)
+				updateCollections(courseId)
 			})
 		},
 		error: displayError
@@ -195,7 +195,7 @@ function updateCourse(id) {
 	if (isAuth) {
 		// Add tag dropdown items to tag dropdown
 		course.element.find(".tags-dropdown").empty()
-		for (let tag of userTags) {
+		for (let tag of tags) {
 			let tagDropItem = $("#templates .tags-dropdown-item").clone()
 
 			tagDropItem.attr("db-id", tag.id)
@@ -211,7 +211,7 @@ function updateCourse(id) {
 		}
 
 		updateCourseTags(id)
-		updateCourseCollections(id)
+		updateCollections(id)
 	} else {
 		course.element.find(".tags-dropdown-btn").on("click", function(e) {
 			$(this).dropdown("hide")
@@ -249,11 +249,11 @@ function updateSubjects() {
 
 function updateCourseTags(id) {
 	const course = coursesData.find(c => c.id == id)
-	const tags = course.element.find(".course-tags")
+	const courseTags = course.element.find(".course-tags")
 
-	tags.find(".tags-selected").empty()
+	courseTags.find(".tags-selected").empty()
 	for (let tagId of course.tags) {
-		let tag = userTags.find(t => t.id == tagId)
+		let tag = tags.find(t => t.id == tagId)
 			
 		if (!tag)
 			continue
@@ -276,10 +276,10 @@ function updateCourseTags(id) {
 			toggleCourseTag(id, tag.id)
 		})
 
-		tags.find(".tags-selected").append(tagItem)
+		courseTags.find(".tags-selected").append(tagItem)
 	}
 
-	tags.find(".tags-dropdown-item").each(function () {
+	courseTags.find(".tags-dropdown-item").each(function () {
 		if (course.tags.includes(parseInt($(this).attr("db-id"))))
 			$(this).find(".bi-check").removeClass("invisible")
 		else
@@ -287,7 +287,7 @@ function updateCourseTags(id) {
 	})
 }
 
-function updateCourseCollections(id) {
+function updateCollections(id) {
 	const course = coursesData.find(c => c.id == id)
 	const collections = course.element.find(".course-collections")
 

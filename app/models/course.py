@@ -24,7 +24,7 @@ class Course(db.Model):
 	countgpa = db.Column(db.Boolean, nullable=False, default=True)
 	subsite = db.Column(db.String(32))
 
-	userCourses = db.relationship("UserCourse", backref="course")
+	collectionCourses = db.relationship("CollectionCourse", backref="course")
 
 	@hybrid_property
 	def faculty_id(self):
@@ -78,10 +78,10 @@ class Course(db.Model):
 		return self.subject.getEmoji()
 	
 	def getTags(self, userId):
-		return [tag for tag in self.userTags if tag.user_id == userId]
+		return [tag for tag in self.tags if tag.user_id == userId]
 	
-	def getUserCourses(self, userId):
-		return [uc for uc in self.userCourses if uc.collection.user_id == userId]
+	def getCollectionCourses(self, userId):
+		return [cc for cc in self.collectionCourses if cc.collection.user_id == userId]
 
 	def __init__(self, subject_id, number, name, units):
 		self.subject_id = subject_id

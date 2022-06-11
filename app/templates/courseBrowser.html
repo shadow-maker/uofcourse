@@ -65,8 +65,7 @@
 					{% for collection in collections %}
 					<li class="collections-dropdown-item" db-id="{{collection.id}}">
 						<a class="dropdown-item px-2 py-1">
-							<i
-								class="bi-check {% if collection not in courseCollections %}invisible{% endif %}"></i>
+							<i class="bi-check invisible"></i>
 							{% if collection.transfer %}
 							<small>Transferred</small>
 							{% else %}

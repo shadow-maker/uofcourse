@@ -13,9 +13,9 @@ var overallGPA = {
 	finalGPA: 0
 }
 
-const modalInfo = $("#modalInfoUserCourse")
-const formAdd = $("#formAddUserCourse")
-const formEdit = $("#formEditUserCourse")
+const modalInfo = $("#modalInfoCollectionCourse")
+const formAdd = $("#formAddCollectionCourse")
+const formEdit = $("#formEditCollectionCourse")
 
 //
 // UTIL FUNCS
@@ -161,7 +161,7 @@ function addCollection(season, year, callback) {
 	})
 }
 
-function addUserCourse(collection_id, course_id, callback) {
+function addCollectionCourse(collection_id, course_id, callback) {
 	$.ajax({
 		url: "/api/me/courses",
 		method: "POST",
@@ -180,7 +180,7 @@ function addUserCourse(collection_id, course_id, callback) {
 
 // PUT
 
-function putUserCourse(data, callback, onerror = displayError) {
+function putCollectionCourse(data, callback, onerror = displayError) {
 	$.ajax({
 		url: "/api/me/courses",
 		method: "PUT",
@@ -244,7 +244,7 @@ function removeCollection(id) {
 	})
 }
 
-function delUserCourse(id, callback) {
+function delCollectionCourse(id, callback) {
 	$.ajax({
 		url: "/api/me/courses/" + id,
 		method: "DELETE",
@@ -290,7 +290,7 @@ function updateCollection(id) {
 	item.find(".collection-course-container").attr("db-id", id)
 
 	item.find(".countInGPA").change(updateOverallGPA)
-	item.find(".add-course").attr("onclick", "$('#formAddUserCourse #selectCollection').val(" + id + ")")
+	item.find(".add-course").attr("onclick", "$('#formAddCollectionCourse #selectCollection').val(" + id + ")")
 
 
 	// Init tooltips
@@ -398,8 +398,8 @@ function updateCollection(id) {
 			item.find(".collection-remove").addClass("d-none")
 		}
 
-		for (let uc of collection.courses)
-			updateCollectionCourse(id, uc.id)
+		for (let cc of collection.courses)
+			updateCollectionCourse(id, cc.id)
 
 		updateOverallGPA()
 	})
@@ -414,43 +414,43 @@ function getUpdateCollection(id) {
 
 function updateCollectionCourse(collection_id, id) {
 	let collection = collections.find(c => c.id == collection_id)
-	let uc = collection.courses.find(c => c.id == id)
+	let cc = collection.courses.find(c => c.id == id)
 
 	let item = $("#templates .collection-course-item").clone()
 
-	uc.element = item
+	cc.element = item
 
-	const grade = grades[uc.grade_id]
+	const grade = grades[cc.grade_id]
 
-	item.attr("db-code", uc.course_code)
+	item.attr("db-code", cc.course_code)
 
-	item.find(".emoji").html("&#" + (uc.course_emoji ? uc.course_emoji : DEFAULT_EMOJI))
-	item.find(".code").text(uc.course_code)
-	item.find(".grade").text(uc.grade_id ? grade.symbol : "-")
+	item.find(".emoji").html("&#" + (cc.course_emoji ? cc.course_emoji : DEFAULT_EMOJI))
+	item.find(".code").text(cc.course_code)
+	item.find(".grade").text(cc.grade_id ? grade.symbol : "-")
 	item.find(".grade").attr(
 		"title",
-		uc.grade_id ? ((grade.gpv ? grade.gpv : "-") + " GPV | " + (uc.weightedGPV ? uc.weightedGPV : "-") + " Weighted") : "Grade not set"
+		cc.grade_id ? ((grade.gpv ? grade.gpv : "-") + " GPV | " + (cc.weightedGPV ? cc.weightedGPV : "-") + " Weighted") : "Grade not set"
 	)
 
 	// Item events
 
 	item.on("click", () => {
 		if (!item.hasClass("dragging")) {
-			getCourse(uc.course_id, (course) => {
+			getCourse(cc.course_id, (course) => {
 				modalInfo.find(".name").text(course.name)
 				modalInfo.find(".link").prop("href", course.url)
 				modalInfo.find(".repeat").text(course.repeat ? "Yes" : "No")
 				modalInfo.find(".countgpa").text(course.countgpa ? "Yes" : "No")
 			})
 
-			if (uc.grade_id) {
-				const grade = grades[uc.grade_id]
+			if (cc.grade_id) {
+				const grade = grades[cc.grade_id]
 				modalInfo.find(".grade-symbol").text(grade.symbol)
 				modalInfo.find(".grade-desc").text(grade.desc)
 				modalInfo.find(".grade-passed").text(grade.passed ? "Yes" : "No")
 				if (grade.gpv) {
 					modalInfo.find(".grade-gpv").text(grade.gpv.toFixed(2))
-					modalInfo.find(".grade-weighted").text((grade.gpv * uc.course_units).toFixed(2))
+					modalInfo.find(".grade-weighted").text((grade.gpv * cc.course_units).toFixed(2))
 				} else {
 					modalInfo.find(".grade-gpv").text("N/A")
 					modalInfo.find(".grade-weighted").text("N/A")
@@ -464,18 +464,18 @@ function updateCollectionCourse(collection_id, id) {
 			}
 
 			modalInfo.find(".term").text(collection.term_name)
-			modalInfo.find(".emoji").html("&#" + (uc.course_emoji ? uc.course_emoji : DEFAULT_EMOJI))
-			modalInfo.find(".code").text(uc.course_code)
-			modalInfo.find(".units").text(uc.course_units.toFixed(2))
+			modalInfo.find(".emoji").html("&#" + (cc.course_emoji ? cc.course_emoji : DEFAULT_EMOJI))
+			modalInfo.find(".code").text(cc.course_code)
+			modalInfo.find(".units").text(cc.course_units.toFixed(2))
 
-			formEdit.find("#selectUserCourse").val(uc.id)
-			formEdit.find("#selectCoursePlaceholder").val(uc.course_code)
-			formEdit.find("#selectGrade").val(uc.grade_id ? uc.grade_id : 0)
-			formEdit.find("#selectPassed").prop("checked", uc.passed ? uc.passed : false)
+			formEdit.find("#selectCollectionCourse").val(cc.id)
+			formEdit.find("#selectCoursePlaceholder").val(cc.course_code)
+			formEdit.find("#selectGrade").val(cc.grade_id ? cc.grade_id : 0)
+			formEdit.find("#selectPassed").prop("checked", cc.passed ? cc.passed : false)
 
-			$("#formEditUserCourse #selectCollection").empty()
+			$("#formEditCollectionCourse #selectCollection").empty()
 			for (let c of collections) {
-				$("#formEditUserCourse #selectCollection").append(
+				$("#formEditCollectionCourse #selectCollection").append(
 					$("<option>", {
 						value: c.id,
 						text: c.term_name
@@ -492,7 +492,7 @@ function updateCollectionCourse(collection_id, id) {
 		courseOldCollection = collection_id
 		courseCanMoveTo = []
 		for (let collec of collections)
-			if (collec.id == collection_id || !collec.courses.find(c => c.course_id == uc.course_id))
+			if (collec.id == collection_id || !collec.courses.find(c => c.course_id == cc.course_id))
 				courseCanMoveTo.push(collec.id)
 		if (!firstDrag) {
 			alert("info", "Drag course to move to another term")
@@ -504,7 +504,7 @@ function updateCollectionCourse(collection_id, id) {
 		item.removeClass("dragging")
 		let newId = parseInt(item.parent().attr("db-id"))
 		if (courseOldCollection != newId && courseCanMoveTo.includes(newId)) {
-			putUserCourse({
+			putCollectionCourse({
 					id: id,
 					collection_id: newId
 				},
@@ -656,8 +656,8 @@ $("#modalEditUnits").on("shown.bs.modal", () => {
 })
 
 // On grade changed in form
-$("#formEditUserCourse #selectGrade").change(function () {
-	$("#formEditUserCourse #selectPassed").prop("checked",
+$("#formEditCollectionCourse #selectGrade").change(function () {
+	$("#formEditCollectionCourse #selectPassed").prop("checked",
 		grades[$(this).val()] ? grades[$(this).val()].passed : false
 	)
 })
@@ -726,13 +726,13 @@ $("#formAddCollection").on("submit", (event) => {
 	)
 })
 
-$("#formAddUserCourse").on("submit", (event) => {
+$("#formAddCollectionCourse").on("submit", (event) => {
 	event.preventDefault()
 	event.stopImmediatePropagation()
 
-	let form = $("#formAddUserCourse")
+	let form = $("#formAddCollectionCourse")
 
-	addUserCourse(
+	addCollectionCourse(
 		form.find("#selectCollection").val(),
 		form.find("#selectCourseId").val(),
 		() => {
@@ -743,7 +743,7 @@ $("#formAddUserCourse").on("submit", (event) => {
 	)
 })
 
-$("#formEditUserCourse").on("submit", (event) => {
+$("#formEditCollectionCourse").on("submit", (event) => {
 	event.preventDefault()
 	event.stopImmediatePropagation()
 
@@ -751,8 +751,8 @@ $("#formEditUserCourse").on("submit", (event) => {
 	let method = $(event.originalEvent.submitter).attr("method")
 
 	if (method == "PUT") {
-		putUserCourse({
-				id: form.find("#selectUserCourse").val(),
+		putCollectionCourse({
+				id: form.find("#selectCollectionCourse").val(),
 				collection_id: form.find("#selectCollection").val(),
 				grade_id: form.find("#selectGrade").val(),
 				passed: form.find("#selectPassed").prop("checked")
@@ -766,7 +766,7 @@ $("#formEditUserCourse").on("submit", (event) => {
 			}
 		)
 	} else if (method == "DELETE") {
-		delUserCourse(form.find("#selectUserCourse").val(), () => {
+		delCollectionCourse(form.find("#selectCollectionCourse").val(), () => {
 			alert("success", "Course removed!")
 			getUpdateCollection(form.find("#selectCollectionOld").val())
 			updateProgress()

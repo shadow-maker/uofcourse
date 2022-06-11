@@ -19,7 +19,7 @@ class Term(db.Model):
 	start = db.Column(db.Date)
 	end = db.Column(db.Date)
 
-	courseCollections = db.relationship("CourseCollection", backref="term")
+	collections = db.relationship("Collection", backref="term")
 
 	@property
 	def name(self):

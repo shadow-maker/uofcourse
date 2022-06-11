@@ -112,8 +112,8 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 	def serializer(course):
 		data = dict(course)
 		if current_user.is_authenticated:
-			data["tags"] = [tag.id for tag in course.userTags if tag.user_id == current_user.id]
-			data["collections"] = [uc.collection.id for uc in course.getUserCourses(current_user.id)]
+			data["tags"] = [tag.id for tag in course.tags if tag.user_id == current_user.id]
+			data["collections"] = [cc.collection.id for cc in course.getCollectionCourses(current_user.id)]
 		return data
 	
 	# Get results

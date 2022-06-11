@@ -1,8 +1,8 @@
 from app import db
 from app.models._course_tag import CourseTag
 
-class UserTag(db.Model):
-	__tablename__ = "user_tag"
+class Tag(db.Model):
+	__tablename__ = "tag"
 	id = db.Column(db.Integer, primary_key=True)
 	user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 	name = db.Column(db.String(16), nullable=False)
@@ -11,7 +11,7 @@ class UserTag(db.Model):
 	starred = db.Column(db.Boolean, nullable=False, default=False)
 	deletable = db.Column(db.Boolean, nullable=False, default=True)
 
-	courses = db.relationship("Course", secondary=CourseTag, backref="userTags")
+	courses = db.relationship("Course", secondary=CourseTag, backref="tags")
 
 	@property
 	def color_hex(self):
@@ -39,4 +39,4 @@ class UserTag(db.Model):
 		yield "deletable", self.deletable
 	
 	def __repr__(self):
-		return f"UserTag (#{self.id}) : User {self.user_id} - {self.name}"
+		return f"Tag (#{self.id}) : User {self.user_id} - {self.name}"

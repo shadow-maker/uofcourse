@@ -1,12 +1,10 @@
 from app import db
-from app.models import CourseCollection, Term, Season, Course
+from app.models import Collection, CollectionCourse, Term, Season, Course
 from app.auth import current_user
 
 from flask import Blueprint, request
 from sqlalchemy import desc
 from sqlalchemy.orm.attributes import QueryableAttribute
-
-from app.models.user_course import UserCourse
 
 me_collection = Blueprint("collections", __name__, url_prefix="/collections")
 
@@ -23,13 +21,13 @@ def getCollections():
 	order = []
 	for column in sort:
 		try:
-			col = getattr(CourseCollection, column)
+			col = getattr(Collection, column)
 			if not issubclass(type(col), QueryableAttribute):
 				raise AttributeError
 		except AttributeError:
-			return {"error": f"'{column}' is not a valid column for CourseCollection"}, 400
+			return {"error": f"'{column}' is not a valid column for Collection"}, 400
 		order.append(col)
-	order.append(CourseCollection.id)
+	order.append(Collection.id)
 
 	# Add sorting columns to desc() if asc is false
 	if asc in ["false", "0"]:
@@ -37,7 +35,7 @@ def getCollections():
 
 	# Query database
 	try:
-		results = CourseCollection.query.filter_by(user_id=current_user.id).order_by(*order).all()
+		results = Collection.query.filter_by(user_id=current_user.id).order_by(*order).all()
 	except:
 		return {"error": "sort columns are not valid"}, 400
 		
@@ -45,28 +43,28 @@ def getCollections():
 
 @me_collection.route("/<id>")
 def getCollection(id):
-	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
+	collection = Collection.query.filter_by(id=id, user_id=current_user.id).first()
 
 	if not collection:
-		return {"error": f"CourseCollection from this user does not exist"}, 404
+		return {"error": f"Collection from this user does not exist"}, 404
 
 	return dict(collection), 200
 
 @me_collection.route("/<id>/term")
 def getCollectionTerm(id):
-	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
+	collection = Collection.query.filter_by(id=id, user_id=current_user.id).first()
 
 	if not collection:
-		return {"error": f"CourseCollection from this user does not exist"}, 404
+		return {"error": f"Collection from this user does not exist"}, 404
 
 	return {"transfer": True} if collection.transfer else dict(collection.term), 200
 
 @me_collection.route("/<id>/courses")
 def getCollectionCourses(id):
-	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
+	collection = Collection.query.filter_by(id=id, user_id=current_user.id).first()
 
 	if not collection:
-		return {"error": f"CourseCollection from this user does not exist"}, 404
+		return {"error": f"Collection from this user does not exist"}, 404
 
 	sort = list(dict.fromkeys(request.args.getlist("sort", type=str)))
 	asc = request.args.get("asc", default="true", type=str).lower()
@@ -75,13 +73,13 @@ def getCollectionCourses(id):
 	order = []
 	for column in sort:
 		try:
-			col = getattr(UserCourse, column)
+			col = getattr(CollectionCourse, column)
 			if not issubclass(type(col), QueryableAttribute):
 				raise AttributeError
 		except AttributeError:
-			return {"error": f"'{column}' is not a valid column for UserCourse"}, 400
+			return {"error": f"'{column}' is not a valid column for CollectionCourse"}, 400
 		order.append(col)
-	order.append(UserCourse.id)
+	order.append(CollectionCourse.id)
 
 	# Add sorting columns to desc() if asc is false
 	if asc in ["false", "0"]:
@@ -89,11 +87,11 @@ def getCollectionCourses(id):
 
 	# Query database
 	try:
-		results = UserCourse.query.filter_by(course_collection_id=id).order_by(*order).all()
+		results = CollectionCourse.query.filter_by(collection_id=id).order_by(*order).all()
 	except:
 		return {"error": "sort columns are not valid"}, 400
 	
-	return {"courses": [dict(uc) for uc in results]}, 200
+	return {"courses": [dict(cc) for cc in results]}, 200
 
 @me_collection.route("/course/<id>")
 def getCourseCollections(id):
@@ -134,11 +132,11 @@ def postCollection(data={}):
 	if not term:
 		return {"error": "term does not exist"}, 400
 
-	if CourseCollection.query.filter_by(user_id=current_user.id, term_id=term.id).first():
+	if Collection.query.filter_by(user_id=current_user.id, term_id=term.id).first():
 		return {"error": f"User already has a collection for term {term.name.capitalize()}"}, 400
 
 	try:
-		collection = CourseCollection(current_user.id, term.id)
+		collection = Collection(current_user.id, term.id)
 		db.session.add(collection)
 		db.session.commit()
 	except:
@@ -150,17 +148,17 @@ def postCollection(data={}):
 # DELETE
 #
 
-# CourseCollection
+# Collection
 
 @me_collection.route("/<id>", methods=["DELETE"])
 def delCollection(id):
-	collection = CourseCollection.query.filter_by(id=id, user_id=current_user.id).first()
+	collection = Collection.query.filter_by(id=id, user_id=current_user.id).first()
 
 	if not collection:
-		return {"error": f"CourseCollection from this user does not exist"}, 404
+		return {"error": f"Collection from this user does not exist"}, 404
 
-	if collection.userCourses:
-		return {"error": f"CourseCollection is not empty"}, 400
+	if collection.collectionCourses:
+		return {"error": f"Collection is not empty"}, 400
 
 	try:
 		db.session.delete(collection)

@@ -157,19 +157,19 @@
 			<div class="card-body px-2 py-2 text-center">
 				{% if current_user.is_authenticated %}
 				Courses taken this term:
-				{% if userCourses %}
-					{% for uCourse in userCourses %}
-					<a class="collection-course-item m-1 btn bg-light card" href="{{uCourse.course.url}}" target="_blank" rel="noopener noreferrer" title="Click to open course in a new tab">
+				{% if collectionCourses %}
+					{% for cc in collectionCourses %}
+					<a class="collection-course-item m-1 btn bg-light card" href="{{cc.course.url}}" target="_blank" rel="noopener noreferrer" title="Click to open course in a new tab">
 						<div class="row">
 							<span class="col-3 h5 p-0 m-0">
-								&#{{uCourse.course.emoji}}
+								&#{{cc.course.emoji}}
 							</span>
 							<span id="code" class="col-6 font-monospace">
-								{{uCourse.course.code}}
+								{{cc.course.code}}
 							</span>
-							<span class="col-3 font-monospace text-start" title="{% if uCourse.grade %}{{uCourse.grade.gpv}} GPV{% else %}Grade not set{% endif %}">
-								{% if uCourse.grade %}
-								{{uCourse.grade.symbol}}
+							<span class="col-3 font-monospace text-start" title="{% if cc.grade %}{{cc.grade.gpv}} GPV{% else %}Grade not set{% endif %}">
+								{% if cc.grade %}
+								{{cc.grade.symbol}}
 								{% else %}
 								-
 								{% endif %}

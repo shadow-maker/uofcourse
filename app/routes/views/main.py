@@ -24,14 +24,14 @@ def home():
 	if term and current_user.is_authenticated:
 		for collection in current_user.collections:
 			if collection.term_id == term.id:
-				courses = sorted(collection.userCourses, key=lambda c: c.course.code)
+				courses = sorted(collection.collectionCourses, key=lambda c: c.course.code)
 				break
 
 	return render_template("index.html",
 		header = "UofC Course Planner",
 		welcome = "welcome" in session and session["welcome"],
 		term = term,
-		userCourses = courses,
+		collectionCourses = courses,
 		today = local.date()
 	)
 
