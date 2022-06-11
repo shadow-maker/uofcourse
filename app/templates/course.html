@@ -134,8 +134,7 @@
 						
 						<p class="mb-2">
 							{% if content %}
-								{% set lines = content.split("\n") %}
-								{% for line in lines %}
+								{% for line in content.split("\n") %}
 									{{line}}
 									{% if not loop.last %}<br>{% endif %}
 								{% endfor %}
