@@ -72,7 +72,7 @@ function putRead(id, set, callback) {
 function loadModal(announcement) {
 	const modalInfo = $("#modalInfoAnnouncement")
 	modalInfo.find(".title").text(announcement.title)
-	modalInfo.find(".datetime").text(announcement.datetime.replace("T", " "))
+	modalInfo.find(".datetime").text(announcement.datetime_local.replace("T", " "))
 	modalInfo.find(".body").text(announcement.body)
 	modalInfo.find(".id").text(announcement.id)
 	
@@ -94,7 +94,7 @@ function updateResults(data) {
 		announcement.element = $("#templates .announcement-item").clone()
 
 		announcement.element.find(".announcement-title").text(announcement.title)
-		announcement.element.find(".announcement-time").text(announcement.datetime.replace("T", " "))
+		announcement.element.find(".announcement-time").text(announcement.datetime_local.replace("T", " "))
 		announcement.element.find(".announcement-text").text(announcement.body)
 
 		if (isAuth && !announcement.read)
