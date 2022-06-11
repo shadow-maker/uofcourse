@@ -54,8 +54,8 @@ function getAnnouncements(callback) {
 		url: "/api/announcements",
 		method: "GET",
 		data: {
-			sort: ["datetime"],
-			asc: false,
+			sort: sortOptions[$("#sortBy").val()].value,
+			asc: $("#orderBy").val(),
 			limit: 10,
 			page: page.current
 		},
@@ -142,4 +142,7 @@ function updateResults(data) {
 // DOCUMENT READY
 //
 
-$(document).ready(page.callback)
+$(document).ready(() => {
+	page.callback()
+	$("#sortSelector select").change(page.callback)
+})

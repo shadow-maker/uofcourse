@@ -49,9 +49,14 @@ def announcements():
 	return render_template("announcements.html",
 		title = "Announcements",
 		header = "Recent Announcements",
-		headerIcon = "shield-exclamation",
+		headerIcon = "bell-fill",
 		description = "Relevant changes and modifications performed on the website.",
-		announcement_id = request.args.get("id"))
+		announcement_id = request.args.get("id"),
+		sortOptions = [
+			{"label": "Datetime", "value": ["datetime", "title"]},
+			{"label": "Title", "value": ["title", "datetime"]},
+		]
+	)
 
 @view.route("/api")
 def api():
