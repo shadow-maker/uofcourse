@@ -2,6 +2,14 @@
 
 {% from "components/pagination.html" import paginationNav, paginationCode with context %}
 
+{% block headscripts %}
+{{ paginationCode() }}
+<script>
+	var selAnnouncement = JSON.parse('{{ announcement_id | tojson | safe }}')
+</script>
+<script src="/static/scripts/announcements.js"></script>
+{% endblock %}
+
 {% block styles %}
 <style>
 	.announcement-item .card-header {
@@ -10,34 +18,27 @@
 </style>
 {% endblock %}
 
-{% block headscripts %}
-{{ paginationCode() }}
-<script> var announcementID = "{{announcement_id}}" </script>
-<script src="/static/scripts/announcements.js"></script>
+{% block templates %}
+<!--Announcement Card-->
+<div class="announcement-item card m-2" title="Click to view full announcement">
+	<div class="card-header bg-light" data-bs-toggle="modal" data-bs-target="#modalInfoAnnouncement">
+		<!--Announcement Title-->
+		<div class="card-title">
+			<span class="announcement-title p-0 m-0 h2"></span>
+		</div>
+		<!--Announcement Datetime-->
+		<div class="card-subtitle">
+			<span class="announcement-time card-subtitle m-0 text-secondary h6"></span>
+		</div>
+	</div>
+	<div class="card-body">
+		<!--Announcement Body-->
+		<div class="announcement-text text-truncate text-dark"></div>
+	</div>
+</div>
 {% endblock %}
 
 {% block content %}
-
-<!--TEMPLATES-->
-<div id="templates" class="d-none">
-	<!--Announcement Card-->
-	<div class="announcement-item card m-2" title="Click to view full announcement">
-		<div class="card-header bg-light" data-bs-toggle="modal" data-bs-target="#modalInfoAnnouncement">
-			<!--Announcement Title-->
-			<div class="card-title">
-				<span class="announcement-title p-0 m-0 h2"></span>
-			</div>
-			<!--Announcement Datetime-->
-			<div class="card-subtitle">
-				<span class="announcement-time card-subtitle m-0 text-secondary h6"></span>
-			</div>
-		</div>
-		<div class="card-body">
-			<!--Announcement Body-->
-			<div class="announcement-text text-truncate text-dark"></div>
-		</div>
-	</div>
-</div>
 
 <!--Announcement Modal-->
 <div id="modalInfoAnnouncement" class="modal fade" tabindex="-1" aria-hidden="true">
