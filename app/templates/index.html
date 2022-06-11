@@ -31,7 +31,14 @@
 <div class="row">
 	<div class="col-12 col-md-7 col-lg-8 col-xl-9 container ps-lg-4 pe-lg-5">
 		<!--Welcome message-->
-		{% include "components/welcome.html" %}
+		{% if current_user.is_authenticated and welcome %}
+		<div id="welcome" class="alert alert-info fs-5 d-flex justify-content-between">
+			<span>
+				Welcome back <span class="fw-bold">{{current_user.name}}</span>!
+			</span>
+			<button type="button" class="btn-close" aria-label="Close"></button>
+		</div>
+		{% endif %}
 		
 		<!--Website description-->
 		<div class="fs-5">
@@ -193,4 +200,22 @@
 	</div>
 </div>
 
+{% endblock %}
+
+{% block tailscripts %}
+<script>
+	$("#welcome").on("click", (e) => {
+		$.ajax({
+			url: "/api/me/sessions/welcome",
+			method: "PUT",
+			success: (response) => {
+				if (response.success)
+					$("#welcome").remove()
+			},
+			error: (response) => {
+				displayError(response)
+			}
+		})
+	})
+</script>
 {% endblock %}
