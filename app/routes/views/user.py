@@ -32,8 +32,6 @@ def account():
 		title = "Account",
 		header = "My Acccount",
 		headerIcon = "person-circle",
-		user = current_user,
-		Role = Role,
 		formPassw = formPassw
 	)
 

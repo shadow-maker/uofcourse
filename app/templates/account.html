@@ -31,14 +31,14 @@
 
 <h2>
 	<span class="align-middle">
-		{{user["name"]}}
+		{{current_user.name}}
 	</span>
 	<span class="h6 m-0 align-middle" title="User role">
-		{% if user.role == Role.moderator%}
+		{% if current_user.role == ROLE_MOD %}
 		<span class="badge rounded-pill border border-2 border-info text-info">
 			MODERATOR
 		</span>
-		{% elif user.role == Role.admin%}
+		{% elif current_user.role == ROLE_ADMIN %}
 		<span class="badge rounded-pill border border-2 border-success text-success">
 			ADMIN
 		</span>
@@ -51,16 +51,16 @@
 	<div class="col-12 col-md-6 col-lg-8 fs-5 mb-4">
 		<div title="Username">
 			<i class="bi-person-badge-fill"></i>
-			<span class="">{{user.username}}</span>
+			<span class="">{{current_user.username}}</span>
 		</div>
 		<div title="User email">
 			<i class="bi-envelope"></i>
-			<span>{{user.email}}</span>
+			<span>{{current_user.email}}</span>
 		</div>
 		<div title="User faculty">
 			<i class="bi-building"></i>
-			<a href="{{user.faculty.url}}" class="text-body text-decoration-none">
-				<span class="text-decoration-underline">{{user.faculty.name}}</span>
+			<a href="{{current_user.faculty.url}}" class="text-body text-decoration-none">
+				<span class="text-decoration-underline">{{current_user.faculty.name}}</span>
 				<i class="fs-6 bi-box-arrow-up-right"></i>
 			</a>
 		</div>
