@@ -15,82 +15,48 @@
 	.announcement-item .card-header {
 		cursor: pointer;
 	}
+
+	#announcementsContainer .btn:hover {
+		background-color: var(--bs-gray-100) !important;
+	}
+
+	#announcementsContainer .announcement-unread {
+		background-color: rgba(0, 0, 0, 0) !important;
+	}
+
+	#modalInfoAnnouncement .announcement-id {
+		opacity: 0;
+	}
+
+	#modalInfoAnnouncement .modal-header:hover .announcement-id {
+		opacity: 1;
+	}
 </style>
 {% endblock %}
 
 {% block templates %}
 <!--Announcement Card-->
 <div class="announcement-item card m-2" title="Click to view full announcement">
-	<div class="card-header bg-light" data-bs-toggle="modal" data-bs-target="#modalInfoAnnouncement">
+	<div class="card-body btn text-start" data-bs-toggle="modal" data-bs-target="#modalInfoAnnouncement">
 		<!--Announcement Title-->
-		<div class="card-title">
-			<span class="announcement-title p-0 m-0 h2"></span>
+		<div class="">
+			<i class="announcement-unread bi-bookmark-fill alert-info fs-4 invisible"></i>
+			<span class="announcement-title h3 m-0"></span>
 		</div>
 		<!--Announcement Datetime-->
-		<div class="card-subtitle">
-			<span class="announcement-time card-subtitle m-0 text-secondary h6"></span>
+		<div class="mx-1 ps-4 pe-sm-4">
+			<span class="announcement-time m-0 text-secondary h6"></span>
 		</div>
-	</div>
-	<div class="card-body">
 		<!--Announcement Body-->
-		<div class="announcement-text text-truncate text-dark"></div>
+		<div class="mx-1 ps-4 pe-sm-4">
+			<div class="announcement-text text-truncate text-dark"></div>
+		</div>
 	</div>
 </div>
 {% endblock %}
 
 {% block content %}
 
-<!--Announcement Modal-->
-<div id="modalInfoAnnouncement" class="modal fade" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Announcement Info</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body px-4">
-				<!--Title-->
-				<div class="row">
-					<div class="col-2">
-						<span class="h5">Title</span>
-					</div>
-					<div class="col">
-						<p class="title text-break fs-5"></p>
-					</div>
-				</div>
-				<hr>
-				<!--Date-->
-				<div class="row">
-					<div class="col-2">
-						<span class="h5">Datetime</span>
-					</div>
-					<div class="col">
-						<span class="datetime"></span>
-					</div>
-				</div>
-				<hr>
-				<!--Body-->
-				<div class="row">
-					<div class="col-2">
-						<span class="h5">Body</span>
-					</div>
-					<div class="col">
-						<p class="body text-break fs-7"></p>
-					</div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<!--ID-->
-                <p class="fst-italic">
-                    <span>Announcement ID: </span>
-                    <span class="id"></span>
-                </p>
-			</div>
-		</div>
-	</div>
-</div>
-
-<!-- RENDERING -->
 <div class="row justify-content-between">
 	<div class="container col-12 col-lg-8 col-xl-9">
 		<!--Loading-->
@@ -105,11 +71,50 @@
 
 		<!--Page navigation-->
 		{{paginationNav()}}
+	</div>
+</div>
 
-		<!--Note-->
-		<div class="alert alert-warning" role="alert">
-			Note: Light blue announcements have been read by you. Grey ones haven't.
+<!--Announcement Modal-->
+<div id="modalInfoAnnouncement" class="modal fade" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">
+					Announcement Info
+					<span class="announcement-id fs-6 fw-normal text-muted">
+						(#<span class="id"></span>)
+					</span>
+				</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body px-4 px-sm-5">
+				<!--Title-->
+				<div class="row">
+					<div class="title h4 m-0" title="Announcement title"></div>
+				</div>
+				<hr>
+				<!--Date-->
+				<div class="row">
+					<div class="col-2 col-lg-1 text-end" title="Announcement datetime">
+						<i class="bi-calendar-event fs-3"></i>
+					</div>
+					<div class="col d-flex align-items-center">
+						<span class="datetime fs-5"></span>
+					</div>
+				</div>
+				<hr>
+				<!--Body-->
+				<div class="row">
+					<div class="col-2 col-lg-1 text-end" aria-colspan="Announcement body">
+						<i class="bi-justify-left fs-3"></i>
+					</div>
+					<div class="col">
+						<p class="body text-break fs-7"></p>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
+
 {% endblock %}
