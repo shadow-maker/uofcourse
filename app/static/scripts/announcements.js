@@ -96,7 +96,7 @@ function loadModal(announcement) {
 	modalInfo.find(".datetime").attr("title",
 		formatDate(announcement.datetime_utc) + " " + formatTime(announcement.datetime_utc) + " UTC"
 	)
-	modalInfo.find(".body").text(announcement.body)
+	modalInfo.find(".body").html(announcement.body.replaceAll("\n", "<br>"))
 	modalInfo.find(".id").text(announcement.id)
 	
 	if (isAuth && !announcement.read) {
