@@ -113,7 +113,7 @@ class User(db.Model, UserMixin):
 	
 	@property
 	def unread_announcements(self):
-		return Announcement.query.filter(not_(Announcement.read_by.contains(self))).all()
+		return Announcement.query.filter(not_(Announcement.read_by.contains(self))).order_by(Announcement.datetime.desc()).all()
 
 	def checkPassw(self, passw):
 		return bcrypt.check_password_hash(self.password, passw)
