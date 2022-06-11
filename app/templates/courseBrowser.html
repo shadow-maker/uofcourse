@@ -296,9 +296,9 @@
 
 	<!--RIGHT: Courses list and page navigation-->
 	<div class="container col-12 col-sm-7 col-lg-8 col-xl-9 m-0 p-0 px-3 px-md-4 px-lg-5">
-		<!--Sort options-->
 		<div class="row mb-2 mb-lg-3 justify-content-between">
-			<div class="col-12 col-lg-6 col-xl-5 pe-lg-0">
+			<!--Sort options-->
+			<div class="col-12 col-lg-7 col-xl-5 pe-lg-0">
 				<div id="sortSelector" class="input-group input-group-sm">
 					<span class="input-group-text bg-light" title="Sort by">
 						<i class="bi-sort-down fw-bold"></i>
@@ -316,14 +316,15 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-12 col-lg-6 col-xl-7 ps-lg-4 pt-1 d-flex justify-content-between">
-				<p class="text-secondary m-0">
+			<!--Page indicator-->
+			<div class="col ps-lg-4 text-secondary d-flex justify-content-between align-items-center">
+				<div>
 					<span class="loaded d-lg-none"><span class="num-total">...</span> results found</span>
 					<span class="loading d-lg-none">Loading...</span>
-				</p>
-				<p class="text-secondary m-0">
+				</div>
+				<div>
 					Page <span class="num-page">1</span> / <span class="num-pages">1</span>
-				</p>
+				</div>
 			</div>
 		</div>
 

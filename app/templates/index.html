@@ -107,7 +107,7 @@
 			{% for announcement in current_user.unread_announcements %}
 			<a class="list-group-item list-group-item-action d-flex justify-content-between" href="{{url_for('view.announcements', id=announcement.id)}}" title="Click to view announcement">
 				<div>
-					<div class="text-muted">
+					<div class="text-muted lh-sm">
 						<small>{{announcement.datetime_local.strftime("%b %d, %Y")}}</small>
 					</div>
 					<div>{{announcement.title}}</div>
