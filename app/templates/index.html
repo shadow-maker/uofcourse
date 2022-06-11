@@ -89,7 +89,7 @@
 
 	<div class="col-12 col-md-5 col-lg-4 col-xl-3 m-0 px-md-0 container">
 		<!--Announcements-->
-		{% if current_user.is_authenticated %}
+		{% if current_user.is_authenticated and current_user.unread_announcements %}
 		<div id="announcements" class="list-group mb-3">
 			<li class="list-group-item list-group-item-info">
 				<h5 class="m-0">
@@ -98,12 +98,17 @@
 				</h5>
 			</li>
 			{% for announcement in current_user.unread_announcements %}
-			<a class="list-group-item list-group-item-action d-flex justify-content-between" href="{{url_for('view.announcements', id=announcement.id)}}">
-				<p class="text-break">{{announcement.title}}</p>
+			<a class="list-group-item list-group-item-action d-flex justify-content-between" href="{{url_for('view.announcements', id=announcement.id)}}" title="Click to view announcement">
+				<div>
+					<div class="text-muted">
+						<small>{{announcement.datetime_local.strftime("%b %d, %Y")}}</small>
+					</div>
+					<div>{{announcement.title}}</div>
+				</div>
 				<i class="bi-box-arrow-up-right"></i>
 			</a>
 			{% endfor %}
-			<small class="list-group-item list-group-item-light p-1 text-center">
+			<small class="list-group-item p-1 text-center">
 				<a href="{{url_for('view.announcements')}}" class="text-muted">View all announcements</a>
 			</small>
 		</div>
