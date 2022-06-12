@@ -1,9 +1,6 @@
 from app import db, bcrypt
+from app import models
 from app.constants import STARRED_COLOR, STARRED_EMOJI
-from app.models.user_log import UserLog, UserLogEvent
-from app.models.tag import Tag
-from app.models.announcement import Announcement
-from app.models.collection import Collection
 from app.localdt import utc
 
 from flask_login import UserMixin
@@ -57,12 +54,14 @@ class User(db.Model, UserMixin):
 		self.password = bcrypt.generate_password_hash(passw).decode("utf-8")
 		self.faculty_id = faculty_id
 
-		self.collections.append(Collection(self.id))
+		self.collections.append(models.Collection(self.id))
 
-		starred = Tag(self.id, "Starred", color=STARRED_COLOR, emoji=STARRED_EMOJI)
+		starred = models.Tag(self.id, "Starred", color=STARRED_COLOR, emoji=STARRED_EMOJI)
 		starred.starred = True
 		starred.deletable = False
 		self.tags.append(starred)
+
+		self.read_announcements = models.Announcement.query.all()
 
 	@property
 	def coursesTaken(self):
@@ -96,31 +95,33 @@ class User(db.Model, UserMixin):
 		)
 
 	def log(self, event, ip=None):
-		log = UserLog(self.id, event, ip)
+		log = models.UserLog(self.id, event, ip)
 		db.session.add(log)
 		db.session.commit()
 	
 	def addTag(self, name, color, emoji=None, deletable=True):
-		tag = Tag(self.id, name, color, emoji, deletable)
+		tag = models.Tag(self.id, name, color, emoji, deletable)
 		self.tags.append(tag)
 		db.session.commit()
 		return tag
 	
 	def announce(self, title, body):
-		announcement = Announcement(self.id, title, body)
+		announcement = models.Announcement(self.id, title, body)
 		db.session.add(announcement)
 		db.session.commit()
 	
 	@property
 	def unread_announcements(self):
-		return Announcement.query.filter(not_(Announcement.read_by.contains(self))).order_by(Announcement.datetime.desc()).all()
+		return models.Announcement.query.filter(
+			not_(models.Announcement.read_by.contains(self))).order_by(models.Announcement.datetime.desc()
+		).all()
 
 	def checkPassw(self, passw):
 		return bcrypt.check_password_hash(self.password, passw)
 
 	def updatePassw(self, new):
 		self.password = bcrypt.generate_password_hash(new).decode("utf-8")
-		self.log(UserLogEvent.AUTH_CHANGE_PASSW)
+		self.log(models.UserLogEvent.AUTH_CHANGE_PASSW)
 	
 	def delete(self):
 		for tag in self.tags:
