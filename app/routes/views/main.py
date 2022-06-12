@@ -48,7 +48,7 @@ def about():
 def announcements():
 	return render_template("announcements.html",
 		title = "Announcements",
-		header = "Recent Announcements",
+		header = "Announcements",
 		headerIcon = "bell-fill",
 		description = "Relevant changes and modifications performed on the website.",
 		announcement_id = request.args.get("id"),
