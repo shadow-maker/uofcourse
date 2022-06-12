@@ -1,4 +1,31 @@
 {
+	"1.1": {
+		"beta": false,
+		"date": "2022-06-11",
+		"title": "Announcements, Planner improvements, and more!",
+		"changes": [
+			"Announcements - A new way for admins to communicate with users. New announcements will appear in the home page and all announcements can be viewed in /announcements",
+			"The Course Planner has been completely rebuilt using only asynchronous requests to increase response rate and improve interactivity",
+			"New Program Progress view in the course planner, showing an overview of the amount of course units taken/enrolled in and amount of units left to graduate",
+			"The Course Planner now shows a color indicator on the terms when dragging a course, showing whether its possible to drag a course to the selected term",
+			"The Go-To modal now supports navigating to subjects and faculties by their respective codes",
+			"Support for collapsing tag courses in the Tags Drawer",
+			"Front-end optimizations in the course browser, the page is no longer refreshed when adding a course to a term",
+			"All main pages now have related icons besides the title in the heading",
+			"Support for viewing user logs' datetime in MDT or UTC timezones",
+			"Added button to download the API documentation in Markdown",
+			"Removed 'My' from the navbar links to reduce clutter in small screens",
+			"Small improvements to the Faculty page's design to improve consistency",
+			"Cache IP location requests to reduce external API calls",
+			"Added faculty_id sorting option to /api/courses",
+			"General front-end improvements and optimizations"
+		],
+		"fixes": [
+			"Fix filtering by faculties in /api/courses and in Course Browser",
+			"Fix sorting courses by subject_code in descending order in /api/courses",
+			"/api/courses endpoints would return units as a string instead of float"
+		]
+	},
 	"1.0.2": {
 		"beta": false,
 		"date": "2022-05-05",

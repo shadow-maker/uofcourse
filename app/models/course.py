@@ -6,6 +6,7 @@ from flask.helpers import url_for
 from sqlalchemy import select, cast, func
 from sqlalchemy.ext.hybrid import hybrid_property
 
+
 class Course(db.Model):
 	__tablename__ = "course"
 	id = db.Column(db.Integer, primary_key=True)
@@ -23,13 +24,21 @@ class Course(db.Model):
 	countgpa = db.Column(db.Boolean, nullable=False, default=True)
 	subsite = db.Column(db.String(32))
 
-	userCourses = db.relationship("UserCourse", backref="course")
+	collectionCourses = db.relationship("CollectionCourse", backref="course")
+
+	@hybrid_property
+	def faculty_id(self):
+		return self.subject.faculty_id
+
+	@faculty_id.expression # type: ignore
+	def faculty_id(cls):
+		return select(Subject.faculty_id).where(Subject.id == cls.subject_id)
 
 	@hybrid_property
 	def subject_code(self):
 		return self.subject.code
 	
-	@subject_code.expression
+	@subject_code.expression # type: ignore
 	def subject_code(cls):
 		return select(Subject.code).where(Subject.id == cls.subject_id)
 
@@ -37,7 +46,7 @@ class Course(db.Model):
 	def code(self):
 		return f"{self.subject_code}-{self.number}"
 	
-	@code.expression
+	@code.expression # type: ignore
 	def code(cls):
 		return func.concat(cls.subject_code.scalar_subquery(), "-", cast(cls.number, db.String))
 
@@ -45,7 +54,7 @@ class Course(db.Model):
 	def level(self):
 		return self.number // 100
 	
-	@level.expression
+	@level.expression # type: ignore
 	def level(cls):
 		return func.floor(cls.number / 100) # This might only work in MySQL and PostgreSQL
 
@@ -69,10 +78,10 @@ class Course(db.Model):
 		return self.subject.getEmoji()
 	
 	def getTags(self, userId):
-		return [tag for tag in self.userTags if tag.user_id == userId]
+		return [tag for tag in self.tags if tag.user_id == userId]
 	
-	def getUserCourses(self, userId):
-		return [uc for uc in self.userCourses if uc.collection.user_id == userId]
+	def getCollectionCourses(self, userId):
+		return [cc for cc in self.collectionCourses if cc.collection.user_id == userId]
 
 	def __init__(self, subject_id, number, name, units):
 		self.subject_id = subject_id
@@ -92,7 +101,7 @@ class Course(db.Model):
 		yield "name", self.name
 		yield "aka", self.aka
 		yield "emoji", self.subject.emoji
-		yield "units", self.units
+		yield "units", float(self.units)
 		yield "desc", self.desc
 		yield "prereqs", self.prereqs
 		yield "coreqs", self.coreqs

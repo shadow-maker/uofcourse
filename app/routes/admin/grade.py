@@ -2,7 +2,7 @@ from app.models import Grade
 from app.routes.admin import BaseModelView
 
 class GradeModelView(BaseModelView):
-	form_excluded_columns = ["userCourses"]
+	form_excluded_columns = ["collectionCourses"]
 
 	column_filters = ["gpv", "passed"]
 

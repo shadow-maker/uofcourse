@@ -150,3 +150,5 @@ alchemydumps-backup/
 backups/
 icon?
 icon
+mypy.ini
+.python-version

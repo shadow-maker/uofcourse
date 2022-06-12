@@ -16,75 +16,102 @@
 <script src="/static/scripts/courseBrowser.js"></script>
 {% endblock %}
 
-{% block content %}
+{% block templates %}
+<!--Course Item-->
+<div class="course-item mb-3 card">
+	<div class="card-body px-1 py-2">
+		<!--Course Link-->
+		<a class="course-link row m-0 text-decoration-none text-body" href="">
+			<!--Course emoji and code-->
+			<div class="col-12 col-md-5 col-lg-4 col-xl-3 ps-2 px-lg-2 ps-xl-3 ps-xxl-4 h4 m-0 d-flex align-items-bottom">
+				<span class="course-emoji p-0 m-0 me-2"></span>
+				<span class="course-code p-0 m-0 font-monospace"></span>
+			</div>
+			<!--Course name-->
+			<div class="col-12 col-md-7 col-lg-8 col-xl-9 ps-2 ps-lg-0 pe-2">
+				<div class="course-name p-0 m-0 h5"></div>
+			</div>
+		</a>
+		<div class="row m-0 p-0">
+			<!--Separator-->
+			<div class="h4 m-0 col-0 col-md-5 col-lg-4 col-xl-3"></div>
 
-<!--TEMPLATES-->
-<div id="templates" class="d-none">
-	<div class="course-item mb-3 card">
-		<div class="card-body px-1 py-2">
-			<!--Course Link-->
-			<a class="course-link row m-0 text-decoration-none text-body" href="">
-				<!--Course emoji and code-->
-				<div class="col-12 col-md-5 col-lg-4 col-xl-3 ps-2 px-lg-3 ps-xl-4 h4 m-0 d-flex align-items-bottom">
-					<span class="course-emoji p-0 m-0 me-2"></span>
-					<span class="course-code p-0 m-0 font-monospace"></span>
-				</div>
-				<!--Course name-->
-				<div class="col-12 col-md-7 col-lg-8 col-xl-9 ps-2 ps-lg-0 pe-2">
-					<div class="course-name p-0 m-0 h5"></div>
-				</div>
-			</a>
-			<div class="row m-0 p-0">
-				<!--Separator-->
-				<div class="h4 m-0 col-0 col-md-5 col-lg-4 col-xl-3"></div>
-
-				<!--Tags-->
-				<div class="col-7 col-xs-6 col-sm-12 col-lg-5 col-xl-7 ps-2 ps-lg-0 pe-1">
-					<span class="tags-selected p-0 m-0"></span>
-					<div class="btn-group">
-						<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button"
-							data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
-							<i class="bi-tag-fill"></i>
-						</button>
-						<ul class="tags-dropdown dropdown-menu fs-6 py-1"></ul>
-					</div>
-				</div>
-
-				<!--Collections-->
-				<div
-					class="col-5 col-sm-12 col-lg-3 col-xl-2 course-collections ps-2 ps-lg-0 pe-1 text-end text-sm-start text-lg-end">
-					<button class="collections-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle"
-						type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add to terms"></button>
-					<ul class="collections-dropdown dropdown-menu fs-6 mt-1">
-						{% for collection in collections %}
-						<li class="collections-dropdown-item" db-id="{{collection.id}}">
-							<a class="dropdown-item px-2 py-1">
-								<i
-									class="bi-check {% if collection not in courseCollections %}invisible{% endif %}"></i>
-								{% if collection.transfer %}
-								<small>Transferred</small>
-								{% else %}
-								<small>{{collection.term.name | capitalize}}</small>
-								{% endif %}
-							</a>
-						</li>
-						{% endfor %}
+			<!--Tags-->
+			<div class="course-tags col-7 col-xs-6 col-sm-12 col-lg-5 col-xl-7 ps-2 ps-lg-0 pe-1">
+				<span class="tags-selected p-0 m-0"></span>
+				<div class="btn-group">
+					<button class="tags-dropdown-btn btn badge btn-secondary dropdown-toggle" type="button"
+						data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
+						<i class="bi-tag-fill"></i>
+					</button>
+					<ul class="dropdown-menu fs-6 py-1">
+						<div class="tags-dropdown"></div>
+						<li><hr class="dropdown-divider my-1"></li>
 						<li>
-							<hr class="dropdown-divider my-1">
-						</li>
-						<li>
-							<a class="dropdown-item px-2 p-y1" href="{{url_for('view.planner')}}">
+							<a class="dropdown-item px-2 p-y1" data-bs-toggle="modal" data-bs-target="#modalEditTags">
 								<i class="bi-pencil-square"></i>
-								<small>Edit in My Planner</small>
+								<small>Edit tags</small>
 							</a>
 						</li>
 					</ul>
 				</div>
 			</div>
+
+			<!--Collections-->
+			<div class="course-collections col-5 col-sm-12 col-lg-3 col-xl-2 ps-2 ps-lg-0 pe-1 text-end text-sm-start text-lg-end">
+				<button class="collections-dropdown-btn btn badge btn-secondary dropdown-toggle"
+					type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add to terms"></button>
+				<ul class="collections-dropdown dropdown-menu fs-6 mt-1">
+					{% for collection in collections %}
+					<li class="collections-dropdown-item" db-id="{{collection.id}}">
+						<a class="dropdown-item px-2 py-1">
+							<i class="bi-check invisible"></i>
+							{% if collection.transfer %}
+							<small>Transferred</small>
+							{% else %}
+							<small>{{collection.term.name | capitalize}}</small>
+							{% endif %}
+						</a>
+					</li>
+					{% endfor %}
+					<li>
+						<hr class="dropdown-divider my-1">
+					</li>
+					<li>
+						<a class="dropdown-item px-2 p-y1" href="{{url_for('view.planner')}}">
+							<i class="bi-pencil-square"></i>
+							<small>Edit in My Planner</small>
+						</a>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 </div>
+<!--Subject search item-->
+<span class="subject-item badge btn btn-secondary border-secondary px-1 py-1 m-1 ms-0 font-monospace text-light fs-6 fw-normal cursor-pointer" title="Click to remove"></span>
+<!--Subject search suggestion-->
+<li class="subject-suggestion">
+	<a class="dropdown-item form-control-sm px-2 py-1" href="#">
+		<span class="code font-monospace"></span> - <span class="name"></span>
+	</a>
+</li>
+<!--Course tag selected item-->
+<span class="tag-selected-item btn badge btn-secondary px-1 me-1 cursor-pointer" title="Click to remove tag">
+	<span class="tag-color d-none"><i class="bi-circle-fill"></i></span>
+	<span class="tag-emoji d-none"></span>
+	<span class="tag-name"></span>
+</span>
+<!--Course tag dropdown item-->
+<li class="tags-dropdown-item" db-id="">
+	<a class="dropdown-item px-2 py-1">
+		<i class="tag-selected bi-check invisible"></i>
+		<small class="tag-name"></small>
+	</a>
+</li>
+{% endblock %}
 
+{% block content %}
 
 <div class="row justify-content-between">
 	<!--LEFT: sort and filter options form-->
@@ -245,14 +272,7 @@
 							<label for="subjectSearch" class="ms-1 mb-0 form-label text-uppercase">
 								<small>Subjects</small>
 							</label>
-							<div id="subjectSelector" class="d-flex flex-wrap ms-3 ps-1">
-								{% for s, data in filterData["subjects"].items() %}
-								{% if data["sel"] %}
-								<span
-									class="bg-secondary px-2 py-1 m-1 rounded font-monospace text-light subjItem">{{data["code"]}}</span>
-								{% endif %}
-								{% endfor %}
-							</div>
+							<div id="subjectSelector" class="d-flex flex-wrap ms-3 ps-1"></div>
 							<div class="ms-3 ps-1">
 								<input class="form-control form-control-sm mr-sm-2 mt-1" type="search"
 									placeholder="Enter subject code" aria-label="Search subjects" id="subjectSearch"
@@ -275,9 +295,9 @@
 
 	<!--RIGHT: Courses list and page navigation-->
 	<div class="container col-12 col-sm-7 col-lg-8 col-xl-9 m-0 p-0 px-3 px-md-4 px-lg-5">
-		<!--Sort options-->
 		<div class="row mb-2 mb-lg-3 justify-content-between">
-			<div class="col-12 col-lg-6 col-xl-5 pe-lg-0">
+			<!--Sort options-->
+			<div class="col-12 col-lg-7 col-xl-5 pe-lg-0">
 				<div id="sortSelector" class="input-group input-group-sm">
 					<span class="input-group-text bg-light" title="Sort by">
 						<i class="bi-sort-down fw-bold"></i>
@@ -295,14 +315,15 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-12 col-lg-6 col-xl-7 ps-lg-4 pt-1 d-flex justify-content-between">
-				<p class="text-secondary m-0">
+			<!--Page indicator-->
+			<div class="col ps-lg-4 text-secondary d-flex justify-content-between align-items-center">
+				<div>
 					<span class="loaded d-lg-none"><span class="num-total">...</span> results found</span>
 					<span class="loading d-lg-none">Loading...</span>
-				</p>
-				<p class="text-secondary m-0">
+				</div>
+				<div>
 					Page <span class="num-page">1</span> / <span class="num-pages">1</span>
-				</p>
+				</div>
 			</div>
 		</div>
 

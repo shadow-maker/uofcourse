@@ -1,5 +1,5 @@
 from app import loginManager
-from app.models import User
+from app import models
 
 from flask import flash, redirect, request
 from flask.helpers import url_for
@@ -11,11 +11,11 @@ from functools import wraps
 loginManager.login_view = "view.login"
 loginManager.login_message = "You need to log in first!"
 
-loginManager.user_loader(lambda uid: User.query.get(uid))
+loginManager.user_loader(lambda uid: models.User.query.get(uid))
 
 @loginManager.unauthorized_handler
 def unauthorized():
-	if request.blueprint.split(".")[0] == "api":
+	if request.blueprint and request.blueprint.split(".")[0] == "api":
 		return {"error": "User not logged in"}, 401
 	else:
 		flash(loginManager.login_message, loginManager.login_message_category)

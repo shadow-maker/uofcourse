@@ -1,11 +1,10 @@
 from app import db, bcrypt
+from app import models
 from app.constants import STARRED_COLOR, STARRED_EMOJI
-from app.models.user_log import UserLog, UserLogEvent
-from app.models.user_tag import UserTag
-from app.models.course_collection import CourseCollection
 from app.localdt import utc
 
 from flask_login import UserMixin
+from sqlalchemy import not_
 
 from enum import Enum
 
@@ -40,10 +39,11 @@ class User(db.Model, UserMixin):
 	created = db.Column(db.DateTime, nullable=False, default=utc.now)
 	
 	faculty_id = db.Column(db.Integer, db.ForeignKey("faculty.id"), nullable=False)
-	neededUnits = db.Column(db.Numeric(precision=5, scale=2)) # 3 integer places, 2 decimal places
+	units = db.Column(db.Numeric(precision=5, scale=2), default=120) # 3 integer places, 2 decimal places
 
-	collections = db.relationship("CourseCollection", backref="user")
-	tags = db.relationship("UserTag", backref="user")
+	collections = db.relationship("Collection", backref="user")
+	tags = db.relationship("Tag", backref="user")
+	announcements = db.relationship("Announcement", backref="author")
 
 	logs = db.relationship("UserLog", backref="user")
 
@@ -54,30 +54,74 @@ class User(db.Model, UserMixin):
 		self.password = bcrypt.generate_password_hash(passw).decode("utf-8")
 		self.faculty_id = faculty_id
 
-		self.collections.append(CourseCollection(self.id))
+		self.collections.append(models.Collection(self.id))
 
-		starred = UserTag(self.id, "Starred", color=STARRED_COLOR, emoji=STARRED_EMOJI)
+		starred = models.Tag(self.id, "Starred", color=STARRED_COLOR, emoji=STARRED_EMOJI)
 		starred.starred = True
 		starred.deletable = False
 		self.tags.append(starred)
 
+		self.read_announcements = models.Announcement.query.all()
+
+	@property
+	def coursesTaken(self):
+		return sum(
+			len(collection.collectionCourses) for collection in self.collections
+			if collection.transfer or collection.term.isPrev()
+		)
+
+	@property
+	def coursesPlanned(self):
+		return sum(len(collection.collectionCourses) for collection in self.collections)
+
+	@property
+	def unitsNeeded(self):
+		return float(self.units) if self.units else None
+
+	@property
+	def unitsTaken(self):
+		for collection in self.collections:
+			print(collection, collection.transfer or collection.term.isPrev(), collection.units_total)
+		return sum(
+			collection.units_total for collection in self.collections
+			if collection.transfer or collection.term.isPrev()
+		)
+
+	@property
+	def unitsPlanned(self):
+		return sum(
+			collection.units_total for collection in self.collections
+			if not(collection.transfer or collection.term.isPrev())
+		)
+
 	def log(self, event, ip=None):
-		log = UserLog(self.id, event, ip)
+		log = models.UserLog(self.id, event, ip)
 		db.session.add(log)
 		db.session.commit()
 	
 	def addTag(self, name, color, emoji=None, deletable=True):
-		tag = UserTag(self.id, name, color, emoji, deletable)
+		tag = models.Tag(self.id, name, color, emoji, deletable)
 		self.tags.append(tag)
 		db.session.commit()
 		return tag
+	
+	def announce(self, title, body):
+		announcement = models.Announcement(self.id, title, body)
+		db.session.add(announcement)
+		db.session.commit()
+	
+	@property
+	def unread_announcements(self):
+		return models.Announcement.query.filter(
+			not_(models.Announcement.read_by.contains(self))).order_by(models.Announcement.datetime.desc()
+		).all()
 
 	def checkPassw(self, passw):
 		return bcrypt.check_password_hash(self.password, passw)
 
 	def updatePassw(self, new):
 		self.password = bcrypt.generate_password_hash(new).decode("utf-8")
-		self.log(UserLogEvent.AUTH_CHANGE_PASSW)
+		self.log(models.UserLogEvent.AUTH_CHANGE_PASSW)
 	
 	def delete(self):
 		for tag in self.tags:
@@ -94,7 +138,7 @@ class User(db.Model, UserMixin):
 	def __iter__(self):
 		yield "id", self.id
 		yield "username", self.username
+		yield "role", self.role.name
 		yield "name", self.name
 		yield "email", self.email
-		yield "faculty", dict(self.faculty)
-		yield "neededUnits", self.neededUnits
+		yield "faculty_id", self.faculty_id

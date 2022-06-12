@@ -1,9 +1,9 @@
 from app import app, jinja, ifttt
 from app import changelog as change
 from app.auth import current_user
+from app.models import Term
 from app.forms import formContact
 from app.routes.views import view
-from app.models import utils
 from app.constants import MESSAGES_TIMEOUT
 from app.localdt import utc, local
 
@@ -17,21 +17,21 @@ import os
 @view.route("/home")
 @view.route("/")
 def home():
-	term = utils.getCurrentTerm()
+	term = Term.getCurrent()
 	if not term:
-		term = utils.getNextTerm()
+		term = Term.getNext()
 	courses = []
 	if term and current_user.is_authenticated:
 		for collection in current_user.collections:
 			if collection.term_id == term.id:
-				courses = sorted(collection.userCourses, key=lambda c: c.course.code)
+				courses = sorted(collection.collectionCourses, key=lambda c: c.course.code)
 				break
 
 	return render_template("index.html",
 		header = "UofC Course Planner",
 		welcome = "welcome" in session and session["welcome"],
 		term = term,
-		userCourses = courses,
+		collectionCourses = courses,
 		today = local.date()
 	)
 
@@ -40,9 +40,23 @@ def home():
 def about():
 	return render_template("about.html",
 		title = "About",
-		header = "About UofCourse"
+		header = "About UofCourse",
+		headerIcon = "info-square"
 	)
 
+@view.route("/announcements")
+def announcements():
+	return render_template("announcements.html",
+		title = "Announcements",
+		header = "Recent Announcements",
+		headerIcon = "bell-fill",
+		description = "Relevant changes and modifications performed on the website.",
+		announcement_id = request.args.get("id"),
+		sortOptions = [
+			{"label": "Datetime", "value": ["datetime", "title"]},
+			{"label": "Title", "value": ["title", "datetime"]},
+		]
+	)
 
 @view.route("/api")
 def api():
@@ -67,6 +81,7 @@ def api():
 	return render_template("api.html",
 		title = "API",
 		header = "API Documentation",
+		headerIcon = "braces-asterisk",
 		description = "UofCourse API Documentation - Easily get course specific data within your program.",
 		html = html
 	)
@@ -110,6 +125,7 @@ def contact():
 	return render_template("contact.html",
 		title = "Contact",
 		header = "Contact admins",
+		headerIcon = "chat-text-fill",
 		form = form
 	)
 
@@ -119,5 +135,6 @@ def changelog():
 	return render_template("changelog.html",
 		title = "Changelog",
 		header = "Changelog",
+		headerIcon = "bug-fill",
 		changelog = change
 	)

@@ -1,7 +1,23 @@
+{% macro alertTemplates() %}
+<!--Alert item-->
+<div class="alert alert-dismissible fade show shadow-sm mb-2 mt-3 d-flex justify-content-between" role="alert" data-bs-dismiss="alert" style="pointer-events: visible;">
+	<div class="message">
+		<b></b>
+	</div>
+	<div class="count">
+		<span class="badge rounded-pill bg-dark bg-opacity-50"></span>
+	</div>
+	<button type="button" class="btn-close" aria-label="Close"></button>
+</div>
+{% endmacro %}
+
+{% macro alertHTML() %}
 <div id="alerts" class="fixed-bottom" style="z-index: 1030; pointer-events: none;">
 	<div class="container px-sm-0 pb-3 pb-md-4 pb-xl-5"></div>
 </div>
+{% endmacro %}
 
+{% macro alertStyles() %}
 <style>
 @media (min-width: 768px){
 	#alerts .container {
@@ -15,10 +31,10 @@
 	}
 }
 </style>
+{% endmacro %}
 
+{% macro alertHeadScripts() %}
 <script>
-const ALERT_CATEGORIES = ["success", "info", "warning", "danger", "primary", "secondary"]
-
 function alert(category, message, pre="") {
 	if (!ALERT_CATEGORIES.includes(category))
 		category = "warning"
@@ -26,24 +42,21 @@ function alert(category, message, pre="") {
 	let count = 1
 	const lastAlert = $("#alerts .container .alert").last()
 	if (lastAlert.find(".message").text().trim() == message)
-		count = parseInt(lastAlert.find(".count").text()) + 1
+		count = parseInt(lastAlert.find(".count .badge").text()) + 1
 	
 	if (count > 1)
 		lastAlert.remove()
-	
-	let newAlert = $(`
-		<div class="alert alert-` + category + ` alert-dismissible fade show shadow-sm mb-2 mt-3 d-flex justify-content-between" role="alert" data-bs-dismiss="alert" style="pointer-events: visible;">
-			<div class="message">
-				<b>` + pre +`</b>` + message + `
-			</div>
-			<div class="` + (count <= 1 ? `invisible` : ``) +`">
-				<span class="count badge rounded-pill bg-dark bg-opacity-50">` + count + `</span>
-			</div>
-			<button type="button" class="btn-close" aria-label="Close"></button>
-		</div>
-	`)
 
-	$(newAlert).appendTo("#alerts .container")
+	let newAlert = $("#templates .alert").clone()
+
+	newAlert.addClass("alert-" + category)
+	newAlert.find(".message b").text(pre)
+	newAlert.find(".message").append(message)
+	newAlert.find(".count .badge").text(count)
+	if (count <= 1)
+		newAlert.find(".count").addClass("invisible")
+
+	$("#alerts .container").append(newAlert)
 
 	if (category != "danger") {
 		setTimeout(() => {
@@ -60,7 +73,12 @@ function displayError(response) {
 	else
 		alert("danger", response.statusText + " (" + response.status + ")")
 }
+</script>
+{% endmacro %}
 
+{% macro alertTailScripts() %}
+<script>
 for (let message of JSON.parse('{{ get_flashed_messages(with_categories=true) | tojson | safe }}'))
 	alert(message[0], message[1])
 </script>
+{% endmacro %}

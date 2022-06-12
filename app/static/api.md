@@ -325,6 +325,7 @@ The following columns are available to be used with the `sort` URL parameter:
 {: .mb-0}
 
 * `id`
+* `faculty_id`
 * `subject_id`
 * `subject_code`
 * `number`

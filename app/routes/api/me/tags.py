@@ -1,58 +1,48 @@
-# These routes are meant to be used internally by AJAX calls
-
-# TODO: Add try statements to db.session.commit()
-
 from app import db
-from app.models import Course, UserTag
-from app.auth import current_user, login_required
-
-from app.routes.api.utils import *
+from app.models import Course, Tag
+from app.auth import current_user
 
 from flask import Blueprint, request
 
-tag = Blueprint("tags", __name__, url_prefix="/tags")
+me_tag = Blueprint("tags", __name__, url_prefix="/tags")
 
 #
 # GET
 #
 
-# User UserTags
+# User Tags
 
-@tag.route("", methods=["GET"])
-@login_required
-def getUserTags():
+@me_tag.route("", methods=["GET"])
+def getTags():
 	return {"tags": [dict(tag) for tag in current_user.tags]}, 200
 
-# UserTag courses
+# Tag courses
 
-@tag.route("/<id>/courses", methods=["GET"])
-@login_required
+@me_tag.route("/<id>/courses", methods=["GET"])
 def getTagCourses(id):
-	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
+	tag = Tag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
 		return {"error": f"Tag with id {id} does not exist"}, 404
 	return {
 		"courses": [dict(course) for course in sorted(tag.courses, key=lambda course: course.code)]
 	}, 200
 
-# Course UserTags
+# Course Tags
 
-@tag.route("/course/<id>", methods=["GET"])
-@login_required
+@me_tag.route("/course/<id>", methods=["GET"])
 def getCourseTags(id):
 	course = Course.query.get(id)
 	if not course:
 		return {"error": f"Course with id {id} does not exist"}, 404
-	return {"tags": [dict(tag) for tag in course.userTags if tag.user_id == current_user.id]}, 200
+	return {"tags": [dict(tag) for tag in course.tags if tag.user_id == current_user.id]}, 200
 
 
 #
 # POST
 #
 
-@tag.route("", methods=["POST"])
-@login_required
-def addUserTag(data={}):
+@me_tag.route("", methods=["POST"])
+def addTag(data={}):
 	if not data:
 		data = request.form.to_dict()
 		if not data:
@@ -77,12 +67,14 @@ def addUserTag(data={}):
 		return {"error": "Tag color must be an integer"}, 400
 	if color < 0 or color > 16777215:
 		return {"error": "Tag color must be an integer between 0 and 16777215"}, 400
-	
-	tag = UserTag(current_user.id, name, color)
 
-	db.session.add(tag)
-	
-	db.session.commit()
+	try:
+		tag = Tag(current_user.id, name, color)
+
+		db.session.add(tag)	
+		db.session.commit()
+	except:
+		return {"error": "Failed to add tag"}, 500
 
 	return {"success": "Tag created"}, 200
 
@@ -90,13 +82,12 @@ def addUserTag(data={}):
 # PUT
 #
 
-@tag.route("/<id>", methods=["PUT"])
-@login_required
-def editUserTag(id, data={}):
+@me_tag.route("/<id>", methods=["PUT"])
+def putTag(id, data={}):
 	if not data:
 		data = request.form.to_dict()
 	
-	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
+	tag = Tag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
 		return {"error": f"Tag with id {data['tag_id']} does not exist"}, 404
 	if not tag.deletable:
@@ -121,22 +112,24 @@ def editUserTag(id, data={}):
 			return {"error": "Tag color must be an integer between 0 and 16777215"}, 400
 		tag.color = color
 
-	db.session.commit()
+	try:
+		db.session.commit()
+	except:
+		return {"error": "Failed to edit tag"}, 500
 
 	return {"success": "Tag edited"}, 200
 
 
 
-@tag.route("/<tag_id>/course/<course_id>", methods=["PUT"])
-@login_required
-def putCourseTag(tag_id, course_id):
+@me_tag.route("/<id>/course/<course_id>", methods=["PUT"])
+def putCourseTag(id, course_id):
 	course = Course.query.get(course_id)
 	if not course:
 		return {"error": f"Course with id {course_id} does not exist"}, 404
 
-	tag = UserTag.query.filter_by(id=tag_id, user_id=current_user.id).first()
+	tag = Tag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
-		return {"error": f"Tag with id {tag_id} does not exist"}, 404
+		return {"error": f"Tag with id {id} does not exist"}, 404
 
 	if course in tag.courses:
 		tag.courses.remove(course)
@@ -154,10 +147,9 @@ def putCourseTag(tag_id, course_id):
 # DELETE
 #
 
-@tag.route("/<id>", methods=["DELETE"])
-@login_required
-def deleteUserTag(id):
-	tag = UserTag.query.filter_by(id=id, user_id=current_user.id).first()
+@me_tag.route("/<id>", methods=["DELETE"])
+def delTag(id):
+	tag = Tag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:
 		return {"error": f"Tag with id {id} does not exist"}, 404
 	if not tag.deletable:

@@ -1,6 +1,4 @@
-from app.models import db
 from app.models import Subject, Faculty
-from app.models import utils as utils
 from app.routes.api.utils import *
 from app.routes.api.courses import getCourses
 
@@ -59,7 +57,7 @@ def getSubjectCourses(id):
 
 @subject.route("/code/<code>", methods=["GET"])
 def getSubjectByCode(code):
-	subject = utils.getSubjectByCode(code)
+	subject = Subject.query.filter_by(code=code.upper()).first()
 	if not subject:
 		return {"error": f"Subject with code {code} does not exist"}, 404
 	return dict(subject), 200

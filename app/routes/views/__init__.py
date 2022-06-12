@@ -1,6 +1,6 @@
 from app import app
 from app import changelog as change
-from app.models import Role
+from app.models import Role, Faculty
 from app.constants import *
 from flask import Blueprint
 
@@ -8,7 +8,7 @@ from flask import Blueprint
 # Create view route blueprint with no url prefix
 #
 
-view = Blueprint("view", __name__, url_prefix="/")
+view: Blueprint = Blueprint("view", __name__, url_prefix="/")
 
 #
 # Define constants - to be passed to all HTML templates and can be accessed via Jinja2
@@ -23,13 +23,15 @@ constants = {
 	"DEBUG" : app.debug,
 	"GANALYTICS_ID" : app.config["GANALYTICS_ID"],
 	"GADSENSE_ID" : app.config["GADSENSE_ID"],
+	"PROPELLER_ID" : app.config["PROPELLER_ID"],
 	"DISQUS_EMBED": DISQUS_EMBED,
 	"COLORS_LIGHT" : COLORS_LIGHT,
 	"COLORS" : COLORS,
 	"COLORS_DARK" : COLORS_DARK,
 	"DEFAULT_EMOJI" : DEFAULT_EMOJI,
 	"ROLE_ADMIN": Role.admin,
-	"ROLE_MOD": Role.moderator
+	"ROLE_MOD": Role.moderator,
+	"FACULTIES": Faculty.query.all()
 }
 
 @view.context_processor

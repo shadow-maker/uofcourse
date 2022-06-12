@@ -1,31 +1,39 @@
 from app import db
 
-class CourseCollection(db.Model):
-	__tablename__ = "course_collection"
+class Collection(db.Model):
+	__tablename__ = "collection"
 	id = db.Column(db.Integer, primary_key=True)
 	user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 	term_id = db.Column(db.Integer, db.ForeignKey("term.id"))
 	transfer = db.Column(db.Boolean, nullable=False, default=False)
 
-	userCourses = db.relationship("UserCourse", backref="collection")
+	collectionCourses = db.relationship("CollectionCourse", backref="collection")
 
 	@property
-	def units(self):
-		return sum([float(uc.course.units) for uc in self.userCourses if uc.grade and uc.grade.gpv])
+	def courses(self):
+		return [cc.course for cc in self.collectionCourses]
+
+	@property
+	def units_total(self):
+		return sum(float(cc.course.units) for cc in self.collectionCourses)
+
+	@property
+	def units_counted(self):
+		return sum(float(cc.course.units) for cc in self.collectionCourses if cc.grade and cc.grade.gpv)
 	
 	def getPoints(self, precision=3):
 		points = 0
-		for uCouse in self.userCourses:
-			grade = uCouse.grade
+		for cc in self.collectionCourses:
+			grade = cc.grade
 			if grade is None:
 				return None
-			if grade.gpv and uCouse.course.countgpa:
-				points += float(grade.gpv) * float(uCouse.course.units)
+			if grade.gpv and cc.course.countgpa:
+				points += float(grade.gpv) * float(cc.course.units)
 		return round(points, precision)
 
 	def getGPA(self, precision=3):
 		points = self.getPoints(6)
-		accUnits = self.units
+		accUnits = self.units_counted
 		if points is None or accUnits == 0:
 			return None
 		return round(points / accUnits, precision)
@@ -39,7 +47,7 @@ class CourseCollection(db.Model):
 		return self.getGPA()
 	
 	def delete(self):
-		for i in self.userCourses:
+		for i in self.collectionCourses:
 			db.session.delete(i)
 		db.session.delete(self)
 		db.session.commit()
@@ -57,7 +65,7 @@ class CourseCollection(db.Model):
 		yield "term_id", self.term_id
 		yield "transfer", self.transfer
 		yield "points", self.points
-		yield "units", self.units
+		yield "units", self.units_counted
 		yield "gpa", self.gpa
 
 	def __repr__(self):

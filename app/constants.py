@@ -5,7 +5,7 @@
 SITE_NAME = "UofCourse"
 SITE_LANG = "en"
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
-CURRENT_VERSION = "1.0.2"
+CURRENT_VERSION = "1.1"
 
 TIMEZONE = "Canada/Mountain"
 
@@ -85,17 +85,5 @@ COLORS_DARK = {
 	"cyan": 0x0aa2c0
 }
 
-# COLORS_LIGHT = {
-# 	"red": 0xff0000,
-# 	"orange": 0xffa500,
-# 	"yellow": 0xffff00,
-# 	"green": 0x479f76,
-# 	"cyan": 0x00ffff,
-# 	"blue": 0x0000ff,
-# 	"purple": 0x800080,
-# 	"pink": 0xffc0cb
-# }
-
-
-STARRED_COLOR = COLORS_DARK["yellow"]
+STARRED_COLOR = COLORS_LIGHT["yellow"]
 STARRED_EMOJI = 11088

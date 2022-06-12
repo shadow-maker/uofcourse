@@ -1,5 +1,5 @@
-from app import db
-from app.localdt import utc
+from app import db, ipcache, ipcache2
+from app.localdt import utc, local
 
 from flask import request
 
@@ -34,14 +34,28 @@ class UserLog(db.Model):
 		return " ".join(self.event.name.split("_")[1:])
 
 	@property
+	def datetime_utc(self):
+		return utc.localize(self.datetime)
+	
+	@property
+	def datetime_local(self):
+		return local.normalize(self.datetime_utc)
+
+	@property
 	def location(self):
-		r = requests.get("http://ip-api.com/json/" + self.ip)
-		if r.status_code == 200:
-			data = r.json()
-			if "lat" in data and "lon" in data:
-				data["gmaps"] = f"https://www.google.com/maps/place/{data['lat']},{data['lon']}"
-			return data
-		return None
+		data = ipcache.get(self.ip)
+		if data is None:
+			r = requests.get("http://ip-api.com/json/" + self.ip)
+			print(dir(r))
+			if r.status_code == 200:
+				data = r.json()
+				if "lat" in data and "lon" in data:
+					data["gmaps"] = f"https://www.google.com/maps/place/{data['lat']},{data['lon']}"
+			else:
+				data = {"message": f"Could not get IP location ({r.status_code} {r.reason})"}
+		ipcache.set(self.ip, data)
+		ipcache2[self.ip] = data
+		return data
 	
 	def __init__(self, user_id, event, ip=None):
 		self.user_id = user_id
@@ -61,7 +75,8 @@ class UserLog(db.Model):
 	def __iter__(self):
 		yield "id", self.id
 		yield "user_id", self.user_id
-		yield "datetime", self.datetime.isoformat()
+		yield "datetime_utc", self.datetime_utc.isoformat()
+		yield "datetime_local", self.datetime_local.isoformat()
 		yield "event_type", self.type
 		yield "event_name", self.name
 		yield "ip", self.ip

@@ -1,15 +1,15 @@
 {% macro paginationNav() %}
 <nav aria-label="Page navigation" id="pageNav" class="loaded">
 	<ul class="pagination justify-content-center mb-2">
-		<li class="page-item d-block page-prev" onclick="page.prev()" style="cursor: pointer;">
+		<li class="page-item d-block page-prev cursor-pointer" onclick="page.prev()">
 			<a class="page-link" aria-label="Previous">
 				<span aria-hidden="true">&laquo;</span>
 			</a>
 		</li>
-		<li class="pageEllipsis page-item" style="cursor: pointer;" display: none>
+		<li class="pageEllipsis page-item cursor-pointer d-none">
 			<a class="page-link">...</a>
 		</li>
-		<li class="page-item d-block page-next" onclick="page.next()" style="cursor: pointer;">
+		<li class="page-item d-block page-next cursor-pointer" onclick="page.next()">
 			<a class="page-link" aria-label="Next">
 				<span aria-hidden="true">&raquo;</span>
 			</a>
@@ -34,13 +34,13 @@ class Page {
 	updateNav() {
 		$("#pageNav .pageSelector").remove()
 		if (this.total > 15) {
-			$("#pageNav .pageEllipsis").show()
+			$("#pageNav .pageEllipsis").removeClass("d-none")
 		} else {
-			$("#pageNav .pageEllipsis").hide()
+			$("#pageNav .pageEllipsis").addClass("d-none")
 			for (let p = this.total; p > 0; p--) {
 				$("#pageNav .page-prev").after(`
-					<li class="pageSelector page-item ` + ((p == this.current) ? `active` : ``) + `"
-					onclick="page.switch(` + ((p == this.current) ? -1 : p) + `)" style="cursor: pointer;">
+					<li class="pageSelector page-item cursor-pointer ` + ((p == this.current) ? `active` : ``) + `"
+					onclick="page.switch(` + ((p == this.current) ? -1 : p) + `)">
 						<a class="page-link">` + p +`</a>
 					</li>
 				`)

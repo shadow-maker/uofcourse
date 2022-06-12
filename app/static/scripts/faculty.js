@@ -22,12 +22,11 @@ function updateSubjects() {
 		var item = $("#templates .subject-item").clone()
 
 		item.attr("id", "subject-" + subject.id)
-		item.attr("db-id", subject.id)
 	
 		item.find(".subject-link").attr("href", subject.url)
 		item.find(".subject-emoji").html("&#" + subject.emoji)
-		item.find(".subject-code").html(subject.code)
-		item.find(".subject-name").html(subject.name)
+		item.find(".subject-code").text(subject.code)
+		item.find(".subject-name").text(subject.name)
 
 		item.appendTo("#subjectsContainer")
 	}

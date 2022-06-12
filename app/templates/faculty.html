@@ -7,28 +7,47 @@
 <script src="/static/scripts/faculty.js"></script>
 {% endblock %}
 
+{% block styles %}
+<style>
+	@media (min-width: 768px) {
+		span.h1 {
+			margin-left: 1em;
+		}
+	}
+
+	#subjectsContainer .subject-code {
+		width: 4rem;
+	}
+</style>
+{% endblock %}
+
+{% block templates %}
+<!--Subject Item-->
+<div class="subject-item mb-3 card">
+	<a class="subject-link m-0 p-0 text-decoration-none text-body" href="">
+		<div class="card-body px-3 px-md-4 py-1 py-md-2">
+			<span class="h4 me-1 me-md-2 me-xl-3">
+				<span class="subject-emoji p-0 m-0 me-1 me-md-2"></span>
+				<span class="subject-code p-0 m-0 font-monospace fw-bold d-inline-block"></span>
+			</span>
+			<br class="d-sm-none">
+			<span class="subject-name p-0 m-0 h5"></span>
+		</div>
+	</a>
+</div>
+{% endblock %}
+
 {% block content %}
 
-<div id="templates" class="d-none">
-	<div class="subject-item mb-3 card">
-		<a class="subject-link m-0 p-0 text-decoration-none text-body" href="">
-			<div class="card-body px-3 px-md-4 py-1 py-md-2">
-				<span class="h4 me-1 me-md-2 me-xl-3">
-					<span class="subject-emoji p-0 m-0 me-1 me-md-2"></span>
-					<span class="subject-code p-0 m-0 font-monospace fw-bold d-inline-block" style="width:4rem;"></span>
-				</span>
-				<br class="d-sm-none">
-				<span class="subject-name p-0 m-0 h5"></span>
-			</div>
-		</a>
-	</div>
+<!--Faculty Code-->
+<div class="mb-2">
+	<span class="h3 font-monospace align-top">f/</span><span class="h3 align-middle font-monospace border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{% if faculty.subdomain %}{{faculty.subdomain}}{% else %}{{faculty.id}}{% endif %}</span>
+	<span class="align-bottom text-muted fs-6">(#{{faculty.id}})</span>
 </div>
 
 <!--Header-->
-<div class="mb-4 py-0 py-lg-3 py-xl-4">
-	<span class="h3 font-monospace">f/</span>
-	<span class="h1">{{faculty.name}}</span>
-	<span class="text-muted fs-6">(#{{faculty.id}})</span>
+<div class="row">
+	<h1 class="mt-2 mb-3 mb-lg-4">{{faculty.name}}</h1>
 </div>
 
 <div class="row mb-1 px-0 px-lg-3">
@@ -38,7 +57,7 @@
 			<div class="row mb-3 mt-0">
 				<!--Heading-->
 				<div class="col-12 col-sm-5 col-md-6 col-lg-12 col-xl-6 col-xxl-7 pe-0">
-					<h2 class="m-0">Faculty Subjects:</h2>
+					<h2 class="m-0">Subjects in this faculty</h2>
 				</div>
 
 				<!--Sorting options-->

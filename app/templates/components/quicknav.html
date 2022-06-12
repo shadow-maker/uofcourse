@@ -1,3 +1,4 @@
+{% macro quicknavHTML() %}
 <div id="quicknav" class="fixed-bottom d-flex justify-content-end p-3 p-md-4 p-xl-5" style="pointer-events: none; z-index: 1020;">
 	<nav class="d-flex flex-column pb-2" style="pointer-events: visible">
 		{% macro quickNavBtn(toggle, target, title, icon) %}
@@ -6,11 +7,13 @@
 		</a>
 		{% endmacro %}
 
-		{{quickNavBtn("offcanvas", "tagsDrawer", "Tags", "tags")}}
-		{{quickNavBtn("modal", "modalGoToCourse", "Go-To course", "search")}}
+		{{quickNavBtn("offcanvas", "tagsDrawer", "(T) Tags", "tags")}}
+		{{quickNavBtn("modal", "modalGoTo", "(G) Go-To", "search")}}
 	</nav>
 </div>
+{% endmacro %}
 
+{% macro quicknavStyles() %}
 <style>
 #quicknav a {
 	width: 3.8em;
@@ -40,16 +43,19 @@
 	box-shadow: 0 0.2rem 0.3rem rgba(0,0,0,.15) !important;
 }
 </style>
+{% endmacro %}
 
+{% macro quicknavScripts() %}
 <script>
 // On any key pressed (keyup)
 $(document).on("keyup", (e) => {
 	// If not in a form
 	if (!$("input").is(":focus") && !$("textarea").is(":focus")) {
 		if (e.key == "g")
-			$("#modalGoToCourse").modal("show")
+			$("#modalGoTo").modal("show")
 		else if (e.key == "t")
 			$("#tagsDrawer").offcanvas("show")
 	}
 })
 </script>
+{% endmacro %}
