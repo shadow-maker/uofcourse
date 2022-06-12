@@ -56,24 +56,29 @@
 						</a>
 					</li>
 				{% endif %}
-				<li title="Announcements">
-					<a class="nav-link position-relative {% if request.path == url_for('view.announcements') %}active{% endif %}" href="{{url_for('view.announcements')}}">
-						<i class="bi-bell-fill fs-5 lh-1 {% if current_user.unread_announcements %}text-primary{% endif %}"></i>
+				<li title="Announcements" class="d-flex align-items-end">
+					<a class="nav-link py-1 position-relative {% if request.path == url_for('view.announcements') %}active{% endif %}" href="{{url_for('view.announcements')}}">
+						<i class="bi-bell-fill fs-4 lh-1"></i>
+						{% if current_user.unread_announcements %}
+						<div class="position-absolute top-0 start-100 translate-middle lh-1 pe-4 pt-2">
+							<i class="bi-circle-fill text-danger p-0" style="font-size: 10px;"></i>
+						</div>
+						{% endif %}
 					</a>
 				</li>
 				{% if current_user.is_authenticated %}
-				<li class="py-1 py-md-0 px-1">
+				<li class="py-1 py-md-0 ps-2">
 					<a class="btn btn-outline-primary d-block" href="{{url_for('view.logout')}}">
 						Log Out
 					</a>
 				</li>
 				{% else %}
-				<li class="py-1 py-md-0 px-1">
+				<li class="py-1 py-md-0 ps-2">
 					<a class="btn btn-outline-info d-block" href="{{url_for('view.login')}}">
 						Log In
 					</a>
 				</li>
-				<li class="py-1 py-md-0 px-1">
+				<li class="py-1 py-md-0 ps-2">
 					<a class="btn btn-outline-primary d-block" href="{{url_for('view.signup')}}">
 						Sign Up
 					</a>
