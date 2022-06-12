@@ -1,12 +1,14 @@
-from app import app, db
+from app import app, db, ipcache, ipcache2
 from app.models import Role
 from app.auth import current_user
 from app.constants import SITE_NAME
 
 from flask import redirect, flash
 from flask.helpers import url_for
-from flask_admin import Admin, AdminIndexView
+from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
+
+from sys import getsizeof
 
 
 class IndexView(AdminIndexView):
@@ -19,6 +21,10 @@ class IndexView(AdminIndexView):
 			return redirect(url_for("view.home"))
 		flash(f"You need to log in first!", "warning")
 		return redirect(url_for("view.login"))
+
+	@expose("/")
+	def index(self):
+		return self.render("admin/index.html", len=len, getsizeof=getsizeof, ipcache=ipcache, ipcache2=ipcache2)
 
 
 class BaseModelView(ModelView):
