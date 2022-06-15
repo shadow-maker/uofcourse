@@ -1,11 +1,24 @@
 {% extends "layout.html" %}
 
+{% block styles %}
+<style>
+	#code .id {
+		opacity: 0;
+		transition-delay: 1s;
+	}
+	#code:hover .id {
+		opacity: 1;
+	}
+</style>
+{% endblock %}
+
 {% block content %}
 
 <!--Subject Code-->
-<div class="mb-2">
-	<span class="h3 font-monospace align-top">s/</span><span class="h3 align-middle font-monospace border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{{subject.code}}</span>
-	<span class="align-bottom text-muted fs-6">(#{{subject.id}})</span>
+<div id="code" class="mb-2">
+	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo" onclick="openGoTo('subject', '{{subject.code}}')">
+		<span class="align-top">s/</span><span class="border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{{subject.code}}</span></a>
+	<span class="id align-bottom text-muted">(#{{subject.id}})</span>
 </div>
 
 <div class="row mb-1">

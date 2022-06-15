@@ -9,9 +9,17 @@
 
 {% block styles %}
 <style>
+	#code .id {
+		opacity: 0;
+		transition-delay: 1s;
+	}
+	#code:hover .id {
+		opacity: 1;
+	}
+
 	@media (min-width: 768px) {
-		span.h1 {
-			margin-left: 1em;
+		h1 {
+			margin-left: 0.9em;
 		}
 	}
 
@@ -40,9 +48,11 @@
 {% block content %}
 
 <!--Faculty Code-->
-<div class="mb-2">
-	<span class="h3 font-monospace align-top">f/</span><span class="h3 align-middle font-monospace border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{% if faculty.subdomain %}{{faculty.subdomain}}{% else %}{{faculty.id}}{% endif %}</span>
-	<span class="align-bottom text-muted fs-6">(#{{faculty.id}})</span>
+<div id="code" class="mb-2">
+	{% set fac = faculty.subdomain if faculty.subdomain else faculty.id %}
+	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo" onclick="openGoTo('faculty', '', '', '{{fac}}')">
+		<span class="align-top">f/</span><span class="align-middle border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{{fac}}</span></a>
+	<span class="id align-bottom text-muted">(#{{faculty.id}})</span>
 </div>
 
 <!--Header-->
@@ -53,16 +63,16 @@
 <div class="row mb-1 px-0 px-lg-3">
 	<!--Faculty Subjects-->
 	<div class="order-2 order-lg-1 col-12 col-lg-7 col-xxl-8">
-		<div class="container px-0 px-md-4">
+		<div class="container ps-0 ps-md-4 ps-lg-5 pe-0 pe-md-4">
 			<div class="row mb-3 mt-0">
 				<!--Heading-->
-				<div class="col-12 col-sm-5 col-md-6 col-lg-12 col-xl-6 col-xxl-7 pe-0">
-					<h2 class="m-0">Subjects in this faculty</h2>
+				<div class="col-12 col-sm-4 col-md-6 col-lg-12 col-xl-5 col-xxl-7 pe-0">
+					<h2 class="m-0">Subjects</h2>
 				</div>
 
 				<!--Sorting options-->
-				<div id="subjectsSort" class="col-12 col-sm-7 col-md-6 col-lg-12 col-xl-6 col-xxl-5">
-					<div class="input-group input-group-sm mt-2 ps-0 ps-lg-3 ps-xl-0">
+				<div id="subjectsSort" class="col d-flex align-items-end">
+					<div class="input-group input-group-sm mt-2 mt-sm-0 mt-lg-2 mt-xl-0 ps-0">
 						<span class="input-group-text bg-light" title="Sort by">
 							<i class="bi-sort-down fw-bold"></i>
 						</span>
@@ -85,7 +95,7 @@
 			</div>
 			
 			<!--Subjects list-->
-			<div class="container ps-0 ps-sm-3 pe-0" id="subjectsContainer"></div>
+			<div class="container px-0" id="subjectsContainer"></div>
 		</div>
 	</div>
 

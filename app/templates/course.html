@@ -10,6 +10,18 @@
 <script src="/static/scripts/course.js"></script>
 {% endblock %}
 
+{% block styles %}
+<style>
+	#code .id {
+		opacity: 0;
+		transition-delay: 1s;
+	}
+	#code:hover .id {
+		opacity: 1;
+	}
+</style>
+{% endblock %}
+
 {% block templates %}
 <!--Course tag selected item-->
 <span class="tag-selected-item btn badge btn-secondary px-1 me-1 cursor-pointer" title="Click to remove tag">
@@ -39,16 +51,19 @@
 {% block content %}
 
 <!--Course Code-->
-<div class="mb-2">
-	<span class="h3 font-monospace align-top">c/</span><span class="h3 font-monospace my-0 mx-1"><span class="border border-2 border-secondary bg-light rounded p-1" title="Subject code">{{subject.code}}</span>-<span
-	class="border border-2 border-secondary bg-light rounded p-1" title="Course number">{{course.number}}</span></span>
-	<span class="align-bottom text-muted fs-6">(#{{course.id}})</span>
+<div id="code" class="mb-2">
+	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo" onclick="openGoTo('course', '{{subject.code}}', '{{course.number}}')">
+		<span class="align-top">c/</span><span class="my-0 mx-1"><span class="border border-2 border-secondary bg-light rounded p-1" title="Subject code">{{subject.code}}</span>-<span
+		class="border border-2 border-secondary bg-light rounded p-1" title="Course number">{{course.number}}</span></span></a>
+	<span class="id text-muted">(#{{course.id}})</span>
 </div>
 
 <div class="row mb-1">
 	<!--Course Header-->
 	<div class="col-12 col-md-7 col-lg-8 col-xl-9">
-		<h1 class="mt-2" title="Course name">&#{{course.emoji}} {{course.name}}</h1>
+		<h1 class="mt-2" title="Course name">
+			&#{{course.emoji}} {{course.name}}
+		</h1>
 
 		<div class="">
 			<h5 title="Faculty">

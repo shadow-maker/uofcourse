@@ -63,7 +63,7 @@
 							<!--Course number-->
 							<input type="text" id="gotoSelectCourse"
 								class="form-control form-control-lg px-2 py-0 fs-4 lh-1 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle"
-								maxlength="3" value="" placeholder="NUM" title="Course number" disabled
+								maxlength="3" value="" placeholder="NUM" title="Course number"
 								autocomplete="off">
 
 							<!--Course exists status-->
@@ -245,16 +245,14 @@
 		})
 	}
 
-	//
-	// EVENTS
-	//
+	function openGoTo(type="course", s="", c="", f="") {
+		// modalGoTo.modal("show")
 
-	// On modal starts to show
-	$("#modalGoTo").on("show.bs.modal", () => {
-		gotoSwitch("course")
+		gotoSwitch(type)
 
-		// Clear form inputs
-		formGoTo.find("input").val("")
+		$("#gotoSelectSubject").val(s)
+		$("#gotoSelectCourse").val(c)
+		$("#gotoSelectFaculty").val(f)
 
 		// Hide status and feedback
 		formGoTo.find("#gotoStatus").children("span").hide()
@@ -262,12 +260,23 @@
 
 		// Disable submit button
 		formGoTo.find(".submit").prop("disabled", true)
+	}
+
+	//
+	// EVENTS
+	//
+
+	// On modal starts to show
+	$("#modalGoTo").on("show.bs.modal", () => {
+		openGoTo()
 	})
 
 	// On modal is shown
 	$("#modalGoTo").on("shown.bs.modal", () => {
 		// Move focus to subject selection when modal is shown
-		if (gotoType == "course" || gotoType == "subject")
+		if (gotoType == "course" && $("#gotoSelectSubject").val().length >= $("#gotoSelectSubject").attr("minLength"))
+			$("#gotoSelectCourse").focus()
+		else if (gotoType == "course" || gotoType == "subject")
 			formGoTo.find("#gotoSelectSubject").focus()
 		else if (gotoType == "faculty")
 			formGoTo.find("#gotoSelectFaculty").focus()
