@@ -1,4 +1,4 @@
-from app import app, db, ipcache, ipcache2
+from app import app, db, ipcache
 from app.models import Role
 from app.auth import current_user
 from app.constants import SITE_NAME
@@ -24,7 +24,7 @@ class IndexView(AdminIndexView):
 
 	@expose("/")
 	def index(self):
-		return self.render("admin/index.html", len=len, getsizeof=getsizeof, ipcache=ipcache, ipcache2=ipcache2)
+		return self.render("admin/index.html", len=len, getsizeof=getsizeof, ipcache=ipcache)
 
 
 class BaseModelView(ModelView):

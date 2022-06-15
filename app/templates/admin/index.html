@@ -8,13 +8,12 @@
 </div>
 
 <div>
-	<div>Ammount of IP addresses cached: {{len(ipcache2)}}</div>
+	<div>Ammount of IP addresses cached: {{len(ipcache)}}</div>
 	<div>Mem size of ipcache: {{getsizeof(ipcache)}}</div>
-	<div>Mem size of ipcache2: {{getsizeof(ipcache2)}}</div>
 	<br>
 	<div class="h6">IP addresses cached:</div>
 	<ul>
-	{% for ip in ipcache2 %}
+	{% for ip in ipcache %}
 		<li>{{ip}}</li>
 	{% endfor %}
 	</ul>

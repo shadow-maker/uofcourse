@@ -1,4 +1,4 @@
-from app import db, ipcache, ipcache2
+from app import db, ipcache
 from app.localdt import utc, local
 
 from flask import request
@@ -43,8 +43,9 @@ class UserLog(db.Model):
 
 	@property
 	def location(self):
-		data = ipcache.get(self.ip)
-		if data is None:
+		if self.ip in ipcache:
+			return ipcache[self.ip]
+		else:
 			r = requests.get("http://ip-api.com/json/" + self.ip)
 			print(dir(r))
 			if r.status_code == 200:
@@ -53,9 +54,8 @@ class UserLog(db.Model):
 					data["gmaps"] = f"https://www.google.com/maps/place/{data['lat']},{data['lon']}"
 			else:
 				data = {"message": f"Could not get IP location ({r.status_code} {r.reason})"}
-		ipcache.set(self.ip, data)
-		ipcache2[self.ip] = data
-		return data
+			ipcache[self.ip] = data
+			return data
 	
 	def __init__(self, user_id, event, ip=None):
 		self.user_id = user_id
