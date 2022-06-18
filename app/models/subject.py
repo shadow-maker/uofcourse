@@ -11,6 +11,8 @@ class Subject(db.Model):
 	name = db.Column(db.String(64))
 	emoji = db.Column(db.Integer, nullable=True, unique=False)
 	site = db.Column(db.String(64))
+	calversion = db.Column(db.String(16), default="current/")
+	old = db.Column(db.Boolean, nullable=False, default=False)
 
 	courses = db.relationship("Course", backref="subject")
 
@@ -20,7 +22,7 @@ class Subject(db.Model):
 	
 	@property
 	def url_uni(self):
-		return UNI_CAL_URL + self.site if self.site else None
+		return UNI_CAL_URL + self.calversion + self.site if self.site else None
 
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:

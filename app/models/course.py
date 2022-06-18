@@ -1,6 +1,6 @@
 from app import db
 from app.models import Subject
-from app.constants import DEFAULT_EMOJI
+from app.constants import UNI_CAL_URL, UNI_CAL_VERSIONS, DEFAULT_EMOJI
 
 from flask.helpers import url_for
 from sqlalchemy import select, cast, func
@@ -23,6 +23,8 @@ class Course(db.Model):
 	repeat = db.Column(db.Boolean, nullable=False, default=False)
 	countgpa = db.Column(db.Boolean, nullable=False, default=True)
 	subsite = db.Column(db.String(32))
+	calversion = db.Column(db.String(16), default="current/")
+	old = db.Column(db.Boolean, nullable=False, default=False)
 
 	collectionCourses = db.relationship("CollectionCourse", backref="course")
 
@@ -64,9 +66,12 @@ class Course(db.Model):
 
 	@property
 	def url_uni(self):
-		if self.subsite:
-			return self.subject.url_uni + "#" + self.subsite
-		return self.subject.url_uni
+		if self.subject.site:
+			url = UNI_CAL_URL + self.calversion + self.subject.site
+			if self.subsite:
+				url += "#" + self.subsite
+			return url
+		return None
 
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:

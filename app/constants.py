@@ -14,8 +14,25 @@ TIMEZONE = "Canada/Mountain"
 #
 
 UNI_URL = "https://www.ucalgary.ca"
-UNI_CAL_URL = "https://www.ucalgary.ca/pubs/calendar/current/"
+UNI_CAL_URL = "https://www.ucalgary.ca/pubs/calendar/"
 REDDIT_URL = "https://www.reddit.com/r/UCalgary/"
+
+UNI_CAL_VERSIONS = [
+	"archives/2009/",
+	"archives/2010/",
+	"archives/2011/",
+	"archives/2012/",
+	"archives/2013/",
+	"archives/2014/",
+	"archives/2015/",
+	"archives/2016/",
+	"archives/2017/",
+	"archives/2018/",
+	"archives/2019/",
+	"archives/2020/",
+	"archives/2021/",
+	"current/"
+]
 
 #
 # OTHER
