@@ -13,7 +13,7 @@ course = Blueprint("courses", __name__, url_prefix="/courses")
 #
 
 @course.route("", methods=["GET"])
-def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat=None, countgpa=None):
+def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat=None, countgpa=None, old=None):
 	# Parse name search query
 	try:
 		if not name:
@@ -75,9 +75,9 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 		return {"error": "Could not parse subjects, invalid format"}, 400
 
 	# Parse repeat
-	if repeat == None:
+	if repeat is None:
 		repeat = request.args.get("repeat", type=str)
-	if repeat != None:
+	if repeat is not None:
 		if type(repeat) == str:
 			repeat = repeat.lower()
 		if type(repeat) != bool and repeat not in ["true", "1", "false", "0"]:
@@ -85,14 +85,24 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 		repeat = repeat in [True, "true", "1"]
 
 	# Parse countgpa
-	if countgpa == None:
+	if countgpa is None:
 		countgpa = request.args.get("countgpa", type=str)
-	if countgpa != None:
+	if countgpa is not None:
 		if type(countgpa) == str:
 			countgpa = countgpa.lower()
 		if type(countgpa) != bool and countgpa not in ["true", "1", "false", "0"]:
 			return {"error": f"'{countgpa}' is not a valid value for countgpa (boolean)"}, 400
 		countgpa = countgpa in [True, "true", "1"]
+
+	# Parse old
+	if old is None:
+		old = request.args.get("old", type=str)
+	if old is not None:
+		if type(old) == str:
+			old = old.lower()
+		if type(old) != bool and old not in ["true", "1", "false", "0"]:
+			return {"error": f"'{old}' is not a valid value for countgpa (boolean)"}, 400
+		old = old in [True, "true", "1"]
 	
 	# Filters
 	filters = [
@@ -103,10 +113,12 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 		filters.append(Course.number.in_(numbers))
 	if levels:
 		filters.append(Course.level.in_(levels))
-	if repeat != None:
+	if repeat is not None:
 		filters.append(Course.repeat == repeat)
-	if countgpa != None:
+	if countgpa is not None:
 		filters.append(Course.countgpa == countgpa)
+	if old is not None:
+		filters.append(Course.old == old)
 
 	# Serializer function to convert a Course object into a JSON-serializable dictionary
 	def serializer(course):

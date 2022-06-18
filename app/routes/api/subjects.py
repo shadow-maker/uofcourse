@@ -13,7 +13,7 @@ subject = Blueprint("subjects", __name__, url_prefix="/subjects")
 
 
 @subject.route("", methods=["GET"])
-def getSubjects(name="", faculties=[]):
+def getSubjects(name="", faculties=[], old=None):
 	# Parse name search query
 	try:
 		if not name:
@@ -31,6 +31,16 @@ def getSubjects(name="", faculties=[]):
 				return {"error": f"Invalid faculty {f}"}, 400
 	except:
 		return {"error": "Could not parse faculties, invalid format"}, 400
+
+	# Parse old
+	if old is None:
+		old = request.args.get("old", type=str)
+	if old is not None:
+		if type(old) == str:
+			old = old.lower()
+		if type(old) != bool and old not in ["true", "1", "false", "0"]:
+			return {"error": f"'{old}' is not a valid value for countgpa (boolean)"}, 400
+		old = old in [True, "true", "1"]
 	
 	# Filters
 	filters = [
@@ -38,6 +48,8 @@ def getSubjects(name="", faculties=[]):
 	]
 	if faculties:
 		filters.append(Subject.faculty_id.in_(faculties))
+	if old is not None:
+		filters.append(Subject.old == old)
 	
 	# Get results
 	return getAll(Subject, tuple(filters))

@@ -59,3 +59,4 @@ class Subject(db.Model):
 		yield "emoji", self.emoji
 		yield "url", self.url
 		yield "url_uni", self.url_uni
+		yield "old", self.old

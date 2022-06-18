@@ -118,3 +118,4 @@ class Course(db.Model):
 		yield "countgpa", self.countgpa
 		yield "url", self.url
 		yield "url_uni", self.url_uni
+		yield "old", self.old
