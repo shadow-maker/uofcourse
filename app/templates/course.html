@@ -134,8 +134,25 @@
 <div class="row">
 	<!--LEFT-->
 	<div class="order-2 order-sm-1 col-12 col-sm-6 col-md-7 col-lg-8 col-xl-9 pe-0">
+
 		<!--Course Info-->
 		<div class="container p-0 ps-lg-4 row mb-4">
+			{% if course.old %}
+			<div class="p-2 pe-0 pe-md-2">
+				<div class="alert alert-warning m-0">
+					<span class="h5 m-0 pe-2">
+						<i class="bi-exclamation-triangle-fill"></i>
+						Old course
+					</span>
+					<br class="d-lg-none">
+					<span class="">
+						<!-- This course was last updated on {{course.latestCalendar().version.replace("archives", "").replace("/", "")}} and has been removed from the calendar since. -->
+						This course was removed from the calendar after the {{course.latestCalendar().schoolyear}} school year.
+					</span>
+				</div>
+			</div>
+			{% endif %}
+			
 			{% macro textCard(title, content, tooltip) %}
 			<div class="col-12 col-lg-6 p-2 pe-0 pe-md-2">
 				<div class="card h-100">

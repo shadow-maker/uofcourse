@@ -14,6 +14,7 @@ class Season(Enum):
 class Term(db.Model):
 	__tablename__ = "term"
 	id = db.Column(db.Integer, primary_key=True)
+	calendar_id = db.Column(db.Integer, db.ForeignKey("calendar.id"))
 	season = db.Column(db.Enum(Season), nullable=False)
 	year = db.Column(db.Integer, nullable=False)
 	start = db.Column(db.Date)

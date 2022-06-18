@@ -1,6 +1,6 @@
 from app import db
 from app.models import Subject
-from app.constants import UNI_CAL_URL, UNI_CAL_VERSIONS, DEFAULT_EMOJI
+from app.constants import DEFAULT_EMOJI
 
 from flask.helpers import url_for
 from sqlalchemy import select, cast, func
@@ -23,7 +23,6 @@ class Course(db.Model):
 	repeat = db.Column(db.Boolean, nullable=False, default=False)
 	countgpa = db.Column(db.Boolean, nullable=False, default=True)
 	subsite = db.Column(db.String(32))
-	calversion = db.Column(db.String(16), default="current/")
 	old = db.Column(db.Boolean, nullable=False, default=False)
 
 	collectionCourses = db.relationship("CollectionCourse", backref="course")
@@ -60,6 +59,9 @@ class Course(db.Model):
 	def level(cls):
 		return func.floor(cls.number / 100) # This might only work in MySQL and PostgreSQL
 
+	def latestCalendar(self):
+		return sorted(self.calendars, key=lambda cal: cal.year, reverse=True)[0]
+
 	@property
 	def url(self):
 		return url_for("view.course", subjectCode=self.subject.code, courseNumber=self.number)
@@ -67,7 +69,7 @@ class Course(db.Model):
 	@property
 	def url_uni(self):
 		if self.subject.site:
-			url = UNI_CAL_URL + self.calversion + self.subject.site
+			url = self.latestCalendar().url + self.subject.site
 			if self.subsite:
 				url += "#" + self.subsite
 			return url

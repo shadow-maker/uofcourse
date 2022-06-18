@@ -1,6 +1,5 @@
 from . import TIMEOUT, prints
-from app.constants import UNI_CAL_URL, UNI_CAL_VERSIONS
-from app.models import db, Faculty, Subject, Course
+from app.models import db, Calendar, Faculty, Subject, Course
 
 from bs4 import BeautifulSoup
 import requests
@@ -22,10 +21,10 @@ facultyMaps = {
 def update():
 	facURL = "course-by-faculty.html"
 
-	for vIndex, version in enumerate(UNI_CAL_VERSIONS):
-		print("\nGETTING FACULTY SUBJECTS FROM CALENDAR VERSION: " + version)
+	for calendar in Calendar.query.order_by(Calendar.year).all():
+		print("\nGETTING FACULTY SUBJECTS FROM CALENDAR VERSION: " +  calendar.version)
 
-		url = UNI_CAL_URL + version + facURL
+		url = calendar.url + facURL
 
 		# Request page
 		try:
@@ -75,13 +74,13 @@ def update():
 
 				# Request Subject page
 				try:
-					r = requests.get(UNI_CAL_URL + version + url, timeout=TIMEOUT)
+					r = requests.get(calendar.url + url, timeout=TIMEOUT)
 					if r.status_code != 200:
 						raise requests.exceptions.RequestException()
 				except requests.exceptions.RequestException:
 					# In case normal page does not work, request print page
 					try:
-						r = requests.get(UNI_CAL_URL + version + "print_" + url, timeout=TIMEOUT)
+						r = requests.get(calendar.url + "print_" + url, timeout=TIMEOUT)
 						if r.status_code != 200:
 							raise requests.exceptions.RequestException()
 					except requests.exceptions.RequestException:
@@ -108,13 +107,14 @@ def update():
 					if subject.site != url:
 						prints(4, f"- site does not match: (db) {subject.site} != {url}, updating...")
 						subject.site = url
-					subject.calversion = version
-					subject.old = vIndex < len(UNI_CAL_VERSIONS) - 1
+					if calendar not in subject.calendars:
+						subject.calendars.append(calendar)
+					subject.old =  calendar.version != "current/"
 				else: # Create new Subject
 					prints(0, "creating row...")
 					subject = Subject(faculty.id, code, name, url)
-					subject.calversion = version
-					subject.old = vIndex < len(UNI_CAL_VERSIONS) - 1
+					subject.calendars.append(calendar)
+					subject.old =  calendar.version != "current/"
 					db.session.add(subject)
 				db.session.commit()
 				
@@ -238,8 +238,9 @@ def update():
 						if course.subsite != subsite:
 							prints(6, f"- subsite does not match: (db) {course.subsite} != {subsite}, updating...")
 							course.subsite = subsite
-						course.calversion = version
-						course.old = vIndex < len(UNI_CAL_VERSIONS) - 1
+						if calendar not in course.calendars:
+							course.calendars.append(calendar)
+						course.old =  calendar.version != "current/"
 					else: # Create new course
 						prints(0, "creating row...")
 						course = Course(subject.id, number, name, units)
@@ -252,7 +253,7 @@ def update():
 						course.repeat = repeat
 						course.countgpa = countgpa
 						course.subsite = subsite
-						course.calversion = version
-						course.old = vIndex < len(UNI_CAL_VERSIONS) - 1
+						course.calendars.append(calendar)
+						course.old =  calendar.version != "current/"
 						db.session.add(course)
 					db.session.commit()

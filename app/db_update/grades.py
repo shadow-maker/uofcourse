@@ -1,6 +1,6 @@
 from . import TIMEOUT
-from app.constants import UNI_CAL_URL, UNI_CAL_VERSIONS
-from app.models import db, Grade
+from app import db
+from app.models import Grade, Calendar
 from bs4 import BeautifulSoup
 import requests
 import sys
@@ -8,9 +8,11 @@ import sys
 def update():
 	url = "f-1-1.html"
 
+	calendar = Calendar.getLatest()
+
 	# Request page
 	try:
-		r = requests.get(UNI_CAL_URL + UNI_CAL_VERSIONS[-1] + url, timeout=TIMEOUT)
+		r = requests.get(calendar.url + url, timeout=TIMEOUT)
 	except requests.exceptions.RequestException:
 		sys.exit(f"FAILED REQUEST FOR GRADE SYSTEM PAGE ({url})")
 	soup = BeautifulSoup(r.text, features="html.parser")

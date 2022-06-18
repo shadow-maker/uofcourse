@@ -69,6 +69,7 @@ from app.routes.admin.grade import GradeModelView
 from app.routes.admin.faculty import FacultyModelView
 from app.routes.admin.subject import SubjectModelView
 from app.routes.admin.course import CourseModelView
+from app.routes.admin.calendar import CalendarModelView
 from app.routes.admin.term import TermModelView
 
 admin.add_views(
@@ -79,5 +80,6 @@ admin.add_views(
 	FacultyModelView(),
 	SubjectModelView(),
 	CourseModelView(),
+	CalendarModelView(),
 	TermModelView()
 )

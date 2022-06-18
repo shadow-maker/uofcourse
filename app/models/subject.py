@@ -1,5 +1,5 @@
 from app import db
-from app.constants import UNI_CAL_URL, DEFAULT_EMOJI
+from app.constants import DEFAULT_EMOJI
 
 from flask.helpers import url_for
 
@@ -11,18 +11,20 @@ class Subject(db.Model):
 	name = db.Column(db.String(64))
 	emoji = db.Column(db.Integer, nullable=True, unique=False)
 	site = db.Column(db.String(64))
-	calversion = db.Column(db.String(16), default="current/")
 	old = db.Column(db.Boolean, nullable=False, default=False)
 
 	courses = db.relationship("Course", backref="subject")
 
+	def latestCalendar(self):
+		return sorted(self.calendars, key=lambda cal: cal.year, reverse=True)[0]
+
 	@property
 	def url(self):
 		return url_for("view.subject", subjectCode=self.code)
-	
+
 	@property
 	def url_uni(self):
-		return UNI_CAL_URL + self.calversion + self.site if self.site else None
+		return self.latestCalendar().url + self.site if self.site else None
 
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
