@@ -88,6 +88,7 @@ function requestResults(callback) {
 	
 	let repeat = JSON.parse($('input[name=repeat]:checked', '#formFilterCourses').val())
 	let countgpa = JSON.parse($('input[name=countgpa]:checked', '#formFilterCourses').val())
+	let old = JSON.parse($('input[name=old]:checked', '#formFilterCourses').val())
 	
 	let data = {
 		sort: sortOptions[$("#sortBy").val()].value,
@@ -106,6 +107,8 @@ function requestResults(callback) {
 		data.repeat = repeat
 	if (countgpa != null)
 		data.countgpa = countgpa
+	if (old != null)
+		data.old = old
 
 	if (JSON.stringify(data) == JSON.stringify(prevQuery))
 		return

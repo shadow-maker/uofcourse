@@ -133,6 +133,36 @@
 						<h5 class="card-title">Filter results</h5>
 						<!--Extra filters-->
 						<fieldset class="form-group">
+							<!--Old-->
+							<div class="row">
+								<div class="col-5 col-sm-12 col-xxl-5 pe-0">
+									<small>Old course</small>
+								</div>
+								<div class="col ps-0 ps-sm-2 ps-xxl-0 text-end text-sm-start text-xxl-end">
+									<div class="form-check form-check-inline me-1 px-0">
+										<input class="form-check-input mx-1" type="radio" name="old"
+											id="oldTrue" value="true">
+										<label class="form-check-label" for="oldTrue">
+											<small>Yes</small>
+										</label>
+									</div>
+									<div class="form-check form-check-inline me-1 px-0">
+										<input class="form-check-input mx-1" type="radio" name="old"
+											id="oldFalse" value="false" checked>
+										<label class="form-check-label" for="oldFalse">
+											<small>No</small>
+										</label>
+									</div>
+									<div class="form-check form-check-inline me-1 px-0">
+										<input class="form-check-input mx-1" type="radio" name="old"
+											id="oldNull" value="null">
+										<label class="form-check-label" for="oldNull">
+											<small>Any</small>
+										</label>
+									</div>
+								</div>
+							</div>
+							<!--Repeat for credit-->
 							<div class="row">
 								<div class="col-5 col-sm-12 col-xxl-5 pe-0">
 									<small>Repeat for credit</small>
@@ -161,6 +191,7 @@
 									</div>
 								</div>
 							</div>
+							<!--Included in GPA-->
 							<div class="row">
 								<div class="col-5 col-sm-12 col-xxl-5 pe-0">
 									<small>Included in GPA</small>
