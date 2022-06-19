@@ -148,30 +148,20 @@
 	// REQUEST FUNCS
 	//
 
-	function requestTag(subpath, method, data, callback) {
-		$.ajax({
-			url: "/api/me/tags" + subpath,
-			method: method,
-			data: data,
-			success: callback,
-			error: displayError
-		})
-	}
-
 	function requestEditTag(id, data, callback) {
-		requestTag("/" + id, "PUT", data, callback)
+		ajax("PUT", "me/tags/" + id, data, callback)
 	}
 
 	function requestDeleteTag(id, callback) {
-		requestTag("/" + id, "DELETE", {}, callback)
+		ajax("DELETE", "me/tags/" + id, {}, callback)
 	}
 
 	function requestTagCourses(id, callback) {
-		requestTag("/" + id + "/courses", "GET", {}, callback)
+		ajax("GET", "me/tags/" + id + "/courses", {}, callback)
 	}
 
 	function requestToggleTag(tagId, courseId) {
-		requestTag("/" + tagId + "/course/" + courseId, "PUT", {}, (response) => {
+		ajax("PUT", "me/tags/" + tagId + "/courses/" + courseId, {}, (response) => {
 			alert("success", response.success)
 			if ($("#tagsDrawer").hasClass("show"))
 				loadTagsDrawer()
@@ -364,7 +354,7 @@
 		function checkCompleted() {
 			completed++
 			if (completed == $("#modalEditTags .tag-edit-item").length) {
-				requestTag("", "GET", {}, (data) => {
+				ajax("GET", "me/tags", {}, (data) => {
 					tags = data.tags
 					if ($("#tagsDrawer").hasClass("show"))
 						loadTagsDrawer()
@@ -415,7 +405,7 @@
 					alert("warning", "Tag name must be at most 16 characters long")
 					checkCompleted();
 				} else {
-					requestTag("", "POST", data, (response) => {
+					ajax("POST", "me/tags", data, (response) => {
 						alert("success", response.success)
 						checkCompleted();
 					})
@@ -435,7 +425,7 @@
 			if (!isAuth) {
 				tags = []
 			} else {
-				requestTag("", "GET", {}, (data) => {
+				ajax("GET", "me/tags", {}, (data) => {
 					tags = data.tags
 					tagsCallback()
 				})

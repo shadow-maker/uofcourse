@@ -111,7 +111,7 @@ def getCourseCollections(id):
 @me_collection.route("", methods=["POST"])
 def postCollection(data={}):
 	if not data:
-		data = request.form.to_dict()
+		data = request.json
 		if not data:
 			return {"error": "no data provided"}, 400
 

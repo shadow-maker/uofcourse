@@ -44,10 +44,10 @@ def getCourseTags(id):
 @me_tag.route("", methods=["POST"])
 def addTag(data={}):
 	if not data:
-		data = request.form.to_dict()
+		data = request.json
 		if not data:
 			return {"error": "no data provided"}, 400
-	
+
 	if "name" not in data:
 		return {"error": "no Tag name provided in data"}, 400
 	if len(data["name"]) < 3:
@@ -85,7 +85,7 @@ def addTag(data={}):
 @me_tag.route("/<id>", methods=["PUT"])
 def putTag(id, data={}):
 	if not data:
-		data = request.form.to_dict()
+		data = request.json
 	
 	tag = Tag.query.filter_by(id=id, user_id=current_user.id).first()
 	if not tag:

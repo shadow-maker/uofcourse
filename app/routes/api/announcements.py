@@ -22,14 +22,6 @@ def getAnnouncements():
 def getAnnouncement(id):
 	return getById(Announcement, id)
 
-@announcement.route("/<id>/read", methods=["GET"])
-@login_required
-def getAnnouncementRead(id):
-	a = Announcement.query.get(id)
-	if not a:
-		return {"error": f"Announcement with id {id} does not exist"}, 404
-	return {"read": a in current_user.read_announcements}, 200
-
 #
 # PUT
 #
@@ -41,14 +33,13 @@ def putAnnouncementRead(id, set=None):
 	if not a:
 		return {"error": f"Announcement with id {id} does not exist"}, 404
 	if set is None:
-		data = request.form.to_dict()
+		data = request.json
 		if not "set" in data:
 			set = False
+		elif data["set"] not in [True, False]:
+			return {"error": "invalid 'set' value in data"}, 400
 		else:
-			try:
-				set = bool(json.loads(data["set"]))
-			except:
-				return {"error": "invalid 'set' value in data"}, 400
+			set = data["set"]
 	try:
 		if set == True:
 			current_user.read_announcements.append(a)

@@ -7,7 +7,7 @@ me = Blueprint("me", __name__, url_prefix="/me")
 
 @me.before_request
 @login_required
-def before_request():
+def meBeforeRequest():
 	pass
 
 from app.routes.api.me.main import *

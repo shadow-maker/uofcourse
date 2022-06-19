@@ -1,3 +1,4 @@
+import re
 from app.models import Subject
 from app.routes.views import view
 
@@ -18,6 +19,7 @@ def subject(subjectCode):
 		title = subjectCode.upper(),
 		description = f"Subject info for {subject.code} : {subject.name}",
 		subject = subject,
+		calendars = sorted(subject.calendars, key=lambda cal: cal.year, reverse=True),
 		faculty = faculty,
 		lenCourses = len(subject.courses)
 	)

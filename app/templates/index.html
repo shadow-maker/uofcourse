@@ -205,16 +205,8 @@
 {% block tailscripts %}
 <script>
 	$("#welcome").on("click", (e) => {
-		$.ajax({
-			url: "/api/me/sessions/welcome",
-			method: "PUT",
-			success: (response) => {
-				if (response.success)
-					$("#welcome").remove()
-			},
-			error: (response) => {
-				displayError(response)
-			}
+		ajax("PUT", "me/sessions/welcome", {set: false}, () => {
+			$("#welcome").remove()
 		})
 	})
 </script>

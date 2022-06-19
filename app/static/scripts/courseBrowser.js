@@ -33,16 +33,11 @@ function checkAll(container) {
 //
 
 function requestCourseTags(id, callback) {
-	requestTag("/course/" + id, "GET", {}, callback)
+	ajax("GET", "me/tags/course/" + id, {}, callback)
 }
 
 function requestCollections(id, callback) {
-	$.ajax({
-		url: "/api/me/collections/course/" + id,
-		method: "GET",
-		success: callback,
-		error: displayError
-	})
+	ajax("GET", "me/collections/course/" + id, {}, callback)
 }
 
 function requestResults(callback) {
@@ -118,21 +113,11 @@ function requestResults(callback) {
 	$(".loading").show()
 	$(".loaded").hide()
 
-	$.ajax({
-		url: "/api/courses",
-		method: "GET",
-		data: data,
-		traditional: true,
-		success: callback,
-		error: (response) => {
-			$(".loading").hide()
-			displayError(response)
-		}
-	})
+	ajax("GET", "courses", data, callback, displayError, () => {$(".loading").hide()})
 }
 
 function toggleCourseTag(courseId, tagId) {
-	requestTag("/" + tagId +"/course/" + courseId, "PUT", {}, (response) => {
+	ajax("PUT", "me/tags/" + tagId + "/course/" + courseId, {}, (response) => {
 		alert("success", response.success)
 		let course = coursesData.find(c => c.id == courseId)
 		requestCourseTags(courseId, (data) => {
@@ -143,23 +128,20 @@ function toggleCourseTag(courseId, tagId) {
 }
 
 function addCollection(courseId, collectionId) {
-	$.ajax({
-		url: "/api/me/courses",
-		method: "POST",
-		data: {
+	ajax("POST", "me/courses",
+		{
 			course_id: courseId,
 			collection_id: collectionId
 		},
-		success: (response) => {
+		(response) => {
 			alert("success", "Added Course to Term")
 			let course = coursesData.find(c => c.id == courseId)
 			requestCollections(courseId, (data) => {
 				course.collections = data.collections.map(c => c.id)
 				updateCollections(courseId)
-			})
-		},
-		error: displayError
-	})
+			})	
+		}
+	)
 }
 
 //
@@ -167,7 +149,6 @@ function addCollection(courseId, collectionId) {
 //
 
 function updateResults(data) {
-	$(".loading").hide()
 	$(".loaded").show()
 
 	$("#coursesContainer").empty()

@@ -50,38 +50,23 @@ function formatTime(date) {
 // 
 
 function getAnnouncements(callback) {
-	$.ajax({
-		url: "/api/announcements",
-		method: "GET",
-		data: {
+	ajax("GET", "announcements",
+		{
 			sort: sortOptions[$("#sortBy").val()].value,
 			asc: $("#orderBy").val(),
 			limit: 10,
 			page: page.current
 		},
-		traditional: true,
-		success: callback,
-		error: displayError
-	})
+		callback
+	)
 }
 
 function getAnnouncement(id, callback) {
-	$.ajax({
-		url: "/api/announcements/" + id,
-		method: "GET",
-		success: callback,
-		error: displayError
-	})
+	ajax("GET", "announcements/" + id, {}, callback)
 }
 
 function putRead(id, set, callback) {
-	$.ajax({
-		url: "/api/announcements/" + id + "/read",
-		method: "PUT",
-		data: {set: set},
-		success: callback,
-		error: displayError
-	})
+	ajax("PUT", "announcements/" + id + "/read", {set: set}, callback)
 }
 //
 // UPDATE FUNCS

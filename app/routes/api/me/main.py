@@ -31,7 +31,7 @@ def getProgress():
 def putUnitsNeeded(unitsNeeded=None):
 	if unitsNeeded is None:
 		try:
-			unitsNeeded = float(request.form.get("units_needed"))
+			unitsNeeded = float(request.json["units_needed"])
 		except:
 			return {"error": "invalid units_needed value"}, 400
 	try:

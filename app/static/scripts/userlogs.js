@@ -15,35 +15,23 @@ function getLogs(callback) {
 	$("#logs .loading").show()
 	$("#logs .loaded").hide()
 
-	$.ajax({
-		url: "/api/me/logs",
-		method: "GET",
-		data: {
+	ajax("GET", "me/logs",
+		{
 			sort: ["datetime"],
 			asc: false,
 			limit: 15,
 			page: page.current
 		},
-		traditional: true,
-    success: callback,
-		error: (response) => {
-			$(".loading").hide()
-			displayError(response)
+		callback,
+		displayError,
+		() => {
+			$("#logs .loading").hide()
 		}
-	})
+	)
 }
 
 function getLocation(id, callback) {
-	$.ajax({
-		url: "/api/me/logs/" + id + "/location",
-		method: "GET",
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
-	})
+	ajax("GET", "me/logs/" + id + "/location", {}, callback)
 }
 
 //

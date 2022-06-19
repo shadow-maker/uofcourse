@@ -3,49 +3,35 @@
 //
 
 function requestCourseTags(callback) {
-	requestTag("/course/" + course_id, "GET", {}, callback)
+	ajax("GET", "me/tags/course/" + course_id, {}, callback)
 }
 
 function requestCollectionCourses(callback) {
-	$.ajax({
-		url: "/api/me/courses/course/" + course_id,
-		method: "GET",
-		success: callback,
-		error: displayError
-	})
+	ajax("GET", "me/courses/course/" + course_id, {}, callback)
 }
 
 function requestCollectionTerm(id, callback) {
-	$.ajax({
-		url: "/api/me/collections/" + id + "/term",
-		method: "GET",
-		success: callback,
-		error: displayError
-	})
+	ajax("GET", "me/collections/" + id + "/term", {}, callback)
 }
 
 function toggleTag(id) {
-	requestTag("/" + id + "/course/" + course_id, "PUT", {}, (data) => {
+	ajax("PUT", "me/tags/" + id + "/course/" + course_id, {}, (data) => {
 		alert("success", data.success)
 		updateTags()
 	})
 }
 
 function addCollection(id) {
-	console.log("Adding to collection " + id)
-	$.ajax({
-		url: "/api/me/courses",
-		method: "POST",
-		data: {
+	ajax("POST", "me/courses",
+		{
 			course_id: course_id,
 			collection_id: id
 		},
-		success: (response) => {
+		(response) => {
 			alert("success", "Added Course to Term")
 			updateCollections()
-		},
-		error: displayError
-	})
+		}
+	)
 }
 
 //

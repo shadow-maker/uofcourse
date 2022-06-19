@@ -22,21 +22,33 @@ const formEdit = $("#formEditCollectionCourse")
 //
 
 function transferredShow() {
-	showTransferred = true
-	putTransferred(true, () => {
+	let callback = () => {
 		$(".transfer").removeClass("d-none")
 		$("#transfer-collapsed").addClass("d-none")
-	})
+	}
+
+	if (!showTransferred) {
+		showTransferred = true
+		putTransferred(showTransferred, callback)
+	} else {
+		callback()
+	}
 }
 
 function transferredHide() {
-	showTransferred = false
-	putTransferred(false, () => {
+	let callback = () => {
 		$(".transfer").addClass("d-none")
 		$("#transfer-collapsed").removeClass("d-none")
 		$(".transfer").find(".countInGPA").prop("checked", false)
 		updateOverallGPA()
-	})
+	}
+
+	if (showTransferred) {
+		showTransferred = false
+		putTransferred(showTransferred, callback)
+	} else {
+		callback()
+	}
 }
 
 // Check course funcs for add modal
@@ -68,173 +80,80 @@ function checkCourse() {
 // GET
 
 function getCollections(callback) {
-	$.ajax({
-		url: "/api/me/collections",
-		method: "GET",
-		data: {
-			sort: ["term_id"],
-		},
-		traditional: true,
-		success: callback,
-		error: displayError
-	})
+	ajax("GET", "me/collections", {sort: ["term_id"]}, callback)
 }
 
 function getCollection(id, callback) {
-	$.ajax({
-		url: "/api/me/collections/" + id,
-		method: "GET",
-		success: callback,
-		error: displayError
-	})
+	ajax("GET", "me/collections/" + id, {}, callback)
 }
 
 function getCollectionCourses(id, callback) {
-	$.ajax({
-		url: "/api/me/collections/" + id + "/courses",
-		method: "GET",
-		data: {
-			sort: ["course_code"],
-		},
-		traditional: true,
-		success: callback,
-		error: displayError
-	})
+	ajax("GET", "me/collections/" + id + "/courses", {sort: ["course_code"]}, callback)
 }
 
 function getTerm(id, callback) {
-	$.ajax({
-		url: "/api/terms/" + id,
-		method: "GET",
-		success: callback,
-		error: displayError
-	})
+	ajax("GET", "terms/" + id, {}, callback)
 }
 
 function getCourse(id, callback) {
-	$.ajax({
-		url: "/api/courses/" + id,
-		method: "GET",
-		success: callback,
-		error: displayError
-	})
+	ajax("GET", "courses/" + id, {}, callback)
 }
 
 function getCourseExists(subject, number, callback) {
-	$.ajax({
-		url: "/api/courses/code/" + subject + "/" + number,
-		method: "GET",
-		success: (response) => {
+	ajax("GET", "courses/code/" + subject + "/" + number, {},
+		(response) => {
 			callback(true, response.id)
 		},
-		error: (response) => {
+		(response) => {
 			callback(false, null)
 		}
-	})
+	)
 }
 
 function getProgress(callback) {
-	$.ajax({
-		url: "/api/me/progress",
-		method: "GET",
-		success: callback,
-		error: displayError
-	})
+	ajax("GET", "me/progress", {}, callback)
 }
 
 // POST
 
 function addCollection(season, year, callback) {
-	$.ajax({
-		url: "/api/me/collections",
-		method: "POST",
-		data: {
+	ajax("POST", "me/collections",
+		{
 			season: season,
 			year: year
 		},
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
-	})
+		callback
+	)
 }
 
 function addCollectionCourse(collection_id, course_id, callback) {
-	$.ajax({
-		url: "/api/me/courses",
-		method: "POST",
-		data: {
+	ajax("POST", "me/courses",
+		{
 			collection_id: collection_id,
 			course_id: course_id
 		},
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
-	})
+		callback
+	)
 }
 
 // PUT
 
-function putCollectionCourse(data, callback, onerror = displayError) {
-	$.ajax({
-		url: "/api/me/courses",
-		method: "PUT",
-		data: data,
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			onerror(response)
-		}
-	})
+function putCollectionCourse(data, callback, onerror=displayError) {
+	ajax("PUT", "me/courses", data, callback, onerror)
 }
 
 function putTransferred(set, callback) {
-	$.ajax({
-		url: "/api/me/sessions/transferred",
-		method: "PUT",
-		data: {
-			set: set
-		},
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
-	})
+	ajax("PUT", "me/sessions/transferred", {set: set}, callback)
 }
 
 function putUnitsNeeded(units, callback) {
-	$.ajax({
-		url: "/api/me/progress",
-		method: "PUT",
-		data: {
-			units_needed: units
-		},
-		success: callback,
-		error: displayError
-	})
+	ajax("PUT", "me/progress", {units_needed: units}, callback)
 }
 
 // DELETE
 
 function delCollection(id, callback) {
-	$.ajax({
-		url: "/api/me/collections/" + id,
-		method: "DELETE",
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
-	})
+	ajax("DELETE", "me/collections/" + id, {}, callback)
 }
 
 function removeCollection(id) {
@@ -245,16 +164,7 @@ function removeCollection(id) {
 }
 
 function delCollectionCourse(id, callback) {
-	$.ajax({
-		url: "/api/me/courses/" + id,
-		method: "DELETE",
-		success: (response) => {
-			callback(response)
-		},
-		error: (response) => {
-			displayError(response)
-		}
-	})
+	ajax("DELETE", "me/courses/" + id, {}, callback)
 }
 
 //

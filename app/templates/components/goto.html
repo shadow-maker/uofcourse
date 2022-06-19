@@ -104,6 +104,16 @@
 
 {% macro gotoStyles() %}
 <style>
+	#modalGoTo.success .modal-header {
+		background-color: #d1e7dd;
+		border-color: #75b798 !important;
+	}
+
+	#modalGoTo.error .modal-header {
+		background-color: #f8d7da;
+		border-color: #ea868f !important;
+	}
+
 	#modalGoTo .dropdown-toggle::after {
 		display: none;
 	}
@@ -143,10 +153,11 @@
 
 	// Change status of form
 	function gotoStatus(status) {
-		const statusContainer = formGoTo.find("#gotoStatus")
-		statusContainer.children("span").hide()
-		if (status)
-			statusContainer.find("." + status).show()
+		formGoTo.find("#gotoStatus").children("span").hide()
+		if (status && gotoType == "course")
+			formGoTo.find("#gotoStatus ." + status).show()
+		modalGoTo.removeClass("success error")
+		modalGoTo.addClass(status)
 	}
 
 	function gotoSwitch(type) {
@@ -207,42 +218,39 @@
 
 	// Check if course exists and change status
 	function gotoCourseCheck() {
-		$.ajax({
-			url: "/api/courses/code/" + $("#gotoSelectSubject").val() + "/" + $("#gotoSelectCourse").val(),
-			method: "GET",
-			success: (response) => {
+		ajax("GET", "courses/code/" + $("#gotoSelectSubject").val() + "/" + $("#gotoSelectCourse").val(),
+			{},
+			(response) => {
 				formGoTo.find(".submit").prop("disabled", false)
 				gotoStatus("success")
 				setTimeout(() => {
 					formGoTo.find(".feedback").removeClass("invisible")
 				}, 1500)
 			},
-			error: (response) => {
+			(response) => {
 				formGoTo.find(".submit").prop("disabled", true)
 				gotoStatus("error")
 				formGoTo.find(".feedback").addClass("invisible")
 			}
-		})
+		)
 	}
 
 	// Check if course exists and change status
 	function gotoSubjectCheck() {
-		$.ajax({
-			url: "/api/subjects/code/" + $("#gotoSelectSubject").val(),
-			method: "GET",
-			success: (response) => {
+		ajax("GET", "subjects/code/" + $("#gotoSelectSubject").val(), {},
+			(response) => {
 				formGoTo.find(".submit").prop("disabled", false)
 				gotoStatus("success")
 				setTimeout(() => {
 					formGoTo.find(".feedback").removeClass("invisible")
 				}, 1500)
 			},
-			error: (response) => {
+			(response) => {
 				formGoTo.find(".submit").prop("disabled", true)
 				gotoStatus("error")
 				formGoTo.find(".feedback").addClass("invisible")
 			}
-		})
+		)
 	}
 
 	function openGoTo(type="course", s="", c="", f="") {
@@ -255,7 +263,7 @@
 		$("#gotoSelectFaculty").val(f)
 
 		// Hide status and feedback
-		formGoTo.find("#gotoStatus").children("span").hide()
+		gotoStatus()
 		formGoTo.find(".feedback").addClass("invisible")
 
 		// Disable submit button

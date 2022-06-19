@@ -3,6 +3,7 @@ from app.models import Grade, Course, Collection, CollectionCourse
 from app.auth import current_user
 
 from flask import Blueprint, request
+from werkzeug.exceptions import BadRequest
 
 import json
 
@@ -30,7 +31,7 @@ def getCourseCollectionCourses(id):
 @me_course.route("", methods=["POST"])
 def postCollectionCourse(data={}):
 	if not data:
-		data = request.form.to_dict()
+		data = request.json
 		if not data:
 			return {"error": "no data provided"}, 400
 	if not "collection_id" in data:
@@ -67,7 +68,7 @@ def postCollectionCourse(data={}):
 @me_course.route("/<id>", methods=["PUT"])
 def putCollectionCourse(data={}, id=None):
 	if not data:
-		data = request.form.to_dict()
+		data = request.json
 		if not data:
 			return {"error": "no data provided"}, 400
 	if not id:
@@ -126,7 +127,7 @@ def putCollectionCourse(data={}, id=None):
 def delCollectionCourse(data={}, id=None):
 	if not id:
 		if not data:
-			data = request.form.to_dict()
+			data = request.json
 		if not data:
 			return {"error": "no data provided"}, 400
 		if not "id" in data:

@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 
 #
 # Create API route blueprint with /api url prefix
@@ -29,3 +29,13 @@ api.register_blueprint(faculty)
 api.register_blueprint(grade)
 api.register_blueprint(me)
 api.register_blueprint(announcement)
+
+@api.before_request
+def apiBeforeRequest():
+	if request.content_length:
+		try:
+			if not request.is_json:
+				raise BadRequest("Request data not in JSON format")
+			request.json
+		except BadRequest as e:
+			return {"error": e.description}, 400
