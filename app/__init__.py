@@ -13,9 +13,6 @@ from sqlalchemy.ext.declarative import DeclarativeMeta
 
 from jinja2 import Environment as JinjaEnvironment
 
-import os
-import json
-
 #
 # Init Flask app
 #
@@ -32,7 +29,6 @@ app.config.from_object(cfg)
 
 db: DeclarativeMeta = SQLAlchemy(app)
 
-
 migrate = Migrate(app, db)
 
 alchemydumps = AlchemyDumps(app, db)
@@ -44,19 +40,7 @@ jinja = JinjaEnvironment()
 
 ifttt = IFTTT(app.config["IFTTT_KEY"], IFTTT_EVENTS)
 
-ipcache = {}
-
-#
-# Init extra utils
-#
-
-try:
-	static = app.static_folder
-	fname = "changelog.json"
-	with open(os.path.join(static, fname) if static else fname, "r") as file:
-		changelog = json.load(file)
-except:
-	changelog = []
+ipcache : dict[str, dict] = {}
 
 #
 # Import models and routes

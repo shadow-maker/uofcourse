@@ -1,5 +1,4 @@
 from app import app, jinja, ifttt
-from app import changelog as change
 from app.auth import current_user
 from app.models import Term
 from app.forms import formContact
@@ -12,6 +11,7 @@ from flask.helpers import url_for
 
 from markdown import markdown
 import os
+import json
 
 
 @view.route("/home")
@@ -132,9 +132,16 @@ def contact():
 
 @view.route("/changelog")
 def changelog():
+	try:
+		with open(os.path.join(app.static_folder, "changelog.json"), "r") as file:
+			data = json.load(file)
+	except:
+		data = {}
+		flash("Could not load the changelog", "danger")
+
 	return render_template("changelog.html",
 		title = "Changelog",
 		header = "Changelog",
 		headerIcon = "bug-fill",
-		changelog = change
+		changelog = data
 	)
