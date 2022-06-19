@@ -75,10 +75,10 @@
 	<!--Icons-->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
 
-	<!--Global scripts-->
+	<!--Global vars-->
 	<script>
-		// Global variables
 		var isAuth = JSON.parse("{{ current_user.is_authenticated | tojson | safe }}")
+		const AJAX_TOKEN = "{{AJAX_TOKEN}}"
 		const COLORS = JSON.parse('{{ COLORS_LIGHT | tojson | safe }}')
 		const DEFAULT_EMOJI = parseInt('{{ DEFAULT_EMOJI }}')
 		const ALERT_CATEGORIES = ["success", "info", "warning", "danger", "primary", "secondary"]
