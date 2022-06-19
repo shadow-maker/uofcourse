@@ -12,6 +12,11 @@ from flask import request, render_template
 from werkzeug.exceptions import HTTPException
 
 
+app.register_blueprint(api)
+app.register_blueprint(view)
+app.register_blueprint(file)
+
+
 # Error handler for all routes
 @app.errorhandler(HTTPException)
 def errorHandler(error):
@@ -25,8 +30,3 @@ def errorHandler(error):
 		errorCode = error.code,
 		errorMessage = ERROR_MESSAGES[error.code] if error.code in ERROR_MESSAGES else error.description
 	), error.code
-
-
-app.register_blueprint(api)
-app.register_blueprint(view)
-app.register_blueprint(file)
