@@ -6,6 +6,7 @@ SITE_NAME = "UofCourse"
 SITE_LANG = "en"
 DEF_DESCRIPTION = "UofCourse is a web application that helps students in their program course planning."
 CURRENT_VERSION = "1.1"
+CURRENT_VERSION_BETA = True
 
 TIMEZONE = "Canada/Mountain"
 
@@ -15,6 +16,7 @@ TIMEZONE = "Canada/Mountain"
 
 UNI_URL = "https://www.ucalgary.ca/"
 REDDIT_URL = "https://www.reddit.com/r/UCalgary/"
+DISQUS_EMBED = "https://uofcourse.disqus.com/embed.js"
 
 #
 # OTHER
@@ -31,8 +33,6 @@ COURSE_LEVELS = [1, 2, 3, 4, 5, 6, 7]
 IFTTT_EVENTS = {
 	"message": "uofcourse_message"
 }
-
-DISQUS_EMBED = "https://uofcourse.disqus.com/embed.js"
 
 DEFAULT_EMOJI = 128218
 
