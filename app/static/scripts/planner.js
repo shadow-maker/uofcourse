@@ -55,10 +55,11 @@ function transferredHide() {
 
 function selectCourseStatus(status, message="") {
 	$("#selectCourseStatus").addClass("invisible")
+	$("#selectCourseStatus .message").text("...")
 	if (status) {
 		$("#selectCourseStatus").children("span").hide()
 		$("#selectCourseStatus ." + status).show()
-		$("#selectCourseStatus .message").text(message).show()
+		$("#selectCourseStatus .message").text(message)
 		$("#selectCourseStatus").removeClass("invisible")
 	}
 }
@@ -566,7 +567,7 @@ $("#modalAddCourse").on("show.bs.modal", () => {
 	formAdd.find(".selectNumber").val("")
 
 	// Hide status
-	$("#selectCourseStatus").addClass("invisible")
+	selectCourseStatus()
 
 	// Disable submit button
 	formAdd.find(".submit").prop("disabled", true)
@@ -600,7 +601,7 @@ $("#selectCourseSubject").on("keyup", function (e) {
 	if ($(this).val().length < $(this).attr("minLength")) {
 		formAdd.find(".selectNumber").prop("disabled", true)
 		formAdd.find(".submit").prop("disabled", true)
-		selectCourseStatus("")
+		selectCourseStatus()
 	} else {
 		formAdd.find(".selectNumber").prop("disabled", false)
 		if (formAdd.find(".selectNumber").val().length == formAdd.find(".selectNumber").attr("maxLength"))
@@ -629,7 +630,7 @@ $("#selectCourseNumber").on("keyup", function (e) {
 		checkCourse()
 	} else {
 		formAdd.find(".submit").prop("disabled", true)
-		selectCourseStatus("")
+		selectCourseStatus()
 	}
 })
 
