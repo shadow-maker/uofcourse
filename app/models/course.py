@@ -83,7 +83,14 @@ class Course(db.Model):
 	@property
 	def emoji(self):
 		return self.subject.getEmoji()
-	
+
+	@property
+	def calendar_terms(self):
+		terms = []
+		for cal in self.calendars:
+			terms += cal.terms
+		return terms
+
 	def getTags(self, userId):
 		return [tag for tag in self.tags if tag.user_id == userId]
 	
