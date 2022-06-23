@@ -174,6 +174,8 @@ function updateCourse(id) {
 	course.element.find(".course-emoji").html("&#" + (course.emoji ? course.emoji : DEFAULT_EMOJI))
 	course.element.find(".course-code").text(course.code)
 	course.element.find(".course-name").text(course.name)
+	if (course.old)
+		course.element.find(".course-old").removeClass("d-none")
 
 	// Add content only available if user is authenticated
 	if (isAuth) {
