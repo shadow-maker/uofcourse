@@ -1,5 +1,5 @@
 from app import db
-from app.models import Grade, Course, Collection, CollectionCourse
+from app.models import Grade, Subject, Course, Collection, CollectionCourse
 from app.auth import current_user
 
 from flask import Blueprint, request
@@ -26,7 +26,45 @@ def getCourseCollectionCourses(id):
 # POST
 #
 
-# User Course
+@me_course.route("/check", methods=["POST"])
+def postCollectionCourseCheck(data={}):
+	if not data:
+		data = request.json
+		if not data:
+			return {"error": "no data provided"}, 400
+	if not "collection_id" in data:
+		return {"error": "no Collection id provided in data"}, 400
+
+	collection = Collection.query.filter_by(id=data["collection_id"], user_id=current_user.id).first()
+	if not collection:
+		return {"error": "Collection from this user does not exist"}, 404
+
+	if "course_id" in data:
+		course = Course.query.get(data["course_id"])
+	else:
+		if not ("subject_code" in data or "course_number" in data):
+			return {"error": "No course provided"}, 400
+		subject = Subject.query.filter_by(code=data["subject_code"]).first()
+		if not subject:
+			return {"error": "Subject does not exist"}, 200
+		course = Course.query.filter_by(subject_id=subject.id, number=data["course_number"]).first()
+	if not course:
+		return {"error": "Course does not exist"}, 200
+
+	for cc in collection.collectionCourses:
+		if cc.course_id == course.id:
+			return {"error": "Course already in this term"}, 200
+
+	if collection.term_id and collection.term not in course.calendar_terms:
+		return {
+			"warning": "Course was not available in this term's calendar",
+			"course_id": course.id
+		}, 200
+	
+	return {
+		"success": "Course can be added to this term",
+		"course_id": course.id
+	}, 200
 
 @me_course.route("", methods=["POST"])
 def postCollectionCourse(data={}):
