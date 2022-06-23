@@ -485,63 +485,42 @@
 					<h5 class="modal-title">Add course to term</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="modal-body px-4">
+				<div class="modal-body px-5 pb-0">
 					<!--Hidden fields-->
 					<input type="number" name="collection_id" id="selectCollection" value="" readonly hidden>
 					<input type="number" name="course_id" id="selectCourseId" value="" readonly hidden>
 
-					<div class="row">
-						<div class="select-from-code col-sm-12 pb-3">
-							<div class="d-flex flex-row justify-content-center">
-								<!--Subject code-->
-								<input type="text"
-									class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle px-2 py-0"
-									id="selectCourseSubject" minlength="2" maxlength="4" value="" placeholder="CODE"
-									autocomplete="off">
+					<div class="d-flex flex-row justify-content-center">
+						<!--Subject code-->
+						<input type="text"
+							class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle px-2 py-0"
+							id="selectCourseSubject" minlength="2" maxlength="4" value="" placeholder="CODE"
+							autocomplete="off">
 
-								<!--Separator-->
-								<div class="flex-shrink-1 d-flex flex-column justify-content-center">
-									<span class="p-1 pt-0 m-0 fs-3 lh-1 align-middle">–</span>
-								</div>
-
-								<!--Course number-->
-								<input type="text"
-									class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-2 py-0"
-									id="selectCourseNumber" maxlength="3" value="" placeholder="NUM" autocomplete="off"
-									disabled>
-
-								<!--Course exists status-->
-								<div class="position-relative">
-									<div class="status fs-4 h-100 position-absolute start-100 p-2 d-flex flex-column justify-content-center"
-										id="selectCourseStatus">
-										<span class="error">
-											<i class="bi-exclamation-circle-fill text-danger" data-bs-toggle="tooltip"
-												data-bs-placement="right" aria-label="Course does not exist"
-												title="Course does not exist"></i>
-										</span>
-										<span class="success">
-											<i class="bi-check-circle-fill text-success" data-bs-toggle="tooltip"
-												data-bs-placement="right" aria-label="Course exists"
-												title="Course exists"></i>
-										</span>
-									</div>
-								</div>
-							</div>
+						<!--Separator-->
+						<div class="flex-shrink-1 d-flex flex-column justify-content-center">
+							<span class="p-1 pt-0 m-0 fs-3 lh-1 align-middle">–</span>
 						</div>
-						<!-- <div class="select-from-tagged col-sm-6">
-							<div class="h5">Select from tagged</div>
-							<div class="h6 m-0">
-								<i class="bi-chevron-right"></i>
-								Starred
-							</div>
-							<ul class="list-group list-group-action">
-								<li class="list-group-item">An item</li>
-								<li class="list-group-item">A second item</li>
-								<li class="list-group-item">A third item</li>
-								<li class="list-group-item">A fourth item</li>
-								<li class="list-group-item">And a fifth one</li>
-							</ul>
-						</div> -->
+
+						<!--Course number-->
+						<input type="text"
+							class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-2 py-0"
+							id="selectCourseNumber" maxlength="3" value="" placeholder="NUM" autocomplete="off"
+							disabled>
+					</div>
+
+					<!--Course exists status-->
+					<div id="selectCourseStatus" class="status invisible text-center p-1">
+						<span class="success">
+							<i class="bi-check-circle-fill text-success"></i>
+						</span>
+						<span class="warning">
+							<i class="bi-exclamation-triangle-fill text-warning"></i>
+						</span>
+						<span class="error">
+							<i class="bi-exclamation-octagon-fill text-danger"></i>
+						</span>
+						<small class="message"></small>
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-around">

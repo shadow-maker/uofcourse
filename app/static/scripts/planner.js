@@ -53,24 +53,37 @@ function transferredHide() {
 
 // Check course funcs for add modal
 
-function selectCourseStatus(status) {
-	$("#selectCourseStatus").children("span").hide()
-	if (status)
+function selectCourseStatus(status, message="") {
+	$("#selectCourseStatus").addClass("invisible")
+	if (status) {
+		$("#selectCourseStatus").children("span").hide()
 		$("#selectCourseStatus ." + status).show()
+		$("#selectCourseStatus .message").text(message).show()
+		$("#selectCourseStatus").removeClass("invisible")
+	}
 }
 
 function checkCourse() {
-	getCourseExists($("#selectCourseSubject").val(), $("#selectCourseNumber").val(), (exists, id) => {
-		if (exists) {
-			$("#selectCourseId").val(id)
-			$("#selectCourseSubmit").prop("disabled", false)
-			selectCourseStatus("success")
-		} else {
-			$("#selectCourseId").val("")
-			$("#selectCourseSubmit").prop("disabled", true)
-			selectCourseStatus("error")
+	let form = $("#formAddCollectionCourse")
+	addCollectionCourseCheck(
+		form.find("#selectCollection").val(),
+		$("#selectCourseSubject").val(),
+		$("#selectCourseNumber").val(),
+		(response) => {
+			if (response.error) {
+				$("#selectCourseId").val("")
+				$("#selectCourseSubmit").prop("disabled", true)
+				selectCourseStatus("error", response.error)
+			} else {
+				$("#selectCourseId").val(response.course_id)
+				$("#selectCourseSubmit").prop("disabled", false)
+				if (response.success)
+					selectCourseStatus("success", response.success)
+				else if (response.warning)
+					selectCourseStatus("warning", response.warning)
+			}
 		}
-	})
+	)
 }
 
 //
@@ -99,17 +112,6 @@ function getCourse(id, callback) {
 	ajax("GET", "courses/" + id, {}, callback)
 }
 
-function getCourseExists(subject, number, callback) {
-	ajax("GET", "courses/code/" + subject + "/" + number, {},
-		(response) => {
-			callback(true, response.id)
-		},
-		(response) => {
-			callback(false, null)
-		}
-	)
-}
-
 function getProgress(callback) {
 	ajax("GET", "me/progress", {}, callback)
 }
@@ -121,6 +123,17 @@ function addCollection(season, year, callback) {
 		{
 			season: season,
 			year: year
+		},
+		callback
+	)
+}
+
+function addCollectionCourseCheck(collection_id, code, number, callback) {
+	ajax("POST", "me/courses/check",
+		{
+			collection_id: collection_id,
+			subject_code: code,
+			course_number: number
 		},
 		callback
 	)
@@ -552,9 +565,8 @@ $("#modalAddCourse").on("show.bs.modal", () => {
 	formAdd.find(".selectSubject").val("")
 	formAdd.find(".selectNumber").val("")
 
-	// Hide status and feedback
-	formAdd.find("#selectCourseStatus").children("span").hide()
-	formAdd.find(".feedback").addClass("invisible")
+	// Hide status
+	$("#selectCourseStatus").addClass("invisible")
 
 	// Disable submit button
 	formAdd.find(".submit").prop("disabled", true)
@@ -588,7 +600,6 @@ $("#selectCourseSubject").on("keyup", function (e) {
 	if ($(this).val().length < $(this).attr("minLength")) {
 		formAdd.find(".selectNumber").prop("disabled", true)
 		formAdd.find(".submit").prop("disabled", true)
-		formAdd.find(".feedback").addClass("invisible")
 		selectCourseStatus("")
 	} else {
 		formAdd.find(".selectNumber").prop("disabled", false)
@@ -618,7 +629,6 @@ $("#selectCourseNumber").on("keyup", function (e) {
 		checkCourse()
 	} else {
 		formAdd.find(".submit").prop("disabled", true)
-		formAdd.find(".feedback").addClass("invisible")
 		selectCourseStatus("")
 	}
 })
