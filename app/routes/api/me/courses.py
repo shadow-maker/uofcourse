@@ -3,7 +3,6 @@ from app.models import Grade, Subject, Course, Collection, CollectionCourse
 from app.auth import current_user
 
 from flask import Blueprint, request
-from werkzeug.exceptions import BadRequest
 
 import json
 
@@ -88,14 +87,13 @@ def postCollectionCourse(data={}):
 		if course.id == cc.course_id:
 			return {"error": "a CollectionCourse with the same Course already exists in this Collection"}, 400
 	
-	try:
-		collectionCourse = CollectionCourse(collection.id, course.id)
+	collectionCourse = CollectionCourse(collection.id, course.id)
 
-		db.session.add(collectionCourse)
-		db.session.commit()
-	except:
-		return {"error": "error creating CollectionCourse"}, 500
-	
+	if collection.transfer:
+		collectionCourse.grade = Grade.query.filter_by(symbol="CR").first()
+
+	db.session.add(collectionCourse)
+	db.session.commit()
 	return {"success": True}, 200
 
 #
