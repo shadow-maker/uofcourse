@@ -117,6 +117,13 @@ function getProgress(callback) {
 	ajax("GET", "me/progress", {}, callback)
 }
 
+function getSummary(x, y, show, taken, planned, callback) {
+	ajax("GET", "me/summary",
+		{x: x, y: y, show: show, taken: taken, planned: planned},
+		callback
+	)
+}
+
 // POST
 
 function addCollection(season, year, callback) {
@@ -556,6 +563,63 @@ function updateProgress() {
 	})
 }
 
+function updateSummary() {
+	let x = $("#summarySelectX").val()
+	let y = $("#summarySelectY").val()
+	y = y == "none" ? null : y
+
+	let show = $("#summarySelectShow").val()
+	let taken = $("#summarySelectTaken").is(":checked") 
+	let planned = $("#summarySelectPlanned").is(":checked")
+
+	function getKey(option, key) {
+		if (option == "terms") {
+			if (key == "none") {
+				key = "transferred"
+			} else {
+				let collection = collections.find(c => c.term_id == key)
+				key = collection ? collection.term_name : key
+			}
+		}
+		return key[0].toUpperCase() + key.substring(1)
+	}
+
+	getSummary(x, y, show, taken, planned, (data) => {
+		$("#summary thead tr").empty()
+		$("#summary tbody").empty()
+		if (y)
+			$("#summary thead tr").append($("<td>").attr("scope", "col"))
+
+		for (let xKey of data.x_keys)
+			$("#summary thead tr").append(
+				$("<td>").attr("scope", "col").text(getKey(x, xKey))
+			)
+
+		if (y) {
+			for (let yKey of data.y_keys) {
+				let row = $("<tr>")
+				row.append(
+					$("<td>").attr("scope", "row").text(getKey(y, yKey)).addClass("table-light")
+				)
+				for (let xKey of data.x_keys)
+					row.append($("<td>").text(data.results[xKey][yKey]))
+				$("#summary tbody").append(row)
+			}
+		} else {
+			let row = $("<tr>")
+			for (let xKey in data.results)
+				row.append($("<td>").text(data.results[xKey]))
+			$("#summary tbody").append(row)
+		}
+
+		for (let i of $("#summarySelectX").find("option"))
+			$(i).prop("disabled", $(i).val() == y)
+
+		for (let i of $("#summarySelectY").find("option"))
+			$(i).prop("disabled", $(i).val() == x)
+	})
+}
+
 //
 // EVENTS
 //
@@ -584,10 +648,18 @@ $("#modalEditUnits").on("shown.bs.modal", () => {
 })
 
 // On grade changed in form
-$("#formEditCollectionCourse #selectGrade").change(function () {
+$("#formEditCollectionCourse #selectGrade").on("change", function () {
 	$("#formEditCollectionCourse #selectPassed").prop("checked",
 		grades[$(this).val()] ? grades[$(this).val()].passed : false
 	)
+})
+
+// On summary options changed
+$("#summary select").on("change", function () {
+	updateSummary()
+})
+$("#summary input").on("change", function () {
+	updateSummary()
 })
 
 // On key up inside subject selection
@@ -665,6 +737,7 @@ $("#formAddCollectionCourse").on("submit", (event) => {
 			alert("success", "Course added!")
 			getUpdateCollection(form.find("#selectCollection").val())
 			updateProgress()
+			updateSummary()
 		}
 	)
 })
@@ -689,6 +762,7 @@ $("#formEditCollectionCourse").on("submit", (event) => {
 				if (form.find("#selectCollectionOld").val() != form.find("#selectCollection").val())
 					getUpdateCollection(form.find("#selectCollectionOld").val())
 				updateProgress()
+				updateSummary()
 			}
 		)
 	} else if (method == "DELETE") {
@@ -696,6 +770,7 @@ $("#formEditCollectionCourse").on("submit", (event) => {
 			alert("success", "Course removed!")
 			getUpdateCollection(form.find("#selectCollectionOld").val())
 			updateProgress()
+			updateSummary()
 		})
 	}
 })
@@ -719,4 +794,5 @@ $("#formEditUnits").on("submit", (event) => {
 $(document).ready(() => {
 	updateCollections()
 	updateProgress()
+	updateSummary()
 })

@@ -69,7 +69,9 @@ def getAll(table, filters=(), serializer=None):
 	results = query.paginate(per_page=limit, page=page)
 
 	return {
-		"results": [serializer(i) for i in results.items], # pass every result item through serializer
+		"results": [
+			serializer(i) for i in results.items # pass every result item through serializer
+		],
 		"page": results.page,
 		"pages": results.pages,
 		"total": results.total

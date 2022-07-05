@@ -45,6 +45,12 @@ class Collection(db.Model):
 	@property
 	def gpa(self):
 		return self.getGPA()
+
+	def isTaken(self):
+		return self.transfer or self.term.isPrev()
+
+	def isPlanned(self):
+		return not self.isTaken()
 	
 	def delete(self):
 		for i in self.collectionCourses:

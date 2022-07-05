@@ -56,5 +56,7 @@ def planner():
 		grades = {grade.id : dict(grade) for grade in Grade.query.all()},
 		seasons = list(Season),
 		years = sorted(set([t[0] for t in Term.query.with_entities(Term.year)]), reverse=True),
+		summaryXYOptions = ["subjects", "faculties", "levels", "grades", "terms"],
+		summaryShowOptions = ["courses", "units"],
 		selCollectionCourse = request.args.get("id"),
 	)

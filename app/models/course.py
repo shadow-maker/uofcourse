@@ -86,10 +86,7 @@ class Course(db.Model):
 
 	@property
 	def calendar_terms(self):
-		terms = []
-		for cal in self.calendars:
-			terms += cal.terms
-		return terms
+		return [term for cal in self.calendars for term in cal.terms]
 
 	def getTags(self, userId):
 		return [tag for tag in self.tags if tag.user_id == userId]

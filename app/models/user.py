@@ -62,17 +62,18 @@ class User(db.Model, UserMixin):
 		self.tags.append(starred)
 
 		self.read_announcements = models.Announcement.query.all()
+	
+	@property
+	def courses(self):
+		return [cc for col in self.collections for cc in col.collectionCourses]
 
 	@property
 	def coursesTaken(self):
-		return sum(
-			len(collection.collectionCourses) for collection in self.collections
-			if collection.transfer or collection.term.isPrev()
-		)
+		return [cc for cc in self.courses if cc.collection.isTaken()]
 
 	@property
 	def coursesPlanned(self):
-		return sum(len(collection.collectionCourses) for collection in self.collections)
+		return [cc for cc in self.courses if cc.collection.isPlanned()]
 
 	@property
 	def unitsNeeded(self):
@@ -80,19 +81,11 @@ class User(db.Model, UserMixin):
 
 	@property
 	def unitsTaken(self):
-		for collection in self.collections:
-			print(collection, collection.transfer or collection.term.isPrev(), collection.units_total)
-		return sum(
-			collection.units_total for collection in self.collections
-			if collection.transfer or collection.term.isPrev()
-		)
+		return sum(col.units_total for col in self.collections if col.isTaken())
 
 	@property
 	def unitsPlanned(self):
-		return sum(
-			collection.units_total for collection in self.collections
-			if not(collection.transfer or collection.term.isPrev())
-		)
+		return sum(col.units_total for col in self.collections if col.isPlanned())
 
 	def log(self, event, ip=None):
 		log = models.UserLog(self.id, event, ip)

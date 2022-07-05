@@ -220,125 +220,188 @@
 	</div>
 </div>
 
-<div class="container-fluid mb-4 px-0">
-	<div class="row">
-		<!--Overall GPA-->
-		<div id="overallGPA" class="col-12 col-lg-7 col-xl-6 mb-2 pe-lg-4">
-			<div class="h2">
-				<span class="">Overall GPA:</span>
-				<span class="final-gpa ms-3 font-monospace" title="-">-</span>
+<!--Other info-->
+<div class="row mb-2">
+	<!--Overall GPA-->
+	<div id="overallGPA" class="col-12 col-lg-7 col-xl-6 mb-2 pe-lg-4">
+		<div class="h2">
+			<span class="">Overall GPA:</span>
+			<span class="final-gpa ms-3 font-monospace" title="-">-</span>
+		</div>
+		<div class="card ms-2">
+			<div class="card-body pe-1">
+				<div id="overallCollectionContainer"></div>
+				<div class="row">
+					<span class="col-8 col-sm-9 col-md-7 col-lg-8 ps-2 ps-lg-3 pe-3 pe-sm-4 pe-md-2 pe-lg-0 pe-xl-4">
+						<hr class="my-2">
+					</span>
+				</div>
+				<div class="row">
+					<span class="col-12 col-sm-3"></span>
+					<span class="col d-flex">
+						<span class="overall-collection-item-calc"></span>
+						<span class="font-monospace px-2">+</span>
+						<span class="font-monospace">
+							<span class="sum-points" title="Sum of points">-</span>
+							/
+							<span class="sum-units" title="Sum of units">-</span>
+							=
+							<span class="final-gpa fw-bold" title="Overall GPA">-</span>
+						</span>
+					</span>
+				</div>
 			</div>
-			<div class="card ms-2">
-				<div class="card-body pe-1">
-					<div id="overallCollectionContainer"></div>
-					<div class="row">
-						<span class="col-8 col-sm-9 col-md-7 col-lg-8 ps-2 ps-lg-3 pe-3 pe-sm-4 pe-md-2 pe-lg-0 pe-xl-4">
-							<hr class="my-2">
-						</span>
+		</div>
+	</div>
+
+	<!--Program Progress-->
+	<div id="progress" class="col ps-lg-3">
+		<div class="h2">Program progress</div>
+		<div class="bar row ps-2 mb-2">
+			<div class="col-8 pt-1">
+				<div class="progress mb-1">
+					<div class="units-taken progress-bar progress-bar-striped" role="progressbar" aria-valuenow=""
+						aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="bottom"
+						title="Course units taken"></div>
+					<div class="units-planned progress-bar progress-bar-striped bg-info" role="progressbar"
+						aria-valuenow="" aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip"
+						data-bs-placement="bottom" title="Course units planned"></div>
+				</div>
+				<div class="d-md-none">
+					<div>
+						<i class="bi-square-fill text-primary"></i>
+						Course units taken
 					</div>
-					<div class="row">
-						<span class="col-12 col-sm-3"></span>
-						<span class="col d-flex">
-							<span class="overall-collection-item-calc"></span>
-							<span class="font-monospace px-2">+</span>
-							<span class="font-monospace">
-								<span class="sum-points" title="Sum of points">-</span>
-								/
-								<span class="sum-units" title="Sum of units">-</span>
-								=
-								<span class="final-gpa fw-bold" title="Overall GPA">-</span>
-							</span>
-						</span>
+					<div>
+						<i class="bi-square-fill text-info"></i>
+						Course units planned
 					</div>
 				</div>
+				<div class="d-none d-md-block pb-4"></div>
+			</div>
+			<div class="col ps-0 pe-sm-0">
+				<div class="lh-1 fs-4 fw-bold" title="Units taken / Units needed">
+					<span class="units-taken-percent">-</span>%
+				</div>
+				<div class="lh-sm text-muted" title="(Units taken + planned) / Units needed">
+					<span class="units-planned-percent">-</span>% planned
+				</div>
+			</div>
+		</div>
+		<div class="info row ps-2">
+			<div class="col-6 col-sm-4 col-lg-6 col-xl-4 mb-3 pe-1">
+				<div class="fs-5">
+					Units taken:
+					<span class="units-taken fw-bold"></span>
+				</div>
+				<div class="text-muted">
+					<span class="units-planned"></span>
+					Planned
+				</div>
+				<div class="text-muted">
+					<span class="units-taken-planned"></span>
+					Taken + planned
+				</div>
+			</div>
+			<div class="col-6 col-sm-4 col-lg-6 col-xl-4 mb-3 ps-0 ps-sm-1 pe-1 pe-sm-2">
+				<div class="fs-5" title="Units needed - Units taken">
+					Units missing:
+					<span class="units-missing-taken fw-bold"></span>
+				</div>
+				<div class="text-muted" title="Units needed - (Units taken + planned)">
+					<span class="units-missing-taken-planned"></span>
+					Not taken or planned
+				</div>
+			</div>
+			<div class="col-12 col-sm-4 col-lg-12 col-xl-4 mb-3 ps-3 ps-sm-0 ps-lg-3 ps-xl-0 pe-0">
+				<div class="fs-5">
+					Units needed to graduate:
+					<a class="text-body" data-bs-toggle="modal" data-bs-target="#modalEditUnits">
+						<span class="units-needed fw-bold"></span><i class="bi-pencil-fill fs-6"></i>
+					</a>
+				</div>
+				<div class="d-grid">
+				</div>
+			</div>
+		</div>
+		<div class="defs px-2 mb-2">
+			<div class="text-muted">
+				<small>
+					<i class="bi-info-circle-fill"></i>
+					Taken - Course units from previous terms or transferred
+				</small>
+			</div>
+			<div class="text-muted">
+				<small>
+					<i class="bi-info-circle-fill"></i>
+					Planned - Course units from the current term or after it
+				</small>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--Summary-->
+<div id="summary">
+	<div class="h2">Summary of courses</div>
+	<div class="row ps-2 mb-2">
+		<!--Vars-->
+		<div class="col-md-6 col-lg-5 col-xl-4 row pe-0 pb-1">
+			<div class="col-3 col-sm-2 col-md-3 d-flex align-items-center">
+				<div class="h6 pe-2 m-0">Variables</div>
+			</div>
+			<div class="col d-flex align-items-center pe-0">
+				<select id="summarySelectX" class="form-select">
+					{% for option in summaryXYOptions %}
+					<option value="{{option}}">{{option}}</option>
+					{% endfor %}
+				</select>
+				<i class="bi-x-lg px-1"></i>
+				<select id="summarySelectY" class="form-select">
+					<option selected value="none">none</option>
+					{% for option in summaryXYOptions %}
+					<option value="{{option}}">{{option}}</option>
+					{% endfor %}
+				</select>
 			</div>
 		</div>
 
-		<!--Program Progress-->
-		<div id="progress" class="col ps-lg-3">
-			<div class="h2">Program progress</div>
-			<div class="bar row ps-2 mb-2">
-				<div class="col-8 pt-1">
-					<div class="progress mb-1">
-						<div class="units-taken progress-bar progress-bar-striped" role="progressbar" aria-valuenow=""
-							aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="bottom"
-							title="Course units taken"></div>
-						<div class="units-planned progress-bar progress-bar-striped bg-info" role="progressbar"
-							aria-valuenow="" aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip"
-							data-bs-placement="bottom" title="Course units planned"></div>
-					</div>
-					<div class="d-md-none">
-						<div>
-							<i class="bi-square-fill text-primary"></i>
-							Course units taken
-						</div>
-						<div>
-							<i class="bi-square-fill text-info"></i>
-							Course units planned
-						</div>
-					</div>
-					<div class="d-none d-md-block pb-4"></div>
-				</div>
-				<div class="col ps-0 pe-sm-0">
-					<div class="lh-1 fs-4 fw-bold" title="Units taken / Units needed">
-						<span class="units-taken-percent">-</span>%
-					</div>
-					<div class="lh-sm text-muted" title="(Units taken + planned) / Units needed">
-						<span class="units-planned-percent">-</span>% planned
-					</div>
-				</div>
+		<!--Show-->
+		<div class="col-md-6 col-lg-4 col-xl-4 row ps-md-3 ps-lg-5 pe-0 pb-1">
+			<div class="col-3 col-sm-2 col-md-2 d-flex align-items-center">
+				<div class="h6 pe-2 m-0">Show</div>
 			</div>
-			<div class="info row ps-2">
-				<div class="col-6 col-sm-4 col-lg-6 col-xl-4 mb-3 pe-1">
-					<div class="fs-5">
-						Units taken:
-						<span class="units-taken fw-bold"></span>
-					</div>
-					<div class="text-muted">
-						<span class="units-planned"></span>
-						Planned
-					</div>
-					<div class="text-muted">
-						<span class="units-taken-planned"></span>
-						Taken + planned
-					</div>
-				</div>
-				<div class="col-6 col-sm-4 col-lg-6 col-xl-4 mb-3 ps-0 ps-sm-1 pe-1 pe-sm-2">
-					<div class="fs-5" title="Units needed - Units taken">
-						Units missing:
-						<span class="units-missing-taken fw-bold"></span>
-					</div>
-					<div class="text-muted" title="Units needed - (Units taken + planned)">
-						<span class="units-missing-taken-planned"></span>
-						Not taken or planned
-					</div>
-				</div>
-				<div class="col-12 col-sm-4 col-lg-12 col-xl-4 mb-3 ps-3 ps-sm-0 ps-lg-3 ps-xl-0 pe-0">
-					<div class="fs-5">
-						Units needed to graduate:
-						<a class="text-body" data-bs-toggle="modal" data-bs-target="#modalEditUnits">
-							<span class="units-needed fw-bold"></span><i class="bi-pencil-fill fs-6"></i>
-						</a>
-					</div>
-					<div class="d-grid">
-					</div>
-				</div>
+			<div class="col d-flex align-items-center pe-0">
+				<select id="summarySelectShow" class="flex-shrink-1 form-select">
+					{% for option in summaryShowOptions %}
+					<option value="{{option}}">Sum of {{option}}</option>
+					{% endfor %}
+				</select>
 			</div>
-			<div class="defs px-2 mb-2">
-				<div class="text-muted">
-					<small>
-						<i class="bi-info-circle-fill"></i>
-						Taken - Course units from terms before the current term or transferred
-					</small>
+		</div>
+
+		<!--Taken/Planned-->
+		<div class="col-md-6 col-lg-3 col-xl-4 row ps-md-3 ps-lg-5 pb-1">
+			<div class="col-3 col-sm-2 col-md-3 d-lg-none"></div>
+			<div class="col d-flex align-items-center pe-0">
+				<div class="form-check form-check-inline">
+					<label class="form-check-label" for="summarySelectTaken">Taken</label>
+					<input class="form-check-input" type="checkbox" id="summarySelectTaken" checked>
 				</div>
-				<div class="text-muted">
-					<small>
-						<i class="bi-info-circle-fill"></i>
-						Planned - Course units from the current term or after it
-					</small>
+				<div class="form-check form-check-inline">
+					<label class="form-check-label" for="summarySelectPlanned">Planned</label>
+					<input class="form-check-input" type="checkbox" id="summarySelectPlanned" checked>
 				</div>
 			</div>
 		</div>
+	</div>
+	<div class="table-responsive ps-2">
+		<table class="table table-bordered table-hover m-0">
+			<thead>
+				<tr class="table-light"></tr>
+			</thead>
+			<tbody></tbody>
+		</table>
 	</div>
 </div>
 
@@ -584,10 +647,10 @@
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-between px-5">
-					<button type="submit" method="DELETE" class="btn btn-danger" data-bs-dismiss="modal">
+					<button type="submit" method="DELETE" class="btn btn-danger m-0" data-bs-dismiss="modal">
 						Remove
 					</button>
-					<button type="submit" method="PUT" class="btn btn-primary" data-bs-dismiss="modal">
+					<button type="submit" method="PUT" class="btn btn-primary m-0" data-bs-dismiss="modal">
 						Save changes
 					</button>
 				</div>
