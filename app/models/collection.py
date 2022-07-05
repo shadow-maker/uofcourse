@@ -14,14 +14,24 @@ class Collection(db.Model):
 		return [cc.course for cc in self.collectionCourses]
 
 	@property
-	def units_total(self):
-		return sum(float(cc.course.units) for cc in self.collectionCourses)
+	def units(self):
+		return sum(float(course.units) for course in self.courses)
+
+	@property
+	def courses_counted(self):
+		return [cc.course for cc in self.collectionCourses if cc.grade and cc.grade.gpv is not None]
 
 	@property
 	def units_counted(self):
-		return sum(
-			float(cc.course.units) for cc in self.collectionCourses if cc.grade and cc.grade.gpv is not None
-		)
+		return sum(float(course.units) for course in self.courses_counted)
+	
+	@property
+	def courses_passed(self):
+		return [cc.course for cc in self.collectionCourses if cc.grade and cc.passed]
+	
+	@property
+	def units_passed(self):
+		return sum(float(course.units) for course in self.courses_passed)
 	
 	def getPoints(self, precision=3):
 		points = 0

@@ -81,11 +81,11 @@ class User(db.Model, UserMixin):
 
 	@property
 	def unitsTaken(self):
-		return sum(col.units_total for col in self.collections if col.isTaken())
+		return sum(col.units_passed for col in self.collections if col.isTaken())
 
 	@property
 	def unitsPlanned(self):
-		return sum(col.units_total for col in self.collections if col.isPlanned())
+		return sum(col.units for col in self.collections if col.isPlanned())
 
 	def log(self, event, ip=None):
 		log = models.UserLog(self.id, event, ip)
