@@ -98,6 +98,10 @@
 	.overall-collection-item-calc {
 		width: 8em;
 	}
+
+	#progress .units-missing {
+		background-color: var(--bs-gray-200);
+	}
 </style>
 {% endblock %}
 
@@ -221,9 +225,9 @@
 </div>
 
 <!--Other info-->
-<div class="row mb-2">
+<div class="row">
 	<!--Overall GPA-->
-	<div id="overallGPA" class="col-12 col-lg-7 col-xl-6 mb-2 pe-lg-4">
+	<div id="overallGPA" class="col-12 col-lg-7 col-xl-6 mb-3 pe-lg-4">
 		<div class="h2">
 			<span class="">Overall GPA:</span>
 			<span class="final-gpa ms-3 font-monospace" title="-">-</span>
@@ -255,10 +259,15 @@
 	</div>
 
 	<!--Program Progress-->
-	<div id="progress" class="col ps-lg-3">
-		<div class="h2">Program progress</div>
-		<div class="bar row ps-2 mb-2">
-			<div class="col-8 pt-1">
+	<div id="progress" class="col mb-3 ps-lg-3">
+		<div class="h2">
+			<span class="">Program progress</span>
+			<!-- <span class="lh-1 fw-bold" title="Units taken / Units needed">
+				<span class="units-taken-percent">-</span>%
+			</span> -->
+		</div>
+		<div class="bar row ps-2 mb-2 mb-md-1">
+			<div class="col-8 col-xl-9 pt-1">
 				<div class="progress mb-1">
 					<div class="units-taken progress-bar progress-bar-striped" role="progressbar" aria-valuenow=""
 						aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="bottom"
@@ -266,6 +275,9 @@
 					<div class="units-planned progress-bar progress-bar-striped bg-info" role="progressbar"
 						aria-valuenow="" aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip"
 						data-bs-placement="bottom" title="Course units planned"></div>
+					<div class="units-missing progress-bar" role="progressbar"
+						aria-valuenow="" aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip"
+						data-bs-placement="bottom" title="Course units missing"></div>
 				</div>
 				<div class="d-md-none">
 					<div>
@@ -277,7 +289,6 @@
 						Course units planned
 					</div>
 				</div>
-				<div class="d-none d-md-block pb-4"></div>
 			</div>
 			<div class="col ps-0 pe-sm-0">
 				<div class="lh-1 fs-4 fw-bold" title="Units taken / Units needed">
@@ -289,7 +300,7 @@
 			</div>
 		</div>
 		<div class="info row ps-2">
-			<div class="col-6 col-sm-4 col-lg-6 col-xl-4 mb-3 pe-1">
+			<div class="col-6 col-xxl-4">
 				<div class="fs-5">
 					Units taken:
 					<span class="units-taken fw-bold"></span>
@@ -303,7 +314,7 @@
 					Taken + planned
 				</div>
 			</div>
-			<div class="col-6 col-sm-4 col-lg-6 col-xl-4 mb-3 ps-0 ps-sm-1 pe-1 pe-sm-2">
+			<div class="col-6 col-xxl-4">
 				<div class="fs-5" title="Units needed - Units taken">
 					Units missing:
 					<span class="units-missing-taken fw-bold"></span>
@@ -313,7 +324,7 @@
 					Not taken or planned
 				</div>
 			</div>
-			<div class="col-12 col-sm-4 col-lg-12 col-xl-4 mb-3 ps-3 ps-sm-0 ps-lg-3 ps-xl-0 pe-0">
+			<div class="col-12 my-2">
 				<div class="fs-5">
 					Units needed to graduate:
 					<a class="text-body" data-bs-toggle="modal" data-bs-target="#modalEditUnits">
@@ -324,31 +335,17 @@
 				</div>
 			</div>
 		</div>
-		<div class="defs px-2 mb-2">
-			<div class="text-muted">
-				<small>
-					<i class="bi-info-circle-fill"></i>
-					Taken - Course units from previous terms or transferred
-				</small>
-			</div>
-			<div class="text-muted">
-				<small>
-					<i class="bi-info-circle-fill"></i>
-					Planned - Course units from the current term or after it
-				</small>
-			</div>
-		</div>
 	</div>
 </div>
 
 <!--Summary-->
-<div id="summary">
+<div id="summary" class="mb-2">
 	<div class="h2">Summary of courses</div>
 	<div class="row ps-2 mb-2">
 		<!--Vars-->
 		<div class="col-md-6 col-lg-5 col-xl-4 row pe-0 pb-1">
 			<div class="col-3 col-sm-2 col-md-3 d-flex align-items-center">
-				<div class="h6 pe-2 m-0">Variables</div>
+				<div class="h6 m-0">Variables</div>
 			</div>
 			<div class="col d-flex align-items-center pe-0">
 				<select id="summarySelectX" class="form-select">
@@ -369,7 +366,7 @@
 		<!--Show-->
 		<div class="col-md-6 col-lg-4 col-xl-4 row ps-md-3 ps-lg-5 pe-0 pb-1">
 			<div class="col-3 col-sm-2 col-md-2 d-flex align-items-center">
-				<div class="h6 pe-2 m-0">Show</div>
+				<div class="h6 m-0">Show</div>
 			</div>
 			<div class="col d-flex align-items-center pe-0">
 				<select id="summarySelectShow" class="flex-shrink-1 form-select">
@@ -381,7 +378,7 @@
 		</div>
 
 		<!--Taken/Planned-->
-		<div class="col-md-6 col-lg-3 col-xl-4 row ps-md-3 ps-lg-5 pb-1">
+		<div class="col-md-6 col-lg-3 col-xl-4 row ps-3 ps-lg-5 pb-1">
 			<div class="col-3 col-sm-2 col-md-3 d-lg-none"></div>
 			<div class="col d-flex align-items-center pe-0">
 				<div class="form-check form-check-inline">
@@ -402,6 +399,17 @@
 			</thead>
 			<tbody></tbody>
 		</table>
+	</div>
+</div>
+
+<div id="defs" class="px-2 mt-5 text-muted">
+	<div class="">
+		<i class="bi-info-circle-fill"></i>
+		Taken - Courses from past terms or transferred
+	</div>
+	<div class="">
+		<i class="bi-info-circle-fill"></i>
+		Planned - Courses from the current or future terms
 	</div>
 </div>
 

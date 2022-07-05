@@ -528,7 +528,13 @@ function updateProgress() {
 					(unitsTotalPercent < 100 ? unitsTotalPercent : 100) - unitsTakenPercent
 				) + "%"
 			)
-			progressBar.find(".units-taken-percent").text(unitsTakenPercent.toFixed(1))
+
+			progressBar.find(".units-missing").attr("aria-valuenow", Math.round(100 - unitsTotalPercent))
+			progressBar.find(".units-missing").css(
+				"width",
+				Math.round(unitsTotalPercent < 100 ? 100 - unitsTotalPercent : 0) + "%"
+			)
+			$("#progress").find(".units-taken-percent").text(unitsTakenPercent.toFixed(1))
 			progressBar.find(".units-planned-percent").text(unitsTotalPercent.toFixed(1))
 
 			progressInfo.find(".units-taken").text(data.units_taken)
