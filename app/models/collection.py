@@ -19,7 +19,9 @@ class Collection(db.Model):
 
 	@property
 	def units_counted(self):
-		return sum(float(cc.course.units) for cc in self.collectionCourses if cc.grade and cc.grade.gpv)
+		return sum(
+			float(cc.course.units) for cc in self.collectionCourses if cc.grade and cc.grade.gpv is not None
+		)
 	
 	def getPoints(self, precision=3):
 		points = 0
@@ -27,7 +29,7 @@ class Collection(db.Model):
 			grade = cc.grade
 			if grade is None:
 				return None
-			if grade.gpv and cc.course.countgpa:
+			if cc.course.countgpa and grade.gpv is not None:
 				points += float(grade.gpv) * float(cc.course.units)
 		return round(points, precision)
 

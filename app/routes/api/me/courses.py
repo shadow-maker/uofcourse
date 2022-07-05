@@ -145,7 +145,7 @@ def putCollectionCourse(data={}, id=None):
 
 	if "passed" in data:
 		try:
-			collectionCourse.passed = json.loads(data["passed"])
+			collectionCourse.passed = data["passed"]
 		except:
 			return {"error": "passed must be a boolean"}, 400
 	
