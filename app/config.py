@@ -12,7 +12,7 @@ class Config:
 		"pool_recycle": 280,
 		"pool_timeout": 20
 	}
-
+ # Test
 	CACHE_TYPE = "SimpleCache"
 
 	def __init__(self):
