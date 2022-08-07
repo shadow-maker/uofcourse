@@ -44,7 +44,7 @@ class User(db.Model, UserMixin):
 	collections = db.relationship("Collection", backref="user")
 	tags = db.relationship("Tag", backref="user")
 	announcements = db.relationship("Announcement", backref="author")
-	features = db.relationship("FeatureRequest", backref="author")
+	features = db.relationship("Feature", backref="author")
 
 	logs = db.relationship("UserLog", backref="user")
 
@@ -108,14 +108,14 @@ class User(db.Model, UserMixin):
 		return tag
 	
 	def requestFeature(self, title, body):
-		request = models.FeatureRequest(self.id, title, body)
-		db.session.add(request)
+		feature = models.Feature(self.id, title, body)
+		db.session.add(feature)
 		db.session.commit()
 	
 	@property
 	def features_requested(self):
-		return models.FeatureRequest.query.filter(
-			(models.FeatureRequest.posted_by.contains(self))).order_by(models.FeatureRequest.datetime.desc()
+		return models.Feature.query.filter(
+			(models.Feature.posted_by.contains(self))).order_by(models.Feature.datetime.desc()
 		).all()
 	
 	def announce(self, title, body):
