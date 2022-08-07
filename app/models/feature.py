@@ -1,10 +1,10 @@
 from app import db
-from app.models._user_feature import UserFeature
+from app.models._user_feature import UserFeatureRequest
 from app.localdt import utc, local
 from app.auth import current_user
 
 
-class Feature(db.Model):
+class FeatureRequest(db.Model):
     __tablename__ = "feature"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
@@ -12,7 +12,7 @@ class Feature(db.Model):
     body = db.Column(db.Text)
     datetime = db.Column(db.DateTime, nullable=False, default=utc.now)
     num_likes = db.Column(db.Integer, primary_key=True)
-    posted_by = db.relationship("User", secondary=UserFeature, backref="requested_features")
+    posted_by = db.relationship("User", secondary=UserFeatureRequest, backref="requested_features")
 
     def __init__(self, user_id, title, body):
         self.user_id = user_id

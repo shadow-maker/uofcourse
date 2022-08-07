@@ -25,7 +25,7 @@ from app.models.tag import Tag
 from app.models.collection_course import CollectionCourse
 from app.models.collection import Collection
 from app.models.announcement import Announcement
-from app.models.feature import Feature
+from app.models.feature import FeatureRequest
 
 #
 # Create all tables in database
