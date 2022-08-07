@@ -130,14 +130,13 @@ def contact():
 	)
 
 @view.route("/featurerequests")
-
 def featureRequests():
 	return render_template("featureRequests.html",
 		title = "Feature Requests",
 		header = "Feature Requests",
 		headerIcon = "mailbox2",
 		description = "Submit a request to the website administrator.",
-		announcement_id = request.args.get("id"),
+		feature_id = request.args.get("id"),
 		sortOptions = [
 			{"label": "Datetime", "value": ["datetime", "title"]},
 			{"label": "Title", "value": ["title", "datetime"]},

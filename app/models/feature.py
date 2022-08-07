@@ -28,7 +28,7 @@ class FeatureRequest(db.Model):
         return local.normalize(self.datetime_utc)
     
     def __repr__(self):
-        return f"Feature Request(id={self.id})"
+        return f"FeatureRequest(id={self.id})"
     
     def __iter__(self):
         yield "id", self.id
