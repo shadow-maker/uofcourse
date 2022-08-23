@@ -5,11 +5,14 @@ from app.routes.admin import BaseModelView
 from flask import flash
 from flask_admin.babel import gettext
 
+from app.models import Calendar
+from app.routes.admin import BaseModelView
+
 class FeatureRequestModelView(BaseModelView):
 	def is_accessible(self):
 		return current_user.is_authenticated and current_user.role >= Role.admin
 	
-	column_list = ["id", "datetime", "title", "user_id"]
+	column_list = ["id", "datetime", "title", "user_id", "num_likes"]
 	column_details_list = ["id", "datetime", "user_id", "title", "body"]
 	form_excluded_columns = ["posted_by", "num_likes", "author", "datetime"]
 	column_default_sort = [("datetime", True) , ("title", True)]

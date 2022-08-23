@@ -11,13 +11,14 @@ class FeatureRequest(db.Model):
     title = db.Column(db.String(256), nullable=False)
     body = db.Column(db.Text)
     datetime = db.Column(db.DateTime, nullable=False, default=utc.now)
-    num_likes = db.Column(db.Integer, primary_key=True)
+    num_likes = db.Column(db.Integer, primary_key=False)
     posted_by = db.relationship("User", secondary=UserFeatureRequest, backref="requested_features")
 
     def __init__(self, user_id, title, body):
         self.user_id = user_id
         self.title = title
         self.body = body
+        self.num_likes = 0
     
     @property
     def datetime_utc(self):
