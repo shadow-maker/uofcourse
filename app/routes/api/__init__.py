@@ -1,6 +1,5 @@
 from flask import Blueprint, request
-from wtforms import ValidationError
-from flask_wtf.csrf import validate_csrf
+from werkzeug.exceptions import BadRequest
 
 #
 # Import all API routes (endpoints)
@@ -38,16 +37,6 @@ api.register_blueprint(announcement)
 
 @api.before_request
 def apiBeforeRequest():
-	# Validate AJAX Token
-	token = request.headers.get("AJAX-TOKEN")
-	if token:
-		try:
-			validate_csrf(token)
-		except ValidationError as e:
-			return {"error": str(e).replace("CSRF", "AJAX")}, 401
-	else:
-		return {"error": "Missing AJAX-TOKEN header"}, 401
-
 	# Validate request data
 	if request.content_length:
 		try:

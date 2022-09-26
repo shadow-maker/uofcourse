@@ -4,7 +4,6 @@ function ajax(method, endpoint, data, success=()=>{}, error=displayError, comple
 	$.ajax({
 		method: method,
 		url: "/api/" + endpoint,
-		headers: {"AJAX-TOKEN": AJAX_TOKEN},
 		data: data,
 		traditional: true,
 		dataType: "json",

@@ -2,7 +2,6 @@ from app import app
 from app import constants
 from app.models import Role, Faculty
 from flask import Blueprint
-from flask_wtf.csrf import generate_csrf
 
 #
 # Create view route blueprint with no url prefix
@@ -24,7 +23,6 @@ def viewConstants():
 		"ROLE_ADMIN": Role.admin,
 		"ROLE_MOD": Role.moderator,
 		"FACULTIES": Faculty.query.all(),
-		"AJAX_TOKEN": generate_csrf()
 	}}
 
 #
