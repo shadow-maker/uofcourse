@@ -12,6 +12,8 @@ There are 5 main data tables that can be retrieved though the API's endpoints. E
 
 With the API the developer can retrieve all rows for a selected table, or a single row by passing its `id` (or `code`, if aplicable) to the endpoint.
 
+All data returned by the API endpoints is in JSON format.
+
 ### Retrieving a single row {: #retrieve-single}
 
 If a single row is retrieved, the API will return a JSON object where every key-value pair corresponds to column data in the table. No URL parameters are supported when requesting a single row.
