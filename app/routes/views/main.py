@@ -87,6 +87,18 @@ def api():
 	)
 
 
+@view.route("/playground")
+def apiPlayground():
+	return render_template("apiPlayground.html",
+		title = "API Playground",
+		header = "API Playground",
+		headerIcon = "braces-asterisk",
+		description = "Test out the UofCourse API endpoints in real time.",
+		baseURLFull = url_for('view.api', _external=True),
+		baseURL = url_for('view.api', _external=True).replace("https://", "").replace("http://", "").replace("www.", "")
+	)
+
+
 @view.route("/contact", methods=["GET", "POST"])
 def contact():
 	form = formContact()
