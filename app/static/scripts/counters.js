@@ -34,11 +34,11 @@ $(document).ready(() => {
 	$("#remaining").text(i)
 
 	var countInterval = window.setInterval(() => {
-		i = delay / 1000
-
 		getCount((data) => {
 			console.log("Updating count...")
 			updateCount(data)
+
+			i = delay / 1000
 		})	
 	}, delay);	  
 
