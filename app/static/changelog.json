@@ -1,4 +1,17 @@
 {
+	"1.1.1": {
+		"beta": false,
+		"date": "2022-09-27",
+		"title": "The CSUS Showcase update",
+		"changes": [
+			"Added a real time user counter page found in /counter",
+			"Added an interactive API playground found in /playground",
+			"Improved the about page info"
+		],
+		"fixes": [
+			"GPA would not be correctly calculated for courses with a grade of F or I"
+		]
+	},
 	"1.1": {
 		"beta": false,
 		"date": "2022-06-11",
