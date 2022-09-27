@@ -30,7 +30,7 @@ class CollectionCourse(db.Model):
 		return self.collection.user_id
 
 	def getWeightedGPV(self, precision=3):
-		if self.grade and self.grade.gpv:
+		if self.grade and self.grade.gpv is not None:
 			return round(float(self.grade.gpv * self.course.units), precision)
 		return None
 

@@ -138,3 +138,12 @@ def changelog():
 		headerIcon = "bug-fill",
 		changelog = change
 	)
+
+
+@view.route("/counter")
+def counter():
+	return render_template("counter.html",
+		title = "User Counter",
+		header = "Real Time User Counter",
+		headerIcon = "people-fill"
+	)

@@ -427,7 +427,7 @@ function updateCollectionCourse(collection_id, id) {
 	cc.element.find(".grade").text(cc.grade_id ? grade.symbol : "-")
 	cc.element.find(".grade").attr(
 		"title",
-		cc.grade_id ? ((grade.gpv ? grade.gpv : "-") + " GPV | " + (cc.weightedGPV ? cc.weightedGPV : "-") + " Weighted") : "Grade not set"
+		cc.grade_id ? ((grade.gpv != null ? grade.gpv : "-") + " GPV | " + (cc.weightedGPV  != null ? cc.weightedGPV : "-") + " Weighted") : "Grade not set"
 	)
 
 	// Item events
@@ -446,7 +446,7 @@ function updateCollectionCourse(collection_id, id) {
 				modalInfo.find(".grade-symbol").text(grade.symbol)
 				modalInfo.find(".grade-desc").text(grade.desc)
 				modalInfo.find(".grade-passed").text(grade.passed ? "Yes" : "No")
-				if (grade.gpv) {
+				if (grade.gpv != null) {
 					modalInfo.find(".grade-gpv").text(grade.gpv.toFixed(2))
 					modalInfo.find(".grade-weighted").text((grade.gpv * cc.course_units).toFixed(2))
 				} else {
