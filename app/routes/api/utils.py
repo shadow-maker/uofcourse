@@ -1,7 +1,7 @@
 from app.constants import *
 from sqlalchemy.orm.attributes import QueryableAttribute
 
-from flask import request
+from flask import request, jsonify
 from sqlalchemy import desc
 
 
@@ -9,7 +9,9 @@ def getById(table, id):
 	obj = table.query.get(id)
 	if not obj:
 		return {"error": f"{table.__name__} with id {id} does not exist"}, 404
-	return dict(obj), 200
+	response = jsonify(dict(obj))
+	response.headers.add("Access-Control-Allow-Origin", "*")
+	return response, 200
 
 
 def getAll(table, filters=(), serializer=None):
@@ -68,11 +70,12 @@ def getAll(table, filters=(), serializer=None):
 	# Get  results
 	results = query.paginate(per_page=limit, page=page)
 
-	return {
-		"results": [
-			serializer(i) for i in results.items # pass every result item through serializer
-		],
+	response = jsonify({
+		"results": [serializer(i) for i in results.items], # pass every result item through serializer
 		"page": results.page,
 		"pages": results.pages,
 		"total": results.total
-	}, 200
+	})
+
+	response.headers.add("Access-Control-Allow-Origin", "*")
+	return response, 200
