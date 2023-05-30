@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block headscripts %}
+<script src="/static/scripts/counters.js"></script>
+{% endblock %}
+
+{% block styles %}
+<style>
+	#total {
+		font-size: calc(4rem + 6vw);
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="text-center my-5">
+	<div class="h2 m-0">There are currently</div>
+
+	<div class="d-flex justify-content-center my-3">
+		<div class="card border-5">
+			<div class="card-body">
+				<span id="total" class="font-monospace my-4 lh-1"></span>
+			</div>
+		</div>
+	</div>
+
+	<div class="h2 m-0">registered users</div>
+
+	<div class="fst-italic mt-2 text-muted">
+		Updating in <span id="remaining"></span> seconds...
+	</div>
+</div>
+
+{% endblock %}

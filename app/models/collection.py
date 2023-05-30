@@ -23,7 +23,10 @@ class Collection(db.Model):
 
 	@property
 	def units_counted(self):
-		return sum(float(course.units) for course in self.courses_counted)
+		return sum(
+			float(cc.course.units) for cc in self.collectionCourses
+			if cc.grade and cc.grade.gpv is not None
+		)
 	
 	@property
 	def courses_passed(self):
