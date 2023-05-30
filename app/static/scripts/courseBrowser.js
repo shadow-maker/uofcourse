@@ -51,6 +51,7 @@ function requestResults(callback) {
 		else
 			name += word + " "
 	}
+	name = name.trim()
 
 	let selectedLevel = []
 	$("input[name='selectedLevel']:checked").each(function () {
@@ -80,11 +81,11 @@ function requestResults(callback) {
 	for (let s in subjects)
 		if (subjects[s].sel)
 			selectedSubject.push(parseInt(subjects[s].id))
-	
+
 	let repeat = JSON.parse($('input[name=repeat]:checked', '#formFilterCourses').val())
 	let countgpa = JSON.parse($('input[name=countgpa]:checked', '#formFilterCourses').val())
 	let old = JSON.parse($('input[name=old]:checked', '#formFilterCourses').val())
-	
+
 	let data = {
 		sort: sortOptions[$("#sortBy").val()].value,
 		asc: $("#orderBy").val(),
@@ -96,7 +97,7 @@ function requestResults(callback) {
 
 	if (name.length > 0)
 		data.name = name
-	if (number != null)
+	if (number.length > 0)
 		data.number = number
 	if (repeat != null)
 		data.repeat = repeat
@@ -113,7 +114,7 @@ function requestResults(callback) {
 	$(".loading").show()
 	$(".loaded").hide()
 
-	ajax("GET", "courses", data, callback, displayError, () => {$(".loading").hide()})
+	ajax("GET", "courses", data, callback, displayError, () => { $(".loading").hide() })
 }
 
 function toggleCourseTag(courseId, tagId) {
@@ -139,7 +140,7 @@ function addCollection(courseId, collectionId) {
 			requestCollections(courseId, (data) => {
 				course.collections = data.collections.map(c => c.id)
 				updateCollections(courseId)
-			})	
+			})
 		}
 	)
 }
@@ -186,7 +187,7 @@ function updateCourse(id) {
 
 			tagDropItem.attr("db-id", tag.id)
 			tagDropItem.find(".tag-name").text(tag.name)
-			
+
 			tagDropItem.on("click", (e) => {
 				e.preventDefault()
 				e.stopImmediatePropagation()
@@ -199,7 +200,7 @@ function updateCourse(id) {
 		updateCourseTags(id)
 		updateCollections(id)
 	} else {
-		course.element.find(".tags-dropdown-btn").on("click", function(e) {
+		course.element.find(".tags-dropdown-btn").on("click", function (e) {
 			$(this).dropdown("hide")
 			alert("warning", "You must be logged in to add tags")
 		})
@@ -240,7 +241,7 @@ function updateCourseTags(id) {
 	courseTags.find(".tags-selected").empty()
 	for (let tagId of course.tags) {
 		let tag = tags.find(t => t.id == tagId)
-			
+
 		if (!tag)
 			continue
 
@@ -293,7 +294,7 @@ function updateCollections(id) {
 	collections.find(".collections-dropdown-item").each(function () {
 		if (course.collections.includes(parseInt($(this).attr("db-id")))) {
 			$(this).find(".bi-check").removeClass("invisible")
-			$(this).find(".dropdown-item").on("click", () => {})
+			$(this).find(".dropdown-item").on("click", () => { })
 		} else {
 			$(this).find(".bi-check").addClass("invisible")
 			$(this).find(".dropdown-item").on("click", (e) => {
