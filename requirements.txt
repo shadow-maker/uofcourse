@@ -12,7 +12,7 @@ charset-normalizer==2.0.12
 click==8.1.2
 dnspython==2.2.1
 email-validator==1.2.0
-Flask==2.1.1
+Flask==2.2.5
 Flask-Admin==1.6.0
 flask-alchemydumps==0.0.13
 Flask-BabelEx==0.9.4
