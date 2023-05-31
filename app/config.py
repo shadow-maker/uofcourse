@@ -3,8 +3,7 @@ from os import getenv
 
 load_dotenv()
 
-def dbURI(type, host, port, name, user, password):
-	return f"{type}://{user}:{password}@{host}:{port}/{name}"
+dbURI = lambda type, host, port, name, user, pssw: f"{type}://{user}:{pssw}@{host}:{port}/{name}"
 
 class Config:
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -14,6 +13,10 @@ class Config:
 	}
 
 	CACHE_TYPE = "SimpleCache"
+	SESSION_TYPE = "filesystem"
+	SESSION_FILE_DIR = "sessions"
+	SESSION_PERMANENT = False
+	SESSION_USE_SIGNER = True
 
 	def __init__(self):
 		for var in ["SECRET_KEY", "GANALYTICS_ID", "GADSENSE_ID", "PROPELLER_ID", "IFTTT_KEY"]:

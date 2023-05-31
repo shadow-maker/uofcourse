@@ -1,12 +1,12 @@
-## Introduction  {: #introduction }
+## Introduction  {: #introduction}
 
 UofCourse offers a public Web API to easily retrieve stored data. The API applies the RESTful API principles, but at the moment only GET requests are supported and no user-specific data can be retrieved. No authentication is required to make requests to the API.
 
-**API BASE URL: ** `{{url_for('view.api', _external=True)}}`
+**API BASE URL:** `{{url_for('view.api', _external=True)}}`
 
 Below you'll find a list of all available endpoints, each with a unique path that extends from the base url. To make a call to a specific endpoint, make a request to the base url + the endpoint path. Some endpoints support [URL parameters](https://www.semrush.com/blog/url-parameters/), which can be passed in the request URL to retrieve specific data.
 
-## General structure {: #general-structure}
+## General structure {: #general-structure .mt-5}
 
 There are 5 main data tables that can be retrieved though the API's endpoints. Each data table has specific columns that correspond to its relevant data. The only column that is available for all the tables is the `id` column, which is the primary key for each row.
 
@@ -14,11 +14,11 @@ With the API the developer can retrieve all rows for a selected table, or a sing
 
 All data returned by the API endpoints is in JSON format.
 
-### Retrieving a single row {: #retrieve-single}
+### Retrieving a single row {: #retrieve-single .mt-4}
 
 If a single row is retrieved, the API will return a JSON object where every key-value pair corresponds to column data in the table. No URL parameters are supported when requesting a single row.
 
-### Retrieving all rows {: #retrieve-all}
+### Retrieving all rows {: #retrieve-all .mt-4}
 
 If all rows are retrieved, the results will be paginated and the API will return a JSON object of the following structure:
 
@@ -42,7 +42,7 @@ Some endpoints support other URL parameters to filter the results.
 
 The endpoints will raise `400` level errors if the contents of the URL parameters are invalid, and `404` level errors if the `page` specified exceeds the amount of pages available. See [below](#error-handling) for more information on error handling.
 
-### Error handling {: #error-handling}
+### Error handling {: #error-handling .mt-4}
 
 The UofCourse API returns [HTTP status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) to state whether the request was successful or not. Whenever a request was successful, a status code of `200` should be returned (along with the requested data). If a request was unsuccessful a staus code of level `400` or `500` will be returned.
 
@@ -50,7 +50,7 @@ The UofCourse API returns [HTTP status codes](https://developer.mozilla.org/en-U
 
 `500` level status codes are associated with server errors, and most likely mean internal bugs with the API.
 
-## Endpoints {: #endpoints}
+## Endpoints {: #endpoints .mt-5}
 
 The API has 5 main endpoint paths that correspond to the available data tables:
 
@@ -60,7 +60,7 @@ The API has 5 main endpoint paths that correspond to the available data tables:
 - Subject - `/subject`
 - Faculty - `/faculty`
 
-### Grades {: #grades}
+### Grades {: #grades .mt-4}
 
 The following data columns (key-value pairs) are available for the Grade table:
 
@@ -72,7 +72,7 @@ The following data columns (key-value pairs) are available for the Grade table:
 | `passed`       | bool                  | No                     | Whether the grade correspond to a passing grade or not       |
 | `desc`         | string                | Yes                    | Grade description, taken from the university's website       |
 
-#### Get all grades {: #grades-1}
+#### Get all grades {: #grades-1 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1}  `/grades`
 {: .p-0 .m-0}
@@ -92,7 +92,7 @@ This endpoint does not support other URL parameters apart from those specified i
 
 A `400` error code will be returned if any other column name is used with the `sort` parameter.
 
-#### Get a grade {: #grades-2}
+#### Get a grade {: #grades-2 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1}  `/grades/{id}`
 {: .p-0 .m-0}
@@ -101,7 +101,7 @@ Returns a JSON object with the data for the Grade item with the specified `id`. 
 
 A `404` error code will be returned if the `id` specified does not correspond to a row in the Grade table.
 
-### Terms {: #terms}
+### Terms {: #terms .mt-4}
 
 The following data columns (key-value pairs) are available for the Term table:
 
@@ -113,7 +113,7 @@ The following data columns (key-value pairs) are available for the Term table:
 | `start`        | string                | Yes                    | Start date of the term, formatted in the ISO date standard YYYY-MM-DD |
 | `end`          | string                | Yes                    | End date of the term, formatted in the ISO date standard YYYY-MM-DD |
 
-#### Get all terms {: #terms-1}
+#### Get all terms {: #terms-1 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1}  `/terms`
 {: .p-0 .m-0}
@@ -133,7 +133,7 @@ This endpoint does not support other URL parameters apart from those specified i
 
 A `400` error code will be returned if any other column name is used with the `sort` parameter.
 
-#### Get a term {: #terms-2}
+#### Get a term {: #terms-2 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1}  `/terms/{id}`
 {: .p-0 .m-0}
@@ -142,7 +142,7 @@ Returns a JSON object with the data for the Term item with the specified `id`. T
 
 A `404` error code will be returned if the `id` specified does not correspond to a row in the Term table.
 
-### Faculties {: #faculties}
+### Faculties {: #faculties .mt-4}
 
 The following data columns (key-value pairs) are available for the Faculty table:
 
@@ -153,7 +153,7 @@ The following data columns (key-value pairs) are available for the Faculty table
 | `url`          | string                | Yes                    | URL path for the faculty page in UofCourse |
 | `url_uni`      | string                | Yes                    | Full URL for the official faculty site     |
 
-#### Get all faculties {: #faculties-1}
+#### Get all faculties {: #faculties-1 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1}  `/faculties`
 {: .p-0 .m-0}
@@ -176,7 +176,7 @@ The following columns are available to be used with the `sort` URL parameter:
 
 A `400` error code will be returned if any other column name is used with the `sort` parameter.
 
-#### Get a faculty {: #faculties-2}
+#### Get a faculty {: #faculties-2 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1}  `/faculties/{id}`
 {: .p-0 .m-0}
@@ -185,7 +185,7 @@ Returns a JSON object with the data for the Faculty item with the specified `id`
 
 A `404` error code will be returned if the `id` specified does not correspond to a row in the Faculty table.
 
-#### Get faculty subjects {: #faculties-3}
+#### Get faculty subjects {: #faculties-3 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1}  `/faculties/{id}/subjects`
 {: .p-0 .m-0}
@@ -196,7 +196,7 @@ Alias for `/subjects?faculties={id}`, see [get all subjects](#subjects) for more
 
 A `404` error code will be returned if the `id` specified does not correspond to a row in the Faculty table.
 
-#### Get faculty courses {: #faculties-4}
+#### Get faculty courses {: #faculties-4 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1}  `/faculties/{id}/courses`
 {: .p-0 .m-0}
@@ -207,7 +207,7 @@ Alias for `/courses?faculties={id}`, see [get all courses](#courses) for more in
 
 A `404` error code will be returned if the `id` specified does not correspond to a row in the Faculty table.
 
-### Subjects {: #subjects}
+### Subjects {: #subjects .mt-4}
 
 The following data columns (key-value pairs) are available for the Subject table:
 
@@ -221,7 +221,7 @@ The following data columns (key-value pairs) are available for the Subject table
 | `url`          | string                | Yes                    | URL path for the subject page in UofCourse                   |
 | `url_uni`      | string                | Yes                    | Full URL for the subject page in the official uni calendar site |
 
-#### Get all subjects {: #subjects-1}
+#### Get all subjects {: #subjects-1 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1} `/subjects`
 {: .p-0 .m-0}
@@ -248,7 +248,7 @@ The following columns are available to be used with the `sort` URL parameter:
 
 A `400` error code will be returned if any other column name is used with the `sort` parameter.
 
-#### Get a subject {: #subjects-2}
+#### Get a subject {: #subjects-2 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1} `/subjects/id`
 {: .p-0 .m-0}
@@ -257,7 +257,7 @@ Returns a JSON object with the data for the Subject item with the specified `id`
 
 A `404` error code will be returned if the `id` specified does not correspond to a row in the Subject table.
 
-#### Get subject courses {: #subjects-3}
+#### Get subject courses {: #subjects-3 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1} `/subjects/{id}/courses`
 {: .p-0 .m-0}
@@ -268,7 +268,7 @@ Alias for `/courses?subjects={id}`, see [get all courses](#courses) for more inf
 
 A `404` error code will be returned if the `id` specified does not correspond to a row in the Subject table.
 
-#### Get a subject by its code {: #subjects-4}
+#### Get a subject by its code {: #subjects-4 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1} `/subjects/code/{subj}`
 {: .p-0 .m-0}
@@ -277,7 +277,7 @@ Returns a JSON object with the data for the Subject item with the specified code
 
 A `404` error code will be returned if the `id` specified does not correspond to a row in the Subject table.
 
-### Courses {: #courses}
+### Courses {: #courses .mt-4}
 
 The following data columns (key-value pairs) are available for the Course table:
 
@@ -302,7 +302,7 @@ The following data columns (key-value pairs) are available for the Course table:
 | `url`          | string                | No                     | URL path for the course page in UofCourse                    |
 | `url_uni`      | string                | Yes                    | Full URL for the course page in the official uni calendar site |
 
-#### Get all courses {: #courses-1}
+#### Get all courses {: #courses-1 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1}  `/courses`
 {: .p-0 .m-0}
@@ -346,7 +346,7 @@ The following columns are available to be used with the `sort` URL parameter:
 
 A `400` error code will be returned if any other column name is used with the `sort` parameter.
 
-#### Get a course {: #courses-2}
+#### Get a course {: #courses-2 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1}  `/courses/{id}`
 {: .p-0 .m-0}
@@ -355,7 +355,7 @@ Returns a JSON object with the data for the Course item with the specified `id`.
 
 A `404` error code will be returned if the `id` specified does not correspond to a row in the Subject table.
 
-#### Get a course by its code {: #courses-3}
+#### Get a course by its code {: #courses-3 .mt-3}
 
 > **GET**{: .badge .bg-primary .me-1}  `/courses/code/{subj}/{num}`
 {: .p-0 .m-0}

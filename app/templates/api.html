@@ -29,12 +29,12 @@
 			$(this).append("<i class='bi-clipboard'></i>")
 		})
 	})
-	
+
 	// Copy endpoint to clipboard when clicked
 	$(document).on("click", "#scrollspy-content blockquote", function () {
 		navigator.clipboard.writeText($(this).find("code").text()).then(
-			() => {alert("success", "Copied endpoint to clipboard!")},
-			() => {alert("danger", "Failed to copy endpoint to clipboard")}
+			() => { alert("success", "Copied endpoint to clipboard!") },
+			() => { alert("danger", "Failed to copy endpoint to clipboard") }
 		)
 	})
 </script>
@@ -164,7 +164,8 @@
 	</div>
 
 	<div class="container col-12 col-sm-7 col-lg-8 col-xl-9 px-md-4 px-lg-5">
-		<div id="scrollspy-content" data-bs-spy="scroll" data-bs-target="#scrollspy-nav" data-bs-offset="0" tabindex="0" class="pb-5">
+		<div id="scrollspy-content" data-bs-spy="scroll" data-bs-target="#scrollspy-nav" data-bs-offset="0" tabindex="0"
+			class="pb-5">
 
 			{{html | safe}}
 

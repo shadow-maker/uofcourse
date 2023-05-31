@@ -65,18 +65,15 @@ def api():
 		template = jinja.from_string(file.read())
 
 	# Process template with variables
-	processed = template.render(
-		url_for = url_for
-	)
+	processed = template.render(url_for = url_for)
 
 	# Convert markdown to html
 	html = markdown(processed, extensions=["attr_list", "tables", "fenced_code"])
-	parts = html.partition("h2")
-	html = parts[0] + parts[1] + parts[2].replace("h2", "h2 class='mt-5'")
-	html = html.replace("<h3", "<h3 class='mt-4'")
-	html = html.replace("<h4", "<h4 class='mt-3'")
 	html = html.replace("<table", "<table class='table table-sm'")
-	html = html.replace("<blockquote", "<blockquote title='Copy endpoint' class='alert alert-secondary p-2 d-flex justify-content-between fs-5'")
+	html = html.replace(
+		"<blockquote",
+		"<blockquote title='Copy endpoint' class='alert alert-secondary p-2 d-flex justify-content-between fs-5'"
+	)
 
 	return render_template("api.html",
 		title = "API",
