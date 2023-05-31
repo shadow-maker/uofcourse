@@ -47,7 +47,6 @@ class UserLog(db.Model):
 			return ipcache[self.ip]
 		else:
 			r = requests.get("http://ip-api.com/json/" + self.ip)
-			print(dir(r))
 			if r.status_code == 200:
 				data = r.json()
 				if "lat" in data and "lon" in data:

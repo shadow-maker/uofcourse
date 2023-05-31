@@ -1,4 +1,3 @@
-import re
 from app.models import Subject
 from app.routes.views import view
 
