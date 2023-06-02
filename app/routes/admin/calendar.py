@@ -3,7 +3,7 @@ from app.routes.admin import BaseModelView
 
 class CalendarModelView(BaseModelView):
 	column_default_sort = [("year", True) , ("version", False)]
-	form_excluded_columns = ["terms"]
+	form_excluded_columns = ["courses", "subjects"]
 	column_details_list = ["id", "year", "schoolyear", "version", "url"]
 
 	def __init__(self, *args, **kwargs):
