@@ -1,14 +1,20 @@
-from app import db
-from app.models import Season, Term
+from app.models import db, Season, Term
+
 import json
 import os
+import sys
+
+TERMS_FILE = "terms.json"
 
 def update():
-	termsFile = "terms.json"
-	termsPath = os.path.join(os.path.dirname(os.path.realpath(__file__)), termsFile)
+	print("\n" + ("-" * 20) + "UPDATING TERMS" + ("-" * 20) + "\n")
 
-	with open(termsPath, "r") as file:
-		terms = json.load(file)
+	try:
+		termsPath = os.path.join(os.path.dirname(os.path.realpath(__file__)), TERMS_FILE)
+		with open(termsPath, "r") as file:
+			terms = json.load(file)
+	except:
+		sys.exit(f"ERROR: Could not open terms file '{TERMS_FILE}'")
 
 	for tId, term in terms.items():
 		try:

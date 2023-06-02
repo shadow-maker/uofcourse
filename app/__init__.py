@@ -46,4 +46,4 @@ ipcache : dict[str, dict] = {}
 # Import models and routes
 #
 
-from app import models, routes
+from app import models, routes, db_update

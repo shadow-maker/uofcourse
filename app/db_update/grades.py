@@ -1,20 +1,23 @@
-from . import TIMEOUT
 from app import db
 from app.models import Grade, Calendar
+from app.constants import REQUESTS_TIMEOUT
 from bs4 import BeautifulSoup
+
 import requests
 import sys
 
+GRADES_PAGE = "f-1-1.html"
+
 def update():
-	url = "f-1-1.html"
+	print("\n" + ("-" * 20) + "UPDATING GRADES" + ("-" * 20) + "\n")
 
 	calendar = Calendar.getLatest()
 
 	# Request page
 	try:
-		r = requests.get(calendar.url + url, timeout=TIMEOUT)
+		r = requests.get(calendar.url + GRADES_PAGE, timeout=REQUESTS_TIMEOUT)
 	except requests.exceptions.RequestException:
-		sys.exit(f"FAILED REQUEST FOR GRADE SYSTEM PAGE ({url})")
+		sys.exit(f"FAILED REQUEST FOR GRADE SYSTEM PAGE ({GRADES_PAGE})")
 	soup = BeautifulSoup(r.text, features="html.parser")
 
 	# Get all grade rows

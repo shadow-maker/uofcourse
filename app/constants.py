@@ -27,6 +27,7 @@ ALLOW_ACCOUNT_CREATION = True
 MAX_ITEMS_PER_PAGE = 50
 
 MESSAGES_TIMEOUT = 300 # seconds
+REQUESTS_TIMEOUT = (5, 30) # Connection timeout, Read timeout
 
 COURSE_LEVELS = [1, 2, 3, 4, 5, 6, 7]
 
