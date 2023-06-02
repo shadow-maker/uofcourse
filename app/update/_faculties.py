@@ -3,8 +3,6 @@ from app.models import db, Calendar, Faculty
 
 from bs4 import ResultSet
 
-FACULTY_PAGE = "course-by-faculty.html"
-
 FACULTY_MAPPINGS = {
 	"Faculty of Communication and Culture": "Faculty of Arts",
 	"Faculty of Fine Arts": "Faculty of Arts",

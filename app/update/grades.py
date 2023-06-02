@@ -6,18 +6,18 @@ from bs4 import BeautifulSoup
 import requests
 import sys
 
-GRADES_PAGE = "f-1-1.html"
-
 def update():
 	print("\n" + ("-" * 20) + "UPDATING GRADES" + ("-" * 20) + "\n")
 
 	calendar = Calendar.getLatest()
 
+	print(f"* Using {calendar.schoolyear} (latest) calendar *\n")
+
 	# Request page
 	try:
-		r = requests.get(calendar.url + GRADES_PAGE, timeout=REQUESTS_TIMEOUT)
+		r = requests.get(calendar.grades_url, timeout=REQUESTS_TIMEOUT)
 	except requests.exceptions.RequestException:
-		sys.exit(f"FAILED REQUEST FOR GRADE SYSTEM PAGE ({GRADES_PAGE})")
+		sys.exit(f"FAILED REQUEST FOR GRADE SYSTEM PAGE ({calendar.grades_page})")
 	soup = BeautifulSoup(r.text, features="html.parser")
 
 	# Get all grade rows
