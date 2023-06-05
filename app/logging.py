@@ -10,7 +10,7 @@ import os
 
 LOG_LEVEL = logging.INFO
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 logger.setLevel(LOG_LEVEL)
 
 logFormatter = logging.Formatter(LOG_FORMAT, LOG_DATE_FORMAT)
@@ -35,7 +35,7 @@ def getLogFileHandler(fname: str, dirname=LOG_DIR, formatter=logFormatter):
 	path = os.path.join(dirname, fname)
 	handler = logging.FileHandler(path)
 	handler.setFormatter(formatter)
-	
+
 	return handler
 
 def setLogFileHandler(logger: logging.Logger, fname: str, dirname=LOG_DIR, formatter=logFormatter):
