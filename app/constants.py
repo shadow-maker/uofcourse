@@ -29,9 +29,6 @@ MAX_ITEMS_PER_PAGE = 50
 MESSAGES_TIMEOUT = 300 # seconds
 REQUESTS_TIMEOUT = (5, 30) # Connection timeout, Read timeout
 
-LOG_FORMAT = "%(asctime)s - %(levelname)s (%(name)s): %(message)s"
-LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
-
 COURSE_LEVELS = [1, 2, 3, 4, 5, 6, 7]
 
 IFTTT_EVENTS = {
