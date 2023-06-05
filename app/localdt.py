@@ -16,6 +16,9 @@ class LocalDatetime:
 	
 	def time(self): # Gets the current time in the local timezone
 		return self.now().time()
+	
+	def converter(self): # Converter function for logging
+		return lambda *args: self.now().timetuple()
 
 	def localize(self, dt: datetime): # Adds timezone to an anaware datetime object
 		return self.timezone.localize(dt)
