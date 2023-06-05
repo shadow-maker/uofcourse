@@ -31,6 +31,7 @@ REQUESTS_TIMEOUT = (5, 30) # Connection timeout, Read timeout
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s (%(name)s): %(message)s"
 LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+LOG_DIR = "logs"
 
 COURSE_LEVELS = [1, 2, 3, 4, 5, 6, 7]
 
