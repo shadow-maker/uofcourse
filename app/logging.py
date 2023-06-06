@@ -1,3 +1,4 @@
+from app import app
 from app.constants import LOG_FORMAT, LOG_DATE_FORMAT, LOG_DIR
 from app.localdt import utc
 
@@ -8,7 +9,10 @@ import os
 # Config
 #
 
-LOG_LEVEL = logging.INFO
+try:
+	LOG_LEVEL = logging._nameToLevel[app.config["LOG_LEVEL"].upper()]
+except KeyError:
+	LOG_LEVEL = logging.INFO
 
 logger = logging.getLogger()
 logger.setLevel(LOG_LEVEL)

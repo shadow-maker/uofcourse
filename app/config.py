@@ -19,7 +19,7 @@ class Config:
 	SESSION_USE_SIGNER = True
 
 	def __init__(self):
-		for var in ["SECRET_KEY", "GANALYTICS_ID", "GADSENSE_ID", "PROPELLER_ID", "IFTTT_KEY"]:
+		for var in ["SECRET_KEY", "GANALYTICS_ID", "GADSENSE_ID", "PROPELLER_ID", "IFTTT_KEY", "LOG_LEVEL"]:
 			setattr(self, var, getenv(var))
 
 		self.SQLALCHEMY_DATABASE_URI = getenv("DB_URI")
