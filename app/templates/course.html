@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 
+{% from "components/iconlink.html" import iconLink %}
 {% from "components/disqus.html" import disqusThread with context %}
 
 {% block headscripts %}
@@ -16,6 +17,7 @@
 		opacity: 0;
 		transition-delay: 1s;
 	}
+
 	#code:hover .id {
 		opacity: 1;
 	}
@@ -52,9 +54,13 @@
 
 <!--Course Code-->
 <div id="code" class="mb-2">
-	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo" onclick="openGoTo('course', '{{subject.code}}', '{{course.number}}')">
-		<span class="align-top">c/</span><span class="my-0 mx-1"><span class="border border-2 border-secondary bg-light rounded p-1" title="Subject code">{{subject.code}}</span>-<span
-		class="border border-2 border-secondary bg-light rounded p-1" title="Course number">{{course.number}}</span></span></a>
+	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo"
+		onclick="openGoTo('course', '{{subject.code}}', '{{course.number}}')">
+		<span class="align-top">c/</span><span class="my-0 mx-1"><span
+				class="border border-2 border-secondary bg-light rounded p-1"
+				title="Subject code">{{subject.code}}</span>-<span
+				class="border border-2 border-secondary bg-light rounded p-1"
+				title="Course number">{{course.number}}</span></span></a>
 	<span class="id text-muted">(#{{course.id}})</span>
 </div>
 
@@ -65,21 +71,9 @@
 			&#{{course.emoji}} {{course.name}}
 		</h1>
 
-		<div class="">
-			<h5 title="Faculty">
-				<i class="bi bi-building"></i>
-				<a href="{{faculty.url}}" class="text-body text-decoration-none">
-					<span class="text-decoration-underline">{{faculty.name}}</span>
-					<i class="h6 bi bi-box-arrow-up-right"></i>
-				</a>
-			</h5>
-			<h5 title="Subject">
-				<i class="bi bi-journals"></i></i>
-				<a href="{{subject.url}}" class="text-body text-decoration-none">
-					<span class="text-decoration-underline">{{subject.name}}</span>
-					<i class="h6 bi bi-box-arrow-up-right"></i>
-				</a>
-			</h5>
+		<div>
+			<h5 title="Faculty">{{iconLink(faculty.url, faculty.name, "building")}}</h5>
+			<h5 title="Subject">{{iconLink(subject.url, subject.name, "journals")}}</h5>
 		</div>
 	</div>
 
@@ -115,18 +109,10 @@
 		<div class="card border-0 col-12 col-sm-6 col-md-12 ps-2 pe-2 pe-sm-0 pe-md-2 pb-1">
 			<div class="card-body p-0">
 				<div>
-					<a href="{{redditSearch}}" target="_blank" rel="noopener noreferrer" class="text-body text-decoration-none">
-						<i class="bi-reddit"></i>
-						<span class="text-decoration-underline">Search on r/UCalgary</span>
-						<i class="bi-box-arrow-up-right"></i>
-					</a>
+					{{iconLink(redditSearch, "Search on r/UCalgary", "reddit")}}
 				</div>
 				<div>
-					<a href="{{course.url_uni}}" target="_blank" rel="noopener noreferrer" class="text-body text-decoration-none">
-						<i class="bi-journal-bookmark-fill"></i>
-						<span class="text-decoration-underline">View in official Uni Calendar</span>
-						<i class="bi-box-arrow-up-right"></i>
-					</a>
+					{{iconLink(course.url_uni, "View in official Uni Calendar", "journal-bookmark-fill")}}
 				</div>
 			</div>
 		</div>
@@ -148,12 +134,13 @@
 					</span>
 					<br class="d-lg-none">
 					<span class="">
-						This course was removed from the Calendar after the {{course.latestCalendar().schoolyear}} school year.
+						This course was removed from the Calendar after the {{course.latestCalendar().schoolyear}}
+						school year.
 					</span>
 				</div>
 			</div>
 			{% endif %}
-			
+
 			{% macro textCard(title, content, tooltip) %}
 			<div class="col-12 col-lg-6 p-2 pe-0 pe-md-2">
 				<div class="card h-100">
@@ -161,18 +148,19 @@
 						<div class="d-flex justify-content-between mb-2">
 							<span class="h3 m-0">{{title}}</span>
 							{% if tooltip %}
-							<i class="bi-info-circle text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{tooltip}}"></i>
+							<i class="bi-info-circle text-muted" data-bs-toggle="tooltip" data-bs-placement="top"
+								title="{{tooltip}}"></i>
 							{% endif %}
 						</div>
-						
+
 						<p class="mb-2">
 							{% if content %}
-								{% for line in content.split("\n") %}
-									{{line}}
-									{% if not loop.last %}<br>{% endif %}
-								{% endfor %}
+							{% for line in content.split("\n") %}
+							{{line}}
+							{% if not loop.last %}<br>{% endif %}
+							{% endfor %}
 							{% else %}
-								<span class="fst-italic">None</span>
+							<span class="fst-italic">None</span>
 							{% endif %}
 						</p>
 					</div>
@@ -182,11 +170,14 @@
 
 			{{textCard("Description", course.desc)}}
 
-			{{textCard("Notes", course.notes, "This contains any information that may be helpful regarding enrolment in the course.")}}
+			{{textCard("Notes", course.notes, "This contains any information that may be helpful regarding enrolment in
+			the course.")}}
 
-			{{textCard("Prerequisites", course.prereqs, "Courses that must be completed or currently registered in before a student may be able to register in this course.")}}
+			{{textCard("Prerequisites", course.prereqs, "Courses that must be completed or currently registered in
+			before a student may be able to register in this course.")}}
 
-			{{textCard("Antirequisites", course.antireqs, "Students may take these courses if they wish, but credit for both courses will not be granted towards their degree.")}}
+			{{textCard("Antirequisites", course.antireqs, "Students may take these courses if they wish, but credit for
+			both courses will not be granted towards their degree.")}}
 
 			{% if course.coreqs %}
 			{{textCard("Corequisites", course.coreqs, "Must be completed at the same time as this class.")}}
@@ -194,7 +185,8 @@
 
 			<div class="text-muted mt-2 px-3">
 				<i class="bi-info-circle-fill"></i>
-				The information above was taken from the {{course.latestCalendar().schoolyear}} version of the University Calendar (the latest available)
+				The information above was taken from the {{course.latestCalendar().schoolyear}} version of the
+				University Calendar (the latest available)
 			</div>
 		</div>
 
@@ -221,14 +213,18 @@
 						<div class="d-flex justify-content-between mb-2">
 							<h4 class="m-0">Tags</h4>
 							{% if current_user.is_authenticated %}
-							<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
+							<button class="tags-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle"
+								type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
 								Add tags
 							</button>
 							<ul class="dropdown-menu fs-6 py-1">
 								<div class="tags-dropdown"></div>
-								<li><hr class="dropdown-divider my-1"></li>
 								<li>
-									<a class="dropdown-item px-2 p-y1" data-bs-toggle="modal" data-bs-target="#modalEditTags">
+									<hr class="dropdown-divider my-1">
+								</li>
+								<li>
+									<a class="dropdown-item px-2 p-y1" data-bs-toggle="modal"
+										data-bs-target="#modalEditTags">
 										<i class="bi-pencil-square"></i>
 										<small>Edit tags</small>
 									</a>
@@ -247,14 +243,15 @@
 					</div>
 
 					<hr class="my-4">
-		
+
 					<!--Course collections-->
 					<div id="collections">
 						<div class="d-flex justify-content-between mb-2">
 							<h4 class="m-0">Terms taken</h4>
-							
+
 							{% if current_user.is_authenticated %}
-							<button class="collections-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
+							<button class="collections-dropdown-btn btn btn-secondary btn-sm badge dropdown-toggle"
+								type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
 								Add to term
 							</button>
 							<ul class="collections-dropdown dropdown-menu fs-6 py-1">
@@ -270,7 +267,9 @@
 									</a>
 								</li>
 								{% endfor %}
-								<li><hr class="dropdown-divider my-1"></li>
+								<li>
+									<hr class="dropdown-divider my-1">
+								</li>
 								<li>
 									<a class="dropdown-item px-2 p-y1" href="{{url_for('view.planner')}}">
 										<i class="bi-pencil-square"></i>

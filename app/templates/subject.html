@@ -1,11 +1,14 @@
 {% extends "layout.html" %}
 
+{% from "components/iconlink.html" import iconLink %}
+
 {% block styles %}
 <style>
 	#code .id {
 		opacity: 0;
 		transition-delay: 1s;
 	}
+
 	#code:hover .id {
 		opacity: 1;
 	}
@@ -14,10 +17,13 @@
 
 {% block content %}
 
+
 <!--Subject Code-->
 <div id="code" class="mb-2">
-	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo" onclick="openGoTo('subject', '{{subject.code}}')">
-		<span class="align-top">s/</span><span class="border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{{subject.code}}</span></a>
+	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo"
+		onclick="openGoTo('subject', '{{subject.code}}')">
+		<span class="align-top">s/</span><span
+			class="border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{{subject.code}}</span></a>
 	<span class="id align-bottom text-muted">(#{{subject.id}})</span>
 </div>
 
@@ -26,13 +32,7 @@
 	<div class="col-12 col-lg-7 col-xxl-8 mb-4">
 		<h1 class="mt-2">&#{{subject.getEmoji()}} {{subject.name}}</h1>
 
-		<h5 title="Faculty">
-			<i class="bi-building"></i>
-			<a href="{{faculty.url}}" class="text-decoration-none text-body">
-				<span class="text-decoration-underline">{{faculty.name}}</span>
-				<i class="h6 bi bi-box-arrow-up-right"></i>
-			</a>
-		</h5>
+		<h5 title="Faculty">{{iconLink(faculty.url, faculty.name, "building")}}</h5>
 
 		{% if subject.old %}
 		<div class="p-2 pe-0 pe-md-2 mt-4">
@@ -43,7 +43,8 @@
 				</span>
 				<br class="d-lg-none">
 				<span class="">
-					This subject was removed from the Calendar after the {{subject.latestCalendar().schoolyear}} school year.
+					This subject was removed from the Calendar after the {{subject.latestCalendar().schoolyear}} school
+					year.
 				</span>
 			</div>
 		</div>
@@ -58,10 +59,10 @@
 
 				<div class="container">
 					<div>
-						<a class="text-body text-decoration-none" href="{{url_for('view.courseBrowser', subject=subject.code)}}">
-							<span class="text-decoration-underline">View courses in Course Browser</span>
-							<i class="bi-box-arrow-up-right"></i>
-						</a>
+						{{iconLink(
+						url_for("view.courseBrowser", subject=subject.code),
+						"View courses in Course Browser"
+						)}}
 					</div>
 					<div>
 						<div class="">
@@ -72,13 +73,15 @@
 					<div class="d-flex align-items-bottom">
 						<span class="">Version</span>
 						<div class="px-2">
-							<select class="form-select form-select-sm" onchange="$('#cal-btn').attr('href', $(this).val())" title="Calendar version">
+							<select class="form-select form-select-sm"
+								onchange="$('#cal-btn').attr('href', $(this).val())" title="Calendar version">
 								{% for calendar in calendars %}
 								<option value="{{calendar.url + subject.site}}">{{calendar.schoolyear}}</option>
 								{% endfor %}
 							</select>
 						</div>
-						<a id="cal-btn" class="btn btn-sm btn-primary" href="{{calendars[0].url + subject.site}}" target="_blank" rel="noopener noreferrer">
+						<a id="cal-btn" class="btn btn-sm btn-primary" href="{{calendars[0].url + subject.site}}"
+							target="_blank" rel="noopener noreferrer">
 							GO
 							<i class="bi-caret-right-fill"></i>
 						</a>

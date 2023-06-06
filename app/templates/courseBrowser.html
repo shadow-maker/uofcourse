@@ -23,7 +23,8 @@
 		<!--Course Link-->
 		<a class="course-link row m-0 text-decoration-none text-body" href="">
 			<!--Course emoji and code-->
-			<div class="col-12 col-md-5 col-lg-4 col-xl-3 ps-2 px-lg-2 ps-xl-3 ps-xxl-4 h4 m-0 d-flex align-items-bottom">
+			<div
+				class="col-12 col-md-5 col-lg-4 col-xl-3 ps-2 px-lg-2 ps-xl-3 ps-xxl-4 h4 m-0 d-flex align-items-bottom">
 				<span class="course-emoji p-0 m-0 me-2"></span>
 				<span class="course-code p-0 m-0 font-monospace"></span>
 			</div>
@@ -38,7 +39,8 @@
 
 			<!--Tags-->
 			<div class="course-tags col-7 col-xs-6 col-sm-12 col-lg-5 col-xl-7 ps-2 ps-lg-0 pe-1">
-				<span class="course-old d-none btn badge btn-warning text-light px-1 me-1 cursor-pointer" title="This is an old course">
+				<span class="course-old d-none btn badge btn-warning text-light px-1 me-1 cursor-pointer"
+					title="This is an old course">
 					<i class="bi-exclamation-triangle-fill"></i>
 				</span>
 				<span class="tags-selected p-0 m-0"></span>
@@ -49,7 +51,9 @@
 					</button>
 					<ul class="dropdown-menu fs-6 py-1">
 						<div class="tags-dropdown"></div>
-						<li><hr class="dropdown-divider my-1"></li>
+						<li>
+							<hr class="dropdown-divider my-1">
+						</li>
 						<li>
 							<a class="dropdown-item px-2 p-y1" data-bs-toggle="modal" data-bs-target="#modalEditTags">
 								<i class="bi-pencil-square"></i>
@@ -61,9 +65,10 @@
 			</div>
 
 			<!--Collections-->
-			<div class="course-collections col-5 col-sm-12 col-lg-3 col-xl-2 ps-2 ps-lg-0 pe-1 text-end text-sm-start text-lg-end">
-				<button class="collections-dropdown-btn btn badge btn-secondary dropdown-toggle"
-					type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Add to terms"></button>
+			<div
+				class="course-collections col-5 col-sm-12 col-lg-3 col-xl-2 ps-2 ps-lg-0 pe-1 text-end text-sm-start text-lg-end">
+				<button class="collections-dropdown-btn btn badge btn-secondary dropdown-toggle" type="button"
+					data-bs-toggle="dropdown" aria-expanded="false" title="Add to terms"></button>
 				<ul class="collections-dropdown dropdown-menu fs-6 mt-1">
 					{% for collection in collections %}
 					<li class="collections-dropdown-item" db-id="{{collection.id}}">
@@ -92,7 +97,9 @@
 	</div>
 </div>
 <!--Subject search item-->
-<span class="subject-item badge btn btn-secondary border-secondary px-1 py-1 m-1 ms-0 font-monospace text-light fs-6 fw-normal cursor-pointer" title="Click to remove"></span>
+<span
+	class="subject-item badge btn btn-secondary border-secondary px-1 py-1 m-1 ms-0 font-monospace text-light fs-6 fw-normal cursor-pointer"
+	title="Click to remove"></span>
 <!--Subject search suggestion-->
 <li class="subject-suggestion">
 	<a class="dropdown-item form-control-sm px-2 py-1" href="#">
@@ -143,22 +150,22 @@
 								</div>
 								<div class="col ps-0 ps-sm-2 ps-xxl-0 text-end text-sm-start text-xxl-end">
 									<div class="form-check form-check-inline me-1 px-0">
-										<input class="form-check-input mx-1" type="radio" name="old"
-											id="oldTrue" value="true">
+										<input class="form-check-input mx-1" type="radio" name="old" id="oldTrue"
+											value="true">
 										<label class="form-check-label" for="oldTrue">
 											<small>Yes</small>
 										</label>
 									</div>
 									<div class="form-check form-check-inline me-1 px-0">
-										<input class="form-check-input mx-1" type="radio" name="old"
-											id="oldFalse" value="false" checked>
+										<input class="form-check-input mx-1" type="radio" name="old" id="oldFalse"
+											value="false" checked>
 										<label class="form-check-label" for="oldFalse">
 											<small>No</small>
 										</label>
 									</div>
 									<div class="form-check form-check-inline me-1 px-0">
-										<input class="form-check-input mx-1" type="radio" name="old"
-											id="oldNull" value="null">
+										<input class="form-check-input mx-1" type="radio" name="old" id="oldNull"
+											value="null">
 										<label class="form-check-label" for="oldNull">
 											<small>Any</small>
 										</label>
@@ -172,22 +179,22 @@
 								</div>
 								<div class="col ps-0 ps-sm-2 ps-xxl-0 text-end text-sm-start text-xxl-end">
 									<div class="form-check form-check-inline me-1 px-0">
-										<input class="form-check-input mx-1" type="radio" name="repeat"
-											id="repeatTrue" value="true">
+										<input class="form-check-input mx-1" type="radio" name="repeat" id="repeatTrue"
+											value="true">
 										<label class="form-check-label" for="repeatTrue">
 											<small>Yes</small>
 										</label>
 									</div>
 									<div class="form-check form-check-inline me-1 px-0">
-										<input class="form-check-input mx-1" type="radio" name="repeat"
-											id="repeatFalse" value="false">
+										<input class="form-check-input mx-1" type="radio" name="repeat" id="repeatFalse"
+											value="false">
 										<label class="form-check-label" for="repeatFalse">
 											<small>No</small>
 										</label>
 									</div>
 									<div class="form-check form-check-inline me-1 px-0">
-										<input class="form-check-input mx-1" type="radio" name="repeat"
-											id="repeatNull" value="null" checked>
+										<input class="form-check-input mx-1" type="radio" name="repeat" id="repeatNull"
+											value="null" checked>
 										<label class="form-check-label" for="repeatNull">
 											<small>Any</small>
 										</label>
@@ -338,7 +345,7 @@
 					</span>
 					<select id="sortBy" name="sortBy" class="form-select bg-light" aria-label="Sort options">
 						{% for option in sortOptions %}
-						<option value="{{loop.index0}}" {% if loop.index0 == 0 %}selected{% endif %}>
+						<option value="{{loop.index0}}" {% if loop.index0==0 %}selected{% endif %}>
 							{{option.label}}
 						</option>
 						{% endfor %}

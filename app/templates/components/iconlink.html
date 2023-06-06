@@ -1,0 +1,9 @@
+{% macro iconLink(url, name, preicon, external=False) %}
+{% if preicon %}
+<i class="bi bi-{{preicon}}"></i>
+{% endif %}
+<a href="{{url}}" class="icon-link icon-link-hover link-body-emphasis link-offset-1" {% if external %}target="_blank"
+	rel="noopener noreferrer" {% endif %}>
+	{{name}}<i class="h6 bi bi-box-arrow-up-right m-0"></i>
+</a>
+{% endmacro %}

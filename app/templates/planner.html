@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% from "components/iconlink.html" import iconLink %}
+
 {% block headscripts %}
 <script>
 	var grades = JSON.parse('{{ grades | tojson | safe }}')
@@ -82,6 +84,7 @@
 	}
 
 	@media (min-width: 576px) {
+
 		#selectCourseSubject,
 		#selectCourseNumber {
 			width: 3.3em;
@@ -89,6 +92,7 @@
 	}
 
 	@media (min-width: 992px) {
+
 		#selectCourseSubject,
 		#selectCourseNumber {
 			width: 3.2em;
@@ -161,7 +165,7 @@
 	</div>
 </div>
 <!--Collection course item-->
-<div class="collection-course-item m-1 btn bg-light card" db-code="" draggable="true" data-bs-toggle="modal"
+<div class="collection-course-item m-1 btn bg-light card border" db-code="" draggable="true" data-bs-toggle="modal"
 	data-bs-target="#modalInfoCollectionCourse" title="Click to view or drag to change term">
 	<div class="row">
 		<span class="emoji col-3 h5 p-0 m-0"></span>
@@ -441,10 +445,10 @@
 					<div class="col">
 						<div class="fs-5">
 							<span class="emoji" title="Course emoji"></span>
-							<a class="link text-decoration-none text-body" href="" target="_blank"
-								rel="noopener noreferrer">
-								<span class="code text-decoration-underline font-monospace" title="Course code"></span>
-								<i class="bi-box-arrow-up-right"></i>
+							<a class="link icon-link icon-link-hover link-body-emphasis link-offset-1" href=""
+								target="_blank" rel="noopener noreferrer">
+								<span class="code font-monospace" title="Course code"></span>
+								<i class="h5 bi bi-box-arrow-up-right mb-1"></i>
 							</a>
 						</div>
 						<div>

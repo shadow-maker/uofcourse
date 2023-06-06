@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% from "components/iconlink.html" import iconLink %}
+
 {% block headscripts %}
 <script>
 	var subjects = JSON.parse('{{ subjects | tojson | safe }}')
@@ -13,6 +15,7 @@
 		opacity: 0;
 		transition-delay: 1s;
 	}
+
 	#code:hover .id {
 		opacity: 1;
 	}
@@ -50,8 +53,10 @@
 <!--Faculty Code-->
 <div id="code" class="mb-2">
 	{% set fac = faculty.subdomain if faculty.subdomain else faculty.id %}
-	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo" onclick="openGoTo('faculty', '', '', '{{fac}}')">
-		<span class="align-top">f/</span><span class="align-middle border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{{fac}}</span></a>
+	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo"
+		onclick="openGoTo('faculty', '', '', '{{fac}}')">
+		<span class="align-top">f/</span><span
+			class="align-middle border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{{fac}}</span></a>
 	<span class="id align-bottom text-muted">(#{{faculty.id}})</span>
 </div>
 
@@ -76,8 +81,8 @@
 						<span class="input-group-text bg-light" title="Sort by">
 							<i class="bi-sort-down fw-bold"></i>
 						</span>
-						<select id="sortBy" name="sortBy" class="form-select bg-light"
-							aria-label="Sort options" title="Sort by">
+						<select id="sortBy" name="sortBy" class="form-select bg-light" aria-label="Sort options"
+							title="Sort by">
 							<option value="code" selected>
 								Code
 							</option>
@@ -85,15 +90,15 @@
 								Name
 							</option>
 						</select>
-						<select id="orderBy" name="orderBy" class="form-select bg-light"
-							aria-label="Sort options" title="Order by">
+						<select id="orderBy" name="orderBy" class="form-select bg-light" aria-label="Sort options"
+							title="Order by">
 							<option value="1" selected>Ascending</option>
 							<option value="0">Descending</option>
 						</select>
 					</div>
 				</div>
 			</div>
-			
+
 			<!--Subjects list-->
 			<div class="container px-0" id="subjectsContainer"></div>
 		</div>
@@ -123,17 +128,14 @@
 				<div class="card bg-light mt-0 mb-2">
 					<div class="card-body">
 						<div>
-							<a class="text-decoration-none text-body" href="{{url_for('view.courseBrowser', faculty=faculty.id)}}">
-								<span class="text-decoration-underline">View courses in Course Browser</span>
-								<i class="bi bi-box-arrow-up-right"></i>
-							</a>
+							{{iconLink(
+							url_for("view.courseBrowser", faculty=faculty.id),
+							"View courses in Course Browser"
+							)}}
 						</div>
 						{% if faculty.url_uni %}
 						<div>
-							<a class="text-decoration-none text-body" href="{{faculty.url_uni}}" target="_blank" rel="noopener noreferrer">
-								<span class="text-decoration-underline">Go to official faculty site</span>
-								<i class="bi bi-box-arrow-up-right"></i>
-							</a>
+							{{iconLink(faculty.url_uni, "Go to official faculty site", external=True)}}
 						</div>
 						{% endif %}
 					</div>

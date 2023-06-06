@@ -71,26 +71,26 @@ function updateLogs(data) {
 			e.preventDefault()
 
 			const modal = $("#modalShowLocation")
-		
+
 			modal.find(".loading").show()
 			modal.find(".success").hide()
 			modal.find(".error").hide()
-		
+
 			modal.find(".ip").val(log.ip)
-		
+
 			getLocation(log.id, (data) => {
 				modal.find(".loading").hide()
 				if (data.status == "success") {
 					modal.find(".success").show()
 					for (property in data)
 						modal.find(".success ." + property).text(data[property])
-					modal.find(".success .gmaps-link").attr("href", data.gmaps)
+					modal.find(".success .gmaps-link a").attr("href", data.gmaps)
 				} else {
 					modal.find(".error").show()
 					modal.find(".error .message").text(data.message)
 				}
 			})
-		
+
 			modal.modal("show")
 		})
 

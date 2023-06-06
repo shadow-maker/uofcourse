@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 
+{% from "components/iconlink.html" import iconLink %}
 {% from "components/pagination.html" import paginationNav, paginationCode with context %}
 
 {% block headscripts %}
@@ -58,18 +59,14 @@
 			<span>{{current_user.email}}</span>
 		</div>
 		<div title="User faculty">
-			<i class="bi-building"></i>
-			<a href="{{current_user.faculty.url}}" class="text-body text-decoration-none">
-				<span class="text-decoration-underline">{{current_user.faculty.name}}</span>
-				<i class="fs-6 bi-box-arrow-up-right"></i>
-			</a>
+			{{iconLink(current_user.faculty.url, current_user.faculty.name, "building")}}
 		</div>
 	</div>
 
 	<!--Security settings-->
 	<div class="col-12 col-md-6 col-lg-4">
 		<div class="card border-danger">
-			<div class="card-header h5 alert-danger border-danger">
+			<div class="card-header h5 bg-danger-subtle border-danger">
 				Security
 			</div>
 			<div class="card-body">
@@ -179,12 +176,8 @@
 						</div>
 					</div>
 					<div class="row mt-2">
-						<div class="col ps-5">
-							<a href="" class="gmaps-link text-body text-decoration-none" target="_blank"
-								rel="noopener noreferrer">
-								<span class="text-decoration-underline">Open in Google Maps</span>
-								<i class="bi-box-arrow-up-right"></i>
-							</a>
+						<div class="col ps-5 gmaps-link">
+							{{iconLink("", "Open in Google Maps", external=True)}}
 						</div>
 					</div>
 				</div>
