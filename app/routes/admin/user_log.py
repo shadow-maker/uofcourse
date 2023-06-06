@@ -26,3 +26,4 @@ class UserLogModelView(BaseModelView):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(UserLog, *args, **kwargs)
+		self.menu_icon_value = "bi-person-fill-check"

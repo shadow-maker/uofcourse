@@ -8,3 +8,4 @@ class GradeModelView(BaseModelView):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(Grade, *args, **kwargs)
+		self.menu_icon_value = "bi-clipboard-check-fill"

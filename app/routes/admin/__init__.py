@@ -5,7 +5,7 @@ from app.constants import SITE_NAME
 
 from flask import redirect, flash
 from flask.helpers import url_for
-from flask_admin import Admin, AdminIndexView, expose
+from flask_admin import Admin, AdminIndexView, consts, expose
 from flask_admin.contrib.sqla import ModelView
 
 from sys import getsizeof
@@ -21,6 +21,9 @@ class IndexView(AdminIndexView):
 			return redirect(url_for("view.home"))
 		flash(f"You need to log in first!", "warning")
 		return redirect(url_for("view.login"))
+	
+	def is_visible(self):
+		return False
 
 	@expose("/")
 	def index(self):
@@ -51,7 +54,11 @@ class BaseModelView(ModelView):
 		self.can_view_details = True
 		if self.column_details_list is None:
 			self.column_details_list = self.column_list
-		super().__init__(model, db.session, *args, **kwargs)
+		super().__init__(model, db.session,
+			menu_class_name = "main-nav-link",
+			menu_icon_type = consts.ICON_TYPE_GLYPH,
+			*args, **kwargs
+		)
 
 
 admin = Admin(app,
@@ -77,9 +84,9 @@ admin.add_views(
 	UserLogModelView(),
 	AnnouncementModelView(),
 	GradeModelView(),
+	TermModelView(),
+	CalendarModelView(),
 	FacultyModelView(),
 	SubjectModelView(),
-	CourseModelView(),
-	CalendarModelView(),
-	TermModelView()
+	CourseModelView()
 )

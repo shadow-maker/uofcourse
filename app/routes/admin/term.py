@@ -9,3 +9,4 @@ class TermModelView(BaseModelView):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(Term, *args, **kwargs)
+		self.menu_icon_value = "bi-calendar-range-fill"

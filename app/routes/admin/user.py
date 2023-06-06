@@ -42,6 +42,7 @@ class UserModelView(BaseModelView):
 	def __init__(self, *args, **kwargs):
 		super().__init__(User, *args, **kwargs)
 		#self.can_view_details = False
+		self.menu_icon_value = "bi-people-fill"
 		self.can_export = False
 
 	# Override to exclude password column

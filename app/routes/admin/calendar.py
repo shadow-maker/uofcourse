@@ -9,3 +9,4 @@ class CalendarModelView(BaseModelView):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(Calendar, *args, **kwargs)
+		self.menu_icon_value = "bi-calendar-fill"

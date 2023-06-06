@@ -7,4 +7,4 @@ class FacultyModelView(BaseModelView):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(Faculty, *args, **kwargs)
-		self.form_columns
+		self.menu_icon_value = "bi-building-fill"

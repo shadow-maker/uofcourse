@@ -12,3 +12,4 @@ class CourseModelView(BaseModelView):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(Course, *args, **kwargs)
+		self.menu_icon_value = "bi-book"

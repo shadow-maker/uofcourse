@@ -16,6 +16,7 @@ class AnnouncementModelView(BaseModelView):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(Announcement, *args, **kwargs)
+		self.menu_icon_value = "bi-bell-fill"
 	
 	# Override to use Announcement.__init__() native constructor
 	def create_model(self, form):
