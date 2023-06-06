@@ -1,4 +1,4 @@
-from . import _faculties, prints
+from . import _faculties, logger
 from app.models import Calendar
 from app.constants import REQUESTS_TIMEOUT
 
@@ -7,8 +7,9 @@ import requests
 import sys
 
 def update(items: list[Calendar]):
+	logger.info(f"Found {len(items)} calendar items")
 	for calendar in items:
-		prints(0, "\nGETTING DATA FROM CALENDAR VERSION: " + calendar.version)
+		logger.info(f"Updating course data for calendar {calendar.schoolyear} version {calendar.version}")
 		
 		# Request page
 		try:
@@ -16,7 +17,8 @@ def update(items: list[Calendar]):
 			if r.status_code != 200:
 				raise requests.exceptions.RequestException()
 		except requests.exceptions.RequestException:
-			sys.exit("  FAILED REQUEST FOR FACULTIES PAGE")
+			logger.error(f"Failed request for faculties page ({calendar.faculties_url})")
+			sys.exit("ERROR Failed request for faculties page")
 
 		# Initialize BeautifulSoup
 		soup = BeautifulSoup(r.text, features="html.parser")
@@ -25,3 +27,8 @@ def update(items: list[Calendar]):
 		items = soup.find_all(class_="item-container")
 
 		_faculties.update(calendar, items)
+
+		logger.info(
+			f"Finished updating course data for calendar {calendar.schoolyear} version {calendar.version}, " +
+			f"{len(calendar.courses)} courses found in this calendar"
+		)

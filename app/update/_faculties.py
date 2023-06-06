@@ -1,4 +1,4 @@
-from . import _subjects, prints
+from . import _subjects, logger
 from app.models import db, Calendar, Faculty
 
 from bs4 import ResultSet
@@ -17,23 +17,31 @@ FACULTY_MAPPINGS = {
 }
 
 def update(calendar: Calendar, items: ResultSet):
+	logger.info(f"Found {len(items)} Faculty items")
 	for f in items:
 		# Get Faculty name data
 		name = f.find(class_="generic-title").text.strip()
+		logger.debug(f"Reading Faculty with name '{name}'")
 
 		if name in FACULTY_MAPPINGS:
 			name = FACULTY_MAPPINGS[name]
+			logger.debug(f"Found alternative name in mappings, replacing with '{name}'")
 
 		# Check for existing Faculty
 		faculty = Faculty.query.filter(Faculty.name.ilike(name)).first()
-		prints(2, f"FACULTY: {name}", False)
-		if faculty:
-			prints(0, f"ALREADY EXISTS (# {faculty.id}), skipping...")
+		if faculty is not None:
+			logger.debug(f"Faculty (id {faculty.id}) already exists (skipping)")
 		else: # Create new Faculty
-			prints(0, "creating row...")
-			faculty = Faculty(name=name)
-			db.session.add(faculty)
-			db.session.commit()
+			logger.debug("Faculty does not exist (creating)")
+			try:
+				faculty = Faculty(name=name)
+				db.session.add(faculty)
+			except Exception as e:
+				logger.error(f"Failed to create Faculty with name '{name}':\n{e}")
+			try:
+				db.session.commit()
+			except Exception as e:
+				logger.error(f"Failed to commit Faculty with name '{name}':\n{e}")
 
 		# Get all Subject links
 		subjectItems = f.find(class_="generic-body").find_all("a")
