@@ -1,4 +1,5 @@
-from . import _faculties, logger
+from ._logger import logger
+from ._faculties import update as facultiesUpdate
 from app.models import Calendar
 from app.constants import REQUESTS_TIMEOUT
 
@@ -26,7 +27,7 @@ def update(items: list[Calendar]):
 		# Get all Faculty HTML elements
 		items = soup.find_all(class_="item-container")
 
-		_faculties.update(calendar, items)
+		facultiesUpdate(calendar, items)
 
 		logger.info(
 			f"Finished updating course data for calendar {calendar.schoolyear} version {calendar.version}, " +

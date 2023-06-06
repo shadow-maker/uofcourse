@@ -20,11 +20,6 @@ logger.setLevel(LOG_LEVEL)
 logFormatter = logging.Formatter(LOG_FORMAT, LOG_DATE_FORMAT)
 logging.Formatter.converter = utc.converter()
 
-consoleHandler = logging.StreamHandler()
-consoleHandler.setFormatter(logFormatter)
-
-logger.addHandler(consoleHandler)
-
 if not os.path.exists(LOG_DIR):
 	os.makedirs(LOG_DIR)
 
@@ -42,5 +37,13 @@ def getLogFileHandler(fname: str, dirname=LOG_DIR, formatter=logFormatter):
 
 	return handler
 
-def setLogFileHandler(logger: logging.Logger, fname: str, dirname=LOG_DIR, formatter=logFormatter):
-	logger.addHandler(getLogFileHandler(fname, dirname, formatter))
+def createLogger(name: str, fname: str, dirname=LOG_DIR, formatter=logFormatter):
+	_logger = logging.getLogger(name)
+
+	_logger.addHandler(getLogFileHandler(fname, dirname, formatter))
+
+	consoleHandler = logging.StreamHandler()
+	consoleHandler.setFormatter(logFormatter)
+	_logger.addHandler(consoleHandler)
+
+	return _logger

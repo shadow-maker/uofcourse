@@ -1,4 +1,4 @@
-from . import logger
+from ._logger import logger
 from app.models import db, Calendar, Course
 
 from bs4 import ResultSet

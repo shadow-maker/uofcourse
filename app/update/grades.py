@@ -1,4 +1,4 @@
-from . import logger
+from ._logger import logger
 from app import db
 from app.models import Grade, Calendar
 from app.constants import REQUESTS_TIMEOUT

@@ -1,4 +1,5 @@
-from . import _courses, logger
+from ._logger import logger
+from ._courses import update as coursesUpdate
 from app.models import db, Calendar, Subject
 from app.constants import REQUESTS_TIMEOUT
 
@@ -79,4 +80,4 @@ def update(calendar: Calendar, facultyID: int, items: ResultSet):
 		# Get all Course HTML elements (rows)
 		courseItems = soup.find_all(class_="item-container")
 
-		_courses.update(calendar, subject.id, courseItems)
+		coursesUpdate(calendar, subject.id, courseItems)

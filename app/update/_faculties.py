@@ -1,4 +1,5 @@
-from . import _subjects, logger
+from ._logger import logger
+from ._subjects import update as subjectsUpdate
 from app.models import db, Calendar, Faculty
 
 from bs4 import ResultSet
@@ -46,4 +47,4 @@ def update(calendar: Calendar, items: ResultSet):
 		# Get all Subject links
 		subjectItems = f.find(class_="generic-body").find_all("a")
 
-		_subjects.update(calendar, faculty.id, subjectItems)
+		subjectsUpdate(calendar, faculty.id, subjectItems)

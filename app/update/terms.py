@@ -1,4 +1,4 @@
-from . import logger
+from ._logger import logger
 from app.models import db, Season, Term
 
 import json

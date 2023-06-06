@@ -2,28 +2,11 @@
 # SCRIPTS TO UPDATE DATABASE BASED ON UNI DATA
 #
 
+from . import terms, grades, courses
 from app import app
-from app.localdt import utc
-from app.logging import LOG_DIR, setLogFileHandler
 
 import click
-import logging
-import os
-
-
-logPreFname = os.path.join(os.getcwd(), LOG_DIR, "update-" + utc.now().strftime("%Y-%m-%d"))
-logFname = logPreFname + ".log"
-count = 1
-while os.path.exists(logFname):
-	count += 1
-	logFname = f"{logPreFname}({count}).log"
-
-logger = logging.getLogger(__name__)
-
-setLogFileHandler(logger, logFname)
-
-
-from . import terms, grades, courses
+import sys
 
 @app.cli.command("update", help="Update database with new university data.")
 @click.argument("item")
@@ -40,4 +23,4 @@ def updateItem(item):
 		grades.update()
 		courses.update()
 	else:
-		logger.error("Invalid item to update. Available options: terms, grades, courses, all")
+		sys.exit("Invalid item to update. Available options: terms, grades, courses, all")
