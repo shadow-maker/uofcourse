@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% from "components/iconlink.html" import iconLink %}
+
 {% block styles %}
 <style>
 	#scrollspy-nav .collapsing {
@@ -40,127 +42,116 @@
 </script>
 {% endblock %}
 
-{% block header %}
-<div class="container mb-4 border-bottom d-flex justify-content-between">
-	<h1>
-		{% if headerIcon %}
-		<i class="bi-{{headerIcon}}"></i>
-		{% endif %}
-		{{header}}
-	</h1>
-	<div>
-		<a class="display-5" href="{{url_for('file.api')}}" title="Download docs in Markdown">
-			<i class="bi-markdown-fill text-secondary"></i>
-		</a>
-	</div>
-</div>
-{% endblock %}
-
 {% block content %}
 
 <div class="row" style="position: relative;">
 	<div class="container col-12 col-sm-5 col-lg-4 col-xl-3 mb-4 mb-sm-0 ps-sm-0">
-		<nav id="scrollspy-nav"
-			class="navbar card bg-body-tertiary sticky-top sticky-offset flex-column align-items-stretch p-3">
-			<div class="navbar-brand">Table of contents</div>
+		<div class="sticky-top sticky-offset">
+			<nav id="scrollspy-nav" class="navbar card bg-body-tertiary flex-column align-items-stretch p-3">
+				<div class="navbar-brand">Table of contents</div>
 
-			<nav class="nav nav-pills flex-column">
-				<!--Introduction-->
-				<a class="nav-link py-1 mb-1" href="#introduction">Introduction</a>
+				<nav class="nav nav-pills flex-column">
+					<!--Introduction-->
+					<a class="nav-link py-1 mb-1" href="#introduction">Introduction</a>
 
-				<!--General Structure-->
-				<a class="nav-link py-1 mb-1" href="#general-structure">General Structure</a>
-				<nav class="nav nav-pills flex-column ps-3">
-					<a class="nav-link py-1 mb-1" href="#retrieve-single">Retrieve single row</a>
-					<a class="nav-link py-1 mb-1" href="#retrieve-all">Retrieve all rows</a>
-					<a class="nav-link py-1 mb-1" href="#error-handling">Error handling</a>
-				</nav>
+					<!--General Structure-->
+					<a class="nav-link py-1 mb-1" href="#general-structure">General Structure</a>
+					<nav class="nav nav-pills flex-column ps-3">
+						<a class="nav-link py-1 mb-1" href="#retrieve-single">Retrieve single row</a>
+						<a class="nav-link py-1 mb-1" href="#retrieve-all">Retrieve all rows</a>
+						<a class="nav-link py-1 mb-1" href="#error-handling">Error handling</a>
+					</nav>
 
-				<!--Endpoints-->
-				<a class="nav-link py-1 mb-1" href="#endpoints">Endpoints</a>
-				<nav class="nav nav-pills flex-column ps-3">
-					<!--Grades-->
-					<a class="nav-link py-1 mb-1" href="#grades">Grades</a>
-					<div class="collapse" id="gradesCollapse">
-						<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
-							<a class="nav-link py-1 mb-1" href="#grades-1">
-								<small>/grades</small>
-							</a>
-							<a class="nav-link py-1 mb-1" href="#grades-2">
-								<small>/grades/{id}</small>
-							</a>
-						</nav>
-					</div>
+					<!--Endpoints-->
+					<a class="nav-link py-1 mb-1" href="#endpoints">Endpoints</a>
+					<nav class="nav nav-pills flex-column ps-3">
+						<!--Grades-->
+						<a class="nav-link py-1 mb-1" href="#grades">Grades</a>
+						<div class="collapse" id="gradesCollapse">
+							<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
+								<a class="nav-link py-1 mb-1" href="#grades-1">
+									<small>/grades</small>
+								</a>
+								<a class="nav-link py-1 mb-1" href="#grades-2">
+									<small>/grades/{id}</small>
+								</a>
+							</nav>
+						</div>
 
-					<!--Terms-->
-					<a class="nav-link py-1 mb-1" href="#terms">Terms</a>
-					<div class="collapse" id="termsCollapse">
-						<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
-							<a class="nav-link py-1 mb-1" href="#terms-1">
-								<small>/terms</small>
-							</a>
-							<a class="nav-link py-1 mb-1" href="#terms-2">
-								<small>/terms/{id}</small>
-							</a>
-						</nav>
-					</div>
+						<!--Terms-->
+						<a class="nav-link py-1 mb-1" href="#terms">Terms</a>
+						<div class="collapse" id="termsCollapse">
+							<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
+								<a class="nav-link py-1 mb-1" href="#terms-1">
+									<small>/terms</small>
+								</a>
+								<a class="nav-link py-1 mb-1" href="#terms-2">
+									<small>/terms/{id}</small>
+								</a>
+							</nav>
+						</div>
 
-					<!--Faculties-->
-					<a class="nav-link py-1 mb-1" href="#faculties">Faculties</a>
-					<div class="collapse" id="facultiesCollapse">
-						<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
-							<a class="nav-link py-1 mb-1" href="#faculties-1">
-								<small>/faculties</small>
-							</a>
-							<a class="nav-link py-1 mb-1" href="#faculties-2">
-								<small>/faculties/{id}</small>
-							</a>
-							<a class="nav-link py-1 mb-1" href="#faculties-3">
-								<small>/faculties/{id}/subjects</small>
-							</a>
-							<a class="nav-link py-1 mb-1" href="#faculties-4">
-								<small>/faculties/{id}/courses</small>
-							</a>
-						</nav>
-					</div>
+						<!--Faculties-->
+						<a class="nav-link py-1 mb-1" href="#faculties">Faculties</a>
+						<div class="collapse" id="facultiesCollapse">
+							<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
+								<a class="nav-link py-1 mb-1" href="#faculties-1">
+									<small>/faculties</small>
+								</a>
+								<a class="nav-link py-1 mb-1" href="#faculties-2">
+									<small>/faculties/{id}</small>
+								</a>
+								<a class="nav-link py-1 mb-1" href="#faculties-3">
+									<small>/faculties/{id}/subjects</small>
+								</a>
+								<a class="nav-link py-1 mb-1" href="#faculties-4">
+									<small>/faculties/{id}/courses</small>
+								</a>
+							</nav>
+						</div>
 
-					<!--Subjects-->
-					<a class="nav-link py-1 mb-1" href="#subjects">Subjects</a>
-					<div class="collapse" id="subjectsCollapse">
-						<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
-							<a class="nav-link py-1 mb-1" href="#subjects-1">
-								<small>/subjects</small>
-							</a>
-							<a class="nav-link py-1 mb-1" href="#subjects-2">
-								<small>/subjects/{id}</small>
-							</a>
-							<a class="nav-link py-1 mb-1" href="#subjects-3">
-								<small>/subjects/{id}/courses</small>
-							</a>
-							<a class="nav-link py-1 mb-1" href="#subjects-4">
-								<small>/subjects/code/{subj}</small>
-							</a>
-						</nav>
-					</div>
+						<!--Subjects-->
+						<a class="nav-link py-1 mb-1" href="#subjects">Subjects</a>
+						<div class="collapse" id="subjectsCollapse">
+							<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
+								<a class="nav-link py-1 mb-1" href="#subjects-1">
+									<small>/subjects</small>
+								</a>
+								<a class="nav-link py-1 mb-1" href="#subjects-2">
+									<small>/subjects/{id}</small>
+								</a>
+								<a class="nav-link py-1 mb-1" href="#subjects-3">
+									<small>/subjects/{id}/courses</small>
+								</a>
+								<a class="nav-link py-1 mb-1" href="#subjects-4">
+									<small>/subjects/code/{subj}</small>
+								</a>
+							</nav>
+						</div>
 
-					<!--Courses-->
-					<a class="nav-link py-1 mb-1" href="#courses">Courses</a>
-					<div class="collapse" id="coursesCollapse">
-						<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
-							<a class="nav-link py-1 mb-1" href="#courses-1">
-								<small>/courses</small>
-							</a>
-							<a class="nav-link py-1 mb-1" href="#courses-2">
-								<small>/courses/{id}</small>
-							</a>
-							<a class="nav-link py-1 mb-1" href="#courses-3">
-								<small>/courses/code/{subj}/{num}</small>
-							</a>
-						</nav>
-					</div>
+						<!--Courses-->
+						<a class="nav-link py-1 mb-1" href="#courses">Courses</a>
+						<div class="collapse" id="coursesCollapse">
+							<nav class="nav nav-pills flex-column ps-3 font-monospace d-none d-sm-block">
+								<a class="nav-link py-1 mb-1" href="#courses-1">
+									<small>/courses</small>
+								</a>
+								<a class="nav-link py-1 mb-1" href="#courses-2">
+									<small>/courses/{id}</small>
+								</a>
+								<a class="nav-link py-1 mb-1" href="#courses-3">
+									<small>/courses/code/{subj}/{num}</small>
+								</a>
+							</nav>
+						</div>
+					</nav>
 				</nav>
 			</nav>
-		</nav>
+			<div class="pt-3 px-3">
+				<h6>{{iconLink(url_for("file.api"), "Download Markdown docs", "markdown-fill")}}</h6>
+				<h6>{{iconLink(url_for("view.apiPlayground"), "Interactive API playground", "joystick")}}</h6>
+			</div>
+		</div>
 	</div>
 
 	<div class="container col-12 col-sm-7 col-lg-8 col-xl-9 px-md-4 px-lg-5">
