@@ -23,14 +23,14 @@
 	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo"
 		onclick="openGoTo('subject', '{{subject.code}}')">
 		<span class="align-top">s/</span><span
-			class="border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{{subject.code}}</span></a>
+			class="border border-2 border-secondary bg-body-tertiary rounded p-1 my-0 mx-1">{{subject.code}}</span></a>
 	<span class="id align-bottom text-muted">(#{{subject.id}})</span>
 </div>
 
 <div class="row mb-1">
 	<!--Subject Header-->
 	<div class="col-12 col-lg-7 col-xxl-8 mb-4">
-		<h1 class="mt-2">&#{{subject.getEmoji()}} {{subject.name}}</h1>
+		<h1 class="mt-2 text-body-emphasis">&#{{subject.getEmoji()}} {{subject.name}}</h1>
 
 		<h5 title="Faculty">{{iconLink(faculty.url, faculty.name, "building")}}</h5>
 
@@ -53,7 +53,7 @@
 
 	<!--Links-->
 	<div class="col-12 col-lg-5 col-xxl-4">
-		<div class="card bg-light">
+		<div class="card bg-body-tertiary">
 			<div class="card-body">
 				<div class="h5">{{lenCourses}} Courses in this subject</div>
 

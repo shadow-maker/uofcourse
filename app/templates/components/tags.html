@@ -1,7 +1,8 @@
 {% macro tagsTemplates() %}
 <!--Tags Drawer Group-->
 <div class="tags-drawer-group list-group mb-3">
-	<div class="tags-drawer-header list-group-item fs-5 bg-light d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="" role="button" aria-expanded="true" title="Click to collapse tagged courses">
+	<div class="tags-drawer-header list-group-item fs-5 bg-body-tertiary d-flex justify-content-between align-items-center"
+		data-bs-toggle="collapse" href="" role="button" aria-expanded="true" title="Click to collapse tagged courses">
 		<span>
 			<span class="tag-emoji d-none"></span>
 			<span class="tag-color d-none"><i class="bi-circle-fill"></i></span>
@@ -16,7 +17,7 @@
 <div class="tags-drawer-course list-group-item list-group-item-action p-0 d-flex justify-content-between">
 	<a class="link flex-grow-1 px-4 py-2 text-body text-decoration-none" href="">
 		<span class="emoji"></span>
-		<span class="code font-monospace"></span>	
+		<span class="code font-monospace"></span>
 	</a>
 	<span class="remove px-4 py-2 text-body cursor-pointer" href="" title="Remove course from tag">
 		<i class="bi-x-lg"></i>
@@ -39,7 +40,8 @@
 					<i class="bi-circle-fill"></i>
 				</span>
 				<select class="tag-select-color form-select" name="color"></select>
-				<input type="text" class="tag-name form-control w-25" name="name" placeholder="Tag name" aria-label="Tag name" value="">
+				<input type="text" class="tag-name form-control w-25" name="name" placeholder="Tag name"
+					aria-label="Tag name" value="">
 			</div>
 		</div>
 		<div class="col-1 ps-0">
@@ -51,7 +53,8 @@
 	<div class="deleted row d-none">
 		<div class="col-11">
 			<div class="input-group">
-				<input type="text" class="form-control fst-italic" placeholder="Tag deleted" aria-label="Tag deleted" value="Deleted" disabled>
+				<input type="text" class="form-control fst-italic" placeholder="Tag deleted" aria-label="Tag deleted"
+					value="Deleted" disabled>
 			</div>
 		</div>
 		<div class="col-1 ps-0">
@@ -136,7 +139,7 @@
 
 {% macro tagsScripts() %}
 <script>
-	let tagsCallback = () => {}
+	let tagsCallback = () => { }
 	let tagsInitialized = false;
 	let tagsEdited = []
 
@@ -180,7 +183,7 @@
 		for (let color in COLORS) {
 			if (COLORS[color] == tagColor)
 				colorFound = true
-			
+
 			options.push($("<option>", {
 				value: COLORS[color],
 				text: color,
@@ -203,7 +206,7 @@
 		container.empty()
 		for (let tag of tags) {
 			let tagItem = $("#templates .tags-drawer-group").clone()
-			
+
 			if (tag.emoji) {
 				tagItem.find(".tag-emoji").html("&#" + tag.emoji + ";")
 				tagItem.find(".tag-emoji").removeClass("d-none")
@@ -416,10 +419,10 @@
 
 	// INIT
 
-	function tagsInit(callback = () => {}) {
+	function tagsInit(callback = () => { }) {
 		if (!tagsInitialized) {
 			tagsInitialized = true
-			
+
 			tagsCallback = callback
 
 			if (!isAuth) {

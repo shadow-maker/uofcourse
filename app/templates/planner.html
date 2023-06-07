@@ -13,7 +13,7 @@
 {% block styles %}
 <style>
 	#collectionsContainer .btn:hover {
-		background-color: var(--bs-gray-200) !important;
+		background-color: var(--bs-secondary-bg) !important;
 	}
 
 	.collection-course-item .edit,
@@ -165,8 +165,8 @@
 	</div>
 </div>
 <!--Collection course item-->
-<div class="collection-course-item m-1 btn bg-light card border" db-code="" draggable="true" data-bs-toggle="modal"
-	data-bs-target="#modalInfoCollectionCourse" title="Click to view or drag to change term">
+<div class="collection-course-item m-1 btn bg-body-tertiary card border" db-code="" draggable="true"
+	data-bs-toggle="modal" data-bs-target="#modalInfoCollectionCourse" title="Click to view or drag to change term">
 	<div class="row">
 		<span class="emoji col-3 h5 p-0 m-0"></span>
 		<span class="code col-6 font-monospace"></span>
@@ -214,7 +214,7 @@
 
 	<div id="collectionsContainer" class="loaded row flex-nowrap overflow-scroll ms-2 me-0 py-3">
 		<div id="transfer-collapsed" class="col-2 col-md-1 px-0 m-0 d-none">
-			<div class="card h-100 bg-light btn">
+			<div class="card h-100 bg-body-tertiary btn">
 				<div class="card-body p-0" onclick="transferredShow()" title="Show transferred courses">
 					<div class="h-100 d-flex justify-content-center text-center">
 						<span class="h4 lh-1">
@@ -400,7 +400,7 @@
 	<div class="table-responsive ps-2">
 		<table class="table table-bordered table-hover m-0">
 			<thead>
-				<tr class="table-light"></tr>
+				<tr class="table-active"></tr>
 			</thead>
 			<tbody></tbody>
 		</table>
@@ -569,7 +569,7 @@
 					<div class="d-flex flex-row justify-content-center">
 						<!--Subject code-->
 						<input type="text"
-							class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-light text-body align-middle px-2 py-0"
+							class="selectSubject form-control form-control-lg fs-4 font-monospace text-end border-2 border-secondary bg-body-tertiary text-body align-middle px-2 py-0"
 							id="selectCourseSubject" minlength="2" maxlength="4" value="" placeholder="CODE"
 							autocomplete="off">
 
@@ -580,7 +580,7 @@
 
 						<!--Course number-->
 						<input type="text"
-							class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle px-2 py-0"
+							class="selectNumber form-control form-control-lg fs-4 font-monospace text-begin border-2 border-secondary bg-body-tertiary text-body align-middle px-2 py-0"
 							id="selectCourseNumber" maxlength="3" value="" placeholder="NUM" autocomplete="off"
 							disabled>
 					</div>

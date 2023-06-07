@@ -37,20 +37,21 @@
 
 							<!--Subject code-->
 							<input type="text" id="gotoSelectSubject"
-								class="form-control form-control-lg px-2 py-0 fs-4 lh-1 font-monospace text-end border-2 border-secondary bg-light text-body align-middle"
+								class="form-control form-control-lg px-2 py-0 fs-4 lh-1 font-monospace text-end border-2 border-secondary bg-body-tertiary text-body align-middle"
 								minlength="3" maxlength="4" value="" placeholder="CODE" title="Subject code"
 								autocomplete="off">
 
 							<!--Faculty-->
 							<input type="text" id="gotoSelectFaculty" list="gotoSelectFacultySuggestions"
-								class="form-control form-control-lg px-2 py-0 fs-4 lh-1 font-monospace border-2 border-secondary bg-light text-body align-middle"
-								minlength="3" maxlength="16" value="" placeholder="FACULTY" title="Faculty name" autocomplete="off">
+								class="form-control form-control-lg px-2 py-0 fs-4 lh-1 font-monospace border-2 border-secondary bg-body-tertiary text-body align-middle"
+								minlength="3" maxlength="16" value="" placeholder="FACULTY" title="Faculty name"
+								autocomplete="off">
 							<datalist id="gotoSelectFacultySuggestions">
 								{% for faculty in FACULTIES %}
 								{% if faculty.subdomain %}
 								<option value="{{faculty.subdomain}}">
-								{% endif %}
-								{% endfor %}
+									{% endif %}
+									{% endfor %}
 							</datalist>
 						</div>
 
@@ -62,9 +63,8 @@
 						<div class="right w-50 d-flex justify-content-start">
 							<!--Course number-->
 							<input type="text" id="gotoSelectCourse"
-								class="form-control form-control-lg px-2 py-0 fs-4 lh-1 font-monospace text-begin border-2 border-secondary bg-light text-body align-middle"
-								maxlength="3" value="" placeholder="NUM" title="Course number"
-								autocomplete="off">
+								class="form-control form-control-lg px-2 py-0 fs-4 lh-1 font-monospace text-begin border-2 border-secondary bg-body-tertiary text-body align-middle"
+								maxlength="3" value="" placeholder="NUM" title="Course number" autocomplete="off">
 
 							<!--Course exists status-->
 							<div class="status ps-3 ps-lg-2 d-flex flex-column justify-content-center" id="gotoStatus">
@@ -105,13 +105,13 @@
 {% macro gotoStyles() %}
 <style>
 	#modalGoTo.success .modal-header {
-		background-color: #d1e7dd;
-		border-color: #75b798 !important;
+		background-color: var(--bs-success-bg-subtle);
+		border-color: var(--bs-success-border-subtle) !important;
 	}
 
 	#modalGoTo.error .modal-header {
-		background-color: #f8d7da;
-		border-color: #ea868f !important;
+		background-color: var(--bs-danger-bg-subtle);
+		border-color: var(--bs-danger-border-subtle) !important;
 	}
 
 	#modalGoTo .dropdown-toggle::after {
@@ -253,7 +253,7 @@
 		)
 	}
 
-	function openGoTo(type="course", s="", c="", f="") {
+	function openGoTo(type = "course", s = "", c = "", f = "") {
 		// modalGoTo.modal("show")
 
 		gotoSwitch(type)
@@ -338,7 +338,7 @@
 		} else {
 			$("#gotoSelectCourse").prop("disabled", false)
 			if ($("#gotoSelectCourse").val().length == $("#gotoSelectCourse").attr(
-					"maxLength"))
+				"maxLength"))
 				gotoCourseCheck()
 		}
 

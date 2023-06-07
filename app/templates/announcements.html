@@ -18,7 +18,7 @@
 	}
 
 	#announcementsContainer .btn:hover {
-		background-color: var(--bs-gray-100) !important;
+		background-color: var(--bs-secondary-bg) !important;
 	}
 
 	#announcementsContainer .announcement-unread {
@@ -64,17 +64,17 @@
 			<!--Sort options-->
 			<div class="col-12 col-sm-8 col-md-6 col-xl-5">
 				<div id="sortSelector" class="input-group input-group-sm">
-					<span class="input-group-text bg-light" title="Sort by">
+					<span class="input-group-text bg-body-tertiary" title="Sort by">
 						<i class="bi-sort-down fw-bold"></i>
 					</span>
-					<select id="sortBy" name="sortBy" class="form-select bg-light" aria-label="Sort options">
+					<select id="sortBy" name="sortBy" class="form-select bg-body-tertiary" aria-label="Sort options">
 						{% for option in sortOptions %}
-						<option value="{{loop.index0}}" {% if loop.index0 == 0 %}selected{% endif %}>
+						<option value="{{loop.index0}}" {% if loop.index0==0 %}selected{% endif %}>
 							{{option.label}}
 						</option>
 						{% endfor %}
 					</select>
-					<select id="orderBy" name="orderBy" class="form-select bg-light" aria-label="Sort options">
+					<select id="orderBy" name="orderBy" class="form-select bg-body-tertiary" aria-label="Sort options">
 						<option value="1">Ascending</option>
 						<option value="0" selected>Descending</option>
 					</select>

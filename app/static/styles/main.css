@@ -42,3 +42,8 @@ a.text-muted:hover {
 .collapsing {
 	transition: 0.3s;
 }
+
+:root {
+	--bs-body-color: var(--bs-emphasis-color);
+	/* --bs-body-bg: var(--bs-secondary-bg-subtle); */
+}

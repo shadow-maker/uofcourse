@@ -57,9 +57,9 @@
 	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo"
 		onclick="openGoTo('course', '{{subject.code}}', '{{course.number}}')">
 		<span class="align-top">c/</span><span class="my-0 mx-1"><span
-				class="border border-2 border-secondary bg-light rounded p-1"
+				class="border border-2 border-secondary bg-body-tertiary rounded p-1"
 				title="Subject code">{{subject.code}}</span>-<span
-				class="border border-2 border-secondary bg-light rounded p-1"
+				class="border border-2 border-secondary bg-body-tertiary rounded p-1"
 				title="Course number">{{course.number}}</span></span></a>
 	<span class="id text-muted">(#{{course.id}})</span>
 </div>
@@ -67,7 +67,7 @@
 <div class="row mb-1">
 	<!--Course Header-->
 	<div class="col-12 col-md-7 col-lg-8 col-xl-9">
-		<h1 class="mt-2" title="Course name">
+		<h1 class="mt-2 text-body-emphasis" title="Course name">
 			&#{{course.emoji}} {{course.name}}
 		</h1>
 
@@ -206,7 +206,7 @@
 	<div class="order-1 order-sm-2 col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3 p-2">
 		<div class="sticky-sm-top sticky-offset">
 			<!--User data-->
-			<div class="card bg-light">
+			<div class="card bg-body-tertiary">
 				<div class="card-body">
 					<!--Tags-->
 					<div id="tags">
@@ -281,7 +281,7 @@
 						</div>
 						{% if current_user.is_authenticated %}
 						<div class="loading fst-italic">Loading...</div>
-						<div class="collections-container card bg-light d-none">
+						<div class="collections-container card bg-body-tertiary d-none">
 							<ul class="list-group list-group-flush"></ul>
 						</div>
 						<div class="collections-none text-center fst-italic d-none">None</div>

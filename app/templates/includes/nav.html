@@ -6,8 +6,9 @@
 	}
 </style>
 
-<div id="navbar" class="container-fluid bg-light sticky-top px-md-5 mb-4 border-bottom border-2" style="z-index: 1030;">
-	<nav class="navbar navbar-expand-md navbar-light px-md-5">
+<div id="navbar" class="container-fluid bg-body-tertiary sticky-top px-md-5 mb-4 border-bottom border-2"
+	style="z-index: 1030;">
+	<nav class="navbar navbar-expand-md px-md-5">
 
 		<div class="nav-head d-flex justify-content-between">
 			<div class="flex-grow-1 d-flex flex-row justify-content-between">
@@ -22,7 +23,8 @@
 					{% endif %}
 				</div>
 				<div class="d-flex align-items-end">
-					<a class="nav-link d-md-none py-1 position-relative text-secondary {% if request.path == url_for('view.announcements') %}active{% endif %}" href="{{url_for('view.announcements')}}">
+					<a class="nav-link d-md-none py-1 position-relative text-secondary {% if request.path == url_for('view.announcements') %}active{% endif %}"
+						href="{{url_for('view.announcements')}}">
 						<i class="bi-bell-fill fs-4 lh-1"></i>
 						{% if current_user.unread_announcements %}
 						<div class="position-absolute top-0 end-0 translate-middle lh-1 pe-1 pt-2">
@@ -32,7 +34,7 @@
 					</a>
 				</div>
 			</div>
-	
+
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#toggleMobileMenu"
 				aria-controls="toggleMobileMenu" aria-expanded="false" arial-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
@@ -44,17 +46,20 @@
 
 			<ul class="navbar-nav text-center">
 				<li>
-					<a class="nav-link {% if request.path == url_for('view.courseBrowser') %}active{% endif %}" href="{{url_for('view.courseBrowser')}}">
+					<a class="nav-link {% if request.path == url_for('view.courseBrowser') %}active{% endif %}"
+						href="{{url_for('view.courseBrowser')}}">
 						Course Browser
 					</a>
 				</li>
 				<li>
-					<a class="nav-link {% if request.path == url_for('view.api') %}active{% endif %}" href="{{url_for('view.api')}}">
+					<a class="nav-link {% if request.path == url_for('view.api') %}active{% endif %}"
+						href="{{url_for('view.api')}}">
 						API
 					</a>
 				</li>
 				<li>
-					<a class="nav-link {% if request.path == url_for('view.about') %}active{% endif %}" href="{{url_for('view.about')}}">
+					<a class="nav-link {% if request.path == url_for('view.about') %}active{% endif %}"
+						href="{{url_for('view.about')}}">
 						About
 					</a>
 				</li>
@@ -64,26 +69,30 @@
 				<!--User related nav links-->
 				<ul class="navbar-nav text-center">
 					{% if current_user.is_authenticated %}
-						{% if current_user.role >= ROLE_MOD %}
-						<li>
-							<a class="nav-link {% if request.path == url_for('admin.index') %}active{% endif %}" href="{{url_for('admin.index')}}">
-								Admin
-							</a>
-						</li>
-						{% endif %}
-						<li>
-							<a class="nav-link {% if request.path == url_for('view.planner') %}active{% endif %}" href="{{url_for('view.planner')}}">
-								Planner
-							</a>
-						</li>
-						<li>
-							<a class="nav-link {% if request.path == url_for('view.account') %}active{% endif %}" href="{{url_for('view.account')}}">
-								Account
-							</a>
-						</li>
+					{% if current_user.role >= ROLE_MOD %}
+					<li>
+						<a class="nav-link {% if request.path == url_for('admin.index') %}active{% endif %}"
+							href="{{url_for('admin.index')}}">
+							Admin
+						</a>
+					</li>
+					{% endif %}
+					<li>
+						<a class="nav-link {% if request.path == url_for('view.planner') %}active{% endif %}"
+							href="{{url_for('view.planner')}}">
+							Planner
+						</a>
+					</li>
+					<li>
+						<a class="nav-link {% if request.path == url_for('view.account') %}active{% endif %}"
+							href="{{url_for('view.account')}}">
+							Account
+						</a>
+					</li>
 					{% endif %}
 					<li title="Announcements" class="d-none d-md-flex justify-content-center align-items-end">
-						<a class="nav-link py-1 position-relative {% if request.path == url_for('view.announcements') %}active{% endif %}" href="{{url_for('view.announcements')}}">
+						<a class="nav-link py-1 position-relative {% if request.path == url_for('view.announcements') %}active{% endif %}"
+							href="{{url_for('view.announcements')}}">
 							<i class="bi-bell-fill fs-4 lh-1"></i>
 							{% if current_user.unread_announcements %}
 							<div class="position-absolute top-0 start-100 translate-middle lh-1 pe-4 pt-2">

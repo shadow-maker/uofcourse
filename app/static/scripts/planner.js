@@ -53,7 +53,7 @@ function transferredHide() {
 
 // Check course funcs for add modal
 
-function selectCourseStatus(status, message="") {
+function selectCourseStatus(status, message = "") {
 	$("#selectCourseStatus").addClass("invisible")
 	$("#selectCourseStatus .message").text("...")
 	if (status) {
@@ -94,7 +94,7 @@ function checkCourse() {
 // GET
 
 function getCollections(callback) {
-	ajax("GET", "me/collections", {sort: ["term_id"]}, callback)
+	ajax("GET", "me/collections", { sort: ["term_id"] }, callback)
 }
 
 function getCollection(id, callback) {
@@ -102,7 +102,7 @@ function getCollection(id, callback) {
 }
 
 function getCollectionCourses(id, callback) {
-	ajax("GET", "me/collections/" + id + "/courses", {sort: ["course_code"]}, callback)
+	ajax("GET", "me/collections/" + id + "/courses", { sort: ["course_code"] }, callback)
 }
 
 function getTerm(id, callback) {
@@ -119,7 +119,7 @@ function getProgress(callback) {
 
 function getSummary(x, y, show, taken, planned, callback) {
 	ajax("GET", "me/summary",
-		{x: x, y: y, show: show, taken: taken, planned: planned},
+		{ x: x, y: y, show: show, taken: taken, planned: planned },
 		callback
 	)
 }
@@ -159,16 +159,16 @@ function addCollectionCourse(collection_id, course_id, callback) {
 
 // PUT
 
-function putCollectionCourse(data, callback, onerror=displayError) {
+function putCollectionCourse(data, callback, onerror = displayError) {
 	ajax("PUT", "me/courses", data, callback, onerror)
 }
 
 function putTransferred(set, callback) {
-	ajax("PUT", "me/sessions/transferred", {set: set}, callback)
+	ajax("PUT", "me/sessions/transferred", { set: set }, callback)
 }
 
 function putUnitsNeeded(units, callback) {
-	ajax("PUT", "me/progress", {units_needed: units}, callback)
+	ajax("PUT", "me/progress", { units_needed: units }, callback)
 }
 
 // DELETE
@@ -358,7 +358,7 @@ function updateCollectionCourse(collection_id, id) {
 	cc.element.find(".grade").text(cc.grade_id ? grade.symbol : "-")
 	cc.element.find(".grade").attr(
 		"title",
-		cc.grade_id ? ((grade.gpv != null ? grade.gpv : "-") + " GPV | " + (cc.weightedGPV  != null ? cc.weightedGPV : "-") + " Weighted") : "Grade not set"
+		cc.grade_id ? ((grade.gpv != null ? grade.gpv : "-") + " GPV | " + (cc.weightedGPV != null ? cc.weightedGPV : "-") + " Weighted") : "Grade not set"
 	)
 
 	// Item events
@@ -401,7 +401,7 @@ function updateCollectionCourse(collection_id, id) {
 			formEdit.find("#selectCoursePlaceholder").val(cc.course_code)
 			formEdit.find("#selectGrade").val(cc.grade_id ? cc.grade_id : 0)
 			formEdit.find("#selectPassed").prop("checked", cc.passed ? cc.passed : false)
-		
+
 			$("#formEditCollectionCourse #selectCollection").empty()
 			for (let c of collections) {
 				$("#formEditCollectionCourse #selectCollection").append(
@@ -434,9 +434,9 @@ function updateCollectionCourse(collection_id, id) {
 		let newId = parseInt(cc.element.parent().attr("db-id"))
 		if (courseOldCollection != newId && courseCanMoveTo.includes(newId)) {
 			putCollectionCourse({
-					id: cc.id,
-					collection_id: newId
-				},
+				id: cc.id,
+				collection_id: newId
+			},
 				() => {
 					alert("success", "Course moved!")
 					getUpdateCollection(collection_id)
@@ -575,7 +575,7 @@ function updateSummary() {
 	y = y == "none" ? null : y
 
 	let show = $("#summarySelectShow").val()
-	let taken = $("#summarySelectTaken").is(":checked") 
+	let taken = $("#summarySelectTaken").is(":checked")
 	let planned = $("#summarySelectPlanned").is(":checked")
 
 	function getKey(option, key) {
@@ -605,7 +605,7 @@ function updateSummary() {
 			for (let yKey of data.y_keys) {
 				let row = $("<tr>")
 				row.append(
-					$("<td>").attr("scope", "row").text(getKey(y, yKey)).addClass("table-light")
+					$("<td>").attr("scope", "row").text(getKey(y, yKey)).addClass("table-active")
 				)
 				for (let xKey of data.x_keys)
 					row.append($("<td>").text(data.results[xKey][yKey]))
@@ -757,11 +757,11 @@ $("#formEditCollectionCourse").on("submit", (event) => {
 
 	if (method == "PUT") {
 		putCollectionCourse({
-				id: form.find("#selectCollectionCourse").val(),
-				collection_id: form.find("#selectCollection").val(),
-				grade_id: form.find("#selectGrade").val(),
-				passed: form.find("#selectPassed").prop("checked")
-			},
+			id: form.find("#selectCollectionCourse").val(),
+			collection_id: form.find("#selectCollection").val(),
+			grade_id: form.find("#selectGrade").val(),
+			passed: form.find("#selectPassed").prop("checked")
+		},
 			() => {
 				alert("success", "Course updated!")
 				getUpdateCollection(form.find("#selectCollection").val())

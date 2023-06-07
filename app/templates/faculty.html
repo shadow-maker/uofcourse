@@ -56,7 +56,7 @@
 	<a class="h3 m-0 font-monospace text-decoration-none text-body" data-bs-toggle="modal" data-bs-target="#modalGoTo"
 		onclick="openGoTo('faculty', '', '', '{{fac}}')">
 		<span class="align-top">f/</span><span
-			class="align-middle border border-2 border-secondary bg-light rounded p-1 my-0 mx-1">{{fac}}</span></a>
+			class="align-middle border border-2 border-secondary bg-body-tertiary rounded p-1 my-0 mx-1">{{fac}}</span></a>
 	<span class="id align-bottom text-muted">(#{{faculty.id}})</span>
 </div>
 
@@ -78,10 +78,10 @@
 				<!--Sorting options-->
 				<div id="subjectsSort" class="col d-flex align-items-end">
 					<div class="input-group input-group-sm mt-2 mt-sm-0 mt-lg-2 mt-xl-0 ps-0">
-						<span class="input-group-text bg-light" title="Sort by">
+						<span class="input-group-text bg-body-tertiary" title="Sort by">
 							<i class="bi-sort-down fw-bold"></i>
 						</span>
-						<select id="sortBy" name="sortBy" class="form-select bg-light" aria-label="Sort options"
+						<select id="sortBy" name="sortBy" class="form-select bg-body-tertiary" aria-label="Sort options"
 							title="Sort by">
 							<option value="code" selected>
 								Code
@@ -90,8 +90,8 @@
 								Name
 							</option>
 						</select>
-						<select id="orderBy" name="orderBy" class="form-select bg-light" aria-label="Sort options"
-							title="Order by">
+						<select id="orderBy" name="orderBy" class="form-select bg-body-tertiary"
+							aria-label="Sort options" title="Order by">
 							<option value="1" selected>Ascending</option>
 							<option value="0">Descending</option>
 						</select>
@@ -109,7 +109,7 @@
 		<div class="sticky-lg-top sticky-offset row p-0 mb-4 mx-0 mx-md-4 mx-lg-0 mx-xl-4">
 			<!--Stats-->
 			<div class="col-12 col-md-6 col-lg-12 px-0 pe-md-2 pe-lg-0">
-				<div class="card bg-light mt-0 mb-2">
+				<div class="card bg-body-tertiary mt-0 mb-2">
 					<div class="card-body">
 						<div class="fs-5">
 							{% for col, amount in len.items() %}
@@ -125,7 +125,7 @@
 
 			<!--Links-->
 			<div class="col-12 col-md-6 col-lg-12 px-0 ps-md-2 ps-lg-0">
-				<div class="card bg-light mt-0 mb-2">
+				<div class="card bg-body-tertiary mt-0 mb-2">
 					<div class="card-body">
 						<div>
 							{{iconLink(
