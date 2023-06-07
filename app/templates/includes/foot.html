@@ -1,8 +1,9 @@
 <div class="container mb-4 mt-5">
 	<footer class="border-top border-2 text-muted px-3 px-md-5 py-4 d-sm-flex justify-content-between">
 		<div class="mb-2 mb-sm-0">
-			<span class="fw-bold">© 2022 {{SITE_NAME}}</span>
-			<a class="badge btn-primary px-1 text-decoration-none" href="{{url_for('view.changelog')}}" title="View changelog">
+			<span class="fw-bold">© 2023 {{SITE_NAME}}</span>
+			<a class="badge btn btn-primary px-1 text-decoration-none" href="{{url_for('view.changelog')}}"
+				title="View changelog">
 				v{{CURRENT_VERSION}}
 				{% if CURRENT_VERSION_BETA %}Beta{% endif %}
 			</a>
