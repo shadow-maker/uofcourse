@@ -4,9 +4,14 @@
 <script>
 	let baseURL = JSON.parse('{{ baseURLFull | tojson | safe }}')
 </script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 <script src="/static/scripts/apiPlayground.js"></script>
 {% endblock %}
 
+{% block styles %}
+<link id="codeLight" rel="stylesheet" href="/static/styles/hljs/github.css">
+<link id="codeDark" rel="stylesheet" href="/static/styles/hljs/github-dark.css">
+{% endblock %}
 
 {% block content %}
 
@@ -58,10 +63,13 @@
 		</div>
 
 		<div class="card card-secondary bg-body-tertiary" style=" max-width: 100%;">
-			<div class="card-body">
-				<pre class="m-0">
-					<code id="requestOutput" class="font-monospace text-white overflow-scroll"></code>
-				</pre>
+			<div class="card-body p-1">
+				<pre class="m-0"><code id="requestOutput" class="font-monospace overflow-scroll language-json">
+{
+  "status": "success",
+  "message": "Welcome to the API playground!"
+}
+					</code></pre>
 			</div>
 		</div>
 	</div>
