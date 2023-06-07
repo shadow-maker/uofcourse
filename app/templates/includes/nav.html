@@ -3,6 +3,17 @@
 		#navbar .nav-head {
 			width: 100%;
 		}
+
+		#navbar-mainlinks li {
+			font-size: 1.25rem !important;
+		}
+	}
+
+	@media (min-width: 768px) {
+		#navbar-mainlinks li::before {
+			content: "•";
+			color: var(--bs-secondary-color);
+		}
 	}
 </style>
 
@@ -23,15 +34,65 @@
 					{% endif %}
 				</div>
 				<div class="d-flex align-items-end">
-					<a class="nav-link d-md-none py-1 position-relative text-secondary {% if request.path == url_for('view.announcements') %}active{% endif %}"
-						href="{{url_for('view.announcements')}}">
-						<i class="bi-bell-fill fs-4 lh-1"></i>
-						{% if current_user.unread_announcements %}
-						<div class="position-absolute top-0 end-0 translate-middle lh-1 pe-1 pt-2">
-							<i class="bi-circle-fill text-danger p-0" style="font-size: 12px;"></i>
-						</div>
-						{% endif %}
-					</a>
+					{% if current_user.is_authenticated %}
+					<div class="dropdown d-md-none mx-2">
+						<a class="btn border px-3 nav-link py-0 {% if request.path == url_for('view.account') %}active{% endif %}"
+							href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<span class="position-relative">
+								<i class="bi-person-circle fs-2"></i>
+								{% if current_user.unread_announcements %}
+								<div class="position-absolute top-0 start-100 translate-middle pe-2 pt-0">
+									<i class="bi-circle-fill text-danger p-0 align-top" style="font-size: 12px;"></i>
+								</div>
+								{% endif %}
+							</span>
+						</a>
+						<ul class="dropdown-menu dropdown-menu-end">
+							<li>
+								<h6 class="dropdown-header">
+									{{current_user.name}}
+									{% if current_user.role >= ROLE_MOD %}
+									<small>
+										<span
+											class="badge rounded-pill border border-2 {% if current_user.role == ROLE_MOD %}border-info text-info{% elif current_user.role == ROLE_ADMIN %}border-success text-success{% endif %}">
+											{{current_user.role.name.upper()}}
+										</span>
+									</small>
+									{% endif %}
+								</h6>
+							</li>
+							{% if current_user.role >= ROLE_MOD %}
+							<li><a href="{{url_for('admin.index')}}" class="dropdown-item">
+									<i class="bi-terminal"></i>
+									Admin
+								</a></li>
+							{% endif %}
+							<li><a href="{{url_for('view.account')}}"
+									class="dropdown-item {% if request.path == url_for('view.account') %}active{% endif %}">
+									<i class="bi-person-badge"></i>
+									Account
+								</a></li>
+							<li><a href="{{url_for('view.planner')}}"
+									class="dropdown-item {% if request.path == url_for('view.planner') %}active{% endif %}">
+									<i class="bi-calendar-range"></i>
+									Planner
+								</a></li>
+							<li><a href="{{url_for('view.announcements')}}"
+									class="dropdown-item {% if request.path == url_for('view.announcements') %}active{% elif current_user.unread_announcements %}text-info-emphasis{% endif %}">
+									<i
+										class="{% if current_user.unread_announcements %}bi-bell-fill{% else %}bi-bell{% endif %}"></i>
+									Announcements
+								</a></li>
+							<li>
+								<hr class="dropdown-divider">
+							</li>
+							<li><a href="{{url_for('view.logout')}}" class="dropdown-item link-primary">
+									<i class="bi-escape"></i>
+									Log Out
+								</a></li>
+						</ul>
+					</div>
+					{% endif %}
 				</div>
 			</div>
 
@@ -44,22 +105,25 @@
 		<div class="collapse navbar-collapse d-md-flex justify-content-between" id="toggleMobileMenu">
 			<hr class="border-secondary my-2 d-md-none">
 
-			<ul class="navbar-nav text-center">
-				<li>
-					<a class="nav-link {% if request.path == url_for('view.courseBrowser') %}active{% endif %}"
-						href="{{url_for('view.courseBrowser')}}">
+			<ul id="navbar-mainlinks" class="navbar-nav text-center">
+				<li class="nav-item ms-1 py-2 py-md-0">
+					<a href="{{url_for('view.courseBrowser')}}"
+						class="nav-link d-inline {% if request.path == url_for('view.courseBrowser') %}active{% endif %}">
+						<i class="bi-binoculars-fill"></i>
 						Course Browser
 					</a>
 				</li>
-				<li>
-					<a class="nav-link {% if request.path == url_for('view.api') %}active{% endif %}"
-						href="{{url_for('view.api')}}">
+				<li class="nav-item ms-1 py-2 py-md-0">
+					<a href="{{url_for('view.api')}}"
+						class="nav-link d-inline {% if request.path == url_for('view.api') %}active{% endif %}">
+						<i class="bi-braces-asterisk"></i>
 						API
 					</a>
 				</li>
-				<li>
-					<a class="nav-link {% if request.path == url_for('view.about') %}active{% endif %}"
-						href="{{url_for('view.about')}}">
+				<li class="nav-item ms-1 py-2 py-md-0">
+					<a href="{{url_for('view.about')}}"
+						class="nav-link d-inline {% if request.path == url_for('view.about') %}active{% endif %}">
+						<i class="bi-info-circle-fill"></i>
 						About
 					</a>
 				</li>
@@ -69,47 +133,70 @@
 				<!--User related nav links-->
 				<ul class="navbar-nav text-center">
 					{% if current_user.is_authenticated %}
-					{% if current_user.role >= ROLE_MOD %}
-					<li>
-						<a class="nav-link {% if request.path == url_for('admin.index') %}active{% endif %}"
-							href="{{url_for('admin.index')}}">
-							Admin
+					<li class="nav-item dropdown d-none d-md-block">
+						<a class="nav-link py-0 {% if request.path == url_for('view.account') %}active{% endif %}"
+							href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<span class="position-relative lh-1">
+								<i class="bi-person-circle fs-4 lh-1"></i>
+								{% if current_user.unread_announcements %}
+								<div class="position-absolute top-0 start-100 translate-middle pe-2 pt-0">
+									<i class="bi-circle-fill text-danger p-0 align-top" style="font-size: 12px;"></i>
+								</div>
+								{% endif %}
+							</span>
+							<span class="lh-1 align-text-top">{{current_user.username}}</span>
+							<i class="bi-chevron-down"></i>
 						</a>
-					</li>
-					{% endif %}
-					<li>
-						<a class="nav-link {% if request.path == url_for('view.planner') %}active{% endif %}"
-							href="{{url_for('view.planner')}}">
-							Planner
-						</a>
-					</li>
-					<li>
-						<a class="nav-link {% if request.path == url_for('view.account') %}active{% endif %}"
-							href="{{url_for('view.account')}}">
-							Account
-						</a>
-					</li>
-					{% endif %}
-					<li title="Announcements" class="d-none d-md-flex justify-content-center align-items-end">
-						<a class="nav-link py-1 position-relative {% if request.path == url_for('view.announcements') %}active{% endif %}"
-							href="{{url_for('view.announcements')}}">
-							<i class="bi-bell-fill fs-4 lh-1"></i>
-							{% if current_user.unread_announcements %}
-							<div class="position-absolute top-0 start-100 translate-middle lh-1 pe-4 pt-2">
-								<i class="bi-circle-fill text-danger p-0" style="font-size: 10px;"></i>
-							</div>
+						<ul class="dropdown-menu dropdown-menu-end">
+							<li>
+								<h6 class="dropdown-header">
+									{{current_user.name}}
+									{% if current_user.role >= ROLE_MOD %}
+									<small>
+										<span
+											class="badge rounded-pill border border-2 {% if current_user.role == ROLE_MOD %}border-info text-info{% elif current_user.role == ROLE_ADMIN %}border-success text-success{% endif %}">
+											{{current_user.role.name.upper()}}
+										</span>
+									</small>
+									{% endif %}
+								</h6>
+							</li>
+							{% if current_user.role >= ROLE_MOD %}
+							<li><a href="{{url_for('admin.index')}}" class="dropdown-item">
+									<i class="bi-terminal"></i>
+									Admin
+								</a></li>
 							{% endif %}
-						</a>
+							<li><a href="{{url_for('view.account')}}"
+									class="dropdown-item {% if request.path == url_for('view.account') %}active{% endif %}">
+									<i class="bi-person-badge"></i>
+									Account
+								</a></li>
+							<li><a href="{{url_for('view.planner')}}"
+									class="dropdown-item {% if request.path == url_for('view.planner') %}active{% endif %}">
+									<i class="bi-calendar-range"></i>
+									Planner
+								</a></li>
+							<li><a href="{{url_for('view.announcements')}}"
+									class="dropdown-item {% if request.path == url_for('view.announcements') %}active{% elif current_user.unread_announcements %}text-info-emphasis{% endif %}">
+									<i
+										class="{% if current_user.unread_announcements %}bi-bell-fill{% else %}bi-bell{% endif %}"></i>
+									Announcements
+								</a></li>
+							<li>
+								<hr class="dropdown-divider">
+							</li>
+							<li><a href="{{url_for('view.logout')}}" class="dropdown-item link-primary">
+									<i class="bi-escape"></i>
+									Log Out
+								</a></li>
+						</ul>
 					</li>
+					{% endif %}
 				</ul>
 				<!--Auth buttons-->
 				<ul class="navbar-nav text-center d-flex flex-row justify-content-between">
 					{% if current_user.is_authenticated %}
-					<li class="flex-grow-1 py-1 py-md-0 ps-2 pe-2 pe-md-0">
-						<a class="btn btn-outline-primary d-block" href="{{url_for('view.logout')}}">
-							Log Out
-						</a>
-					</li>
 					{% else %}
 					<li class="flex-grow-1 py-1 py-md-0 ps-2 pe-2 pe-md-0">
 						<a class="btn btn-outline-info d-block" href="{{url_for('view.login')}}">

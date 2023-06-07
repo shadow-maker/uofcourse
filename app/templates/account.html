@@ -35,13 +35,10 @@
 		{{current_user.name}}
 	</span>
 	<span class="h6 m-0 align-middle" title="User role">
-		{% if current_user.role == ROLE_MOD %}
-		<span class="badge rounded-pill border border-2 border-info text-info">
-			MODERATOR
-		</span>
-		{% elif current_user.role == ROLE_ADMIN %}
-		<span class="badge rounded-pill border border-2 border-success text-success">
-			ADMIN
+		{% if current_user.role >= ROLE_MOD %}
+		<span
+			class="badge rounded-pill border border-2 {% if current_user.role == ROLE_MOD %}border-info text-info{% elif current_user.role == ROLE_ADMIN %}border-success text-success{% endif %}">
+			{{current_user.role.name.upper()}}
 		</span>
 		{% endif %}
 	</span>
