@@ -12,17 +12,18 @@
 		}
 	}
 
-	.collection-course-item:hover, #btnAddTerm:hover {
-		background-color: var(--bs-gray-200) !important;
+	.collection-course-item:hover,
+	#btnAddTerm:hover {
+		background-color: var(--bs-secondary-bg) !important;
 	}
-	
+
 	.collection-course-item .open {
 		display: none;
 	}
-	
+
 	.collection-course-item:hover .open {
 		display: block;
-	}	
+	}
 </style>
 {% endblock %}
 
@@ -39,28 +40,30 @@
 			<button type="button" class="btn-close" aria-label="Close"></button>
 		</div>
 		{% endif %}
-		
+
 		<!--Website description-->
 		<div class="fs-5">
 			A website created to aid UofC students in their program course planning.
 
 			<br><br>
-	
+
 			Main features:
-	
+
 			<ul class="fs-6">
-				<li>An intuitive course browser that allows to quickly browse through the university's full course catalog, with filter and sorting options</li>
+				<li>An intuitive course browser that allows to quickly browse through the university's full course
+					catalog, with filter and sorting options</li>
 				<li>Per-course pages with all the essential information for students</li>
 				<li>Save courses with custom tags</li>
 				<li>Arrange courses in terms in the virtual Course Planner</li>
-				<li>Public Web API to easily retrieve Grade, Term, Faculty, Subject and Course data within your own application</li>
+				<li>Public Web API to easily retrieve Grade, Term, Faculty, Subject and Course data within your own
+					application</li>
 			</ul>
-	
+
 			More information in the <a href="{{url_for('view.about')}}">about</a> page
 
 			<br><br>
 		</div>
-		
+
 		<!--Quick links-->
 		<div class="d-none d-lg-block">
 			<h5>Quick links:</h5>
@@ -70,17 +73,17 @@
 					<i class="bi-binoculars-fill"></i>
 					Course Browser
 				</a>
-		
+
 				<a class="btn btn-outline-primary my-1" href="{{url_for('view.courseRandom')}}">
 					<i class="bi-shuffle"></i>
 					Random Course
 				</a>
-	
+
 				<a class="btn btn-outline-primary my-1" href="" data-bs-toggle="modal" data-bs-target="#modalGoTo">
 					<i class="bi-box-arrow-up-right"></i>
 					Go To Course
 				</a>
-		
+
 				<a class="btn btn-outline-primary my-1" href="{{url_for('view.planner')}}">
 					<i class="bi-calendar-range"></i>
 					My Planner
@@ -105,7 +108,8 @@
 				</h5>
 			</li>
 			{% for announcement in current_user.unread_announcements %}
-			<a class="list-group-item list-group-item-action d-flex justify-content-between" href="{{url_for('view.announcements', id=announcement.id)}}" title="Click to view announcement">
+			<a class="list-group-item list-group-item-action d-flex justify-content-between"
+				href="{{url_for('view.announcements', id=announcement.id)}}" title="Click to view announcement">
 				<div>
 					<div class="text-muted lh-sm">
 						<small>{{announcement.datetime_local.strftime("%b %d, %Y")}}</small>
@@ -120,7 +124,7 @@
 			</small>
 		</div>
 		{% endif %}
-	
+
 		<!--Current or next term-->
 		{% if term %}
 		<div class="card">
@@ -131,57 +135,59 @@
 				</div>
 
 				<div class="h4 my-1">{{term.name | capitalize}}</div>
-		
+
 				{% if term.isCurrent() %}
-					<div class="fst-italic" title="Ends {{term.end}}">
+				<div class="fst-italic" title="Ends {{term.end}}">
 					{% if term.end %}
-						{% if (term.end - today).days > 0 %}
-							{{(term.end - today).days}} days remaining
-						{% else %}
-							Last day
-						{% endif %}
+					{% if (term.end - today).days > 0 %}
+					{{(term.end - today).days}} days remaining
+					{% else %}
+					Last day
 					{% endif %}
-					</div>
+					{% endif %}
+				</div>
 				{% elif term.isNext() %}
-					<div class="fst-italic" title="Begins {{term.start}}">
+				<div class="fst-italic" title="Begins {{term.start}}">
 					{% if term.start %}
-						{% if (term.start - today).days > 1 %}
-							Begins in {{(term.start - today).days}} days
-						{% else %}
-							Begins tomorrow
-						{% endif %}
+					{% if (term.start - today).days > 1 %}
+					Begins in {{(term.start - today).days}} days
+					{% else %}
+					Begins tomorrow
 					{% endif %}
-					</div>
+					{% endif %}
+				</div>
 				{% endif %}
 			</div>
 			<div class="card-body px-2 py-2 text-center">
 				{% if current_user.is_authenticated %}
 				Courses taken this term:
 				{% if collectionCourses %}
-					{% for cc in collectionCourses %}
-					<a class="collection-course-item m-1 btn bg-light card" href="{{cc.course.url}}" target="_blank" rel="noopener noreferrer" title="Click to open course in a new tab">
-						<div class="row">
-							<span class="col-3 h5 p-0 m-0">
-								&#{{cc.course.emoji}}
-							</span>
-							<span id="code" class="col-6 font-monospace">
-								{{cc.course.code}}
-							</span>
-							<span class="col-3 font-monospace text-start" title="{% if cc.grade %}{{cc.grade.gpv}} GPV{% else %}Grade not set{% endif %}">
-								{% if cc.grade %}
-								{{cc.grade.symbol}}
-								{% else %}
-								-
-								{% endif %}
-							</span>
-						</div>
-						<div class="open position-absolute end-0 pe-2">
-							<i class="bi-box-arrow-up-right"></i>
-						</div>
-					</a>
-					{% endfor %}
+				{% for cc in collectionCourses %}
+				<a class="collection-course-item m-1 btn bg-body-tertiary card" href="{{cc.course.url}}" target="_blank"
+					rel="noopener noreferrer" title="Click to open course in a new tab">
+					<div class="row">
+						<span class="col-3 h5 p-0 m-0">
+							&#{{cc.course.emoji}}
+						</span>
+						<span id="code" class="col-6 font-monospace">
+							{{cc.course.code}}
+						</span>
+						<span class="col-3 font-monospace text-start"
+							title="{% if cc.grade %}{{cc.grade.gpv}} GPV{% else %}Grade not set{% endif %}">
+							{% if cc.grade %}
+							{{cc.grade.symbol}}
+							{% else %}
+							-
+							{% endif %}
+						</span>
+					</div>
+					<div class="open position-absolute end-0 pe-2">
+						<i class="bi-box-arrow-up-right"></i>
+					</div>
+				</a>
+				{% endfor %}
 				{% else %}
-					<div class="fst-italic">None</div>
+				<div class="fst-italic">None</div>
 				{% endif %}
 				<a class="btn btn-sm btn-outline-secondary mt-2" href="{{url_for('view.planner')}}">
 					<i class="bi-pencil-square"></i>
@@ -205,7 +211,7 @@
 {% block tailscripts %}
 <script>
 	$("#welcome").on("click", (e) => {
-		ajax("PUT", "me/sessions/welcome", {set: false}, () => {
+		ajax("PUT", "me/sessions/welcome", { set: false }, () => {
 			$("#welcome").remove()
 		})
 	})

@@ -24,28 +24,29 @@
 		<div class="card h-100">
 			<div class="card-header text-center">
 				{% if tag.emoji %}
-					&#{{tag.emoji}}
+				&#{{tag.emoji}}
 				{% else %}
-					<i class="bi-circle-fill" style="color: #{{tag.color_hex}};"></i>
+				<i class="bi-circle-fill" style="color: #{{tag.color_hex}};"></i>
 				{% endif %}
 				{{tag.name}}
 			</div>
 			<div class="tag-course-container card-body p-1" db-id="{{tag.id}}">
 				{% for course in tag.courses | sort(attribute="subject.code") %}
-					<a class="tag-course-item m-1 btn bg-light card" db-id="{{course.id}}"
-						db-code="{{course.code}}" draggable="true" href="{{course.url}}" target="_blank" rel="noopener noreferrer" title="Click to open course in a new tab">
-						<div class="row">
-							<span class="col-3 h5 p-0 m-0">
-								&#{{course.emoji}}
-							</span>
-							<span id="code" class="col-6 font-monospace">
-								{{course.code}}
-							</span>
-							<span class="col-3">
-								<i class="bi-box-arrow-up-right"></i>
-							</span>
-						</div>
-					</a>
+				<a class="tag-course-item m-1 btn card" db-id="{{course.id}}" db-code="{{course.code}}" draggable="true"
+					href="{{course.url}}" target="_blank" rel="noopener noreferrer"
+					title="Click to open course in a new tab">
+					<div class="row">
+						<span class="col-3 h5 p-0 m-0">
+							&#{{course.emoji}}
+						</span>
+						<span id="code" class="col-6 font-monospace">
+							{{course.code}}
+						</span>
+						<span class="col-3">
+							<i class="bi-box-arrow-up-right"></i>
+						</span>
+					</div>
+				</a>
 				{% endfor %}
 			</div>
 			<div class="card-footer"></div>
