@@ -47,7 +47,7 @@
 								{% endif %}
 							</span>
 						</a>
-						<ul class="dropdown-menu dropdown-menu-end">
+						<ul class="dropdown-menu dropdown-menu-end shadow">
 							<li>
 								<h6 class="dropdown-header">
 									{{current_user.name}}
@@ -129,13 +129,12 @@
 				</li>
 			</ul>
 
-			<div class="d-md-flex">
+			<div class="d-md-flex align-items-center">
+				{% if current_user.is_authenticated %}
 				<!--User related nav links-->
-				<ul class="navbar-nav text-center">
-					{% if current_user.is_authenticated %}
+				<ul class="navbar-nav">
 					<li class="nav-item dropdown d-none d-md-block">
-						<a class="nav-link py-0 {% if request.path == url_for('view.account') %}active{% endif %}"
-							href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<a class="nav-link py-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 							<span class="position-relative lh-1">
 								<i class="bi-person-circle fs-4 lh-1"></i>
 								{% if current_user.unread_announcements %}
@@ -147,7 +146,7 @@
 							<span class="lh-md align-top">{{current_user.username}}</span>
 							<i class="bi-chevron-down lh-1 align-text-top"></i>
 						</a>
-						<ul class="dropdown-menu dropdown-menu-end">
+						<ul class="dropdown-menu dropdown-menu-end shadow">
 							<li>
 								<h6 class="dropdown-header">
 									{{current_user.name}}
@@ -192,12 +191,10 @@
 								</a></li>
 						</ul>
 					</li>
-					{% endif %}
 				</ul>
+				{% else %}
 				<!--Auth buttons-->
-				<ul class="navbar-nav text-center d-flex flex-row justify-content-between">
-					{% if current_user.is_authenticated %}
-					{% else %}
+				<ul class="navbar-nav text-center d-flex flex-row justify-content-between me-md-2">
 					<li class="flex-grow-1 py-1 py-md-0 ps-2 pe-2 pe-md-0">
 						<a class="btn btn-outline-info d-block" href="{{url_for('view.login')}}">
 							Log In
@@ -208,7 +205,52 @@
 							Sign Up
 						</a>
 					</li>
-					{% endif %}
+				</ul>
+				{% endif %}
+				<!--Theme controls-->
+				<ul class="navbar-nav h-100">
+					<!--Desktop-->
+					<li class="nav-item dropdown d-none d-md-block ms-1">
+						<a class="nav-link py-0" href="#" role="button" data-bs-toggle="dropdown"
+							data-bs-auto-close="outside" aria-expanded="false">
+							<i class="bi-brightness-high-fill lh-1 fs-4 d-none" data-bs-theme-icon="light"></i>
+							<i class="bi-moon-stars-fill lh-1 fs-4 d-none" data-bs-theme-icon="dark"></i>
+							<i class="bi-circle-half lh-1 fs-4" data-bs-theme-icon="auto"></i>
+							<!-- <i class="bi-chevron-down lh-1 align-text-top"></i> -->
+						</a>
+						<ul class="dropdown-menu dropdown-menu-end shadow">
+							<li><a class="dropdown-item" data-bs-theme-value="light" title="Light theme">
+									<i class="bi-brightness-high-fill"></i>
+									Light
+								</a></li>
+							<li><a class="dropdown-item" data-bs-theme-value="dark" title="Dark theme">
+									<i class="bi-moon-stars-fill"></i>
+									Dark
+								</a></li>
+							<li><a class="dropdown-item" data-bs-theme-value="auto" title="Sync with system theme">
+									<i class="bi-circle-half"></i>
+									Auto
+								</a></li>
+						</ul>
+					</li>
+					<!--Mobile-->
+					<li class="nav-item d-md-none d-flex justify-content-evenly mt-2">
+						<button class="btn btn-sm btn-outline-secondary border-0" data-bs-theme-value="light"
+							title="Light theme">
+							<i class="bi-brightness-high-fill"></i>
+							Light
+						</button>
+						<button class="btn btn-sm btn-outline-secondary border-0" data-bs-theme-value="dark"
+							title="Dark theme">
+							<i class="bi-moon-stars-fill"></i>
+							Dark
+						</button>
+						<button class="btn btn-sm btn-outline-secondary border-0" data-bs-theme-value="auto"
+							title="Sync with system theme">
+							<i class="bi-circle-half"></i>
+							Auto
+						</button>
+					</li>
 				</ul>
 			</div>
 		</div>
