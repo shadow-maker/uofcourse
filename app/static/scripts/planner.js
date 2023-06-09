@@ -237,20 +237,19 @@ function updateCollection(id) {
 			collection.dragover = true
 			if (courseCanMoveTo.includes(collection.id)) {
 				item.addClass("dragover-success")
-				let container = item.find(".collection-course-container")
-				$(".dragging").appendTo(container)
-				// Sort course items
-				container.children(".collection-course-item").sort((a, b) => {
-					if (($(a).attr("db-code").toLowerCase() < $(b).attr("db-code").toLowerCase()))
-						return -1
-					else if (($(a).attr("db-code").toLowerCase() > $(b).attr("db-code").toLowerCase()))
-						return 1
-					else
-						return 0
-				}).each(function () {
-					$(this).remove()
-					$(this).appendTo(container)
-				})
+				const container = item.find(".collection-course-container")
+				const dragging = $(".dragging")
+				// Place dragging item in correct position (assumes collection.courses is sorted)
+				let inserted = false
+				for (const course of collection.courses) {
+					if (course.course_code.toLowerCase() > dragging.attr("db-code").toLowerCase()) {
+						dragging.insertBefore(course.element)
+						inserted = true
+						break
+					}
+				}
+				if (!inserted)
+					dragging.appendTo(container)
 			} else {
 				item.addClass("dragover-danger")
 				let match = collection.courses.find(c => c.course_code == $(".dragging").attr("db-code"))
@@ -344,8 +343,11 @@ function getUpdateCollection(id) {
 }
 
 function updateCollectionCourse(collection_id, id) {
-	let collection = collections.find(c => c.id == collection_id)
-	let cc = collection.courses.find(c => c.id == id)
+	const collection = collections.find(c => c.id == collection_id)
+	const cc = collection.courses.find(c => c.id == id)
+
+	if (cc.element)
+		cc.element.remove()
 
 	cc.element = $("#templates .collection-course-item").clone()
 
@@ -364,63 +366,69 @@ function updateCollectionCourse(collection_id, id) {
 	// Item events
 
 	cc.element.on("click", () => {
-		if (!cc.element.hasClass("dragging")) {
-			getCourse(cc.course_id, (course) => {
-				modalInfo.find(".name").text(course.name)
-				modalInfo.find(".link").prop("href", course.url)
-				modalInfo.find(".repeat").text(course.repeat ? "Yes" : "No")
-				modalInfo.find(".countgpa").text(course.countgpa ? "Yes" : "No")
-			})
+		if (cc.element.hasClass("dragging"))
+			return
 
-			if (cc.grade_id) {
-				const grade = grades[cc.grade_id]
-				modalInfo.find(".grade-symbol").text(grade.symbol)
-				modalInfo.find(".grade-desc").text(grade.desc)
-				modalInfo.find(".grade-passed").text(grade.passed ? "Yes" : "No")
-				if (grade.gpv != null) {
-					modalInfo.find(".grade-gpv").text(grade.gpv.toFixed(2))
-					modalInfo.find(".grade-weighted").text((grade.gpv * cc.course_units).toFixed(2))
-				} else {
-					modalInfo.find(".grade-gpv").text("N/A")
-					modalInfo.find(".grade-weighted").text("N/A")
-				}
+		modalInfo.find(".name").text("Loading...")
+		modalInfo.find(".link").prop("href", "")
+		modalInfo.find(".repeat").text("Loading...")
+		modalInfo.find(".countgpa").text("Loading...")
+
+		getCourse(cc.course_id, (course) => {
+			modalInfo.find(".name").text(course.name)
+			modalInfo.find(".link").prop("href", course.url)
+			modalInfo.find(".repeat").text(course.repeat ? "Yes" : "No")
+			modalInfo.find(".countgpa").text(course.countgpa ? "Yes" : "No")
+		})
+
+		if (cc.grade_id) {
+			const grade = grades[cc.grade_id]
+			modalInfo.find(".grade-symbol").text(grade.symbol)
+			modalInfo.find(".grade-desc").text(grade.desc)
+			modalInfo.find(".grade-passed").text(grade.passed ? "Yes" : "No")
+			if (grade.gpv != null) {
+				modalInfo.find(".grade-gpv").text(grade.gpv.toFixed(2))
+				modalInfo.find(".grade-weighted").text((grade.gpv * cc.course_units).toFixed(2))
 			} else {
-				modalInfo.find(".grade-symbol").text("-")
-				modalInfo.find(".grade-desc").text("")
-				modalInfo.find(".grade-gpv").text("")
-				modalInfo.find(".grade-passed").text("")
-				modalInfo.find(".grade-weighted").text("")
+				modalInfo.find(".grade-gpv").text("N/A")
+				modalInfo.find(".grade-weighted").text("N/A")
 			}
-
-			modalInfo.find(".term").text(collection.term_name)
-			modalInfo.find(".emoji").html("&#" + (cc.course_emoji ? cc.course_emoji : DEFAULT_EMOJI))
-			modalInfo.find(".code").text(cc.course_code)
-			modalInfo.find(".units").text(cc.course_units.toFixed(2))
-
-			formEdit.find("#selectCollectionCourse").val(cc.id)
-			formEdit.find("#selectCoursePlaceholder").val(cc.course_code)
-			formEdit.find("#selectGrade").val(cc.grade_id ? cc.grade_id : 0)
-			formEdit.find("#selectPassed").prop("checked", cc.passed ? cc.passed : false)
-
-			$("#formEditCollectionCourse #selectCollection").empty()
-			for (let c of collections) {
-				$("#formEditCollectionCourse #selectCollection").append(
-					$("<option>", {
-						value: c.id,
-						text: c.term_name
-					})
-				)
-			}
-			formEdit.find("#selectCollection").val(collection.id)
-			formEdit.find("#selectCollectionOld").val(collection.id)
+		} else {
+			modalInfo.find(".grade-symbol").text("-")
+			modalInfo.find(".grade-desc").text("")
+			modalInfo.find(".grade-gpv").text("")
+			modalInfo.find(".grade-passed").text("")
+			modalInfo.find(".grade-weighted").text("")
 		}
+
+		modalInfo.find(".term").text(collection.term_name)
+		modalInfo.find(".emoji").html("&#" + (cc.course_emoji ? cc.course_emoji : DEFAULT_EMOJI))
+		modalInfo.find(".code").text(cc.course_code)
+		modalInfo.find(".units").text(cc.course_units.toFixed(2))
+
+		formEdit.find("#selectCollectionCourse").val(cc.id)
+		formEdit.find("#selectCoursePlaceholder").val(cc.course_code)
+		formEdit.find("#selectGrade").val(cc.grade_id ? cc.grade_id : 0)
+		formEdit.find("#selectPassed").prop("checked", cc.passed ? cc.passed : false)
+
+		$("#formEditCollectionCourse #selectCollection").empty()
+		for (let c of collections) {
+			$("#formEditCollectionCourse #selectCollection").append(
+				$("<option>", {
+					value: c.id,
+					text: c.term_name
+				})
+			)
+		}
+		formEdit.find("#selectCollection").val(collection.id)
+		formEdit.find("#selectCollectionOld").val(collection.id)
 	})
 
 	cc.element.get(0).addEventListener("dragstart", () => {
 		cc.element.addClass("dragging")
 		courseOldCollection = collection_id
 		courseCanMoveTo = []
-		for (let collec of collections)
+		for (const collec of collections)
 			if (collec.id == collection_id || !collec.courses.find(c => c.course_id == cc.course_id))
 				courseCanMoveTo.push(collec.id)
 		if (!firstDrag) {
@@ -431,12 +439,9 @@ function updateCollectionCourse(collection_id, id) {
 
 	cc.element.get(0).addEventListener("dragend", () => {
 		cc.element.removeClass("dragging")
-		let newId = parseInt(cc.element.parent().attr("db-id"))
+		const newId = parseInt(cc.element.parent().attr("db-id"))
 		if (courseOldCollection != newId && courseCanMoveTo.includes(newId)) {
-			putCollectionCourse({
-				id: cc.id,
-				collection_id: newId
-			},
+			putCollectionCourse({ id: cc.id, collection_id: newId },
 				() => {
 					alert("success", "Course moved!")
 					getUpdateCollection(collection_id)
@@ -450,9 +455,9 @@ function updateCollectionCourse(collection_id, id) {
 				}
 			)
 		}
-		for (let collec of collections) {
+		for (const collec of collections) {
 			collec.element.removeClass("dragover-success").removeClass("dragover-danger")
-			for (let c of collec.courses)
+			for (const c of collec.courses)
 				c.element.removeClass("drag-course-match")
 		}
 	})
