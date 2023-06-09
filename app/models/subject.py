@@ -17,6 +17,11 @@ class Subject(db.Model):
 
 	def latestCalendar(self):
 		return sorted(self.calendars, key=lambda cal: cal.year, reverse=True)[0]
+	
+	def calendarURL(self, calendar=None):
+		if calendar is None or calendar not in self.calendars:
+			calendar = self.latestCalendar()
+		return calendar.url + self.site if self.site else None
 
 	@property
 	def url(self):
@@ -24,7 +29,7 @@ class Subject(db.Model):
 
 	@property
 	def url_uni(self):
-		return self.latestCalendar().url + self.site if self.site else None
+		return self.calendarURL()
 
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:

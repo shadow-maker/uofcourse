@@ -80,11 +80,11 @@
 							<select class="form-select form-select-sm"
 								onchange="$('#cal-btn').attr('href', $(this).val())" title="Calendar version">
 								{% for calendar in calendars %}
-								<option value="{{calendar.url + subject.site}}">{{calendar.schoolyear}}</option>
+								<option value="{{subject.calendarURL(calendar)}}">{{calendar.schoolyear}}</option>
 								{% endfor %}
 							</select>
 						</div>
-						<a id="cal-btn" class="btn btn-sm btn-primary" href="{{calendars[0].url + subject.site}}"
+						<a id="cal-btn" class="btn btn-sm btn-primary" href="{{subject.calendarURL(calendar)}}"
 							target="_blank" rel="noopener noreferrer">
 							GO
 							<i class="bi-caret-right-fill"></i>

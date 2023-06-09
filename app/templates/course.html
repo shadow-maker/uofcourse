@@ -7,6 +7,11 @@
 <script>
 	var course_id = parseInt("{{course.id}}")
 	var grades = JSON.parse('{{ grades | tojson | safe }}')
+
+	function collapse(element) {
+		$(element).find(".toggleOn").toggle()
+		$(element).find(".toggleOff").toggle()
+	}
 </script>
 <script src="/static/scripts/course.js"></script>
 {% endblock %}
@@ -187,10 +192,42 @@
 			{{textCard("Corequisites", course.coreqs, "Must be completed at the same time as this class.")}}
 			{% endif %}
 
-			<div class="text-muted mt-2 px-3">
-				<i class="bi-info-circle-fill"></i>
-				The information above was taken from the {{course.latestCalendar().schoolyear}} version of the
-				University Calendar (the latest available)
+			<div class="d-flex mt-2 px-3">
+				<i class="bi-info-circle-fill text-muted me-2"></i>
+				<div>
+					<div class="text-muted">
+						The information above was taken from the {{course.latestCalendar().schoolyear}} version of the
+						University Calendar (the latest available)
+					</div>
+					<span data-bs-toggle="collapse" href="#calendarSelector" role="button" aria-expanded="false"
+						aria-controls="calendarSelector" onclick="collapse(this)">
+						<span class="toggleOff"><small><i class="bi-chevron-right"></i></small></span>
+						<span class="toggleOn disabled"><small><i class="bi-chevron-down"></i></small></span>
+						<a class="link-body-emphasis">View a different version of this course</a>
+					</span>
+					<div class="collapse px-3 pt-2" id="calendarSelector">
+						<div class="d-flex align-items-center">
+							<div class="ms-1 me-2">Calendar</div>
+							<div>
+								<div class="input-group input-group-sm">
+									<select class="form-select" onchange="$('#cal-btn').attr('href', $(this).val())"
+										title="Calendar version">
+										{% for calendar in course.calendars[::-1] %}
+										<option value="{{course.calendarURL(calendar)}}">{{calendar.schoolyear}}
+										</option>
+										{% endfor %}
+									</select>
+									<a id="cal-btn" class="btn btn-outline-primary" type="button"
+										href="{{course.calendarURL(course.calendars[-1])}}" target="_blank"
+										rel="noopener noreferrer">
+										GO
+										<i class="bi-caret-right-fill"></i>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 

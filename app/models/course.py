@@ -61,6 +61,16 @@ class Course(db.Model):
 
 	def latestCalendar(self):
 		return sorted(self.calendars, key=lambda cal: cal.year, reverse=True)[0]
+	
+	def calendarURL(self, calendar=None):
+		if calendar is None or calendar not in self.calendars:
+			calendar = self.latestCalendar()
+		if self.subject.site:
+			_url = calendar.url + self.subject.site
+			if self.subsite:
+				_url += "#" + self.subsite
+			return _url
+		return None
 
 	@property
 	def url(self):
@@ -68,12 +78,7 @@ class Course(db.Model):
 
 	@property
 	def url_uni(self):
-		if self.subject.site:
-			url = self.latestCalendar().url + self.subject.site
-			if self.subsite:
-				url += "#" + self.subsite
-			return url
-		return None
+		return self.calendarURL()
 
 	def getEmoji(self, default=DEFAULT_EMOJI):
 		if self.emoji:
