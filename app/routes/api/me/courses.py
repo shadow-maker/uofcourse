@@ -8,6 +8,10 @@ import json
 
 me_course = Blueprint("course", __name__, url_prefix="/courses")
 
+#
+# GET
+#
+
 @me_course.route("/course/<id>", methods=["GET"])
 def getCourseCollectionCourses(id):
 	course = Course.query.get(id)
@@ -67,6 +71,8 @@ def postCollectionCourseCheck(data={}):
 
 @me_course.route("", methods=["POST"])
 def postCollectionCourse(data={}):
+	response = {"success": True, "warnings": []}
+
 	if not data:
 		data = request.json
 		if not data:
@@ -86,6 +92,10 @@ def postCollectionCourse(data={}):
 	for cc in collection.collectionCourses:
 		if course.id == cc.course_id:
 			return {"error": "a CollectionCourse with the same Course already exists in this Collection"}, 400
+		
+	if collection.term_id and collection.term not in collectionCourse.course.calendar_terms:
+		response["warnings"].append("Course was not available in this term's calendar")
+		response["not-available"] = True
 	
 	collectionCourse = CollectionCourse(collection.id, course.id)
 
@@ -94,7 +104,8 @@ def postCollectionCourse(data={}):
 
 	db.session.add(collectionCourse)
 	db.session.commit()
-	return {"success": True}, 200
+
+	return response, 200
 
 #
 # PUT
@@ -103,6 +114,8 @@ def postCollectionCourse(data={}):
 @me_course.route("", defaults={"id":None}, methods=["PUT"])
 @me_course.route("/<id>", methods=["PUT"])
 def putCollectionCourse(data={}, id=None):
+	response = {"success": True, "warnings": []}
+
 	if not data:
 		data = request.json
 		if not data:
@@ -127,6 +140,10 @@ def putCollectionCourse(data={}, id=None):
 			if collectionCourse != cc and collectionCourse.course_id == cc.course_id:
 				return {"error": "a CollectionCourse with the same Course already exists in this Collection"}, 400
 		collectionCourse.collection_id = collection.id
+
+	if collection.term_id and collection.term not in collectionCourse.course.calendar_terms:
+		response["warnings"].append("Course was not available in this term's calendar")
+		response["not-available"] = True
 	
 	if "grade_id" in data:
 		try:
@@ -152,7 +169,7 @@ def putCollectionCourse(data={}, id=None):
 	except:
 		return {"error": "error updating CollectionCourse"}, 500
 	
-	return {"success": True}, 200
+	return response, 200
 
 #
 # DELETE

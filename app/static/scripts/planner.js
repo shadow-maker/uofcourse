@@ -244,7 +244,7 @@ function updateCollection(id) {
 				const dragging = $(".dragging")
 				// Place dragging item in correct position (assumes collection.courses is sorted)
 				let inserted = false
-				for (const course of collection.courses) {
+				for (let course of collection.courses) {
 					if (course.course_code.toLowerCase() > dragging.attr("db-code").toLowerCase()) {
 						dragging.insertBefore(course.element)
 						inserted = true
@@ -380,12 +380,15 @@ function updateCollectionCourse(collection_id, id) {
 		modalInfo.find(".link").prop("href", "")
 		modalInfo.find(".repeat").text("Loading...")
 		modalInfo.find(".countgpa").text("Loading...")
+		modalInfo.find(".not-available").addClass("d-none")
 
 		getCourse(cc.course_id, (course) => {
 			modalInfo.find(".name").text(course.name)
 			modalInfo.find(".link").prop("href", course.url)
 			modalInfo.find(".repeat").text(course.repeat ? "Yes" : "No")
 			modalInfo.find(".countgpa").text(course.countgpa ? "Yes" : "No")
+			if (!cc.calendar_available)
+				modalInfo.find(".not-available").removeClass("d-none")
 		})
 
 		if (cc.grade_id) {
@@ -435,7 +438,7 @@ function updateCollectionCourse(collection_id, id) {
 		cc.element.addClass("dragging")
 		courseOldCollection = collection_id
 		courseCanMoveTo = []
-		for (const collec of collections)
+		for (let collec of collections)
 			if (collec.id == collection_id || !collec.courses.find(c => c.course_id == cc.course_id))
 				courseCanMoveTo.push(collec.id)
 		if (!firstDrag) {
@@ -449,8 +452,10 @@ function updateCollectionCourse(collection_id, id) {
 		const newId = parseInt(cc.element.parent().attr("db-id"))
 		if (courseOldCollection != newId && courseCanMoveTo.includes(newId)) {
 			putCollectionCourse({ id: cc.id, collection_id: newId },
-				() => {
+				(response) => {
 					alert("success", "Course moved!")
+					for (let w of response.warnings)
+						alert("warning", w)
 					getUpdateCollection(collection_id)
 					getUpdateCollection(newId)
 					updateProgress()
@@ -462,9 +467,9 @@ function updateCollectionCourse(collection_id, id) {
 				}
 			)
 		}
-		for (const collec of collections) {
+		for (let collec of collections) {
 			collec.element.removeClass("dragover-success").removeClass("dragover-danger")
-			for (const c of collec.courses)
+			for (let c of collec.courses)
 				c.element.removeClass("drag-course-match")
 		}
 	})
@@ -751,8 +756,10 @@ $("#formAddCollectionCourse").on("submit", (event) => {
 	addCollectionCourse(
 		form.find("#selectCollection").val(),
 		form.find("#selectCourseId").val(),
-		() => {
+		(response) => {
 			alert("success", "Course added!")
+			for (let w of response.warning)
+				alert("warning", w)
 			getUpdateCollection(form.find("#selectCollection").val())
 			updateProgress()
 			updateSummary()

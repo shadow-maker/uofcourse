@@ -20,6 +20,9 @@ class CollectionCourse(db.Model):
 	@course_code.expression # type: ignore
 	def course_code(cls):
 		return select(Course.code).where(Course.id == cls.course_id)
+	
+	def isCalendarAvailable(self):
+		return self.collection.term_id and self.collection.term in self.course.calendar_terms
 
 	@property
 	def user(self):
@@ -59,3 +62,4 @@ class CollectionCourse(db.Model):
 		yield "grade_id", self.grade_id
 		yield "passed", self.passed
 		yield "weightedGPV", self.weightedGPV
+		yield "calendar_available", self.isCalendarAvailable()
