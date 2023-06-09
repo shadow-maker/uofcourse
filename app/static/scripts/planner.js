@@ -4,14 +4,17 @@
 
 let firstDrag = false
 
-var collections = []
-var courseCanMoveTo = []
-var courseOldCollection = null
-var overallGPA = {
+let collections = []
+let courseCanMoveTo = []
+let courseOldCollection = null
+let overallGPA = {
 	sumUnits: 0,
 	sumGPA: 0,
 	finalGPA: 0
 }
+
+const dateFormatLocale = "en-US"
+const dateFormatOptions = { month: "short", day: "2-digit" }
 
 const modalInfo = $("#modalInfoCollectionCourse")
 const formAdd = $("#formAddCollectionCourse")
@@ -277,8 +280,12 @@ function updateCollection(id) {
 
 			if (term.start || term.end) {
 				item.find(".term-date").removeClass("invisible")
-				item.find(".term-date .start").text(term.start)
-				item.find(".term-date .end").text(term.end)
+
+				const start = new Date(term.start)
+				item.find(".term-date .start").text(start.toLocaleDateString(dateFormatLocale, dateFormatOptions))
+
+				const end = new Date(term.end)
+				item.find(".term-date .end").text(end.toLocaleDateString(dateFormatLocale, dateFormatOptions))
 			}
 
 			if (term.current)
