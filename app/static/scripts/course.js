@@ -29,6 +29,8 @@ function addCollection(id) {
 		},
 		(response) => {
 			alert("success", "Added Course to Term")
+			for (let w of response.warnings)
+				alert("warning", w)
 			updateCollections()
 		}
 	)
@@ -100,9 +102,9 @@ function updateCollections() {
 
 		$("#collections").find(".collections-container .list-group").empty()
 		if (data.results.length > 0)
-		$("#collections").find(".collections-container").removeClass("d-none")
+			$("#collections").find(".collections-container").removeClass("d-none")
 		else
-		$("#collections").find(".collections-none").removeClass("d-none")
+			$("#collections").find(".collections-none").removeClass("d-none")
 		for (let cc of data.results) {
 			let collecCourseItem = $("#templates .collection-course-item").clone()
 
@@ -134,7 +136,7 @@ function updateCollections() {
 		$("#collections").find(".collections-dropdown-item").each(function () {
 			if (data.results.find(c => c.collection_id == parseInt($(this).attr("db-id")))) {
 				$(this).find(".bi-check").removeClass("invisible")
-				$(this).find(".dropdown-item").on("click", () => {})
+				$(this).find(".dropdown-item").on("click", () => { })
 			} else {
 				$(this).find(".bi-check").addClass("invisible")
 				$(this).find(".dropdown-item").on("click", (e) => {

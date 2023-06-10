@@ -93,7 +93,7 @@ def postCollectionCourse(data={}):
 		if course.id == cc.course_id:
 			return {"error": "a CollectionCourse with the same Course already exists in this Collection"}, 400
 		
-	if collection.term_id and collection.term not in collectionCourse.course.calendar_terms:
+	if collection.term_id and collection.term not in course.calendar_terms:
 		response["warnings"].append("Course was not available in this term's calendar")
 		response["not-available"] = True
 	
