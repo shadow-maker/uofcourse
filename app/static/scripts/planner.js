@@ -81,11 +81,11 @@ function formAddCustomOn() {
 
 function selectCourseStatus(status, message = "") {
 	$("#selectCourseStatus").addClass("invisible")
-	$("#selectCourseStatus .message").text("...")
+	$("#selectCourseStatus .message").html("...")
 	if (status) {
 		$("#selectCourseStatus").children("span").hide()
 		$("#selectCourseStatus ." + status).show()
-		$("#selectCourseStatus .message").text(message)
+		$("#selectCourseStatus .message").html(message)
 		$("#selectCourseStatus").removeClass("invisible")
 	}
 }
@@ -101,10 +101,15 @@ function checkCourse() {
 				$("#selectCourseSubmit").prop("disabled", true)
 				selectCourseStatus("error", response.error)
 			} else {
-				if (response.success)
+				if (response.success) {
 					selectCourseStatus("success", response.success)
-				else if (response.warning)
-					selectCourseStatus("warning", response.warning)
+					$("#customCoursePrompt").addClass("invisible")
+				} else {
+					let warnings = ""
+					for (let w of response.warnings)
+						warnings += w + "<br>"
+					selectCourseStatus("warning", warnings)
+				}
 				if (response.course_id == null) {
 					$("#customCoursePrompt").removeClass("invisible")
 				} else {
@@ -717,11 +722,8 @@ $("#summary input").on("change", function () {
 
 // On key up inside subject selection
 $("#selectCourseSubject").on("keyup", function (e) {
-	// Convert subject into uppercase
-	$(this).val($(this).val().toUpperCase())
-
-	// Remove numeric characters
-	$(this).val($(this).val().replace(/[0-9]/g, ""))
+	// Remove special characters
+	$(this).val($(this).val().replace(/[^a-zA-Z]/g, "").toUpperCase())
 
 	if ($(this).val().length < $(this).attr("minLength")) {
 		formAdd.find(".selectNumber").prop("disabled", true)
@@ -747,7 +749,7 @@ $("#selectCourseNumber").on("keydown", function (e) {
 
 // On key down inside number selection
 $("#selectCourseNumber").on("keyup", function (e) {
-	// Remove non-numeric characters
+	// Remove special characters
 	$(this).val($(this).val().replace(/[^a-zA-Z0-9]/g, "").toUpperCase())
 
 	// Check course if length is complete

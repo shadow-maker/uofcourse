@@ -72,9 +72,15 @@ def postCollectionCourseCheck(data={}):
 		if not subject:
 			return {"error": "Subject does not exist"}, 200
 		course = Course.query.filter_by(subject_id=subject.id, number=data["course_number"]).first()
+
+	code = data["subject_code"] + "-" + data["course_number"]
+	for cc in collection.collectionCourses:
+		if cc.course.code == code:
+			return {"error": "Course already in this term"}, 200
+
 	if not course:
 		return {
-			"warning": "Course does not exist",
+			"warnings": ["Course does not exist"],
 			"course_id": None
 		}, 200
 
@@ -82,16 +88,28 @@ def postCollectionCourseCheck(data={}):
 		if cc.course_id == course.id:
 			return {"error": "Course already in this term"}, 200
 
+	warnings = []
 	if collection.term_id and collection.term not in course.calendar_terms:
+		warnings.append("Course was not available in this term's calendar")
+	if not course.repeat:
+		for col in current_user.collections:
+			if col.id == collection.id:
+				continue
+			for cc in col.collectionCourses:
+				if (cc.grade is not None or col.term.isPrev()) and course.id == cc.course_id:
+					warnings.append(f"Course already taken in {col.term.name} and cannot be repeated")
+					break
+	
+	if len(warnings) > 0:
 		return {
-			"warning": "Course was not available in this term's calendar",
+			"warnings": warnings,
 			"course_id": course.id
 		}, 200
-	
-	return {
-		"success": "Course can be added to this term",
-		"course_id": course.id
-	}, 200
+	else:
+		return {
+			"success": "Course can be added to this term",
+			"course_id": course.id
+		}, 200
 
 @me_course.route("", methods=["POST"])
 def postCollectionCourse(data={}):
@@ -148,8 +166,17 @@ def postCollectionCourse(data={}):
 			if course.id == cc.course_id:
 				return {"error": "a CollectionCourse with the same Course already exists in this Collection"}, 400
 		if collection.term_id and collection.term not in course.calendar_terms:
-			response["warnings"].append("Course was not available in this term's calendar")
+			response["warnings"].append(f"Course {course.code} was not available in this term's calendar")
 			response["not-available"] = True
+		if not course.repeat:
+			for col in current_user.collections:
+				if col.id == collection.id:
+					continue
+				for cc in col.collectionCourses:
+					if course.id == cc.course_id:
+						response["warnings"].append(f"Course {course.code} already taken in term {col.term.name} and cannot be repeated")
+						response["taken"] = True
+						break
 	
 		collectionCourse = CollectionCourse(collection.id, course_id=course.id)
 
@@ -200,7 +227,7 @@ def putCollectionCourse(data={}, id=None):
 		collectionCourse.collection_id = collection.id
 
 	if not collectionCourse.isCalendarAvailable():
-		response["warnings"].append("Course was not available in this term's calendar")
+		response["warnings"].append(f"Course {collectionCourse.course.code} was not available in this term's calendar")
 		response["not-available"] = True
 	
 	if "grade_id" in data:
