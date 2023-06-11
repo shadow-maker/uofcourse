@@ -343,6 +343,7 @@ function updateCollection(id) {
 }
 
 function getUpdateCollection(id) {
+	console.log("getUpdateCollection", id)
 	getCollection(id, (data) => {
 		Object.assign(collections.find(c => c.id == id), data)
 		updateCollection(id)
@@ -758,7 +759,7 @@ $("#formAddCollectionCourse").on("submit", (event) => {
 		form.find("#selectCourseId").val(),
 		(response) => {
 			alert("success", "Course added!")
-			for (let w of response.warning)
+			for (let w of response.warnings)
 				alert("warning", w)
 			getUpdateCollection(form.find("#selectCollection").val())
 			updateProgress()
