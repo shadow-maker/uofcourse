@@ -10,7 +10,7 @@ def update(calendar: Calendar, facultyID: int, items: ResultSet):
 	logger.info(f"Found {len(items)} Subject items")
 	for i, s in enumerate(items):
 		# Get Subject code, skip if too short
-		code = s.text.replace(" ", "")
+		code = s.text.replace(" ", "").strip()
 		if len(code) < 3 or len(code) > 6 or not code.isupper():
 			logger.warning(f"Subject item {i} has invalid code '{code}' (skipping)")
 			continue

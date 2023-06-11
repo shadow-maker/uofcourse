@@ -22,6 +22,7 @@ from app.models.grade import Grade
 from app.models.user import Role, User
 from app.models.user_log import UserLogEvent, UserLog
 from app.models.tag import Tag
+from app.models.custom_course import CustomCourse
 from app.models.collection_course import CollectionCourse
 from app.models.collection import Collection
 from app.models.announcement import Announcement

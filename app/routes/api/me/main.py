@@ -34,8 +34,8 @@ def getPlannerSummary():
 	show = request.args.get("show", "courses").lower()
 
 	options = {
-		"subjects": lambda cc : cc.course.subject.code,
-		"faculties": lambda cc : cc.course.subject.faculty.subdomain or cc.course.subject.faculty.name,
+		"subjects": lambda cc : cc.course.subject_code,
+		"faculties": lambda cc : None if cc.isCustom() else cc.course.subject.faculty.subdomain or cc.course.subject.faculty.name,
 		"levels": lambda cc : f"{cc.course.level}XX",
 		"grades": lambda cc : cc.grade.symbol if cc.grade_id else "none",
 		"terms": lambda cc : str(cc.collection.term_id) if cc.collection.term_id else "none"

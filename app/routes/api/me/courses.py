@@ -1,5 +1,5 @@
 from app import db
-from app.models import Grade, Subject, Course, Collection, CollectionCourse
+from app.models import Grade, Subject, Course, CustomCourse, Collection, CollectionCourse
 from app.auth import current_user
 
 from flask import Blueprint, request
@@ -11,6 +11,27 @@ me_course = Blueprint("course", __name__, url_prefix="/courses")
 #
 # GET
 #
+
+@me_course.route("/<id>", methods=["GET"])
+def getCollectionCourse(id):
+	cc = CollectionCourse.query.get(id)
+	if not cc:
+		return {"error": f"CollectionCourse with id {id} does not exist"}, 404
+	if cc.user_id != current_user.id:
+		return {"error": "CollectionCourse does not belong to this user"}, 403
+	return dict(cc), 200
+
+@me_course.route("/<id>/course", methods=["GET"])
+def getCollectionCourseCourse(id):
+	cc = CollectionCourse.query.get(id)
+	if not cc:
+		return {"error": f"CollectionCourse with id {id} does not exist"}, 404
+	if cc.user_id != current_user.id:
+		return {"error": "CollectionCourse does not belong to this user"}, 403
+	course = cc.course
+	if course is None:
+		return {"error": f"Course of CollectionCourse {cc.id} does not exist"}, 404
+	return dict(course), 200
 
 @me_course.route("/course/<id>", methods=["GET"])
 def getCourseCollectionCourses(id):
@@ -52,7 +73,10 @@ def postCollectionCourseCheck(data={}):
 			return {"error": "Subject does not exist"}, 200
 		course = Course.query.filter_by(subject_id=subject.id, number=data["course_number"]).first()
 	if not course:
-		return {"error": "Course does not exist"}, 200
+		return {
+			"warning": "Course does not exist",
+			"course_id": None
+		}, 200
 
 	for cc in collection.collectionCourses:
 		if cc.course_id == course.id:
@@ -71,6 +95,8 @@ def postCollectionCourseCheck(data={}):
 
 @me_course.route("", methods=["POST"])
 def postCollectionCourse(data={}):
+	custom = False
+	collectionCourse = None
 	response = {"success": True, "warnings": []}
 
 	if not data:
@@ -79,31 +105,63 @@ def postCollectionCourse(data={}):
 			return {"error": "no data provided"}, 400
 	if not "collection_id" in data:
 		return {"error": "no Collection id provided in data"}, 400
-	if not "course_id" in data:
-		return {"error": "no Course id provided in data"}, 400
-
 	collection = Collection.query.filter_by(id=data["collection_id"], user_id=current_user.id).first()
 	if not collection:
 		return {"error": "Collection from this user does not exist"}, 404
-	
-	course = Course.query.get(data["course_id"])
-	if not course:
-		return {"error": "Course not found"}, 404
-	for cc in collection.collectionCourses:
-		if course.id == cc.course_id:
-			return {"error": "a CollectionCourse with the same Course already exists in this Collection"}, 400
+
+	if "custom" in data:
+		custom = bool(data["custom"])
+	if custom:
+		if not "subject_code" in data:
+			return {"error": "no Subject code provided in data"}, 400
+		if not "number" in data:
+			return {"error": "no Course number provided in data"}, 400
 		
-	if collection.term_id and collection.term not in course.calendar_terms:
-		response["warnings"].append("Course was not available in this term's calendar")
-		response["not-available"] = True
+		course = CustomCourse(data["subject_code"], data["number"])
+
+		if "name" in data:
+			course.name = data["name"]
+		if "units" in data:
+			course.units = float(data["units"])
+		if "repeat" in data:
+			course.repeat = bool(data["repeat"])
+		if "countgpa" in data:
+			course.countgpa = bool(data["countgpa"])
+
+		try:
+			db.session.add(course)
+			db.session.commit()
+		except:
+			db.session.rollback()
+			return {"error": "error creating Custom Course"}, 500
+		
+		collectionCourse = CollectionCourse(collection.id, custom_course_id=course.id)
+		
+	else:
+		if not "course_id" in data:
+			return {"error": "no Course id provided in data"}, 400
+
+		course = Course.query.get(data["course_id"])
+		if not course:
+			return {"error": "Course not found"}, 404
+		for cc in collection.collectionCourses:
+			if course.id == cc.course_id:
+				return {"error": "a CollectionCourse with the same Course already exists in this Collection"}, 400
+		if collection.term_id and collection.term not in course.calendar_terms:
+			response["warnings"].append("Course was not available in this term's calendar")
+			response["not-available"] = True
 	
-	collectionCourse = CollectionCourse(collection.id, course.id)
+		collectionCourse = CollectionCourse(collection.id, course_id=course.id)
 
 	if collection.transfer:
 		collectionCourse.grade = Grade.query.filter_by(symbol="CR").first()
 
-	db.session.add(collectionCourse)
-	db.session.commit()
+	try:
+		db.session.add(collectionCourse)
+		db.session.commit()
+	except:
+		db.session.rollback()
+		return {"error": "error creating Collection Course"}, 500
 
 	return response, 200
 
@@ -141,7 +199,7 @@ def putCollectionCourse(data={}, id=None):
 				return {"error": "a CollectionCourse with the same Course already exists in this Collection"}, 400
 		collectionCourse.collection_id = collection.id
 
-	if collection.term_id and collection.term not in collectionCourse.course.calendar_terms:
+	if not collectionCourse.isCalendarAvailable():
 		response["warnings"].append("Course was not available in this term's calendar")
 		response["not-available"] = True
 	
@@ -194,6 +252,14 @@ def delCollectionCourse(data={}, id=None):
 
 	if collectionCourse.collection.user_id != current_user.id:
 		return {"error": f"User does not have access to this CollectionCourse"}, 403
+	
+	if collectionCourse.isCustom():
+		customCourse = collectionCourse._custom_course
+		try:
+			db.session.delete(customCourse)
+			db.session.commit()
+		except:
+			return {"error": "error deleting CustomCourse from CollectionCourse"}, 500
 
 	try:
 		db.session.delete(collectionCourse)

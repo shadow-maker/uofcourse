@@ -14,7 +14,7 @@ class Course(db.Model):
 	number = db.Column(db.Integer, nullable=False, unique=False)
 	name = db.Column(db.String(256))
 	aka = db.Column(db.Text)
-	units = db.Column(db.Numeric(precision=4, scale=2)) # 2 integer places, 2 decimal places
+	units = db.Column(db.Numeric(precision=4, scale=2), default=3.0) # 2 integer places, 2 decimal places
 	desc = db.Column(db.Text)
 	prereqs = db.Column(db.Text)
 	coreqs = db.Column(db.Text)
@@ -25,7 +25,7 @@ class Course(db.Model):
 	subsite = db.Column(db.String(32))
 	old = db.Column(db.Boolean, nullable=False, default=False)
 
-	collectionCourses = db.relationship("CollectionCourse", backref="course")
+	collectionCourses = db.relationship("CollectionCourse", backref="_course")
 
 	@hybrid_property
 	def faculty_id(self):
@@ -81,8 +81,6 @@ class Course(db.Model):
 		return self.calendarURL()
 
 	def getEmoji(self, default=DEFAULT_EMOJI):
-		if self.emoji:
-			return self.emoji
 		return self.subject.getEmoji(default)
 	
 	@property

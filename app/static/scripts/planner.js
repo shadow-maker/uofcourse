@@ -54,6 +54,29 @@ function transferredHide() {
 	}
 }
 
+function formAddCustomOff() {
+	$("#selectCourseCustom").prop("checked", false);
+	$("#customCoursePrompt").addClass("invisible")
+	$("#customCourseFields").addClass("d-none")
+	$("#customCourseSubmit").addClass("d-none")
+	$("#selectCourseSubmit").removeClass("d-none")
+	$("#selectCourseSubmit").prop("disabled", true)
+}
+
+function formAddCustomOn() {
+	$("#selectCourseCustom").prop("checked", true);
+	$("#customCoursePrompt").addClass("invisible")
+	$("#customCourseFields").removeClass("d-none")
+	$("#selectCourseSubmit").addClass("d-none")
+	$("#customCourseSubmit").removeClass("d-none")
+	$("#customCourseSubmit").prop("disabled", false)
+
+	$("#customCourseName").val("")
+	$("#customCourseUnits").val(3.00)
+	$("#customCourseRepeat").prop("checked", false)
+	$("#customCourseCountGPA").prop("checked", true)
+}
+
 // Check course funcs for add modal
 
 function selectCourseStatus(status, message = "") {
@@ -68,9 +91,8 @@ function selectCourseStatus(status, message = "") {
 }
 
 function checkCourse() {
-	let form = $("#formAddCollectionCourse")
 	addCollectionCourseCheck(
-		form.find("#selectCollection").val(),
+		formAdd.find("#selectCollection").val(),
 		$("#selectCourseSubject").val(),
 		$("#selectCourseNumber").val(),
 		(response) => {
@@ -79,12 +101,16 @@ function checkCourse() {
 				$("#selectCourseSubmit").prop("disabled", true)
 				selectCourseStatus("error", response.error)
 			} else {
-				$("#selectCourseId").val(response.course_id)
-				$("#selectCourseSubmit").prop("disabled", false)
 				if (response.success)
 					selectCourseStatus("success", response.success)
 				else if (response.warning)
 					selectCourseStatus("warning", response.warning)
+				if (response.course_id == null) {
+					$("#customCoursePrompt").removeClass("invisible")
+				} else {
+					$("#selectCourseId").val(response.course_id)
+					$("#selectCourseSubmit").prop("disabled", false)
+				}
 			}
 		}
 	)
@@ -112,8 +138,8 @@ function getTerm(id, callback) {
 	ajax("GET", "terms/" + id, {}, callback)
 }
 
-function getCourse(id, callback) {
-	ajax("GET", "courses/" + id, {}, callback)
+function getCourse(collection_course_id, callback) {
+	ajax("GET", "me/courses/" + collection_course_id + "/course", {}, callback)
 }
 
 function getProgress(callback) {
@@ -150,12 +176,9 @@ function addCollectionCourseCheck(collection_id, code, number, callback) {
 	)
 }
 
-function addCollectionCourse(collection_id, course_id, callback) {
+function addCollectionCourse(data, callback) {
 	ajax("POST", "me/courses",
-		{
-			collection_id: collection_id,
-			course_id: course_id
-		},
+		data,
 		callback
 	)
 }
@@ -343,7 +366,6 @@ function updateCollection(id) {
 }
 
 function getUpdateCollection(id) {
-	console.log("getUpdateCollection", id)
 	getCollection(id, (data) => {
 		Object.assign(collections.find(c => c.id == id), data)
 		updateCollection(id)
@@ -383,12 +405,25 @@ function updateCollectionCourse(collection_id, id) {
 		modalInfo.find(".countgpa").text("Loading...")
 		modalInfo.find(".not-available").addClass("d-none")
 
-		getCourse(cc.course_id, (course) => {
+		modalInfo.find(".term").text(collection.term_name)
+		modalInfo.find(".emoji").html("&#" + (cc.course_emoji ? cc.course_emoji : DEFAULT_EMOJI))
+		modalInfo.find(".code").text(cc.course_code)
+		modalInfo.find(".units").text(cc.course_units.toFixed(2))
+
+		if (cc.custom) {
+			modalInfo.find(".code-custom").removeClass("d-none")
+			modalInfo.find(".code-link").addClass("d-none")
+		} else {
+			modalInfo.find(".code-custom").addClass("d-none")
+			modalInfo.find(".code-link").removeClass("d-none")
+		}
+
+		getCourse(cc.id, (course) => {
 			modalInfo.find(".name").text(course.name)
 			modalInfo.find(".link").prop("href", course.url)
 			modalInfo.find(".repeat").text(course.repeat ? "Yes" : "No")
 			modalInfo.find(".countgpa").text(course.countgpa ? "Yes" : "No")
-			if (!cc.calendar_available)
+			if (!cc.custom && !cc.calendar_available)
 				modalInfo.find(".not-available").removeClass("d-none")
 		})
 
@@ -411,11 +446,6 @@ function updateCollectionCourse(collection_id, id) {
 			modalInfo.find(".grade-passed").text("")
 			modalInfo.find(".grade-weighted").text("")
 		}
-
-		modalInfo.find(".term").text(collection.term_name)
-		modalInfo.find(".emoji").html("&#" + (cc.course_emoji ? cc.course_emoji : DEFAULT_EMOJI))
-		modalInfo.find(".code").text(cc.course_code)
-		modalInfo.find(".units").text(cc.course_units.toFixed(2))
 
 		formEdit.find("#selectCollectionCourse").val(cc.id)
 		formEdit.find("#selectCoursePlaceholder").val(cc.course_code)
@@ -657,8 +687,7 @@ $("#modalAddCourse").on("show.bs.modal", () => {
 	// Hide status
 	selectCourseStatus()
 
-	// Disable submit button
-	formAdd.find(".submit").prop("disabled", true)
+	formAddCustomOff()
 })
 
 // On modal is shown - move focus to input
@@ -696,7 +725,7 @@ $("#selectCourseSubject").on("keyup", function (e) {
 
 	if ($(this).val().length < $(this).attr("minLength")) {
 		formAdd.find(".selectNumber").prop("disabled", true)
-		formAdd.find(".submit").prop("disabled", true)
+		formAddCustomOff()
 		selectCourseStatus()
 	} else {
 		formAdd.find(".selectNumber").prop("disabled", false)
@@ -719,13 +748,13 @@ $("#selectCourseNumber").on("keydown", function (e) {
 // On key down inside number selection
 $("#selectCourseNumber").on("keyup", function (e) {
 	// Remove non-numeric characters
-	$(this).val($(this).val().replace(/\D/g, ""))
+	$(this).val($(this).val().replace(/[^a-zA-Z0-9]/g, "").toUpperCase())
 
 	// Check course if length is complete
 	if ($(this).val().length == $(this).attr("maxLength")) {
 		checkCourse()
 	} else {
-		formAdd.find(".submit").prop("disabled", true)
+		formAddCustomOff()
 		selectCourseStatus()
 	}
 })
@@ -748,24 +777,39 @@ $("#formAddCollection").on("submit", (event) => {
 	)
 })
 
+$("#customCoursePrompt").on("click", () => {
+	formAddCustomOn()
+})
+
 $("#formAddCollectionCourse").on("submit", (event) => {
 	event.preventDefault()
 	event.stopImmediatePropagation()
 
-	let form = $("#formAddCollectionCourse")
+	data = { collection_id: formAdd.find("#selectCollection").val() }
 
-	addCollectionCourse(
-		form.find("#selectCollection").val(),
-		form.find("#selectCourseId").val(),
-		(response) => {
-			alert("success", "Course added!")
-			for (let w of response.warnings)
-				alert("warning", w)
-			getUpdateCollection(form.find("#selectCollection").val())
-			updateProgress()
-			updateSummary()
-		}
-	)
+	if (formAdd.find("#selectCourseCustom").prop("checked")) {
+		// Custom course
+		data.custom = true
+		data.subject_code = formAdd.find("#selectCourseSubject").val()
+		data.number = formAdd.find("#selectCourseNumber").val()
+		data.name = formAdd.find("#customCourseName").val()
+		data.units = parseFloat(formAdd.find("#customCourseUnits").val())
+		data.repeat = formAdd.find("#customCourseRepeat").prop("checked")
+		data.countgpa = formAdd.find("#customCourseCountGPA").prop("checked")
+	} else {
+		// Existing course
+		data.custom = false
+		data.course_id = formAdd.find("#selectCourseId").val()
+	}
+	addCollectionCourse(data, (response) => {
+		alert("success", "Course added!")
+		for (let w of response.warnings)
+			alert("warning", w)
+		getUpdateCollection(formAdd.find("#selectCollection").val())
+		updateProgress()
+		updateSummary()
+	})
+
 })
 
 $("#formEditCollectionCourse").on("submit", (event) => {
