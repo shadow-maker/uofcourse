@@ -134,9 +134,14 @@ function updateCollections() {
 		}
 
 		$("#collections").find(".collections-dropdown-item").each(function () {
-			if (data.results.find(c => c.collection_id == parseInt($(this).attr("db-id")))) {
+			let cc = data.results.find(c => c.collection_id == parseInt($(this).attr("db-id")))
+			if (cc) {
 				$(this).find(".bi-check").removeClass("invisible")
 				$(this).find(".dropdown-item").on("click", () => { })
+				if (cc.calendar_available)
+					$(this).find(".warning").addClass("invisible")
+				else
+					$(this).find(".warning").removeClass("invisible")
 			} else {
 				$(this).find(".bi-check").addClass("invisible")
 				$(this).find(".dropdown-item").on("click", (e) => {
