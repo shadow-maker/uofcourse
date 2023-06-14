@@ -94,17 +94,20 @@ function updateTags() {
 
 function updateCollections() {
 	$("#collections").find(".loading").show()
-	$("#collections").find(".loaded").hide()
+	$("#collections").find(".collections-container").addClass("d-none")
+	$("#collections").find(".collections-none").addClass("d-none")
 
 	requestCollectionCourses((data) => {
 		$("#collections").find(".loading").hide()
-		$("#collections").find(".loaded").show()
 
 		$("#collections").find(".collections-container .list-group").empty()
-		if (data.results.length > 0)
+		if (data.results.length > 0) {
 			$("#collections").find(".collections-container").removeClass("d-none")
-		else
+			$("#collections").find(".collections-none").addClass("d-none")
+		} else {
+			$("#collections").find(".collections-container").addClass("d-none")
 			$("#collections").find(".collections-none").removeClass("d-none")
+		}
 		for (let cc of data.results) {
 			let collecCourseItem = $("#templates .collection-course-item").clone()
 
@@ -137,7 +140,7 @@ function updateCollections() {
 			let cc = data.results.find(c => c.collection_id == parseInt($(this).attr("db-id")))
 			if (cc) {
 				$(this).find(".bi-check").removeClass("invisible")
-				$(this).find(".dropdown-item").on("click", () => { })
+				$(this).find(".dropdown-item").off("click")
 				if (cc.calendar_available)
 					$(this).find(".warning").addClass("invisible")
 				else

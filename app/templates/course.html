@@ -274,7 +274,7 @@
 							{% endif %}
 						</div>
 						{% if current_user.is_authenticated %}
-						<div class="loading fst-italic">Loading...</div>
+						<div class="loading text-center fst-italic">Loading...</div>
 						<div class="tags-selected"></div>
 						{% else %}
 						<span class="fst-italic">
@@ -325,11 +325,11 @@
 							{% endif %}
 						</div>
 						{% if current_user.is_authenticated %}
-						<div class="loading fst-italic">Loading...</div>
 						<div class="collections-container card bg-body-tertiary d-none">
 							<ul class="list-group list-group-flush"></ul>
 						</div>
 						<div class="collections-none text-center fst-italic d-none">None</div>
+						<div class="loading text-center fst-italic">Loading...</div>
 						<div class="loaded text-center mt-2">
 							<a class="btn btn-sm btn-outline-secondary" href="{{url_for('view.planner')}}">
 								<i class="bi-pencil-square"></i>
