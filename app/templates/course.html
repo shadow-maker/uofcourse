@@ -297,6 +297,7 @@
 							</button>
 							<ul class="collections-dropdown dropdown-menu fs-6 py-1">
 								{% for collection in collections %}
+								{% set available = collection.isCalendarAvailable(course) %}
 								<li class="collections-dropdown-item" db-id="{{collection.id}}">
 									<a class="dropdown-item px-2 py-1 d-flex justify-content-between">
 										<div>
@@ -307,8 +308,8 @@
 											<small>{{collection.term.name | capitalize}}</small>
 											{% endif %}
 										</div>
-										<i class="warning bi-exclamation-triangle-fill text-warning pe-1 invisible"
-											title="Course was not available in the selected term"></i>
+										<i class="warning bi-exclamation-triangle-fill pe-1 text-body {% if available %}invisible{% endif %}"
+											title="Course was not available in this term"></i>
 									</a>
 								</li>
 								{% endfor %}

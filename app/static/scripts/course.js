@@ -141,10 +141,15 @@ function updateCollections() {
 			if (cc) {
 				$(this).find(".bi-check").removeClass("invisible")
 				$(this).find(".dropdown-item").off("click")
-				if (cc.calendar_available)
+				if (cc.calendar_available) {
 					$(this).find(".warning").addClass("invisible")
-				else
+					$(this).find(".warning").removeClass("text-warning")
+					$(this).find(".warning").addClass("text-body")
+				} else {
 					$(this).find(".warning").removeClass("invisible")
+					$(this).find(".warning").removeClass("text-body")
+					$(this).find(".warning").addClass("text-warning")
+				}
 			} else {
 				$(this).find(".bi-check").addClass("invisible")
 				$(this).find(".dropdown-item").on("click", (e) => {

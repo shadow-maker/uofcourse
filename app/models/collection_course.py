@@ -40,7 +40,7 @@ class CollectionCourse(db.Model):
 	def isCalendarAvailable(self):
 		if self.isCustom():
 			return True
-		return self.collection.term_id and self.collection.term in self.course.calendar_terms
+		return self.collection.term is None or self.collection.term in self.course.calendar_terms
 
 	@hybrid_property
 	def user(self):

@@ -68,6 +68,9 @@ class Collection(db.Model):
 	def isPlanned(self):
 		return not self.isTaken()
 	
+	def isCalendarAvailable(self, course):
+		return self.term is None or self.term in course.calendar_terms
+	
 	def delete(self):
 		for i in self.collectionCourses:
 			db.session.delete(i)
