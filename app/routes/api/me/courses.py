@@ -97,7 +97,11 @@ def postCollectionCourseCheck(data={}):
 				continue
 			for cc in col.collectionCourses:
 				if (cc.grade is not None or col.term.isPrev()) and course.id == cc.course_id:
-					warnings.append(f"Course already taken in {col.term.name} and cannot be repeated")
+					warnings.append(
+						f"Course already Transferred and cannot be repeated"
+						if col.transfer else
+						f"Course already taken in {col.term.name} and cannot be repeated"
+					)
 					break
 	
 	if len(warnings) > 0:
@@ -165,7 +169,7 @@ def postCollectionCourse(data={}):
 		for cc in collection.collectionCourses:
 			if course.id == cc.course_id:
 				return {"error": "a CollectionCourse with the same Course already exists in this Collection"}, 400
-		if collection.term_id and collection.term not in course.calendar_terms:
+		if not collection.isCalendarAvailable(course):
 			response["warnings"].append(f"Course {course.code} was not available in this term's calendar")
 			response["not-available"] = True
 		if not course.repeat:
@@ -174,7 +178,11 @@ def postCollectionCourse(data={}):
 					continue
 				for cc in col.collectionCourses:
 					if course.id == cc.course_id:
-						response["warnings"].append(f"Course {course.code} already taken in term {col.term.name} and cannot be repeated")
+						response["warnings"].append(
+							f"Course {course.code} already Transferred and cannot be repeated"
+							if col.transfer else
+							f"Course {course.code} already taken in term {col.term.name} and cannot be repeated"
+							)
 						response["taken"] = True
 						break
 	
@@ -226,7 +234,7 @@ def putCollectionCourse(data={}, id=None):
 				return {"error": "a CollectionCourse with the same Course already exists in this Collection"}, 400
 		collectionCourse.collection_id = collection.id
 
-	if not collectionCourse.isCalendarAvailable():
+	if not (collection.term is None or collectionCourse.isCustom() or collection.term in collectionCourse.course.calendar_terms):
 		response["warnings"].append(f"Course {collectionCourse.course.code} was not available in this term's calendar")
 		response["not-available"] = True
 	

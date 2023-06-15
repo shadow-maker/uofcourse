@@ -198,7 +198,7 @@
 {% block content %}
 
 <!--Courses per term-->
-<div class="container-fluid mb-4 px-0">
+<div class="container-fluid mb-1 px-0">
 	<div class="d-flex justify-content-between">
 		<div class="h2 m-0">Courses per term</div>
 
@@ -229,8 +229,19 @@
 	</div>
 </div>
 
+<div id="plannerWarnings" class="px-2 mb-2 d-none">
+	<h4 data-bs-toggle="collapse" href="#plannerWarningsContainer" role="button" aria-expanded="false"
+		aria-controls="plannerWarningsContainer" onclick="collapse(this)" class="m-0">
+		<span class="toggleOff"><small><i class="bi-chevron-right"></i></small></span>
+		<span class="toggleOn disabled"><small><i class="bi-chevron-down"></i></small></span>
+		<i class="bi-exclamation-triangle-fill text-warning"></i>
+		<span class="">Planner Warnings</span>
+	</h4>
+	<ul id="plannerWarningsContainer" class="collapse ms-4 m-0 text-warning-emphasis lh-sm"></ul>
+</div>
+
 <!--Other info-->
-<div class="row">
+<div class="row mt-3">
 	<!--Overall GPA-->
 	<div id="overallGPA" class="col-12 col-lg-7 col-xl-6 mb-3 pe-lg-4">
 		<div class="h2">

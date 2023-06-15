@@ -77,6 +77,11 @@ function formAddCustomOn() {
 	$("#customCourseCountGPA").prop("checked", true)
 }
 
+function collapse(element) {
+	$(element).find(".toggleOn").toggle()
+	$(element).find(".toggleOff").toggle()
+}
+
 // Check course funcs for add modal
 
 function selectCourseStatus(status, message = "") {
@@ -148,14 +153,18 @@ function getCourse(collection_course_id, callback) {
 }
 
 function getProgress(callback) {
-	ajax("GET", "me/progress", {}, callback)
+	ajax("GET", "me/planner/progress", {}, callback)
 }
 
 function getSummary(x, y, show, taken, planned, callback) {
-	ajax("GET", "me/summary",
+	ajax("GET", "me/planner/summary",
 		{ x: x, y: y, show: show, taken: taken, planned: planned },
 		callback
 	)
+}
+
+function getWarnings(callback) {
+	ajax("GET", "me/planner/warnings", {}, callback)
 }
 
 // POST
@@ -199,7 +208,7 @@ function putTransferred(set, callback) {
 }
 
 function putUnitsNeeded(units, callback) {
-	ajax("PUT", "me/progress", { units_needed: units }, callback)
+	ajax("PUT", "me/planner/progress", { units_needed: units }, callback)
 }
 
 // DELETE
@@ -236,11 +245,13 @@ function updateCollections() {
 			collection.element.appendTo("#collectionsContainer")
 		}
 		for (let collection of collections)
-			updateCollection(collection.id)
+			updateCollection(collection.id, false)
+		updateWarnings()
+		updateOverallGPA()
 	})
 }
 
-function updateCollection(id) {
+function updateCollection(id, updateWidgets = true) {
 	let collection = collections.find(c => c.id == id)
 	let item = collection.element
 
@@ -366,14 +377,17 @@ function updateCollection(id) {
 		for (let cc of collection.courses)
 			updateCollectionCourse(id, cc.id)
 
-		updateOverallGPA()
+		if (updateWidgets) {
+			updateWarnings()
+			updateOverallGPA()
+		}
 	})
 }
 
-function getUpdateCollection(id) {
+function getUpdateCollection(id, updateWidgets = true) {
 	getCollection(id, (data) => {
 		Object.assign(collections.find(c => c.id == id), data)
-		updateCollection(id)
+		updateCollection(id, updateWidgets)
 	})
 }
 
@@ -492,7 +506,7 @@ function updateCollectionCourse(collection_id, id) {
 					alert("success", "Course moved!")
 					for (let w of response.warnings)
 						alert("warning", w)
-					getUpdateCollection(collection_id)
+					getUpdateCollection(collection_id, false)
 					getUpdateCollection(newId)
 					updateProgress()
 				},
@@ -518,6 +532,19 @@ function updateCollectionCourse(collection_id, id) {
 		selCollectionCourse = null
 		window.history.pushState({}, document.title, window.location.pathname)
 	}
+}
+
+function updateWarnings() {
+	getWarnings((response) => {
+		if (response.warnings.length == 0) {
+			$("#plannerWarnings").addClass("d-none")
+		} else {
+			$("#plannerWarnings").removeClass("d-none")
+			$("#plannerWarningsContainer").empty()
+			for (let w of response.warnings)
+				$("#plannerWarningsContainer").append($("<li>", { text: w }))
+		}
+	})
 }
 
 function updateOverallGPA() {
@@ -832,7 +859,7 @@ $("#formEditCollectionCourse").on("submit", (event) => {
 				alert("success", "Course updated!")
 				getUpdateCollection(form.find("#selectCollection").val())
 				if (form.find("#selectCollectionOld").val() != form.find("#selectCollection").val())
-					getUpdateCollection(form.find("#selectCollectionOld").val())
+					getUpdateCollection(form.find("#selectCollectionOld").val(), false)
 				updateProgress()
 				updateSummary()
 			}
