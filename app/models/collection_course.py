@@ -41,6 +41,11 @@ class CollectionCourse(db.Model):
 		if self.isCustom():
 			return True
 		return self.collection.term is None or self.collection.term in self.course.calendar_terms
+	
+	def calendarURL(self):
+		if self.isCustom() or self.collection.transfer:
+			return ""
+		return self.course.calendarURL(self.collection.term.calendar)
 
 	@hybrid_property
 	def user(self):
@@ -84,4 +89,5 @@ class CollectionCourse(db.Model):
 		yield "grade_id", self.grade_id
 		yield "passed", self.passed
 		yield "weightedGPV", self.weightedGPV
-		yield "calendar_available", self.isCalendarAvailable()
+		yield "calendar_available", self.isCalendarAvailable(),
+		yield "calendar_url", self.calendarURL()

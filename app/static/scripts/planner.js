@@ -428,6 +428,13 @@ function updateCollectionCourse(collection_id, id) {
 		modalInfo.find(".emoji").html("&#" + (cc.course_emoji ? cc.course_emoji : DEFAULT_EMOJI))
 		modalInfo.find(".code").text(cc.course_code)
 		modalInfo.find(".units").text(cc.course_units.toFixed(2))
+		if (cc.calendar_url) {
+			modalInfo.find(".calendarurl a").prop("href", cc.calendar_url)
+			modalInfo.find(".calendarurl").removeClass("d-none")
+		} else {
+			modalInfo.find(".calendarurl a").prop("href", "")
+			modalInfo.find(".calendarurl").addClass("d-none")
+		}
 
 		if (cc.custom) {
 			modalInfo.find(".code-custom").removeClass("d-none")
