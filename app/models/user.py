@@ -41,6 +41,7 @@ class User(db.Model, UserMixin):
 	faculty_id = db.Column(db.Integer, db.ForeignKey("faculty.id"), nullable=False)
 	units = db.Column(db.Numeric(precision=5, scale=2), default=120) # 3 integer places, 2 decimal places
 
+	courseRatings = db.relationship("CourseRating", backref="user")
 	collections = db.relationship("Collection", backref="user")
 	tags = db.relationship("Tag", backref="user")
 	announcements = db.relationship("Announcement", backref="author")

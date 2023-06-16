@@ -25,6 +25,7 @@ class Course(db.Model):
 	subsite = db.Column(db.String(32))
 	old = db.Column(db.Boolean, nullable=False, default=False)
 
+	ratings = db.relationship("CourseRating", backref="course")
 	collectionCourses = db.relationship("CollectionCourse", backref="_course")
 
 	@hybrid_property

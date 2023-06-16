@@ -20,6 +20,7 @@ class Term(db.Model):
 	start = db.Column(db.Date)
 	end = db.Column(db.Date)
 
+	courseRatings = db.relationship("CourseRating", backref="term")
 	collections = db.relationship("Collection", backref="term")
 
 	@property
