@@ -77,10 +77,6 @@ function getTerm(id, callback) {
 	ajax("GET", "terms/" + id, {}, callback)
 }
 
-function getCourse(collection_course_id, callback) {
-	ajax("GET", "me/courses/" + collection_course_id + "/course", {}, callback)
-}
-
 function getProgress(callback) {
 	ajax("GET", "me/planner/progress", {}, callback)
 }
@@ -108,22 +104,7 @@ function addCollection(season, year, callback) {
 	)
 }
 
-function addCollectionCourseCheck(collection_id, code, number, callback) {
-	ajax("POST", "me/courses/check",
-		{
-			collection_id: collection_id,
-			subject_code: code,
-			course_number: number
-		},
-		callback
-	)
-}
-
 // PUT
-
-function putCollectionCourse(data, callback, onerror = displayError) {
-	ajax("PUT", "me/courses", data, callback, onerror)
-}
 
 function putTransferred(set, callback) {
 	ajax("PUT", "me/sessions/transferred", { set: set }, callback)
@@ -181,7 +162,7 @@ function updateCollection(id, updateWidgets = true) {
 	item.find(".collection-course-container").attr("db-id", id)
 
 	item.find(".countInGPA").change(updateOverallGPA)
-	item.find(".add-course").attr("onclick", "$('#formAddCollectionCourse #selectCollection').val(" + id + ")")
+	item.find(".add-course").attr("onclick", "formAdd.find('#selectCollection').val(" + id + ")")
 
 
 	// Init tooltips
@@ -335,78 +316,7 @@ function updateCollectionCourse(collection_id, id) {
 	cc.element.on("click", () => {
 		if (cc.element.hasClass("dragging"))
 			return
-
-		modalInfo.find(".name").text("Loading...")
-		modalInfo.find(".link").prop("href", "")
-		modalInfo.find(".repeat").text("Loading...")
-		modalInfo.find(".countgpa").text("Loading...")
-		modalInfo.find(".not-available").addClass("d-none")
-
-		modalInfo.find(".term").text(collection.term_name)
-		modalInfo.find(".emoji").html("&#" + (cc.course_emoji ? cc.course_emoji : DEFAULT_EMOJI))
-		modalInfo.find(".code").text(cc.course_code)
-		modalInfo.find(".units").text(cc.course_units.toFixed(2))
-		if (cc.calendar_url) {
-			modalInfo.find(".calendarurl a").prop("href", cc.calendar_url)
-			modalInfo.find(".calendarurl").removeClass("d-none")
-		} else {
-			modalInfo.find(".calendarurl a").prop("href", "")
-			modalInfo.find(".calendarurl").addClass("d-none")
-		}
-
-		if (cc.custom) {
-			modalInfo.find(".code-custom").removeClass("d-none")
-			modalInfo.find(".code-link").addClass("d-none")
-		} else {
-			modalInfo.find(".code-custom").addClass("d-none")
-			modalInfo.find(".code-link").removeClass("d-none")
-		}
-
-		getCourse(cc.id, (course) => {
-			modalInfo.find(".name").text(course.name)
-			modalInfo.find(".link").prop("href", course.url)
-			modalInfo.find(".repeat").text(course.repeat ? "Yes" : "No")
-			modalInfo.find(".countgpa").text(course.countgpa ? "Yes" : "No")
-			if (!cc.custom && !cc.calendar_available)
-				modalInfo.find(".not-available").removeClass("d-none")
-		})
-
-		if (cc.grade_id) {
-			const grade = grades[cc.grade_id]
-			modalInfo.find(".grade-symbol").text(grade.symbol)
-			modalInfo.find(".grade-desc").text(grade.desc)
-			modalInfo.find(".grade-passed").text(grade.passed ? "Yes" : "No")
-			if (grade.gpv != null) {
-				modalInfo.find(".grade-gpv").text(grade.gpv.toFixed(2))
-				modalInfo.find(".grade-weighted").text((grade.gpv * cc.course_units).toFixed(2))
-			} else {
-				modalInfo.find(".grade-gpv").text("N/A")
-				modalInfo.find(".grade-weighted").text("N/A")
-			}
-		} else {
-			modalInfo.find(".grade-symbol").text("-")
-			modalInfo.find(".grade-desc").text("")
-			modalInfo.find(".grade-gpv").text("")
-			modalInfo.find(".grade-passed").text("")
-			modalInfo.find(".grade-weighted").text("")
-		}
-
-		formEdit.find("#selectCollectionCourse").val(cc.id)
-		formEdit.find("#selectCoursePlaceholder").val(cc.course_code)
-		formEdit.find("#selectGrade").val(cc.grade_id ? cc.grade_id : 0)
-		formEdit.find("#selectPassed").prop("checked", cc.passed ? cc.passed : false)
-
-		$("#formEditCollectionCourse #selectCollection").empty()
-		for (let c of collections) {
-			$("#formEditCollectionCourse #selectCollection").append(
-				$("<option>", {
-					value: c.id,
-					text: c.term_name
-				})
-			)
-		}
-		formEdit.find("#selectCollection").val(collection.id)
-		formEdit.find("#selectCollectionOld").val(collection.id)
+		updateModals(cc, collection, collections)
 	})
 
 	cc.element.get(0).addEventListener("dragstart", () => {
