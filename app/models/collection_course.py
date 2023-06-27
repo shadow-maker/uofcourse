@@ -1,5 +1,5 @@
 from app import db
-from app.models import Course, CustomCourse
+from app.models import Course, CustomCourse, CourseRating
 
 from sqlalchemy import select
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -36,6 +36,16 @@ class CollectionCourse(db.Model):
 		if cls.custom_course_id is not None:
 			return select(CustomCourse.code).where(CustomCourse.id == cls.custom_course_id)
 		return None
+	
+	@hybrid_property
+	def rating(self):
+		return CourseRating.query.filter_by(course_id=self.course_id, user_id=self.collection.user_id, term_id=self.collection.term_id).first()
+	
+	def setRating(self, value: float, outof: int = 100):
+		if self.rating is None:
+			db.session.add(CourseRating(self.course_id, self.collection.user_id, self.collection.term_id, value, outof))
+		else:
+			self.rating.setRating(value, outof)
 	
 	def isCalendarAvailable(self):
 		if self.isCustom():
@@ -91,3 +101,4 @@ class CollectionCourse(db.Model):
 		yield "weightedGPV", self.weightedGPV
 		yield "calendar_available", self.isCalendarAvailable(),
 		yield "calendar_url", self.calendarURL()
+		yield "rating", self.rating.percent if self.rating else None

@@ -1,4 +1,5 @@
 {% from "components/iconlink.html" import iconLink %}
+{% from "components/ratingstars.html" import ratingStarsIndicator %}
 
 {% macro ccModalsHTML(grades) %}
 <!--Info Modal-->
@@ -61,6 +62,24 @@
 						</div>
 						<div class="calendarurl">
 							{{iconLink("", "Open in term calendar page", external=True)}}
+						</div>
+					</div>
+				</div>
+				<hr>
+				<!--Rating-->
+				<div class="row">
+					<div class="col-3">
+						<span class="h5">Rating</span>
+					</div>
+					<div class="col">
+						<div class="rating fs-5 lh-sm">
+							{% for i in range(1, 6) %}
+							<span class="star-{{i}}">
+								<i class="bi-star"></i>
+								<i class="bi-star-half d-none"></i>
+								<i class="bi-star-fill d-none"></i>
+							</span>
+							{% endfor %}
 						</div>
 					</div>
 				</div>
@@ -254,6 +273,24 @@
 							</div>
 						</div>
 					</div>
+					<!--Rating-->
+					<div class="row mb-2">
+						<label for="selectRating" class="col-3 col-form-label">Rating</label>
+						<div class="col-6 pe-0 fs-3" id="selectRatingStars">
+							{% for i in range(1, 6) %}<span class="star-{{i}} pe-1" db-rating="{{i}}"><i
+									class="bi-star"></i><i class="bi-star-half d-none"></i><i
+									class="bi-star-fill d-none"></i></span>{% endfor %}
+						</div>
+						<div class="col-3 ps-0">
+							<select class="form-select" aria-label="Select rating" name="rating" id="selectRating">
+								{% for i in range(6) %}
+								<option value="{{i}}">
+									{{i}} / 5
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-between px-5">
 					<button type="submit" method="DELETE" class="btn btn-danger m-0" data-bs-dismiss="modal">
@@ -357,6 +394,8 @@
 		modalInfo.find(".emoji").html("&#" + (cc.course_emoji ? cc.course_emoji : DEFAULT_EMOJI))
 		modalInfo.find(".code").text(cc.course_code)
 		modalInfo.find(".units").text(cc.course_units.toFixed(2))
+		setRatingIndicator(modalInfo.find(".rating"), cc.rating ? Math.round(cc.rating / 20) : 0)
+		modalInfo.find(".rating").val(cc.rating ? Math.round(cc.rating / 20) : 0)
 		if (cc.calendar_url) {
 			modalInfo.find(".calendarurl a").prop("href", cc.calendar_url)
 			modalInfo.find(".calendarurl").removeClass("d-none")
@@ -406,6 +445,16 @@
 		formEdit.find("#selectCoursePlaceholder").val(cc.course_code)
 		formEdit.find("#selectGrade").val(cc.grade_id ? cc.grade_id : 0)
 		formEdit.find("#selectPassed").prop("checked", cc.passed ? cc.passed : false)
+		setRatingIndicator(formEdit.find("#selectRatingStars"), cc.rating ? Math.round(cc.rating / 20) : null)
+		formEdit.find("#selectRating").val(cc.rating ? Math.round(cc.rating / 20) : 0)
+		if (collection.transfer || !collection.term.prev) {
+			formEdit.find("#selectRatingStars").addClass("text-muted")
+			formEdit.find("#selectRatingStars").prop("title", "Rating cannot be added for course in this term")
+			formEdit.find("#selectRating").prop("disabled", true)
+		} else {
+			formEdit.find("#selectRatingStars").removeClass("text-muted")
+			formEdit.find("#selectRating").prop("disabled", false)
+		}
 
 		$("#formEditCollectionCourse #selectCollection").empty()
 		for (let c of collections) {
@@ -418,6 +467,20 @@
 		}
 		formEdit.find("#selectCollection").val(collection.id)
 		formEdit.find("#selectCollectionOld").val(collection.id)
+	}
+
+	function setRatingIndicator(element, rating) {
+		for (let i = 1; i <= 5; i++) {
+			let star = element.find(".star-" + i)
+			if (i <= rating) {
+				star.find(".bi-star").addClass("d-none")
+				star.find(".bi-star-fill").removeClass("d-none")
+			} else {
+				star.find(".bi-star").removeClass("d-none")
+				star.find(".bi-star-fill").addClass("d-none")
+			}
+		}
+		element.prop("title", rating ? rating + " / 5 stars" : "Rating not set")
 	}
 
 	//
@@ -553,11 +616,31 @@
 
 	})
 
-	// On grade changed in form
 	formEdit.find("#selectGrade").on("change", function () {
 		formEdit.find("#selectPassed").prop("checked",
 			grades[$(this).val()] ? grades[$(this).val()].passed : false
 		)
+	})
+
+	formEdit.find("#selectRatingStars").on("click", "span", function () {
+		if (formEdit.find("#selectRating").prop("disabled") == false) {
+			let rating = parseInt($(this).attr("db-rating"))
+			setRatingIndicator(formEdit.find("#selectRatingStars"), rating)
+			formEdit.find("#selectRating").val(rating)
+		}
+	})
+
+	formEdit.find("#selectRatingStars").on("mouseover", "span", function () {
+		if (formEdit.find("#selectRating").prop("disabled") == false) {
+			let rating = parseInt($(this).attr("db-rating"))
+			setRatingIndicator(formEdit.find("#selectRatingStars"), rating)
+			formEdit.find("#selectRating").val(rating)
+		}
+	})
+
+	formEdit.find("#selectRating").on("change", function () {
+		let rating = parseInt($(this).val())
+		setRatingIndicator(formEdit.find("#selectRatingStars"), rating)
 	})
 
 	formEdit.on("submit", (event) => {
@@ -568,22 +651,23 @@
 		let method = $(event.originalEvent.submitter).attr("method")
 
 		if (method == "PUT") {
-			putCollectionCourse({
+			data = {
 				id: form.find("#selectCollectionCourse").val(),
 				collection_id: form.find("#selectCollection").val(),
 				grade_id: form.find("#selectGrade").val(),
 				passed: form.find("#selectPassed").prop("checked")
-			},
-				() => {
-					alert("success", "Course updated!")
-					if (typeof getUpdateCollection !== "undefined") {
-						getUpdateCollection(form.find("#selectCollection").val())
-						if (form.find("#selectCollectionOld").val() != form.find("#selectCollection").val())
-							getUpdateCollection(form.find("#selectCollectionOld").val(), false)
-					}
-					ccAfterUpdate()
+			}
+			if (form.find("#selectRating").prop("disabled") == false)
+				data.rating = parseInt(form.find("#selectRating").val()) * 20
+			putCollectionCourse(data, () => {
+				alert("success", "Course updated!")
+				if (typeof getUpdateCollection !== "undefined") {
+					getUpdateCollection(form.find("#selectCollection").val())
+					if (form.find("#selectCollectionOld").val() != form.find("#selectCollection").val())
+						getUpdateCollection(form.find("#selectCollectionOld").val(), false)
 				}
-			)
+				ccAfterUpdate()
+			})
 		} else if (method == "DELETE") {
 			delCollectionCourse(form.find("#selectCollectionCourse").val(), () => {
 				alert("success", "Course removed!")

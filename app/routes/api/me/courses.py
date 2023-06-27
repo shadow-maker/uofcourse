@@ -233,6 +233,8 @@ def putCollectionCourse(data={}, id=None):
 			if collectionCourse != cc and collectionCourse.course_id == cc.course_id:
 				return {"error": "a CollectionCourse with the same Course already exists in this Collection"}, 400
 		collectionCourse.collection_id = collection.id
+		if (collection.transfer or not collection.isTaken()) and collectionCourse.rating is not None:
+			db.session.delete(collectionCourse.rating)
 
 	if not (collection.term is None or collectionCourse.isCustom() or collection.term in collectionCourse.course.calendar_terms):
 		response["warnings"].append(f"Course {collectionCourse.course.code} was not available in this term's calendar")
@@ -256,6 +258,15 @@ def putCollectionCourse(data={}, id=None):
 			collectionCourse.passed = data["passed"]
 		except:
 			return {"error": "passed must be a boolean"}, 400
+	if "rating" in data:
+		if collection.transfer:
+			return {"error": "Cannot set rating for a transferred course"}, 400
+		if not collection.isTaken():
+			return {"error": "Cannot set rating for a course that has not been taken yet"}, 400
+		try:
+			collectionCourse.setRating(float(data["rating"]))
+		except:
+			return {"error": "Error setting rating"}, 400
 	
 	try:
 		db.session.commit()
