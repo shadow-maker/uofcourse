@@ -1,5 +1,5 @@
 from app import db
-# from app.models import Course, Term, User
+from app.models import Course
 from app.localdt import utc
 
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -15,11 +15,11 @@ class CourseRating(db.Model):
 	percent = db.Column(db.Integer, nullable=False)									# 0-100
 	datetime = db.Column(db.DateTime, nullable=False, default=utc.now)
 
-	def __init__(self, course_id, user_id, term_id, percent):
+	def __init__(self, course_id, user_id, term_id, value, outof: int = 100):
 		self.course_id = course_id
 		self.user_id = user_id
 		self.term_id = term_id
-		self.setRating(percent)
+		self.setRating(value, outof)
 
 	def setRating(self, value: float, outof: int = 100):
 		if value < 0 or value > outof:
@@ -27,6 +27,10 @@ class CourseRating(db.Model):
 
 		interval = 100.0 / outof
 		self.percent = int(value * interval)
+		if self.course is None:
+			Course.query.get(self.course_id).resetRatingCache()
+		else:
+			self.course.resetRatingCache()
 
 	def getRating(self, outof: int = 100, decimals: int = 2) -> float:
 		interval = outof / 100.0

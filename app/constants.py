@@ -35,6 +35,8 @@ LOG_DIR = "logs"
 
 COURSE_LEVELS = [1, 2, 3, 4, 5, 6, 7]
 
+MIN_RATINGS_NEEDED = 5
+
 IFTTT_EVENTS = {
 	"message": "uofcourse_message"
 }

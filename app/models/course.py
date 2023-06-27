@@ -1,6 +1,6 @@
 from app import db
 from app.models import Subject
-from app.constants import DEFAULT_EMOJI
+from app.constants import DEFAULT_EMOJI, MIN_RATINGS_NEEDED
 
 from flask.helpers import url_for
 from sqlalchemy import select, cast, func
@@ -27,6 +27,9 @@ class Course(db.Model):
 
 	ratings = db.relationship("CourseRating", backref="course")
 	collectionCourses = db.relationship("CollectionCourse", backref="_course")
+
+	lenRatingCache = None
+	overallRatingCache = None
 
 	@hybrid_property
 	def faculty_id(self):
@@ -59,6 +62,29 @@ class Course(db.Model):
 	@level.expression # type: ignore
 	def level(cls):
 		return func.floor(cls.number / 100) # This might only work in MySQL and PostgreSQL
+	
+	def resetRatingCache(self):
+		self.lenRatingCache = None
+		self.overallRatingCache = None
+
+	def getLenRating(self):
+		if self.lenRatingCache is None:
+			self.lenRatingCache = len(self.ratings)	
+		return self.lenRatingCache
+	
+	def getOverallRatingPercent(self, minNeeded=MIN_RATINGS_NEEDED) -> float:
+		if self.getLenRating() < minNeeded:
+			return None
+		if self.overallRatingCache is None:
+			self.overallRatingCache = sum(r.percent for r in self.ratings) / self.getLenRating()
+		return self.overallRatingCache
+
+	def getOverallRating(self, minNeeded=MIN_RATINGS_NEEDED, outof: int = 100, decimals: int = 2) -> float:
+		self.getOverallRatingPercent(minNeeded)
+		if self.overallRatingCache is None:
+			return -1
+		interval = outof / 100.0
+		return round(self.overallRatingCache * interval, decimals)
 
 	def latestCalendar(self):
 		return sorted(self.calendars, key=lambda cal: cal.year, reverse=True)[0]
@@ -130,3 +156,4 @@ class Course(db.Model):
 		yield "url", self.url
 		yield "url_uni", self.url_uni
 		yield "old", self.old
+		yield "rating", self.getOverallRating()
