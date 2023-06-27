@@ -2,15 +2,25 @@
 // REQUEST FUNCTIONS
 //
 
-function requestCourseTags(callback) {
+let collections = []
+
+function getCollections(callback) {
+	ajax("GET", "me/collections", { sort: ["term_id"] }, callback)
+}
+
+function getCourseTags(callback) {
 	ajax("GET", "me/tags/course/" + course_id, {}, callback)
 }
 
-function requestCollectionCourses(callback) {
+function getCollectionCourses(callback) {
 	ajax("GET", "me/courses/course/" + course_id, {}, callback)
 }
 
-function requestCollectionTerm(id, callback) {
+function getCollections(callback) {
+	ajax("GET", "me/collections", { sort: ["term_id"] }, callback)
+}
+
+function getCollectionTerm(id, callback) {
 	ajax("GET", "me/collections/" + id + "/term", {}, callback)
 }
 
@@ -21,7 +31,7 @@ function toggleTag(id) {
 	})
 }
 
-function addCollection(id) {
+function postCollection(id) {
 	ajax("POST", "me/courses",
 		{
 			course_id: course_id,
@@ -59,7 +69,7 @@ function updateTags() {
 	}
 
 	// Request course tags and add selected tags
-	requestCourseTags((data) => {
+	getCourseTags((data) => {
 		$("#tags").find(".loading").hide()
 
 		$("#tags").find(".tags-selected").empty()
@@ -97,69 +107,76 @@ function updateCollections() {
 	$("#collections").find(".collections-container").addClass("d-none")
 	$("#collections").find(".collections-none").addClass("d-none")
 
-	requestCollectionCourses((data) => {
-		$("#collections").find(".loading").hide()
+	getCollections(data => {
+		collections = data.collections
 
-		$("#collections").find(".collections-container .list-group").empty()
-		if (data.results.length > 0) {
-			$("#collections").find(".collections-container").removeClass("d-none")
-			$("#collections").find(".collections-none").addClass("d-none")
-		} else {
-			$("#collections").find(".collections-container").addClass("d-none")
-			$("#collections").find(".collections-none").removeClass("d-none")
-		}
-		for (let cc of data.results) {
-			let collecCourseItem = $("#templates .collection-course-item").clone()
+		getCollectionCourses(data => {
+			$("#collections").find(".loading").hide()
 
-			collecCourseItem.attr("href", "/planner?id=" + cc.id)
-
-			requestCollectionTerm(cc.collection_id, (term) => {
-				if (term.transfer)
-					collecCourseItem.find(".term-name").text("Transfer")
-				else
-					collecCourseItem.find(".term-name").text(
-						term.season.charAt(0).toUpperCase() + term.season.slice(1) + " " + term.year
-					)
-			})
-
-			if (cc.grade_id) {
-				let grade = grades[cc.grade_id]
-				collecCourseItem.find(".grade").text(grade.symbol)
-				collecCourseItem.find(".grade").attr(
-					"title", grade.gpv + " GPV | " + cc.weightedGPV + " Weighted"
-				)
+			$("#collections").find(".collections-container .list-group").empty()
+			if (data.results.length > 0) {
+				$("#collections").find(".collections-container").removeClass("d-none")
+				$("#collections").find(".collections-none").addClass("d-none")
 			} else {
-				collecCourseItem.find(".grade").text("-")
-				collecCourseItem.find(".grade").attr("title", "Grade not set")
+				$("#collections").find(".collections-container").addClass("d-none")
+				$("#collections").find(".collections-none").removeClass("d-none")
 			}
+			for (let cc of data.results) {
+				let collection = collections.find(c => c.id == cc.collection_id)
+				let collecCourseItem = $("#templates .collection-course-item").clone()
 
-			$("#collections").find(".collections-container .list-group").append(collecCourseItem)
-		}
-
-		$("#collections").find(".collections-dropdown-item").each(function () {
-			let cc = data.results.find(c => c.collection_id == parseInt($(this).attr("db-id")))
-			if (cc) {
-				$(this).find(".bi-check").removeClass("invisible")
-				$(this).find(".dropdown-item").off("click")
-				if (cc.calendar_available) {
-					$(this).find(".warning").addClass("invisible")
-					$(this).find(".warning").removeClass("text-warning")
-					$(this).find(".warning").addClass("text-body")
-				} else {
-					$(this).find(".warning").removeClass("invisible")
-					$(this).find(".warning").removeClass("text-body")
-					$(this).find(".warning").addClass("text-warning")
-				}
-			} else {
-				$(this).find(".bi-check").addClass("invisible")
-				$(this).find(".dropdown-item").on("click", (e) => {
-					e.preventDefault()
-					e.stopImmediatePropagation()
-					addCollection($(this).attr("db-id"))
+				getCollectionTerm(cc.collection_id, term => {
+					collection.term = term
+					collection.term_name = term.transfer
+						? "Transfer"
+						: term.season.charAt(0).toUpperCase() + term.season.slice(1) + " " + term.year
+					collecCourseItem.find(".term-name").text(collection.term_name)
+					collecCourseItem.on("click", () => updateModals(cc, collection, collections))
 				})
+
+				if (cc.grade_id) {
+					let grade = grades[cc.grade_id]
+					collecCourseItem.find(".grade").text(grade.symbol)
+					collecCourseItem.find(".grade").attr(
+						"title", grade.gpv + " GPV | " + cc.weightedGPV + " Weighted"
+					)
+				} else {
+					collecCourseItem.find(".grade").text("-")
+					collecCourseItem.find(".grade").attr("title", "Grade not set")
+				}
+
+				$("#collections").find(".collections-container .list-group").append(collecCourseItem)
 			}
+
+			$("#collections").find(".collections-dropdown-item").each(function () {
+				let cc = data.results.find(c => c.collection_id == parseInt($(this).attr("db-id")))
+				if (cc) {
+					$(this).find(".bi-check").removeClass("invisible")
+					$(this).find(".dropdown-item").off("click")
+					if (cc.calendar_available) {
+						$(this).find(".warning").addClass("invisible")
+						$(this).find(".warning").removeClass("text-warning")
+						$(this).find(".warning").addClass("text-body")
+					} else {
+						$(this).find(".warning").removeClass("invisible")
+						$(this).find(".warning").removeClass("text-body")
+						$(this).find(".warning").addClass("text-warning")
+					}
+				} else {
+					$(this).find(".bi-check").addClass("invisible")
+					$(this).find(".dropdown-item").on("click", (e) => {
+						e.preventDefault()
+						e.stopImmediatePropagation()
+						postCollection($(this).attr("db-id"))
+					})
+				}
+			})
 		})
 	})
+}
+
+function ccAfterUpdate() {
+	updateCollections()
 }
 
 //

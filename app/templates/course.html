@@ -2,6 +2,7 @@
 
 {% from "components/iconlink.html" import iconLink %}
 {% from "components/ratingstars.html" import ratingStarsIndicator %}
+{% from "components/collectionCourseModals.html" import ccModalsHTML, ccModalsScripts %}
 {% from "components/disqus.html" import disqusThread with context %}
 
 {% block headscripts %}
@@ -14,7 +15,6 @@
 		$(element).find(".toggleOff").toggle()
 	}
 </script>
-<script src="/static/scripts/course.js"></script>
 {% endblock %}
 
 {% block styles %}
@@ -49,7 +49,8 @@
 	</a>
 </li>
 <!--Collection course item-->
-<a class="collection-course-item list-group-item list-group-item-action d-flex" title="View and edit course">
+<a class="collection-course-item list-group-item list-group-item-action d-flex" title="View and edit course"
+	data-bs-toggle="modal" data-bs-target="#modalInfoCollectionCourse">
 	<div class="flex-grow-1 d-flex justify-content-between pe-2">
 		<span class="term-name"></span>
 		<span class="grade font-monospace" title="" style="width: 1.3em;"></span>
@@ -388,4 +389,12 @@
 	</div>
 </div>
 
+<!--Modals-->
+{{ccModalsHTML(grades)}}
+
+{% endblock %}
+
+{% block tailscripts %}
+{{ccModalsScripts()}}
+<script src="/static/scripts/course.js"></script>
 {% endblock %}

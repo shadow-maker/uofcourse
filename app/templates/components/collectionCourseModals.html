@@ -666,7 +666,8 @@
 					if (form.find("#selectCollectionOld").val() != form.find("#selectCollection").val())
 						getUpdateCollection(form.find("#selectCollectionOld").val(), false)
 				}
-				ccAfterUpdate()
+				if (typeof ccAfterUpdate !== "undefined")
+					ccAfterUpdate()
 			})
 		} else if (method == "DELETE") {
 			delCollectionCourse(form.find("#selectCollectionCourse").val(), () => {
