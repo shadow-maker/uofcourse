@@ -16,10 +16,6 @@ let overallGPA = {
 const dateFormatLocale = "en-US"
 const dateFormatOptions = { month: "short", day: "2-digit" }
 
-const modalInfo = $("#modalInfoCollectionCourse")
-const formAdd = $("#formAddCollectionCourse")
-const formEdit = $("#formEditCollectionCourse")
-
 //
 // UTIL FUNCS
 //
@@ -54,76 +50,9 @@ function transferredHide() {
 	}
 }
 
-function formAddCustomOff() {
-	$("#selectCourseCustom").prop("checked", false);
-	$("#customCoursePrompt").addClass("invisible")
-	$("#customCourseFields").addClass("d-none")
-	$("#customCourseSubmit").addClass("d-none")
-	$("#selectCourseSubmit").removeClass("d-none")
-	$("#selectCourseSubmit").prop("disabled", true)
-}
-
-function formAddCustomOn() {
-	$("#selectCourseCustom").prop("checked", true);
-	$("#customCoursePrompt").addClass("invisible")
-	$("#customCourseFields").removeClass("d-none")
-	$("#selectCourseSubmit").addClass("d-none")
-	$("#customCourseSubmit").removeClass("d-none")
-	$("#customCourseSubmit").prop("disabled", false)
-
-	$("#customCourseName").val("")
-	$("#customCourseUnits").val(3.00)
-	$("#customCourseRepeat").prop("checked", false)
-	$("#customCourseCountGPA").prop("checked", true)
-}
-
 function collapse(element) {
 	$(element).find(".toggleOn").toggle()
 	$(element).find(".toggleOff").toggle()
-}
-
-// Check course funcs for add modal
-
-function selectCourseStatus(status, message = "") {
-	$("#selectCourseStatus").addClass("invisible")
-	$("#selectCourseStatus .message").html("...")
-	if (status) {
-		$("#selectCourseStatus").children("span").hide()
-		$("#selectCourseStatus ." + status).show()
-		$("#selectCourseStatus .message").html(message)
-		$("#selectCourseStatus").removeClass("invisible")
-	}
-}
-
-function checkCourse() {
-	addCollectionCourseCheck(
-		formAdd.find("#selectCollection").val(),
-		$("#selectCourseSubject").val(),
-		$("#selectCourseNumber").val(),
-		(response) => {
-			if (response.error) {
-				$("#selectCourseId").val("")
-				$("#selectCourseSubmit").prop("disabled", true)
-				selectCourseStatus("error", response.error)
-			} else {
-				if (response.success) {
-					selectCourseStatus("success", response.success)
-					$("#customCoursePrompt").addClass("invisible")
-				} else {
-					let warnings = ""
-					for (let w of response.warnings)
-						warnings += w + "<br>"
-					selectCourseStatus("warning", warnings)
-				}
-				if (response.course_id == null) {
-					$("#customCoursePrompt").removeClass("invisible")
-				} else {
-					$("#selectCourseId").val(response.course_id)
-					$("#selectCourseSubmit").prop("disabled", false)
-				}
-			}
-		}
-	)
 }
 
 //
@@ -190,13 +119,6 @@ function addCollectionCourseCheck(collection_id, code, number, callback) {
 	)
 }
 
-function addCollectionCourse(data, callback) {
-	ajax("POST", "me/courses",
-		data,
-		callback
-	)
-}
-
 // PUT
 
 function putCollectionCourse(data, callback, onerror = displayError) {
@@ -222,10 +144,6 @@ function removeCollection(id) {
 		alert("success", "Term removed!")
 		updateCollections()
 	})
-}
-
-function delCollectionCourse(id, callback) {
-	ajax("DELETE", "me/courses/" + id, {}, callback)
 }
 
 //
@@ -713,37 +631,18 @@ function updateSummary() {
 	})
 }
 
+function ccAfterUpdate() {
+	updateProgress()
+	updateSummary()
+}
+
 //
 // EVENTS
 //
 
-// On modal starts to show
-$("#modalAddCourse").on("show.bs.modal", () => {
-	// Clear form inputs
-	formAdd.find(".selectSubject").val("")
-	formAdd.find(".selectNumber").val("")
-
-	// Hide status
-	selectCourseStatus()
-
-	formAddCustomOff()
-})
-
-// On modal is shown - move focus to input
-$("#modalAddCourse").on("shown.bs.modal", () => {
-	formAdd.find(".selectSubject").focus()
-})
-
 $("#modalEditUnits").on("shown.bs.modal", () => {
 	let value = $("#formEditUnits #selectUnitsNeeded").val()
 	$("#formEditUnits #selectUnitsNeeded").val("").focus().val(value)
-})
-
-// On grade changed in form
-$("#formEditCollectionCourse #selectGrade").on("change", function () {
-	$("#formEditCollectionCourse #selectPassed").prop("checked",
-		grades[$(this).val()] ? grades[$(this).val()].passed : false
-	)
 })
 
 // On summary options changed
@@ -752,47 +651,6 @@ $("#summary select").on("change", function () {
 })
 $("#summary input").on("change", function () {
 	updateSummary()
-})
-
-// On key up inside subject selection
-$("#selectCourseSubject").on("keyup", function (e) {
-	// Remove special characters
-	$(this).val($(this).val().replace(/[^a-zA-Z]/g, "").toUpperCase())
-
-	if ($(this).val().length < $(this).attr("minLength")) {
-		formAdd.find(".selectNumber").prop("disabled", true)
-		formAddCustomOff()
-		selectCourseStatus()
-	} else {
-		formAdd.find(".selectNumber").prop("disabled", false)
-		if (formAdd.find(".selectNumber").val().length == formAdd.find(".selectNumber").attr("maxLength"))
-			checkCourse()
-	}
-
-	// Move focus to number selection if max length is reached
-	if ($(this).val().length == $(this).attr("maxLength"))
-		formAdd.find(".selectNumber").focus()
-})
-
-// On key up inside number selection
-$("#selectCourseNumber").on("keydown", function (e) {
-	// If pressing backspace and the value is empty, move focus to subject selection
-	if ($(this).val().length == 0 && e.keyCode == 8)
-		formAdd.find(".selectSubject").focus()
-})
-
-// On key down inside number selection
-$("#selectCourseNumber").on("keyup", function (e) {
-	// Remove special characters
-	$(this).val($(this).val().replace(/[^a-zA-Z0-9]/g, "").toUpperCase())
-
-	// Check course if length is complete
-	if ($(this).val().length == $(this).attr("maxLength")) {
-		checkCourse()
-	} else {
-		formAddCustomOff()
-		selectCourseStatus()
-	}
 })
 
 // Form submit
@@ -813,74 +671,6 @@ $("#formAddCollection").on("submit", (event) => {
 	)
 })
 
-$("#customCoursePrompt").on("click", () => {
-	formAddCustomOn()
-})
-
-$("#formAddCollectionCourse").on("submit", (event) => {
-	event.preventDefault()
-	event.stopImmediatePropagation()
-
-	data = { collection_id: formAdd.find("#selectCollection").val() }
-
-	if (formAdd.find("#selectCourseCustom").prop("checked")) {
-		// Custom course
-		data.custom = true
-		data.subject_code = formAdd.find("#selectCourseSubject").val()
-		data.number = formAdd.find("#selectCourseNumber").val()
-		data.name = formAdd.find("#customCourseName").val()
-		data.units = parseFloat(formAdd.find("#customCourseUnits").val())
-		data.repeat = formAdd.find("#customCourseRepeat").prop("checked")
-		data.countgpa = formAdd.find("#customCourseCountGPA").prop("checked")
-	} else {
-		// Existing course
-		data.custom = false
-		data.course_id = formAdd.find("#selectCourseId").val()
-	}
-	addCollectionCourse(data, (response) => {
-		alert("success", "Course added!")
-		for (let w of response.warnings)
-			alert("warning", w)
-		getUpdateCollection(formAdd.find("#selectCollection").val())
-		updateProgress()
-		updateSummary()
-	})
-
-})
-
-$("#formEditCollectionCourse").on("submit", (event) => {
-	event.preventDefault()
-	event.stopImmediatePropagation()
-
-	let form = $(event.target)
-	let method = $(event.originalEvent.submitter).attr("method")
-
-	if (method == "PUT") {
-		putCollectionCourse({
-			id: form.find("#selectCollectionCourse").val(),
-			collection_id: form.find("#selectCollection").val(),
-			grade_id: form.find("#selectGrade").val(),
-			passed: form.find("#selectPassed").prop("checked")
-		},
-			() => {
-				alert("success", "Course updated!")
-				getUpdateCollection(form.find("#selectCollection").val())
-				if (form.find("#selectCollectionOld").val() != form.find("#selectCollection").val())
-					getUpdateCollection(form.find("#selectCollectionOld").val(), false)
-				updateProgress()
-				updateSummary()
-			}
-		)
-	} else if (method == "DELETE") {
-		delCollectionCourse(form.find("#selectCollectionCourse").val(), () => {
-			alert("success", "Course removed!")
-			getUpdateCollection(form.find("#selectCollectionOld").val())
-			updateProgress()
-			updateSummary()
-		})
-	}
-})
-
 $("#formEditUnits").on("submit", (event) => {
 	event.preventDefault()
 	event.stopImmediatePropagation()
@@ -899,6 +689,5 @@ $("#formEditUnits").on("submit", (event) => {
 
 $(document).ready(() => {
 	updateCollections()
-	updateProgress()
-	updateSummary()
+	ccAfterUpdate()
 })
