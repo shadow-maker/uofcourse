@@ -1,0 +1,12 @@
+{% macro ratingStarsIndicator(value, class="") %}
+<span class="{{class}}" title="{{value}} / 5 stars">
+	{% for i in range(5) %}
+	{% if value - i <= 0 %} <i class="bi-star"></i>
+		{% elif value - i < 1 %} <i class="bi-star-half"></i>
+			{% else %}
+			<i class="bi-star-fill"></i>
+			{% endif %}
+
+			{% endfor %}
+</span>
+{% endmacro %}
