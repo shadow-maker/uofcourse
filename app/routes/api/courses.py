@@ -1,4 +1,4 @@
-from app.models import Course, Subject, Faculty
+from app.models import Term, Course, Subject, Faculty
 from app.auth import current_user
 from app.routes.api.utils import *
 
@@ -136,6 +136,30 @@ def getCourses(name="", numbers=[], levels=[], faculties=[], subjects=[], repeat
 def getCourseById(id):
 	return getById(Course, id)
 
+@course.route("/<id>/ratings", methods=["GET"])
+def getCourseRatings(id):
+	course = Course.query.get(id)
+	if not course:
+		return {"error": f"Course with id {id} does not exist"}, 404
+	outof = request.args.get("outof", default=100, type=int)
+	decimals = request.args.get("decimals", default=0, type=int)
+	termId = request.args.get("term", default=None, type=int)
+	term = None
+	if termId is not None:
+		term = Term.query.get(termId)
+		if not term:
+			return {"error": f"Provided term id {termId} does not exist"}, 404
+		if term not in course.calendar_terms:
+			return {"error": f"Course with id {id} was not available in term {termId}"}, 404
+	if term is None:
+		average = course.getOverallRatingAverage(outof=outof, decimals=decimals)
+	else:
+		average = course.getRatingAverage(term, outof=outof, decimals=decimals)
+	return {
+		"average": average,
+		"count": len(course.getRatings(term)),
+		"distribution": course.getRatingsDistribution(term, outof, decimals)
+	}, 200
 
 @course.route("/code/<subjectCode>/<courseNumber>", methods=["GET"])
 def getCourseByCode(subjectCode, courseNumber):

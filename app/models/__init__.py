@@ -6,14 +6,14 @@ from app import db
 # University data related models
 #
 
-from app.models.faculty import Faculty
-from app.models.subject import Subject
-from app.models.course import Course
+from app.models.grade import Grade
 
 from app.models.calendar import Calendar
 from app.models.term import Season, Term
 
-from app.models.grade import Grade
+from app.models.faculty import Faculty
+from app.models.subject import Subject
+from app.models.course import Course
 
 #
 # User related models

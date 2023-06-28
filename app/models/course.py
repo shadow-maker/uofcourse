@@ -1,5 +1,5 @@
 from app import db
-from app.models import Subject
+from app.models import Calendar, Term, Subject
 from app.constants import DEFAULT_EMOJI, MIN_RATINGS_NEEDED
 
 from flask.helpers import url_for
@@ -67,26 +67,61 @@ class Course(db.Model):
 		self.lenRatingCache = None
 		self.overallRatingCache = None
 
+	def getRatings(self, term: Term) -> list:
+		if term not in self.calendar_terms:
+			return self.ratings
+		return [rating for rating in self.ratings if term.id == rating.term_id]
+	
+	def getRatingsDistribution(self, term: Term, outof: int = 100, decimals: int = 2) -> dict:
+		ratings = self.getRatings(term)
+		values = [rating.getRating(outof, decimals) for rating in ratings]
+		distributions = {}
+		for value in values:
+			if value not in distributions:
+				distributions[value] = 0
+			distributions[value] += 1
+		return distributions
+
 	def getLenRating(self):
 		if self.lenRatingCache is None:
 			self.lenRatingCache = len(self.ratings)	
 		return self.lenRatingCache
 	
-	def getOverallRatingPercent(self, minNeeded=MIN_RATINGS_NEEDED) -> float:
+	def getLenTermRating(self, term: Term):
+		if term not in self.calendar_terms:
+			return None
+		return len(self.getRatings(term))
+	
+	def getOverallRatingAveragePercent(self, minNeeded=MIN_RATINGS_NEEDED) -> float:
 		if self.getLenRating() < minNeeded:
 			return None
 		if self.overallRatingCache is None:
 			self.overallRatingCache = sum(r.percent for r in self.ratings) / self.getLenRating()
 		return self.overallRatingCache
 
-	def getOverallRating(self, minNeeded=MIN_RATINGS_NEEDED, outof: int = 100, decimals: int = 2) -> float:
-		self.getOverallRatingPercent(minNeeded)
+	def getOverallRatingAverage(self, minNeeded=MIN_RATINGS_NEEDED, outof: int = 100, decimals: int = 2) -> float:
+		self.getOverallRatingAveragePercent(minNeeded)
 		if self.overallRatingCache is None:
 			return -1
 		interval = outof / 100.0
 		return round(self.overallRatingCache * interval, decimals)
+	
+	def getRatingAveragePercent(self, term: Term, minNeeded=MIN_RATINGS_NEEDED) -> float:
+		if term not in self.calendar_terms:
+			return None
+		ratings = self.getRatings(term)
+		if len(ratings) < minNeeded:
+			return None
+		return sum(r.percent for r in ratings) / len(ratings)
 
-	def latestCalendar(self):
+	def getRatingAverage(self, term: Term, minNeeded=MIN_RATINGS_NEEDED, outof: int = 100, decimals: int = 2) -> float:
+		percent = self.getRatingAveragePercent(term, minNeeded)
+		if percent is None:
+			return -1
+		interval = outof / 100.0
+		return round(percent * interval, decimals)
+
+	def latestCalendar(self) -> Calendar:
 		return sorted(self.calendars, key=lambda cal: cal.year, reverse=True)[0]
 	
 	def calendarURL(self, calendar):
@@ -119,7 +154,7 @@ class Course(db.Model):
 
 	@property
 	def calendar_terms(self):
-		return [term for cal in self.calendars for term in cal.terms]
+		return sorted([term for cal in self.calendars for term in cal.terms], key=lambda term: term.id, reverse=True)
 
 	def getTags(self, userId):
 		return [tag for tag in self.tags if tag.user_id == userId]
@@ -156,4 +191,4 @@ class Course(db.Model):
 		yield "url", self.url
 		yield "url_uni", self.url_uni
 		yield "old", self.old
-		yield "rating", self.getOverallRating()
+		yield "rating", self.getOverallRatingAverage()
