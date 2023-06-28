@@ -47,3 +47,12 @@ def apiBeforeRequest():
 			request.json
 		except BadRequest as e:
 			return {"error": e.description}, 400
+
+#
+# Allow CORS
+#
+
+@api.after_request
+def apiAfterRequest(response):
+	response.headers["Access-Control-Allow-Origin"] = "*"
+	return response

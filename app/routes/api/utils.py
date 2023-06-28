@@ -9,9 +9,7 @@ def getById(table, id):
 	obj = table.query.get(id)
 	if not obj:
 		return {"error": f"{table.__name__} with id {id} does not exist"}, 404
-	response = jsonify(dict(obj))
-	response.headers.add("Access-Control-Allow-Origin", "*")
-	return response, 200
+	return dict(obj), 200
 
 
 def getAll(table, filters=(), serializer=None):
@@ -70,12 +68,9 @@ def getAll(table, filters=(), serializer=None):
 	# Get  results
 	results = query.paginate(per_page=limit, page=page)
 
-	response = jsonify({
+	return {
 		"results": [serializer(i) for i in results.items], # pass every result item through serializer
 		"page": results.page,
 		"pages": results.pages,
 		"total": results.total
-	})
-
-	response.headers.add("Access-Control-Allow-Origin", "*")
-	return response, 200
+	}, 200

@@ -10,6 +10,13 @@ me = Blueprint("me", __name__, url_prefix="/me")
 def meBeforeRequest():
 	pass
 
+# Disable CORS
+
+@me.after_request
+def apiAfterRequest(response):
+	response.headers.pop("Access-Control-Allow-Origin", None)
+	return response
+
 from app.routes.api.me.main import *
 from app.routes.api.me.logs import *
 from app.routes.api.me.sessions import *
