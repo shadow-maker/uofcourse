@@ -474,9 +474,15 @@
 			let star = element.find(".star-" + i)
 			if (i <= rating) {
 				star.find(".bi-star").addClass("d-none")
+				star.find(".bi-star-half").addClass("d-none")
 				star.find(".bi-star-fill").removeClass("d-none")
+			} else if (i <= rating + 0.5) {
+				star.find(".bi-star").addClass("d-none")
+				star.find(".bi-star-half").removeClass("d-none")
+				star.find(".bi-star-fill").addClass("d-none")
 			} else {
 				star.find(".bi-star").removeClass("d-none")
+				star.find(".bi-star-half").addClass("d-none")
 				star.find(".bi-star-fill").addClass("d-none")
 			}
 		}
