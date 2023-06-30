@@ -120,7 +120,12 @@ class Course(db.Model):
 			return -1
 		interval = outof / 100.0
 		return round(percent * interval, decimals)
-
+	
+	def cleanRatings(self):
+		for rating in self.ratings:
+			if not rating.isValid():
+				db.session.delete(rating)
+	
 	def latestCalendar(self) -> Calendar:
 		return sorted(self.calendars, key=lambda cal: cal.year, reverse=True)[0]
 	

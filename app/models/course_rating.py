@@ -16,6 +16,8 @@ class CourseRating(db.Model):
 	datetime = db.Column(db.DateTime, nullable=False, default=utc.now)
 
 	def __init__(self, course_id, user_id, term_id, value, outof: int = 100):
+		if self.query.filter_by(course_id=course_id, user_id=user_id, term_id=term_id).first():
+			raise ValueError(f"Rating for course={course_id} by user={user_id} in term={term_id} already exists")
 		self.course_id = course_id
 		self.user_id = user_id
 		self.term_id = term_id
@@ -39,6 +41,26 @@ class CourseRating(db.Model):
 	@hybrid_property
 	def rating(self) -> float:
 		return self.getRating()
+	
+	@property
+	def collection(self):
+		try:
+			return [col for col in self.user.collections if self.term_id == col.term_id][0]
+		except IndexError:
+			return None
+	
+	def isValid(self) -> bool:
+		if self.percent < 0 or self.percent > 100:
+			return False
+		if not self.term.isPrev():
+			return False
+		if self.term not in self.course.calendar_terms:
+			return False
+		if self.term not in self.user.collection_terms:
+			return False
+		if self.course not in self.collection.courses:
+			return False
+		return True
 	
 	def __repr__(self):
 		return f"COURSE_RATING(#{self.id})"
