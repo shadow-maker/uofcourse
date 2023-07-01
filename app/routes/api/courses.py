@@ -1,5 +1,5 @@
 from app.models import Term, Course, Subject, Faculty
-from app.auth import current_user
+from app.auth import current_user, login_required
 from app.routes.api.utils import *
 
 from flask import Blueprint, request
@@ -137,6 +137,7 @@ def getCourseById(id):
 	return getById(Course, id)
 
 @course.route("/<id>/ratings", methods=["GET"])
+@login_required
 def getCourseRatings(id):
 	course = Course.query.get(id)
 	if not course:
@@ -159,6 +160,30 @@ def getCourseRatings(id):
 		"average": average,
 		"count": len(course.getRatings(term)),
 		"distribution": course.getRatingsDistribution(term, outof, decimals)
+	}, 200
+
+@course.route("/<id>/grades", methods=["GET"])
+@login_required
+def getCourseGrades(id):
+	course = Course.query.get(id)
+	if not course:
+		return {"error": f"Course with id {id} does not exist"}, 404
+	termId = request.args.get("term", default=None, type=int)
+	term = None
+	if termId is not None:
+		term = Term.query.get(termId)
+		if not term:
+			return {"error": f"Provided term id {termId} does not exist"}, 404
+		if term not in course.calendar_terms:
+			return {"error": f"Course with id {id} was not available in term {termId}"}, 404
+	if term is None:
+		average = course.getOverallGPVAverage()
+	else:
+		average = course.getGPVAverage(term)
+	return {
+		"average": average,
+		"count": len(course.getGrades(term)),
+		"distribution": course.getGradesDistribution(term)
 	}, 200
 
 @course.route("/code/<subjectCode>/<courseNumber>", methods=["GET"])

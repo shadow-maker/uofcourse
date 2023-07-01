@@ -4,6 +4,14 @@
 
 let collections = []
 
+function getRatings(data, callback) {
+	ajax("GET", "courses/" + course_id + "/ratings", data, callback)
+}
+
+function getGrades(data, callback) {
+	ajax("GET", "courses/" + course_id + "/grades", data, callback)
+}
+
 function getCollections(callback) {
 	ajax("GET", "me/collections", { sort: ["term_id"] }, callback)
 }
@@ -175,9 +183,98 @@ function updateCollections() {
 	})
 }
 
+function updateRatings(term) {
+	let data = { outof: 10, decimals: 0 }
+	if (term > 0)
+		data.term = term
+	getRatings(data, response => {
+		let container = $("#ratings")
+		let average = response.average / 2
+		let maxCount = 0
+		let distribution = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+		for (let d in response.distribution) {
+			let count = response.distribution[d]
+			distribution[Math.round(parseFloat(d) / 2)] = count
+			if (count > maxCount)
+				maxCount = count
+		}
+		setRatingIndicator(container.find(".stars"), average)
+		if (average < 0) {
+			container.find(".stars").addClass("text-muted").removeClass("text-warning")
+			container.find(".distribution").children(".row").each(function () {
+				$(this).find(".progress").attr("aria-valuenow", 0)
+				$(this).find(".progress-bar").css("width", "0%")
+				$(this).find(".dist-count").text("-%")
+				$(this).attr("title", "Not enough ratings")
+				$(this).addClass("text-muted")
+			})
+		} else {
+			container.find(".stars").removeClass("text-muted").addClass("text-warning")
+			container.find(".distribution").children(".row").each(function () {
+				let distCount = distribution[parseInt($(this).attr("db-value"))]
+				let distPercent = Math.round((distCount / response.count) * 100)
+				$(this).find(".progress").attr("aria-valuenow", distPercent)
+				$(this).find(".progress-bar").css("width", distPercent + "%")
+				$(this).find(".dist-count").text(distPercent + "%")
+				$(this).attr("title", distCount + " ratings")
+				$(this).removeClass("text-muted")
+			})
+		}
+		container.find(".count").text(response.count)
+	})
+}
+
+function updateGrades(term) {
+	let data = {}
+	if (term > 0)
+		data.term = term
+	getGrades(data, response => {
+		let container = $("#grades")
+		let distribution = {}
+		for (let grade in grades) {
+			if (grades[grade].gpv == null)
+				continue
+			distribution[grade] = response.distribution[grade] ? response.distribution[grade] : 0
+		}
+		if (response.average < 0) {
+			container.find(".average").text("-")
+			container.find(".distribution").children(".row").each(function () {
+				$(this).find(".progress").attr("aria-valuenow", 0)
+				$(this).find(".progress-bar").css("width", "0%")
+				$(this).find(".dist-count").text("-%")
+				$(this).attr("title", "Not enough grades")
+				$(this).addClass("text-muted")
+			})
+		} else {
+			container.find(".average").text(response.average)
+			container.find(".distribution").children(".row").each(function () {
+				let distCount = distribution[parseInt($(this).attr("db-value"))]
+				let distPercent = Math.round((distCount / response.count) * 100)
+				$(this).find(".progress").attr("aria-valuenow", distPercent)
+				$(this).find(".progress-bar").css("width", distPercent + "%")
+				$(this).find(".dist-count").text(distPercent + "%")
+				$(this).attr("title", distCount + " grades")
+				$(this).removeClass("text-muted")
+			})
+		}
+		container.find(".count").text(response.count)
+	})
+}
+
 function ccAfterUpdate() {
 	updateCollections()
+	$("#selectStatsTerm").val(0)
 }
+
+//
+// EVENTS
+//
+
+$("#selectStatsTerm").on("change", function () {
+	let term = parseInt($(this).val())
+	updateRatings(term)
+	updateGrades(term)
+})
 
 //
 // DOCUMENT READY
@@ -187,5 +284,7 @@ $(document).ready(() => {
 	tagsInit(() => {
 		updateTags()
 		updateCollections()
+		updateRatings(0)
+		updateGrades(0)
 	})
 })

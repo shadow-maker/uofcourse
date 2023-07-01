@@ -67,6 +67,10 @@ class User(db.Model, UserMixin):
 	@property
 	def courses(self):
 		return [cc for col in self.collections for cc in col.collectionCourses]
+	
+	@property
+	def collection_terms(self):
+		return [col.term for col in self.collections if not col.transfer]
 
 	@property
 	def coursesTaken(self):

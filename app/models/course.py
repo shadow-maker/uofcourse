@@ -1,6 +1,6 @@
 from app import db
 from app.models import Calendar, Term, Subject
-from app.constants import DEFAULT_EMOJI, MIN_RATINGS_NEEDED
+from app.constants import DEFAULT_EMOJI, MIN_RATINGS_NEEDED, MIN_GRADES_NEEDED
 
 from flask.helpers import url_for
 from sqlalchemy import select, cast, func
@@ -28,8 +28,11 @@ class Course(db.Model):
 	ratings = db.relationship("CourseRating", backref="course")
 	collectionCourses = db.relationship("CollectionCourse", backref="_course")
 
-	lenRatingCache = None
-	overallRatingCache = None
+	ratingsLenCache = None
+	ratingsOverallCache = None
+
+	gradesLenCache = None
+	gradesOverallCache = None
 
 	@hybrid_property
 	def faculty_id(self):
@@ -64,8 +67,8 @@ class Course(db.Model):
 		return func.floor(cls.number / 100) # This might only work in MySQL and PostgreSQL
 	
 	def resetRatingCache(self):
-		self.lenRatingCache = None
-		self.overallRatingCache = None
+		self.ratingsLenCache = None
+		self.ratingsOverallCache = None
 
 	def getRatings(self, term: Term) -> list:
 		if term not in self.calendar_terms:
@@ -82,29 +85,29 @@ class Course(db.Model):
 			distributions[value] += 1
 		return distributions
 
-	def getLenRating(self):
-		if self.lenRatingCache is None:
-			self.lenRatingCache = len(self.ratings)	
-		return self.lenRatingCache
+	def getRatingsLen(self):
+		if self.ratingsLenCache is None:
+			self.ratingsLenCache = len(self.ratings)	
+		return self.ratingsLenCache
 	
-	def getLenTermRating(self, term: Term):
+	def getRatingsLenTerm(self, term: Term):
 		if term not in self.calendar_terms:
 			return None
 		return len(self.getRatings(term))
 	
 	def getOverallRatingAveragePercent(self, minNeeded=MIN_RATINGS_NEEDED) -> float:
-		if self.getLenRating() < minNeeded:
+		if self.getRatingsLen() < minNeeded:
 			return None
-		if self.overallRatingCache is None:
-			self.overallRatingCache = sum(r.percent for r in self.ratings) / self.getLenRating()
-		return self.overallRatingCache
+		if self.ratingsOverallCache is None:
+			self.ratingsOverallCache = sum(r.percent for r in self.ratings) / self.getRatingsLen()
+		return self.ratingsOverallCache
 
 	def getOverallRatingAverage(self, minNeeded=MIN_RATINGS_NEEDED, outof: int = 100, decimals: int = 2) -> float:
 		self.getOverallRatingAveragePercent(minNeeded)
-		if self.overallRatingCache is None:
+		if self.ratingsOverallCache is None:
 			return -1
 		interval = outof / 100.0
-		return round(self.overallRatingCache * interval, decimals)
+		return round(self.ratingsOverallCache * interval, decimals)
 	
 	def getRatingAveragePercent(self, term: Term, minNeeded=MIN_RATINGS_NEEDED) -> float:
 		if term not in self.calendar_terms:
@@ -125,6 +128,49 @@ class Course(db.Model):
 		for rating in self.ratings:
 			if not rating.isValid():
 				db.session.delete(rating)
+
+	@hybrid_property
+	def grades(self) -> list:
+		return [cc.grade for cc in self.collectionCourses if cc.grade is not None and cc.grade.gpv is not None]
+
+	def getGrades(self, term: Term) -> list:
+		if term not in self.calendar_terms:
+			return self.grades
+		return [cc.grade for cc in self.collectionCourses if cc.grade is not None and term.id == cc.collection.term_id]
+	
+	def getGradesDistribution(self, term: Term) -> dict:
+		grades = self.getGrades(term)
+		distributions = {}
+		for grade in grades:
+			if grade.id not in distributions:
+				distributions[grade.id] = 0
+			distributions[grade.id] += 1
+		return distributions
+	
+	def getGradesLen(self):
+		if self.gradesLenCache is None:
+			self.gradesLenCache = len(self.grades)	
+		return self.gradesLenCache
+	
+	def getGradesLenTerm(self, term: Term):
+		if term not in self.calendar_terms:
+			return None
+		return len(self.getGrades(term))
+	
+	def getOverallGPVAverage(self, minNeeded=MIN_GRADES_NEEDED) -> float:
+		if self.getGradesLen() < minNeeded:
+			return -1
+		if self.gradesOverallCache is None:
+			self.gradesOverallCache = round(sum(g.gpv for g in self.grades if g.gpv is not None) / self.getGradesLen(), 2)
+		return self.gradesOverallCache
+	
+	def getGPVAverage(self, term: Term, minNeeded=MIN_GRADES_NEEDED) -> float:
+		if term not in self.calendar_terms:
+			return -1
+		grades = self.getGrades(term)
+		if len(grades) < minNeeded:
+			return -1
+		return round(sum(g.gpv for g in self.grades if g.gpv is not None) / len(grades), 2)
 	
 	def latestCalendar(self) -> Calendar:
 		return sorted(self.calendars, key=lambda cal: cal.year, reverse=True)[0]

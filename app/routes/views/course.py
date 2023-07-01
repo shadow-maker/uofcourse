@@ -1,6 +1,6 @@
 from app.models import Faculty, Subject, Course, Grade
 from app.auth import current_user
-from app.constants import COURSE_LEVELS, REDDIT_URL
+from app.constants import COURSE_LEVELS, REDDIT_URL, MIN_RATINGS_NEEDED
 from app.routes.views import view
 
 from flask import render_template, flash, redirect, request
@@ -36,7 +36,8 @@ def course(subjectCode, courseNumber):
 		grades = {grade.id : dict(grade) for grade in Grade.query.all()},
 		collections = sorted(
 			current_user.collections, key=lambda c : c.term_id or 0
-		) if current_user.is_authenticated else []
+		) if current_user.is_authenticated else [],
+		ratingTerms = [term for term in course.calendar_terms if course.getRatingsLenTerm(term) > 0]
 	)
 
 
