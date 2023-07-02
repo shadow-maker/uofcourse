@@ -314,6 +314,9 @@
 	const modalEdit = $("#modalEditCollectionCourse")
 	const formEdit = $("#formEditCollectionCourse")
 
+	let selectRatingStarsHoverWaiting = false
+	let selectRatingStarsHoverTime = null
+
 	//
 	// UTIL FUNCS
 	//
@@ -636,11 +639,29 @@
 		}
 	})
 
+	formEdit.find("#selectRatingStars").on("mouseover", function () {
+		if (formEdit.find("#selectRating").prop("disabled") == false) {
+			if (!selectRatingStarsHoverWaiting) {
+				selectRatingStarsHoverWaiting = true
+				selectRatingStarsHoverTime = new Date().getTime()
+			}
+		}
+	})
+
+	formEdit.find("#selectRatingStars").on("mouseleave", function () {
+		if (formEdit.find("#selectRating").prop("disabled") == false)
+			selectRatingStarsHoverWaiting = false
+	})
+
 	formEdit.find("#selectRatingStars").on("mouseover", "span", function () {
 		if (formEdit.find("#selectRating").prop("disabled") == false) {
-			let rating = parseInt($(this).attr("db-rating"))
-			setRatingIndicator(formEdit.find("#selectRatingStars"), rating)
-			formEdit.find("#selectRating").val(rating)
+			if (selectRatingStarsHoverWaiting) {
+				if (new Date().getTime() - selectRatingStarsHoverTime > 300) {
+					let rating = parseInt($(this).attr("db-rating"))
+					setRatingIndicator(formEdit.find("#selectRatingStars"), rating)
+					formEdit.find("#selectRating").val(rating)
+				}
+			}
 		}
 	})
 
