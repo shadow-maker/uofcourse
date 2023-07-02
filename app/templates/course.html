@@ -263,11 +263,17 @@
 		<!--Course statistics-->
 		<div id="statistics" class="container ps-2 ps-lg-4 pe-0 row mb-3">
 			<hr>
-			<div class="row p-0 mb-2">
-				<div class="col-6 col-sm-12 col-md-7 col-lg-5 col-xxl-3 pe-0">
-					<h3 class="lh-1">Course statistics</h3>
+			<div class="row px-0 mb-2">
+				<div class="col-7 col-sm-12 col-md-7 col-lg-6 col-xxl-4 pe-0">
+					<!-- <h3 class="lh-1">Course statistics</h3> -->
+					<h3 data-bs-toggle="collapse" href="#statistics-content" role="button" aria-expanded="false"
+						aria-controls="statistics-content" onclick="collapse(this)" class="ps-0">
+						<span class="toggleOff"><small><i class="bi-chevron-right"></i></small></span>
+						<span class="toggleOn disabled"><small><i class="bi-chevron-down"></i></small></span>
+						<span>Course statistics</span>
+					</h3>
 				</div>
-				<div class="col col-xxl-3 pe-0">
+				<div class="col col-xxl-3 ps-lg-4 pe-0 pe-xxl-5 ms-sm-4 ms-md-0">
 					{% if current_user.is_authenticated %}
 					<select id="selectStatsTerm" class="form-select form-select-sm"
 						aria-label="Select term to view ratings">
@@ -279,103 +285,114 @@
 					{% endif %}
 				</div>
 			</div>
-			{% if current_user.is_authenticated %}
-			<div class="row ms-2">
-				<div id="ratings" class="col-12 col-lg-6 pe-lg-3 mb-3 mb-lg-0">
-					<div class="d-flex justify-content-between mb-3">
-						<h4 class="m-0">Ratings</h4>
-						<div class="lh-1 text-end">
-							<span class="stars fs-3">
-								{% for i in range(1, 6) %}
-								<span class="star-{{i}}">
-									<i class="bi-star"></i>
-									<i class="bi-star-half d-none"></i>
-									<i class="bi-star-fill d-none"></i>
+			<div id="statistics-content" class="collapse ps-4 ms-md-2 pe-lg-3">
+				{% if current_user.is_authenticated %}
+				<div class="row">
+					<div id="ratings" class="col-12 col-lg-6 pe-lg-3 mb-3 mb-lg-0">
+						<div class="d-flex justify-content-between mb-3">
+							<h4 class="m-0">Ratings</h4>
+							<div class="lh-1 text-end">
+								<span class="stars fs-3">
+									{% for i in range(1, 6) %}
+									<span class="star-{{i}}">
+										<i class="bi-star"></i>
+										<i class="bi-star-half d-none"></i>
+										<i class="bi-star-fill d-none"></i>
+									</span>
+									{% endfor %}
 								</span>
-								{% endfor %}
-							</span>
-							<div>
-								<small>
-									Average from
-									<span class="count"></span>
-									ratings
-								</small>
-							</div>
-						</div>
-					</div>
-					<div class="distribution">
-						{% for i in range(5, 0, -1) %}
-						<div class="row" db-value="{{i}}">
-							<div class="col-4 col-sm-6 col-md-4 col-lg-5 col-xl-4 col-xxl-3 pe-0 lh-sm">
-								{{ratingStarsIndicator(i)}}
-							</div>
-							<div class="col-7 col-sm-4 col-md-7 col-lg-5 col-xl-7 col-xxl-8 ps-0 ps-xxl-2 lh-sm">
-								<div class="progress mt-1" role="progressbar" aria-label="Basic example"
-									aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 0.9rem">
-									<div class="progress-bar bg-warning" style="width: 0%"></div>
+								<div>
+									<small>
+										Average from
+										<span class="count"></span>
+										ratings
+									</small>
 								</div>
 							</div>
-							<div class="col-1 col-lg-2 col-xl-1 ps-0 pe-0 lh-sm">
-								<small class="dist-count">-%</small>
-							</div>
 						</div>
-						{% endfor %}
-					</div>
-				</div>
-				<div id="grades" class="col-12 col-lg-6 ps-lg-3">
-					<div class="d-flex justify-content-between mb-3">
-						<h4 class="m-0">Grades</h4>
-						<div class="lh-1 text-end">
-							<span class="average fs-3 font-monospace"></span>
-							<span class="fs-5 font-monospace">/</span>
-							<span class="fs-5 font-monospace">4.0</span>
-							<div>
-								<small>
-									Average from
-									<span class="count"></span>
-									grades
-								</small>
-							</div>
-						</div>
-					</div>
-					<div class="distribution">
-						{% for id, grade in grades.items() %}
-						{% if grade.gpv != None %}
-						<div class="row" db-value="{{id}}">
-							<div class="col-2 d-lg-none"></div>
-							<div class="col-2 col-sm-4 col-md-2 col-lg-2 col-xl-2 col-xxl-1 lh-sm font-monospace"
-								title="{{grade.symbol}} ({{grade.gpv}} GPV)">
-								{{grade.symbol}}
-							</div>
-							<div class="col-7 col-sm-4 col-md-7 col-lg-8 col-xl-9 col-xxl-10 ps-0 ps-xxl-2 lh-sm">
-								<div class="progress mt-1" role="progressbar" aria-label="Basic example"
-									aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 0.9rem">
-									<div class="progress-bar bg-warning" style="width: 0%"></div>
+						<div class="distribution">
+							{% for i in range(5, 0, -1) %}
+							<div class="row" db-value="{{i}}">
+								<div class="col-4 col-sm-6 col-md-4 col-lg-5 col-xl-4 col-xxl-3 pe-0 lh-sm">
+									{{ratingStarsIndicator(i)}}
+								</div>
+								<div class="col-7 col-sm-4 col-md-7 col-lg-5 col-xl-7 col-xxl-8 ps-0 ps-xxl-2 lh-sm">
+									<div class="progress mt-1" role="progressbar" aria-label="Basic example"
+										aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 0.9rem">
+										<div class="progress-bar bg-warning" style="width: 0%"></div>
+									</div>
+								</div>
+								<div class="col-1 col-lg-2 col-xl-1 ps-0 pe-0 lh-sm">
+									<small class="dist-count">-%</small>
 								</div>
 							</div>
-							<div class="col-1 col-lg-2 col-xl-1 ps-0 pe-0 lh-sm">
-								<small class="dist-count">-%</small>
+							{% endfor %}
+						</div>
+					</div>
+					<div id="grades" class="col-12 col-lg-6 ps-lg-3">
+						<div class="d-flex justify-content-between mb-3">
+							<h4 class="m-0">Grades</h4>
+							<div class="lh-1 text-end">
+								<span class="average fs-3 font-monospace"></span>
+								<span class="fs-5 font-monospace">/</span>
+								<span class="fs-5 font-monospace">4.0</span>
+								<div>
+									<small>
+										Average from
+										<span class="count"></span>
+										grades
+									</small>
+								</div>
 							</div>
 						</div>
-						{% endif %}
-						{% endfor %}
+						<div class="distribution">
+							{% for id, grade in grades.items() %}
+							{% if grade.gpv != None %}
+							<div class="row" db-value="{{id}}">
+								<div class="col-2 d-lg-none"></div>
+								<div class="col-2 col-sm-4 col-md-2 col-lg-2 col-xl-2 col-xxl-1 lh-sm font-monospace"
+									title="{{grade.symbol}} ({{grade.gpv}} GPV)">
+									{{grade.symbol}}
+								</div>
+								<div class="col-7 col-sm-4 col-md-7 col-lg-8 col-xl-9 col-xxl-10 ps-0 ps-xxl-2 lh-sm">
+									<div class="progress mt-1" role="progressbar" aria-label="Basic example"
+										aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 0.9rem">
+										<div class="progress-bar bg-info" style="width: 0%"></div>
+									</div>
+								</div>
+								<div class="col-1 col-lg-2 col-xl-1 ps-0 pe-0 lh-sm">
+									<small class="dist-count">-%</small>
+								</div>
+							</div>
+							{% endif %}
+							{% endfor %}
+						</div>
 					</div>
 				</div>
+				{% else %}
+				<span class="fst-italic">
+					You must be logged in to see course statistics
+				</span>
+				{% endif %}
 			</div>
-			{% else %}
-			<span class="fst-italic">
-				You must be logged in to see course statistics
-			</span>
-			{% endif %}
 		</div>
 
 		<!--Comments-->
 		<div id="comments" class="container ps-2 ps-lg-4 pe-0 row">
 			<hr>
-			<h3>Discussion</h3>
-			<div>
+			<h3 data-bs-toggle="collapse" href="#comments-content" role="button" aria-expanded="true"
+				aria-controls="comments-content" onclick="collapse(this)" class="ps-0">
+				<span class="toggleOff"><small><i class="bi-chevron-right"></i></small></span>
+				<span class="toggleOn disabled"><small><i class="bi-chevron-down"></i></small></span>
+				<span>Discussion</span>
+			</h3>
+			<div id="comments-content" class="collapse ps-4 ms-md-2">
 				{% if not DEBUG %}
 				{{disqusThread(request.url, course.id)}}
+				{% else %}
+				<span class="fst-italic">
+					Disqus comments are disabled
+				</span>
 				{% endif %}
 			</div>
 		</div>
