@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 
+{% from "components/ratingstars.html" import ratingStarsIndicator %}
 {% from "components/pagination.html" import paginationNav, paginationCode with context %}
 
 {% block headscripts %}
@@ -16,82 +17,102 @@
 <script src="/static/scripts/courseBrowser.js"></script>
 {% endblock %}
 
+{% block styles %}
+<style>
+	.course-item:hover a {
+		color: var(--bs-link-hover-color-rgb) !important;
+	}
+</style>
+{% endblock %}
+
 {% block templates %}
 <!--Course Item-->
-<div class="course-item mb-3 card">
-	<div class="card-body px-1 py-2">
-		<!--Course Link-->
-		<a class="course-link row m-0 text-decoration-none link-body-emphasis" href="">
-			<!--Course emoji and code-->
-			<div
-				class="col-12 col-md-5 col-lg-4 col-xl-3 ps-2 px-lg-2 ps-xl-3 ps-xxl-4 h4 m-0 d-flex align-items-bottom">
-				<span class="course-emoji p-0 m-0 me-2"></span>
-				<span class="course-code p-0 m-0 font-monospace"></span>
+<div class="course-item mb-2 card">
+	<div class="card-body px-1 px-sm-2 ps-xl-3 py-2">
+		<div class="d-flex link-body-emphasis">
+			<div class="lh-sm pe-2">
+				<a class="course-link text-decoration-none" href="">
+					<span class="course-emoji fs-4 p-0 m-0 d-block" style="width: 1em;"></span>
+				</a>
 			</div>
-			<!--Course name-->
-			<div class="col-12 col-md-7 col-lg-8 col-xl-9 ps-2 ps-lg-0 pe-2">
-				<div class="course-name p-0 m-0 h5"></div>
-			</div>
-		</a>
-		<div class="row m-0 p-0">
-			<!--Separator-->
-			<div class="h4 m-0 col-0 col-md-5 col-lg-4 col-xl-3"></div>
+			<div class="lh-1 w-100">
+				<a class="course-link d-flex justify-content-between text-decoration-none link-body-emphasis" href="">
+					<div class="" style="width: 8em;">
+						<span class="course-code h4 p-0 m-0 font-monospace"></span>
+					</div>
+					<div class="course-rating fs-4 lh-sm text-end">
+						{% for i in range(1, 6) %}
+						<span class="star-{{i}}">
+							<i class="bi-star"></i>
+							<i class="bi-star-half d-none"></i>
+							<i class="bi-star-fill d-none"></i>
+						</span>
+						{% endfor %}
+					</div>
+				</a>
+				<a class="course-link text-decoration-none link-body-emphasis" href="">
+					<div class="course-name h5 p-0 m-0"></div>
+				</a>
+				{% if current_user.is_authenticated %}
+				<div class="row p-0 m-0">
+					<!--Tags-->
+					<div class="course-tags mt-1 col-7 col-xs-6 col-sm-12 col-lg-5 col-xl-7 ps-0">
+						<span class="course-old d-none btn badge btn-warning text-light px-1 me-1 cursor-pointer"
+							title="This is an old course">
+							<i class="bi-exclamation-triangle-fill"></i>
+						</span>
+						<span class="tags-selected p-0 m-0"></span>
+						<div class="btn-group">
+							<button class="tags-dropdown-btn btn badge btn-secondary dropdown-toggle" type="button"
+								data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
+								<i class="bi-tag-fill"></i>
+							</button>
+							<ul class="dropdown-menu py-1">
+								<div class="tags-dropdown"></div>
+								<li>
+									<hr class="dropdown-divider my-1">
+								</li>
+								<li>
+									<a class="dropdown-item px-2 p-y1" data-bs-toggle="modal"
+										data-bs-target="#modalEditTags">
+										<i class="bi-pencil-square"></i>
+										<small>Edit tags</small>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
 
-			<!--Tags-->
-			<div class="course-tags col-7 col-xs-6 col-sm-12 col-lg-5 col-xl-7 ps-2 ps-lg-0 pe-1">
-				<span class="course-old d-none btn badge btn-warning text-light px-1 me-1 cursor-pointer"
-					title="This is an old course">
-					<i class="bi-exclamation-triangle-fill"></i>
-				</span>
-				<span class="tags-selected p-0 m-0"></span>
-				<div class="btn-group">
-					<button class="tags-dropdown-btn btn badge btn-secondary dropdown-toggle" type="button"
-						data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
-						<i class="bi-tag-fill"></i>
-					</button>
-					<ul class="dropdown-menu fs-6 py-1">
-						<div class="tags-dropdown"></div>
-						<li>
-							<hr class="dropdown-divider my-1">
-						</li>
-						<li>
-							<a class="dropdown-item px-2 p-y1" data-bs-toggle="modal" data-bs-target="#modalEditTags">
-								<i class="bi-pencil-square"></i>
-								<small>Edit tags</small>
-							</a>
-						</li>
-					</ul>
+					<!--Collections-->
+					<div class="course-collections mt-1 col px-0 text-end text-sm-start text-lg-end">
+						<button class="collections-dropdown-btn btn badge btn-secondary dropdown-toggle" type="button"
+							data-bs-toggle="dropdown" aria-expanded="false" title="Add to terms"></button>
+						<ul class="collections-dropdown dropdown-menu py-1">
+							{% for collection in collections %}
+							<li class="collections-dropdown-item" db-id="{{collection.id}}">
+								<a class="dropdown-item px-2 py-1">
+									<i class="bi-check invisible"></i>
+									{% if collection.transfer %}
+									<small>Transferred</small>
+									{% else %}
+									<small>{{collection.term.name | capitalize}}</small>
+									{% endif %}
+								</a>
+							</li>
+							{% endfor %}
+							<li>
+								<hr class="dropdown-divider my-1">
+							</li>
+							<li>
+								<a class="dropdown-item px-2 p-y1" href="{{url_for('view.planner')}}">
+									<i class="bi-pencil-square"></i>
+									<small>Edit in My Planner</small>
+								</a>
+							</li>
+						</ul>
+					</div>
 				</div>
-			</div>
-
-			<!--Collections-->
-			<div
-				class="course-collections col-5 col-sm-12 col-lg-3 col-xl-2 ps-2 ps-lg-0 pe-1 text-end text-sm-start text-lg-end">
-				<button class="collections-dropdown-btn btn badge btn-secondary dropdown-toggle" type="button"
-					data-bs-toggle="dropdown" aria-expanded="false" title="Add to terms"></button>
-				<ul class="collections-dropdown dropdown-menu fs-6 mt-1">
-					{% for collection in collections %}
-					<li class="collections-dropdown-item" db-id="{{collection.id}}">
-						<a class="dropdown-item px-2 py-1">
-							<i class="bi-check invisible"></i>
-							{% if collection.transfer %}
-							<small>Transferred</small>
-							{% else %}
-							<small>{{collection.term.name | capitalize}}</small>
-							{% endif %}
-						</a>
-					</li>
-					{% endfor %}
-					<li>
-						<hr class="dropdown-divider my-1">
-					</li>
-					<li>
-						<a class="dropdown-item px-2 p-y1" href="{{url_for('view.planner')}}">
-							<i class="bi-pencil-square"></i>
-							<small>Edit in My Planner</small>
-						</a>
-					</li>
-				</ul>
+				{% endif %}
 			</div>
 		</div>
 	</div>
@@ -131,16 +152,16 @@
 				<!--Search-->
 				<div class="card bg-body-tertiary mb-2">
 					<div class="card-body">
-						<h5 class="card-title">Search courses</h5>
-						<input class="form-control form-control-sm" type="search" name="search"
-							placeholder="Type something...." id="searchCourses">
+						<!-- <h5 class="card-title">Search courses</h5> -->
+						<input class="form-control form-control" type="search" name="search"
+							placeholder="Search by name..." id="searchCourses">
 					</div>
 				</div>
 
 				<!--Filter-->
 				<div class="card bg-body-tertiary">
 					<div class="card-body">
-						<h5 class="card-title">Filter results</h5>
+						<!-- <h5 class="card-title">Filter results</h5> -->
 						<!--Extra filters-->
 						<fieldset class="form-group">
 							<!--Old-->

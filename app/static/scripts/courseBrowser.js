@@ -28,6 +28,26 @@ function checkAll(container) {
 	$("#formFilterCourses").submit()
 }
 
+function setRatingIndicator(element, rating) {
+	for (let i = 1; i <= 5; i++) {
+		let star = element.find(".star-" + i)
+		if (i <= rating) {
+			star.find(".bi-star").addClass("d-none")
+			star.find(".bi-star-half").addClass("d-none")
+			star.find(".bi-star-fill").removeClass("d-none")
+		} else if (i <= rating + 0.5) {
+			star.find(".bi-star").addClass("d-none")
+			star.find(".bi-star-half").removeClass("d-none")
+			star.find(".bi-star-fill").addClass("d-none")
+		} else {
+			star.find(".bi-star").removeClass("d-none")
+			star.find(".bi-star-half").addClass("d-none")
+			star.find(".bi-star-fill").addClass("d-none")
+		}
+	}
+	element.prop("title", rating && rating >= 0 ? rating + " / 5 stars" : "No rating")
+}
+
 //
 // REQUEST FUNCS
 //
@@ -175,6 +195,11 @@ function updateCourse(id) {
 	course.element.find(".course-emoji").html("&#" + (course.emoji ? course.emoji : DEFAULT_EMOJI))
 	course.element.find(".course-code").text(course.code)
 	course.element.find(".course-name").text(course.name)
+	setRatingIndicator(course.element.find(".course-rating"), course.rating / 20)
+	if (course.rating < 0)
+		course.element.find(".course-rating").addClass("text-muted").removeClass("text-warning")
+	else
+		course.element.find(".course-rating").removeClass("text-muted").addClass("text-warning")
 	if (course.old)
 		course.element.find(".course-old").removeClass("d-none")
 
