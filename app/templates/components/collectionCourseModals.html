@@ -450,7 +450,7 @@
 		formEdit.find("#selectPassed").prop("checked", cc.passed ? cc.passed : false)
 		setRatingIndicator(formEdit.find("#selectRatingStars"), cc.rating ? Math.round(cc.rating / 20) : null)
 		formEdit.find("#selectRating").val(cc.rating ? Math.round(cc.rating / 20) : 0)
-		if (collection.transfer || !collection.term.prev) {
+		if (collection.transfer || !collection.term.prev || cc.custom) {
 			formEdit.find("#selectRatingStars").addClass("text-muted")
 			formEdit.find("#selectRatingStars").prop("title", "Rating cannot be added for course in this term")
 			formEdit.find("#selectRating").prop("disabled", true)
