@@ -303,18 +303,9 @@ function updateCollections(id) {
 	const course = coursesData.find(c => c.id == id)
 	const collections = course.element.find(".course-collections")
 
-	if (course.collections.length == 0)
-		collections.find(".collections-dropdown-btn").text(
-			"Not taken"
-		)
-	else if (course.collections.length == 1)
-		collections.find(".collections-dropdown-btn").text(
-			"Taken in " + course.collections.length + " term"
-		)
-	else
-		collections.find(".collections-dropdown-btn").text(
-			"Taken in " + course.collections.length + " terms"
-		)
+	collections.find(".collections-dropdown-btn .count").text(
+		course.collections.length > 0 ? course.collections.length : "Planner"
+	)
 
 	collections.find(".collections-dropdown-item").each(function () {
 		if (course.collections.includes(parseInt($(this).attr("db-id")))) {

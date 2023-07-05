@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 
-{% from "components/ratingstars.html" import ratingStarsIndicator %}
 {% from "components/pagination.html" import paginationNav, paginationCode with context %}
 
 {% block headscripts %}
@@ -32,12 +31,12 @@
 		<div class="d-flex link-body-emphasis">
 			<div class="lh-sm pe-2">
 				<a class="course-link text-decoration-none" href="">
-					<span class="course-emoji fs-4 p-0 m-0 d-block" style="width: 1em;"></span>
+					<span class="course-emoji fs-4 p-0 m-0 d-block" style="width: 1em;" title="Course emoji"></span>
 				</a>
 			</div>
 			<div class="lh-1 w-100">
 				<a class="course-link d-flex justify-content-between text-decoration-none link-body-emphasis" href="">
-					<div class="" style="width: 8em;">
+					<div title="Course code">
 						<span class="course-code h4 p-0 m-0 font-monospace"></span>
 					</div>
 					<div class="course-rating fs-4 lh-sm text-end">
@@ -51,17 +50,17 @@
 					</div>
 				</a>
 				<a class="course-link text-decoration-none link-body-emphasis" href="">
-					<div class="course-name h5 p-0 m-0"></div>
+					<div class="course-name h5 p-0 m-0" title="Course name"></div>
 				</a>
 				{% if current_user.is_authenticated %}
-				<div class="row p-0 m-0">
+				<div class="d-flex justify-content-between pt-1">
 					<!--Tags-->
-					<div class="course-tags mt-1 col-7 col-xs-6 col-sm-12 col-lg-5 col-xl-7 ps-0">
+					<div class="course-tags lh-base">
 						<span class="course-old d-none btn badge btn-warning text-light px-1 me-1 cursor-pointer"
 							title="This is an old course">
 							<i class="bi-exclamation-triangle-fill"></i>
 						</span>
-						<span class="tags-selected p-0 m-0"></span>
+						<span class="tags-selected"></span>
 						<div class="btn-group">
 							<button class="tags-dropdown-btn btn badge btn-secondary dropdown-toggle" type="button"
 								data-bs-toggle="dropdown" aria-expanded="false" title="Add tags">
@@ -84,9 +83,12 @@
 					</div>
 
 					<!--Collections-->
-					<div class="course-collections mt-1 col px-0 text-end text-sm-start text-lg-end">
+					<div class="course-collections ps-2 text-end text-sm-start text-lg-end lh-base">
 						<button class="collections-dropdown-btn btn badge btn-secondary dropdown-toggle" type="button"
-							data-bs-toggle="dropdown" aria-expanded="false" title="Add to terms"></button>
+							data-bs-toggle="dropdown" aria-expanded="false" title="Add to terms">
+							<i class="bi-calendar-range"></i>
+							<span class="count"></span>
+						</button>
 						<ul class="collections-dropdown dropdown-menu py-1">
 							{% for collection in collections %}
 							<li class="collections-dropdown-item" db-id="{{collection.id}}">
